@@ -12,6 +12,10 @@
 bin/
 gen/
 
+# built application files
+*.apk
+*.ap_
+
 # Gradle files
 .gradle/
 build/
@@ -25,3 +29,25 @@ proguard/
 
 # Log Files
 *.log
+
+# Android Studio
+.idea/
+.gradle
+/*/local.properties
+/*/out
+/*/*/build
+/*/*/production
+*.iml
+*.iws
+*.ipr
+*~
+*.swp
+
+#idea-studio
+.gradle
+/local.properties
+/.idea/workspace.xml
+/.idea/libraries
+.DS_Store
+/build
+/captures
