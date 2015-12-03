@@ -1,3 +1,6 @@
+# First version of the git ignore file. Should remove the problem of uploading auto generated files
+
+
 # Built application files
 *.apk
 *.ap_
