@@ -3,6 +3,7 @@
     <PreferenceCategory
         android:title="@string/pref_profile"
         android:key="pref_key_profile">
+
         <EditTextPreference
             android:key="pref_key_name"
             android:summary="@string/pref_name_summary"
@@ -14,7 +15,9 @@
         <EditTextPreference
             android:key="pref_key_bloodsugar"
             android:summary="@string/pref_blood_sugar_summary"
-            android:title="@string/pref_blood_sugar"/>
+            android:title="@string/pref_blood_sugar"
+            android:inputType="numberDecimal"
+            android:dialogTitle="@string/pref_blood_sugar_dialogtitle"/>
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_notification"
@@ -31,10 +34,17 @@
             android:key="pref_key_sound"
             android:title="@string/pref_vibration"
             android:defaultValue="false"/>
+        <CheckBoxPreference
+            android:key="pref_key_assistant"
+            android:title="Assistant Notifications"
+            android:summary="@string/pref_assistant_summary"
+            android:defaultValue="true"/>
     </PreferenceCategory>
+
+    <!-- Prediction Model -->
     <PreferenceCategory
-        android:title="@string/pref_other"
-        android:key="pref_key_other">
+        android:title="@string/pref_predModel"
+        android:key="pref_predModel">
         <uni.mannheim.teamproject.diabetesplaner.SettingsActivity.MyDialogPreference
             android:key="pref_key_reset"
             android:title="@string/pref_reset"
@@ -43,6 +53,26 @@
             android:dialogMessage="@string/pref_reset_dialog_message"
             android:positiveButtonText="@string/reset"
             android:negativeButtonText="@string/cancel"/>
+        <CheckBoxPreference
+            android:key="pref_datacollection"
+            android:title="@string/pref_datacollection"
+            android:summary="@string/pref_datacollection_summary"
+            android:defaultValue="true"
+            android:dialogMessage="@string/pref_datacollection_dialog"
+            android:dialogIcon="@android:drawable/ic_dialog_alert"
+            android:positiveButtonText="@string/Yes"
+            android:negativeButtonText="@string/No"/>
+        <CheckBoxPreference
+            android:key="pref_vacation"
+            android:summary="@string/pref_vacation_summary"
+            android:title="@string/pref_vacation_title"
+            android:defaultValue="false"/>
+
+    </PreferenceCategory>
+    <PreferenceCategory
+        android:title="@string/pref_other"
+        android:key="pref_key_other">
+
         <uni.mannheim.teamproject.diabetesplaner.SettingsActivity.MyDialogPreference
             android:key="pref_key_help"
             android:title="@string/pref_help"
@@ -55,6 +85,7 @@
             android:key="pref_key_about"
             android:summary="@string/pref_version_summary"
             android:title="@string/pref_version"/>
+
     </PreferenceCategory>
 
 </PreferenceScreen>

@@ -3,6 +3,7 @@ package uni.mannheim.teamproject.diabetesplaner.SettingsActivity;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.EditTextPreference;
+import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.view.View;
 import android.widget.EditText;
@@ -69,5 +70,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 }
             }
         }
+
+
+
+    }
+
+
+    public void onPreferenceClickListener(Preference Preference) {
     }
 }
