@@ -24,26 +24,41 @@
     <string name="pref_weight_summary">insert weight</string>
     <string name="pref_blood_sugar">Blood Sugar Level</string>
     <string name="pref_blood_sugar_summary">insert blood sugar level</string>
+    <string name="pref_blood_sugar_dialogtitel">Blood Sugar Level</string>
+    <string name="pref_blood_sugar_dialogtitle">Enter your current blood sugar level</string>
 
     <string name="pref_notification">Notifications</string>
     <string name="pref_popup">Popup Notifications</string>
     <string name="pref_sound">Notification Sound</string>
     <string name="pref_vibration">Notification Vibration</string>
 
-    <string name="pref_reset">Hard Reset</string>
+    <!-- Prediction Model -->
+    <string name="pref_reset">Prediction Model Reset</string>
     <string name="reset">Reset</string>
     <string name="cancel">Cancel</string>
+    <string name="pref_reset_summary">Resets the prediction model</string>
+    <string name="pref_reset_dialog_message">Are you sure you want to reset the prediction model?</string>
+    <string name="pref_datacollection">Data Collection</string>
+    <string name="pref_datacollection_summary">Turn data collection on/off</string>
+    <string name="pref_predModel">Prediction Model</string>
+    <string name="pref_datacollection_dialog">Are you sure to stop the data collection? After the change, the prediction model could then not be accurate.</string>
+    <string name="Yes">Yes</string>
+    <string name="No">No</string>
+    <string name="pref_vacation_title">Vacation Mode</string>
+    <string name="pref_vacation_summary">The vacation mode is used to stop data collection for the prediction model</string>
 
-    <string name="pref_reset_summary">Resets the app to the initial configuaration</string>
-    <string name="pref_reset_dialog_message">Are you sure you want to reset the app?</string>
+    <!-- Notifications -->
+
 
     <string name="pref_other">Other</string>
+    <string name="pref_assistant_summary">Stop the assistant notifications</string>
     <string name="pref_help">Help</string>
     <string name="ok">OK</string>
     <string name="pref_help_summary">Start app tutorial</string>
     <string name="pref_help_dialog_message">TODO: start tutorial or some explainations</string>
     <string name="pref_version">Version</string>
     <string name="pref_version_summary">1.0.1</string>
+
 
 
     <string name="listItem123">92734098879.sqlite</string>
@@ -54,6 +69,7 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="menu_item_share">Share</string>
     <string name="communicate">Communicate</string>
+
 
 
 </resources>
