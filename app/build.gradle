@@ -28,5 +28,5 @@ dependencies {
     compile 'com.android.support:design:23.0.1'
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
     compile files('src/main/java/libr/opencsv-3.6.jar')
-    compile files('src/main/java/libr/rapidminer-RapidProM-2.0.2.jar')
+    provided files('src/main/java/libr/rapidminer-RapidProM-2.0.2.jar')
 }
