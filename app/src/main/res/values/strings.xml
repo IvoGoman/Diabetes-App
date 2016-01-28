@@ -10,6 +10,7 @@
 
     <string name="menu_item_daily_routine">Daily Routine</string>
     <string name="menu_item_activity_input">Activity Input</string>
+    <string name="menu_item_activity_measurement">Activity/Measurement</string>
     <string name="menu_item_statistics">Statistics</string>
     <string name="menu_item_history">History</string>
     <string name="menu_item_settings">Settings</string>
@@ -54,6 +55,14 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="menu_item_share">Share</string>
     <string name="communicate">Communicate</string>
+
+
+    <!-- Strings related to Measurement Tab, created by: Naira-->
+    <string name="glucose_label">Glucose Level</string>
+    <string name="insulin_label">Insulin Dosage</string>
+    <string name="GlucoseTextField">mg/dl</string>
+    <string name="InsulinTextField">Unit/mL</string>
+    <string name="Done_button">Done</string>
 
 
 </resources>
