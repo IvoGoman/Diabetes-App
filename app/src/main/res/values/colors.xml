@@ -9,4 +9,9 @@
     <color name="textColorPrimary">#FFFFFF</color>
     <color name="windowBackground">#FFFFFF</color>
     <color name="navigationBarColor">#000000</color>
+
+    <color name="bad">#EF5350</color>
+    <color name="potential_bad">#FFCA28</color>
+    <color name="good">#B2FF59</color>
+    <color name="no_influence">#4DD0E1</color>
 </resources>

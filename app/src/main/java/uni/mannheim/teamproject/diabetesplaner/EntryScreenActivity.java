@@ -22,6 +22,9 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.util.ArrayList;
+
+import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsFragment;
 import uni.mannheim.teamproject.diabetesplaner.StatisticsFragment.StatisticsFragment;
@@ -133,6 +136,8 @@ public class EntryScreenActivity extends AppCompatActivity
 
         if (id == R.id.nav_daily_routine) {
             Toast.makeText(this, R.string.menu_item_daily_routine, Toast.LENGTH_SHORT).show();
+
+            ArrayList<String> list = new ArrayList<String>();
 
             fragment = new DailyRoutineFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
