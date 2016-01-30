@@ -58,11 +58,11 @@
 
 
     <!-- Strings related to Measurement Tab, created by: Naira-->
-    <string name="glucose_label">Glucose Level</string>
-    <string name="insulin_label">Insulin Dosage</string>
-    <string name="GlucoseTextField">mg/dl</string>
-    <string name="InsulinTextField">Unit/mL</string>
-    <string name="Done_button">Done</string>
+    <string name="glucoseLabel">Glucose Level</string>
+    <string name="insulinLabel">Insulin Dosage</string>
+    <string name="glucoseTextField">mg/dl</string>
+    <string name="insulinTextField">Unit/mL</string>
+    <string name="DoneButton">Done</string>
 
 
 </resources>

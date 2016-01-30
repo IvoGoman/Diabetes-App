@@ -156,7 +156,6 @@ public class EntryScreenActivity extends AppCompatActivity
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
-            addItem.setVisible(true);
         }
         else if (id == R.id.nav_statistics) {
             Toast.makeText(this, R.string.menu_item_statistics, Toast.LENGTH_SHORT).show();
