@@ -74,6 +74,8 @@ public class StatisticsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        //add title to the ActionBar
         aca = (AppCompatActivity) getActivity();
         final ActionBar actionBar = aca.getSupportActionBar();
         aca.getSupportActionBar().setTitle(R.string.menu_item_statistics);
@@ -85,6 +87,7 @@ public class StatisticsFragment extends Fragment {
                              Bundle savedInstanceState) {
         View inflaterView = inflater.inflate(R.layout.fragment_statistics, container, false);
 
+        //setup tablayout
         viewPager = (ViewPager) inflaterView.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
@@ -95,6 +98,10 @@ public class StatisticsFragment extends Fragment {
         return inflaterView;
     }
 
+    /**
+     * setUp ViewPager with a RingChartFragment and a LineChartFragment
+     * @param viewPager a viewPager object
+     */
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(aca.getSupportFragmentManager());
         adapter.addFragment(new RingChartFragment(), "Ring Chart");
@@ -103,6 +110,9 @@ public class StatisticsFragment extends Fragment {
         viewPager.setAdapter(adapter);
     }
 
+    /**
+     * class needed for the TapLayout
+     */
     class ViewPagerAdapter extends FragmentPagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();

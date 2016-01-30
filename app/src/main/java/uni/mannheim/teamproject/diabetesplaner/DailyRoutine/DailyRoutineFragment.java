@@ -69,9 +69,12 @@ public class DailyRoutineFragment extends Fragment {
             arglist = getArguments().getStringArrayList(ARG_LIST);
         }
 
+        //sets title of the page in the ActionBar
         AppCompatActivity aca = (AppCompatActivity) getActivity();
         aca.getSupportActionBar().setTitle(R.string.menu_item_daily_routine);
 
+        //hardcoded ArrayList with a daily routine
+        //TODO get the list from the prediction model
         list2.add(new String[]{"1", "0:00", "9:14"});
         list2.add(new String[]{"2","9:14","9:53"});
         list2.add(new String[]{"13","9:53","13:07"});
@@ -90,12 +93,13 @@ public class DailyRoutineFragment extends Fragment {
         // Inflate the layout for this fragment
         final View inflaterView = inflater.inflate(R.layout.fragment_daily_routine, container, false);
 
+        //get the layout
         LinearLayout linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_daily_routine);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         //params.topMargin = getpx(8);
 
-
+        //create a DailyRoutineView for every list item, so for every activity in the daily routine
         for(int i=0; i<list2.size(); i++){
             DailyRoutineView drv = new DailyRoutineView(getActivity(),Integer.valueOf(list2.get(i)[0]),0,list2.get(i)[1], list2.get(i)[2]);
             linearLayout.addView(drv);
@@ -151,7 +155,6 @@ public class DailyRoutineFragment extends Fragment {
      * @return
      */
     public int getpx(int dp){
-
         return (int)(dp*getResources().getDisplayMetrics().density);
     }
 
@@ -161,7 +164,6 @@ public class DailyRoutineFragment extends Fragment {
      * @return
      */
     public int getdp(int px){
-
         return (int)(px/getResources().getDisplayMetrics().density);
     }
 

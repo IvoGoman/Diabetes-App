@@ -81,7 +81,7 @@ public class ActivityInputFragment extends Fragment implements AbsListView.OnIte
         // TODO: Change Adapter to display your content
         mAdapter = new CustomListView(getActivity(), list);
 
-
+        //set title of ActionBar
         AppCompatActivity aca = (AppCompatActivity) getActivity();
         ActionBar actionBar = aca.getSupportActionBar();
         actionBar.setTitle(R.string.menu_item_activity_input);

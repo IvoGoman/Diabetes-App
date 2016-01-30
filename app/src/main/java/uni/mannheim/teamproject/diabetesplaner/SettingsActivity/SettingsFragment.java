@@ -42,12 +42,13 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
     {
         //checks if Preference with key is EditTextPreference
-        //if so puts the edited text to the summary field
-        //TODO save and handle the settings
+        //if so puts the edited text to the summary field. Checks valid input
+        //TODO save and handle the settings. Check valid input for all possible scenarios
         if(findPreference(key) instanceof EditTextPreference) {
             EditTextPreference editTextPref = (EditTextPreference) findPreference(key);
             EditText nameDialog = editTextPref.getEditText();
 
+            //username, weight and blood sugar level
             if (editTextPref.getKey().equals("pref_key_name")) {
                 editTextPref.setSummary(nameDialog.getText());
 

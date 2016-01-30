@@ -67,6 +67,8 @@ public class HistoryFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
+
+        //add title to ActionBar
         aca = (AppCompatActivity) getActivity();
         aca.getSupportActionBar().setTitle(R.string.menu_item_history);
 
@@ -78,6 +80,7 @@ public class HistoryFragment extends Fragment {
 
         final View inflaterView = inflater.inflate(R.layout.fragment_history, container, false);
 
+        //creates a spinner pull down menu and handles select events
         Spinner spinner = (Spinner)inflaterView.findViewById(R.id.spinner_history);
         //TODO: add history item at the point where a daily routine is completed
         historyList.add("12.01.2016");

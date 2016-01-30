@@ -22,8 +22,6 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.util.ArrayList;
-
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsFragment;
@@ -47,11 +45,15 @@ public class EntryScreenActivity extends AppCompatActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //set the content view
         setContentView(R.layout.activity_main);
+
+        //create the ActionBar
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
         setSupportActionBar(toolbar);
 
+        //create the Navigation Drawer Layout
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -61,6 +63,8 @@ public class EntryScreenActivity extends AppCompatActivity
         navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
+
+        //create a DailyRoutineFragment (start page)
         Fragment fragment = new DailyRoutineFragment();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.mainFrame, fragment);
@@ -100,6 +104,11 @@ public class EntryScreenActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     * handles ActionBar clicks
+     * @param item
+     * @return
+     */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         // Handle action bar item clicks here. The action bar will
@@ -107,7 +116,7 @@ public class EntryScreenActivity extends AppCompatActivity
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
 
-        //noinspection SimplifiableIfStatement
+        //handles event when add button in the ActionBar on the ActivityInputFragment page was clicked
         if (id == R.id.action_add_activity_input) {
             //TODO: add activity log
             ActivityInputFragment.list.add("ActivityData.csv");
@@ -122,22 +131,25 @@ public class EntryScreenActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+    /**
+     * handles if a menu item in the navigation drawer was selected
+     * @param item
+     * @return
+     */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
+        //TODO create backstack !
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         actualMenuItem = item;
         Fragment fragment = null;
-
 
         MenuItem addItem = optionsMenu.findItem(R.id.action_add_activity_input);
         addItem.setVisible(false);
 
         if (id == R.id.nav_daily_routine) {
             Toast.makeText(this, R.string.menu_item_daily_routine, Toast.LENGTH_SHORT).show();
-
-            ArrayList<String> list = new ArrayList<String>();
 
             fragment = new DailyRoutineFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -167,7 +179,6 @@ public class EntryScreenActivity extends AppCompatActivity
 
             fragment = new HistoryFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-            // Add this transaction to the back stack
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
 

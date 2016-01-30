@@ -292,7 +292,6 @@ public class DailyRoutineView extends View {
      * @return dp
      */
     public int getdp(int px){
-
         return (int)(px/getResources().getDisplayMetrics().density);
     }
 

@@ -22,7 +22,7 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Display the settingsFragment as the add_activity_input_menu content.
+        // Display the settingsFragment as the content.
 
         SettingsFragment setFrag = new SettingsFragment();
         getFragmentManager().beginTransaction()
