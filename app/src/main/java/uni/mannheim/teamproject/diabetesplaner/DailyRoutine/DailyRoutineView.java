@@ -72,7 +72,7 @@ public class DailyRoutineView extends View {
         this.endtime = endtime;
         this.endInMinOfDay = getMinutesOfDay(endtime);
         durationAsString = getDuration();
-        setState();
+        setState(false);
 
         initColors();
         initPaints();
@@ -333,7 +333,7 @@ public class DailyRoutineView extends View {
      * @return isFinished
      */
     public boolean isFinished(int minutes, int hour){
-        int time = getMinutesOfDay(hour+":"+minutes);
+        int time = getMinutesOfDay(hour + ":" + minutes);
         if(endInMinOfDay<=time){
             return true;
         }else{
@@ -348,7 +348,7 @@ public class DailyRoutineView extends View {
      * @return isRemaining
      */
     public boolean isRemaining(int minutes, int hour){
-        int time = getMinutesOfDay(hour+":"+minutes);
+        int time = getMinutesOfDay(hour + ":" + minutes);
         if(time<startInMinOfDay){
             return true;
         }else{
@@ -361,18 +361,23 @@ public class DailyRoutineView extends View {
      * 1: is remaining
      * 2: is running
      * 3: is finished
+     * @param isArchieved true if daily routine is archieved
      */
-    public void setState() {
+    public void setState(boolean isArchieved) {
         Calendar c = Calendar.getInstance();
         int minutes = c.get(Calendar.MINUTE);
         int hour = c.get(Calendar.HOUR_OF_DAY);
 
-        if(isRemaining(minutes, hour)){
-            state = 1;
-        }else if(isRunning(minutes, hour)){
-            state = 2;
-        }else if(isFinished(minutes, hour)){
+        if(isArchieved){
             state = 3;
+        }else {
+            if (isRemaining(minutes, hour)) {
+                state = 1;
+            } else if (isRunning(minutes, hour)) {
+                state = 2;
+            } else if (isFinished(minutes, hour)) {
+                state = 3;
+            }
         }
     }
 
