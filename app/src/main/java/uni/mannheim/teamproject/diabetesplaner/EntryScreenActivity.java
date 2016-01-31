@@ -94,10 +94,18 @@ public class EntryScreenActivity extends AppCompatActivity
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         //sets visibility of icons in the ActionBar
+        //item for activity input
         MenuItem addItem = menu.findItem(R.id.add_icon_action_bar);
         addItem.setVisible(false);
+
+        //items for daily routine
+        MenuItem addItemRoutine = menu.findItem(R.id.add_icon_action_bar_routine);
+        addItemRoutine.setVisible(true);
+        MenuItem editItem = menu.findItem(R.id.edit_icon_action_bar_routine);
+        editItem.setVisible(false);
         MenuItem deleteItem = menu.findItem(R.id.delete_icon_action_bar);
         deleteItem.setVisible(false);
+
         super.onPrepareOptionsMenu(menu);
         return true;
     }
@@ -107,8 +115,7 @@ public class EntryScreenActivity extends AppCompatActivity
 
         this.optionsMenu = menu;
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.add_item_action_bar, menu);
-        getMenuInflater().inflate(R.menu.delete_icon_action_bar, menu);
+        getMenuInflater().inflate(R.menu.items_action_bar, menu);
         return true;
     }
 
@@ -140,6 +147,8 @@ public class EntryScreenActivity extends AppCompatActivity
                 LinearLayout linearLayout = DailyRoutineFragment.getLinearLayout();
                 for(int i=0; i<dailyRoutine.size();i++){
                     if(dailyRoutine.get(i).isSelected()){
+                        DailyRoutineView.getSelectedActivities().remove(dailyRoutine.get(i));
+                        DailyRoutineView.setActionBarItems();
                         linearLayout.removeView(dailyRoutine.get(i));
                         //TODO handle the remove event within the database
                     }
@@ -167,8 +176,15 @@ public class EntryScreenActivity extends AppCompatActivity
         actualMenuItem = item;
         Fragment fragment = null;
 
+        //set all action items to invisible
         MenuItem addItem = optionsMenu.findItem(R.id.add_icon_action_bar);
         addItem.setVisible(false);
+        MenuItem deleteItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.delete_icon_action_bar);
+        deleteItem.setVisible(false);
+        MenuItem editItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.edit_icon_action_bar_routine);
+        editItem.setVisible(false);
+        MenuItem addItemRoutine = EntryScreenActivity.getOptionsMenu().findItem(R.id.add_icon_action_bar_routine);
+        addItemRoutine.setVisible(false);
 
         if (id == R.id.nav_daily_routine) {
             Toast.makeText(this, R.string.menu_item_daily_routine, Toast.LENGTH_SHORT).show();
@@ -177,6 +193,8 @@ public class EntryScreenActivity extends AppCompatActivity
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
+
+            addItemRoutine.setVisible(true);
 
         } else if (id == R.id.nav_activity_input) {
             Toast.makeText(this, R.string.menu_item_activity_input, Toast.LENGTH_SHORT).show();
@@ -266,4 +284,5 @@ public class EntryScreenActivity extends AppCompatActivity
     public static Menu getOptionsMenu(){
         return optionsMenu;
     }
+
 }

@@ -5,13 +5,17 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
+import uni.mannheim.teamproject.diabetesplaner.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 
@@ -36,6 +40,8 @@ public class DailyRoutineFragment extends Fragment {
 
     public static final String TAG = DailyRoutineFragment.class.getSimpleName();
 
+    private Timer timer;
+    private TimerTask timerTask;
 
     // TODO: Rename and change types of parameters
     private ArrayList<String> arglist;
@@ -196,4 +202,63 @@ public class DailyRoutineFragment extends Fragment {
     public static LinearLayout getLinearLayout(){
         return linearLayout;
     }
+
+    /**
+     * sets the delete icon in the action bar visible true/false
+     * @param isVisible visible/invisible
+     */
+    public static void setDeleteIconVisible(boolean isVisible){
+        MenuItem deleteItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.delete_icon_action_bar);
+        deleteItem.setVisible(isVisible);
+    }
+
+    /**
+     * sets visibility of add item in the action bar
+     * @param isVisible visible/invisible
+     */
+    public static void setAddItemVisible(boolean isVisible){
+        MenuItem addItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.add_icon_action_bar_routine);
+        addItem.setVisible(isVisible);
+    }
+
+    /**
+     * sets the edit icon in the action bar visible
+     * @param isVisible visible/invisible
+     */
+    public static void setEditIconVisible(boolean isVisible){
+        MenuItem editItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.edit_icon_action_bar_routine);
+        editItem.setVisible(isVisible);
+    }
+
+    public void onPause(){
+        super.onPause();
+        timer.cancel();
+    }
+
+    public void onResume(){
+        super.onResume();
+        try {
+            //timer for updating the actual activity
+            //updates every 10 seconds
+            timer = new Timer();
+            timerTask = new TimerTask() {
+                @Override
+                public void run() {
+                    aca.runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            for (int i = 0; i < items.size(); i++){
+                                items.get(i).invalidate();
+                            }
+                        }
+                    });
+
+                }
+            };
+            timer.schedule(timerTask, 10000, 10000);
+        } catch (IllegalStateException e){
+            android.util.Log.e(TAG, "resume error");
+        }
+    }
+
 }

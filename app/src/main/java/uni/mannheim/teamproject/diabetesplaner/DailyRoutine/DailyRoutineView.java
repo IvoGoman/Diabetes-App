@@ -11,14 +11,14 @@ import android.graphics.drawable.ColorDrawable;
 import android.os.Vibrator;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
-import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Timer;
+import java.util.TimerTask;
 
-import uni.mannheim.teamproject.diabetesplaner.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 
@@ -72,6 +72,9 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     private static ArrayList<DailyRoutineView> selectedActivities = new ArrayList<DailyRoutineView>();
 
+    private Timer timer = new Timer();
+    private TimerTask timerTask;
+
     public DailyRoutineView(Context context) {
         super(context);
         initColors();
@@ -98,6 +101,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
         initColors();
         initPaints();
+
     }
 
     /**
@@ -181,6 +185,8 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         Point p2 = new Point(getRight() - getpx(8) - borderWidth / 2, borderWidth / 2);
         Point p3 = new Point(getRight() - getpx(8) - borderWidth / 2, heightLower + heightUpper);
         Point p4 = new Point(getLeft() + offsetL, heightLower + heightUpper);
+
+        setState(false);
 
         //determine colors for state
         switch (state) {
@@ -512,6 +518,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             selectedActivities.add(this);
             isSelected = true;
             touched = true;
+            setActionBarItems();
         }
         selectable = true;
 
@@ -539,13 +546,13 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     public boolean onTouch(View v, MotionEvent event) {
         //handles if an item was touched
         //getParent().requestDisallowInterceptTouchEvent(true);
+        if(selectedActivities.size()<1){
+            selectable = false;
+        }
         if (selectable) {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 if (isSelected) {
                     selectedActivities.remove(this);
-                    if(selectedActivities.size()<1){
-                        selectable = false;
-                    }
                     isSelected = false;
                     touched = false;
                 } else {
@@ -554,7 +561,9 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
                     isSelected = true;
                     touched = true;
                 }
-                invalidate();
+            }
+            if(selectedActivities.size()<1){
+                selectable = false;
             }
         } else {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
@@ -562,26 +571,35 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             } else if (event.getAction() == MotionEvent.ACTION_UP) {
                 touched = false;
             }
-            invalidate();
         }
 
-        if(selectedActivities.size()>0){
-            setDeleteIconVisible(true);
-        }else{
-            setDeleteIconVisible(false);
-        }
+        setActionBarItems();
+        invalidate();
 
         return false;
     }
 
+
     /**
-     * sets the delete icon in the action bar visible true/false
-     * @param isVisible visible/invisible
+     * sets the add, edit and remove icons in the action bar
+     * depending on the selected activities
      */
-    private void setDeleteIconVisible(boolean isVisible){
-        MenuItem deleteItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.delete_icon_action_bar);
-        deleteItem.setVisible(isVisible);
+    public static void setActionBarItems() {
+        if(selectedActivities.size()<1){
+            DailyRoutineFragment.setAddItemVisible(true);
+            DailyRoutineFragment.setEditIconVisible(false);
+            DailyRoutineFragment.setDeleteIconVisible(false);
+        }else if(selectedActivities.size()==1) {
+            DailyRoutineFragment.setAddItemVisible(false);
+            DailyRoutineFragment.setEditIconVisible(true);
+            DailyRoutineFragment.setDeleteIconVisible(true);
+        }else if(selectedActivities.size()>1){
+            DailyRoutineFragment.setAddItemVisible(false);
+            DailyRoutineFragment.setEditIconVisible(false);
+            DailyRoutineFragment.setDeleteIconVisible(true);
+        }
     }
+
 
     /**
      * true if this item is selected
@@ -598,4 +616,5 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     public static ArrayList<DailyRoutineView> getSelectedActivities(){
         return selectedActivities;
     }
+
 }
