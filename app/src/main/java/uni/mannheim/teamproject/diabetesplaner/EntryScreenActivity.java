@@ -14,6 +14,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -22,7 +23,10 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.util.ArrayList;
+
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
+import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsFragment;
 import uni.mannheim.teamproject.diabetesplaner.StatisticsFragment.StatisticsFragment;
@@ -30,7 +34,7 @@ import uni.mannheim.teamproject.diabetesplaner.StatisticsFragment.StatisticsFrag
 public class EntryScreenActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private Menu optionsMenu;
+    private static Menu optionsMenu;
     private static MenuItem actualMenuItem;
     public static NavigationView navigationView;
     public static TextView username;
@@ -89,8 +93,11 @@ public class EntryScreenActivity extends AppCompatActivity
 
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        MenuItem item = menu.findItem(R.id.action_add_activity_input);
-        item.setVisible(false);
+        //sets visibility of icons in the ActionBar
+        MenuItem addItem = menu.findItem(R.id.add_icon_action_bar);
+        addItem.setVisible(false);
+        MenuItem deleteItem = menu.findItem(R.id.delete_icon_action_bar);
+        deleteItem.setVisible(false);
         super.onPrepareOptionsMenu(menu);
         return true;
     }
@@ -100,7 +107,8 @@ public class EntryScreenActivity extends AppCompatActivity
 
         this.optionsMenu = menu;
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.add_activity_input_menu, menu);
+        getMenuInflater().inflate(R.menu.add_item_action_bar, menu);
+        getMenuInflater().inflate(R.menu.delete_icon_action_bar, menu);
         return true;
     }
 
@@ -117,16 +125,30 @@ public class EntryScreenActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //handles event when add button in the ActionBar on the ActivityInputFragment page was clicked
-        if (id == R.id.action_add_activity_input) {
-            //TODO: add activity log
-            ActivityInputFragment.list.add("ActivityData.csv");
+        switch (id){
+            case R.id.add_icon_action_bar:
+                //TODO: add activity log
+                ActivityInputFragment.list.add("ActivityData.csv");
 
-            ListAdapter mAdapter = new CustomListView(this, ActivityInputFragment.list);
+                ListAdapter mAdapter = new CustomListView(this, ActivityInputFragment.list);
 
-            ActivityInputFragment.addListItem(mAdapter);
+                ActivityInputFragment.addListItem(mAdapter);
 
-            return true;
+                return true;
+            case R.id.delete_icon_action_bar:
+                ArrayList<DailyRoutineView> dailyRoutine = DailyRoutineFragment.getActivityList();
+                LinearLayout linearLayout = DailyRoutineFragment.getLinearLayout();
+                for(int i=0; i<dailyRoutine.size();i++){
+                    if(dailyRoutine.get(i).isSelected()){
+                        linearLayout.removeView(dailyRoutine.get(i));
+                        //TODO handle the remove event within the database
+                    }
+                }
+
+                //do sth with the delete icon
+                return true;
         }
+
 
         return super.onOptionsItemSelected(item);
     }
@@ -145,7 +167,7 @@ public class EntryScreenActivity extends AppCompatActivity
         actualMenuItem = item;
         Fragment fragment = null;
 
-        MenuItem addItem = optionsMenu.findItem(R.id.action_add_activity_input);
+        MenuItem addItem = optionsMenu.findItem(R.id.add_icon_action_bar);
         addItem.setVisible(false);
 
         if (id == R.id.nav_daily_routine) {
@@ -235,5 +257,13 @@ public class EntryScreenActivity extends AppCompatActivity
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
+    }
+
+    /**
+     * getter for ActionBar
+     * @return optionsMenu (ActionBar)
+     */
+    public static Menu getOptionsMenu(){
+        return optionsMenu;
     }
 }

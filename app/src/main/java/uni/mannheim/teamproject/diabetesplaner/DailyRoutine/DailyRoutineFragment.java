@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 
 import java.util.ArrayList;
 
@@ -30,7 +31,8 @@ public class DailyRoutineFragment extends Fragment {
 
     private static final String ARG_LIST = "list";
     private ArrayList<String[]> list2 = new ArrayList<String[]>();
-    private ArrayList<DailyRoutineView> items = new ArrayList<DailyRoutineView>();
+    private static ArrayList<DailyRoutineView> items = new ArrayList<DailyRoutineView>();
+    private static LinearLayout linearLayout;
 
     public static final String TAG = DailyRoutineFragment.class.getSimpleName();
 
@@ -41,6 +43,7 @@ public class DailyRoutineFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private DailyRoutineView dailyRoutineView;
+    private AppCompatActivity aca;
 
     /**
      * Use this factory method to create a new instance of
@@ -70,7 +73,7 @@ public class DailyRoutineFragment extends Fragment {
         }
 
         //sets title of the page in the ActionBar
-        AppCompatActivity aca = (AppCompatActivity) getActivity();
+        aca = (AppCompatActivity) getActivity();
         aca.getSupportActionBar().setTitle(R.string.menu_item_daily_routine);
 
         //hardcoded ArrayList with a daily routine
@@ -93,8 +96,11 @@ public class DailyRoutineFragment extends Fragment {
         // Inflate the layout for this fragment
         final View inflaterView = inflater.inflate(R.layout.fragment_daily_routine, container, false);
 
+        //get Scrollview
+        ScrollView scrollView = (ScrollView) inflaterView.findViewById(R.id.scroll_view_daily_routine);
+
         //get the layout
-        LinearLayout linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_daily_routine);
+        linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_daily_routine);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         //params.topMargin = getpx(8);
@@ -167,4 +173,27 @@ public class DailyRoutineFragment extends Fragment {
         return (int)(px/getResources().getDisplayMetrics().density);
     }
 
+    /**
+     * returns parent activity
+     * @return parant activity
+     */
+    public AppCompatActivity getParentActivity(){
+        return aca;
+    }
+
+    /**
+     * returns the list with all activity views of the dailyroutine
+     * @return DailyRoutineView
+     */
+    public static ArrayList<DailyRoutineView> getActivityList(){
+        return items;
+    }
+
+    /**
+     * returns the layout
+     * @return LinearLayout
+     */
+    public static LinearLayout getLinearLayout(){
+        return linearLayout;
+    }
 }

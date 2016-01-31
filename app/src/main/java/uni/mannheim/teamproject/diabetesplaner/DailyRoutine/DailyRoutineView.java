@@ -8,16 +8,21 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Vibrator;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
+import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
+import uni.mannheim.teamproject.diabetesplaner.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 
-public class DailyRoutineView extends View {
+public class DailyRoutineView extends View implements View.OnLongClickListener, View.OnClickListener, View.OnTouchListener {
 
     public static final String TAG = DailyRoutineView.class.getSimpleName();
     private int endInMinOfDay;
@@ -28,6 +33,7 @@ public class DailyRoutineView extends View {
     private String starttime;
     private String endtime;
     private int state;
+    private boolean touched = false;
 
     Paint borderPaint = new Paint();
     Paint upperPaint = new Paint();
@@ -40,16 +46,18 @@ public class DailyRoutineView extends View {
     Paint upline = open;
     Paint downline = open;
     Paint dot = open;
+    Paint highlightPaint = new Paint();
 
     private int heightUpper = getpx(40);
     private int heightLower = getpx(30);
     private int offsetL1 = getpx(11);
-    private int offsetL = getpx(10)+offsetL1;
+    private int offsetL = getpx(10) + offsetL1;
     private int dotOffset = getpx(25);
     private int lineOffset = getpx(5);
     private int marginTop = getpx(8);
     private int radius = getpx(5);
     private int borderWidth = getpx(2);
+    private Context context;
 
     int innerColor = Color.parseColor("#f2f2f2");
     int innerColor2 = Color.parseColor("#d8d8d8");
@@ -57,14 +65,22 @@ public class DailyRoutineView extends View {
     int textColor = Color.parseColor("#2a2a2a");
     int doneColor = Color.parseColor("#3f3f3f");
     int openColor = Color.parseColor("#939393");
+    int highlightColor = Color.argb(100, 255, 255, 255);
+
+    private static boolean selectable = false;
+    private boolean isSelected = false;
+
+    private static ArrayList<DailyRoutineView> selectedActivities = new ArrayList<DailyRoutineView>();
 
     public DailyRoutineView(Context context) {
         super(context);
         initColors();
         initPaints();
     }
+
     public DailyRoutineView(Context context, int activity, int subactivity, String starttime, String endtime) {
         super(context);
+        this.context = context;
         this.activity = activity;
         this.subactivity = subactivity;
         this.starttime = starttime;
@@ -73,6 +89,12 @@ public class DailyRoutineView extends View {
         this.endInMinOfDay = getMinutesOfDay(endtime);
         durationAsString = getDuration();
         setState(false);
+        this.setOnTouchListener(this);
+        this.setOnLongClickListener(this);
+        this.setOnClickListener(this);
+        this.setLongClickable(true);
+        this.setClickable(true);
+        setWillNotDraw(false);
 
         initColors();
         initPaints();
@@ -81,9 +103,8 @@ public class DailyRoutineView extends View {
     /**
      * inits special Colors
      */
-    public void initColors(){
+    public void initColors() {
         innerColor = ContextCompat.getColor(this.getContext(), getColor(activity));
-        Log.d(TAG, String.valueOf(innerColor));
 
         ColorDrawable cd = new ColorDrawable(innerColor);
         int col = cd.getColor();
@@ -92,14 +113,14 @@ public class DailyRoutineView extends View {
         int green = Color.green(col);
         int blue = Color.blue(col);
 
-        innerColor2 = Color.argb(alpha, red-10, green-10, blue-10);
+        innerColor2 = Color.argb(alpha, red - 10, green - 10, blue - 10);
 
     }
 
     /**
      * inits all Paints
      */
-    public void initPaints(){
+    public void initPaints() {
         borderPaint.setColor(textColor);
         borderPaint.setStrokeWidth(borderWidth);
         borderPaint.setStyle(Paint.Style.STROKE);
@@ -125,6 +146,8 @@ public class DailyRoutineView extends View {
         open.setColor(openColor);
         open.setStrokeWidth(getpx(3));
 
+        highlightPaint.setColor(highlightColor);
+        highlightPaint.setStyle(Paint.Style.FILL);
     }
 
     //TODO: initialize all objects only once maybe in the constructor
@@ -132,17 +155,17 @@ public class DailyRoutineView extends View {
     public void onDraw(Canvas canvas) {
 
         //upper rectangle
-        Rect front = new Rect(getLeft()+offsetL, 0, getRight()-getpx(8), heightUpper);
+        Rect front = new Rect(getLeft() + offsetL, 0, getRight() - getpx(8), heightUpper);
         canvas.drawRect(front, upperPaint);
 
         //lower rectangle
-        Rect front2 = new Rect(getLeft()+offsetL, heightUpper, getRight()-getpx(8), heightLower+heightUpper);
+        Rect front2 = new Rect(getLeft() + offsetL, heightUpper, getRight() - getpx(8), heightLower + heightUpper);
         canvas.drawRect(front2, lowerPaint);
 
         //arrow-triangle
-        Point a = new Point(getLeft()+offsetL1, dotOffset);
-        Point b = new Point(getLeft()+offsetL, dotOffset-getpx(10));
-        Point c = new Point(getLeft()+offsetL, dotOffset+getpx(10));
+        Point a = new Point(getLeft() + offsetL1, dotOffset);
+        Point b = new Point(getLeft() + offsetL, dotOffset - getpx(10));
+        Point c = new Point(getLeft() + offsetL, dotOffset + getpx(10));
 
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
@@ -153,8 +176,14 @@ public class DailyRoutineView extends View {
 
         canvas.drawPath(path, upperPaint);
 
+        //init border points
+        Point p1 = new Point(getLeft() + offsetL, borderWidth / 2);
+        Point p2 = new Point(getRight() - getpx(8) - borderWidth / 2, borderWidth / 2);
+        Point p3 = new Point(getRight() - getpx(8) - borderWidth / 2, heightLower + heightUpper);
+        Point p4 = new Point(getLeft() + offsetL, heightLower + heightUpper);
+
         //determine colors for state
-        switch (state){
+        switch (state) {
             case 1:
                 upline = open;
                 downline = open;
@@ -164,12 +193,8 @@ public class DailyRoutineView extends View {
                 upline = done;
                 downline = open;
                 dot = done;
-                //border
-                Point p1 = new Point(getLeft()+offsetL, borderWidth/2);
-                Point p2 = new Point(getRight()-getpx(8)-borderWidth/2, borderWidth/2);
-                Point p3 = new Point(getRight()-getpx(8)-borderWidth/2, heightLower+heightUpper);
-                Point p4 = new Point(getLeft()+offsetL, heightLower+heightUpper);
 
+                //border
                 Path border = new Path();
                 border.moveTo(p1.x, p1.y);
                 border.lineTo(p2.x, p2.y);
@@ -206,152 +231,197 @@ public class DailyRoutineView extends View {
         canvas.drawText("Start: " + starttime, getLeft() + getpx(10) + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
         //end text
         canvas.drawText("End: " + endtime, getRight() - getpx(20) - fontDur.measureText("End: " + endtime), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
+
+        if (touched) {
+            //highlight clicked item
+            Path hl = new Path();
+            hl.moveTo(p1.x, p1.y - borderWidth / 2);
+            hl.lineTo(p2.x + borderWidth / 2, p2.y - borderWidth / 2);
+            hl.lineTo(p3.x + borderWidth / 2, p3.y);
+            hl.lineTo(p4.x, p4.y);
+            hl.lineTo(c.x, c.y);
+            hl.lineTo(a.x, a.y);
+            hl.lineTo(b.x, b.y);
+
+            hl.close();
+
+            canvas.drawPath(hl, highlightPaint);
+        }
     }
 
     /**
      * get the String to the activity id
      * TODO should be read from the database!
+     *
      * @param id activity id
      * @return name of activity
      */
-    public String getActivity(int id){
-        switch (id){
-            case 1: return "Schlafen";
-            case 2: return "Essen/Trinken";
-            case 3: return "Körperpflege";
-            case 4: return "Transportmittel benutzen";
-            case 5: return "Entspannen";
-            case 6: return "Fortbewegen (mit Gehilfe)";
-            case 7: return "Medikamente einnehmen";
-            case 8: return "Einkaufen";
-            case 9: return "Hausarbeit";
-            case 10: return "Essen zubereiten";
-            case 11: return "Geselligkeit";
-            case 12: return "Fortbewegen";
-            case 13: return "Schreibtischarbeit";
-            case 14: return "Sport";
-            default: return "unknown activity";
+    public String getActivity(int id) {
+        switch (id) {
+            case 1:
+                return "Schlafen";
+            case 2:
+                return "Essen/Trinken";
+            case 3:
+                return "Körperpflege";
+            case 4:
+                return "Transportmittel benutzen";
+            case 5:
+                return "Entspannen";
+            case 6:
+                return "Fortbewegen (mit Gehilfe)";
+            case 7:
+                return "Medikamente einnehmen";
+            case 8:
+                return "Einkaufen";
+            case 9:
+                return "Hausarbeit";
+            case 10:
+                return "Essen zubereiten";
+            case 11:
+                return "Geselligkeit";
+            case 12:
+                return "Fortbewegen";
+            case 13:
+                return "Schreibtischarbeit";
+            case 14:
+                return "Sport";
+            default:
+                return "unknown activity";
         }
     }
 
     /**
      * takes start and endtime as String in HH:mm format and returns the duration
+     *
      * @return duration
      */
-    public String getDuration(){
+    public String getDuration() {
         int start = startInMinOfDay;
         int end = endInMinOfDay;
 
-        int duration = end-start;
-        Log.d(TAG, String.valueOf(duration));
+        int duration = end - start;
         return getDurationAsString(duration);
     }
 
     /**
      * takes the duration in minutes as input and outputs it in the 2h 22min format
+     *
      * @param duration duration in minutes
      * @return duration
      */
-    public String getDurationAsString(int duration){
-        int min = duration%60;
-        int h = duration/60;
+    public String getDurationAsString(int duration) {
+        int min = duration % 60;
+        int h = duration / 60;
 
-        if(h>0) {
+        if (h > 0) {
             return h + "h " + min + "min";
-        }else{
+        } else {
             return min + "min";
         }
     }
 
     /**
      * returns subactivity TODO should be read from the database
+     *
      * @param id subactivity id
      * @return name of activity
      */
-    public String getSubactivity(int id){
-        switch (id){
-            case 1: return "Joggen";
-            case 2: return "Biken";
-            case 3: return "Climbing";
-            default: return "";
+    public String getSubactivity(int id) {
+        switch (id) {
+            case 1:
+                return "Joggen";
+            case 2:
+                return "Biken";
+            case 3:
+                return "Climbing";
+            default:
+                return "";
         }
     }
 
     /**
      * returns the px value to a dp value
+     *
      * @param dp dp value
      * @return px
      */
-    public int getpx(int dp){
-        return (int)(dp*getResources().getDisplayMetrics().density);
+    public int getpx(int dp) {
+        return (int) (dp * getResources().getDisplayMetrics().density);
     }
 
     /**
      * returns the dp value for a px value
+     *
      * @param px px vlaue
      * @return dp
      */
-    public int getdp(int px){
-        return (int)(px/getResources().getDisplayMetrics().density);
+    public int getdp(int px) {
+        return (int) (px / getResources().getDisplayMetrics().density);
     }
 
     /**
      * returns the position of the dot
+     *
      * @return point
      */
-    public Point getDot(){
-        return new Point(getLeft(),dotOffset);
+    public Point getDot() {
+        return new Point(getLeft(), dotOffset);
     }
 
     /**
      * returns the total height of a activity item
+     *
      * @return total height
      */
-    public int getTotalHeight(){
-        return (int) (heightLower+heightUpper + marginTop);
+    public int getTotalHeight() {
+        return (int) (heightLower + heightUpper + marginTop);
     }
 
     /**
      * checks if actual time is inbetween
+     *
      * @param minutes minutes of the actual time
-     * @param hour hours of the actual time
+     * @param hour    hours of the actual time
      * @return if this is the actual activity
      */
-    private boolean isRunning(int minutes, int hour){
-        int time = getMinutesOfDay(hour+":"+minutes);
-        if(startInMinOfDay<=time && time<endInMinOfDay){
+    private boolean isRunning(int minutes, int hour) {
+        int time = getMinutesOfDay(hour + ":" + minutes);
+        if (startInMinOfDay <= time && time < endInMinOfDay) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
     /**
      * checks if activity is finished
+     *
      * @param minutes minutes of actual time
-     * @param hour hours of actual time
+     * @param hour    hours of actual time
      * @return isFinished
      */
-    public boolean isFinished(int minutes, int hour){
+    public boolean isFinished(int minutes, int hour) {
         int time = getMinutesOfDay(hour + ":" + minutes);
-        if(endInMinOfDay<=time){
+        if (endInMinOfDay <= time) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
 
     /**
      * checks if activity is remaining
+     *
      * @param minutes minutes of actual time
-     * @param hour hours of actual time
+     * @param hour    hours of actual time
      * @return isRemaining
      */
-    public boolean isRemaining(int minutes, int hour){
+    public boolean isRemaining(int minutes, int hour) {
         int time = getMinutesOfDay(hour + ":" + minutes);
-        if(time<startInMinOfDay){
+        if (time < startInMinOfDay) {
             return true;
-        }else{
+        } else {
             return false;
         }
     }
@@ -361,6 +431,7 @@ public class DailyRoutineView extends View {
      * 1: is remaining
      * 2: is running
      * 3: is finished
+     *
      * @param isArchieved true if daily routine is archieved
      */
     public void setState(boolean isArchieved) {
@@ -368,9 +439,9 @@ public class DailyRoutineView extends View {
         int minutes = c.get(Calendar.MINUTE);
         int hour = c.get(Calendar.HOUR_OF_DAY);
 
-        if(isArchieved){
+        if (isArchieved) {
             state = 3;
-        }else {
+        } else {
             if (isRemaining(minutes, hour)) {
                 state = 1;
             } else if (isRunning(minutes, hour)) {
@@ -383,36 +454,148 @@ public class DailyRoutineView extends View {
 
     /**
      * takes the time in HH:mm and returns it in minutes of the day
+     *
      * @param time a time
      * @return minutes of the day
      */
-    public int getMinutesOfDay(String time){
+    public int getMinutesOfDay(String time) {
         String[] tmp = time.split(":");
-        return Integer.parseInt(tmp[0])*60+Integer.parseInt(tmp[1]);
+        return Integer.parseInt(tmp[0]) * 60 + Integer.parseInt(tmp[1]);
     }
 
     /**
      * returns the color for an activity
+     *
      * @param activityid id of activity
      * @return id of color in resources
      */
-    public int getColor(int activityid){
-        switch (activityid){
-            case 1: return R.color.good;
-            case 2: return R.color.bad;
-            case 3: return R.color.no_influence;
-            case 4: return R.color.potential_bad;
-            case 5: return R.color.good;
-            case 6: return R.color.good;
-            case 7: return R.color.good;
-            case 8: return R.color.no_influence;
-            case 9: return R.color.no_influence;
-            case 10: return R.color.no_influence;
-            case 11: return R.color.good;
-            case 12: return R.color.good;
-            case 13: return R.color.potential_bad;
-            case 14: return R.color.good;
-            default: return R.color.no_influence;
+    public int getColor(int activityid) {
+        switch (activityid) {
+            case 1:
+                return R.color.good;
+            case 2:
+                return R.color.bad;
+            case 3:
+                return R.color.no_influence;
+            case 4:
+                return R.color.potential_bad;
+            case 5:
+                return R.color.good;
+            case 6:
+                return R.color.good;
+            case 7:
+                return R.color.good;
+            case 8:
+                return R.color.no_influence;
+            case 9:
+                return R.color.no_influence;
+            case 10:
+                return R.color.no_influence;
+            case 11:
+                return R.color.good;
+            case 12:
+                return R.color.good;
+            case 13:
+                return R.color.potential_bad;
+            case 14:
+                return R.color.good;
+            default:
+                return R.color.no_influence;
         }
+    }
+
+    @Override
+    public boolean onLongClick(View v) {
+        //makes the items selectable
+        if(!selectable) {
+            vibrate(this.context, 500);
+            selectedActivities.add(this);
+            isSelected = true;
+            touched = true;
+        }
+        selectable = true;
+
+        return true;
+    }
+
+    /**
+     * performs a vibrate
+     *
+     * @param context context
+     * @param millis  milliseconds to vibrate
+     */
+    private void vibrate(Context context, int millis) {
+        Vibrator vibr = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        // Vibrate for 500 milliseconds
+        vibr.vibrate(millis);
+    }
+
+    @Override
+    public void onClick(View v) {
+
+    }
+
+    @Override
+    public boolean onTouch(View v, MotionEvent event) {
+        //handles if an item was touched
+        //getParent().requestDisallowInterceptTouchEvent(true);
+        if (selectable) {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                if (isSelected) {
+                    selectedActivities.remove(this);
+                    if(selectedActivities.size()<1){
+                        selectable = false;
+                    }
+                    isSelected = false;
+                    touched = false;
+                } else {
+                    Log.d(TAG, "added");
+                    selectedActivities.add(this);
+                    isSelected = true;
+                    touched = true;
+                }
+                invalidate();
+            }
+        } else {
+            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                touched = true;
+            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                touched = false;
+            }
+            invalidate();
+        }
+
+        if(selectedActivities.size()>0){
+            setDeleteIconVisible(true);
+        }else{
+            setDeleteIconVisible(false);
+        }
+
+        return false;
+    }
+
+    /**
+     * sets the delete icon in the action bar visible true/false
+     * @param isVisible visible/invisible
+     */
+    private void setDeleteIconVisible(boolean isVisible){
+        MenuItem deleteItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.delete_icon_action_bar);
+        deleteItem.setVisible(isVisible);
+    }
+
+    /**
+     * true if this item is selected
+     * @return boolean
+     */
+    public boolean isSelected(){
+        return isSelected;
+    }
+
+    /**
+     * getter for the isSelected activity list
+     * @return list with isSelected activities
+     */
+    public static ArrayList<DailyRoutineView> getSelectedActivities(){
+        return selectedActivities;
     }
 }

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
 
     <item
-        android:id="@+id/action_add_activity_input"
+        android:id="@+id/add_icon_action_bar"
         android:icon="@android:drawable/ic_input_add"
         android:title=""
         app:showAsAction="ifRoom"/>
