@@ -1,18 +1,31 @@
 package uni.mannheim.teamproject.diabetesplaner;
 
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.ImageView;
-import android.widget.Spinner;
+import android.widget.DatePicker;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.Locale;
+import java.util.Random;
+
+import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
 
 
 /**
@@ -35,8 +48,10 @@ public class HistoryFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private AppCompatActivity aca;
-    private ArrayList<String> historyList = new ArrayList<String>();
-    private ImageView imgBus;
+    //    private ArrayList<String> historyList = new ArrayList<String>();
+
+
+    private ArrayList<DailyRoutineView> items = new ArrayList<DailyRoutineView>();
 
     /**
      * Use this factory method to create a new instance of
@@ -67,10 +82,9 @@ public class HistoryFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-        //add title to ActionBar
         aca = (AppCompatActivity) getActivity();
         aca.getSupportActionBar().setTitle(R.string.menu_item_history);
+
 
     }
 
@@ -79,42 +93,23 @@ public class HistoryFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         final View inflaterView = inflater.inflate(R.layout.fragment_history, container, false);
-
-        //creates a spinner pull down menu and handles select events
-        Spinner spinner = (Spinner)inflaterView.findViewById(R.id.spinner_history);
-        //TODO: add history item at the point where a daily routine is completed
-        historyList.add("12.01.2016");
-        historyList.add("11.01.2016");
-        historyList.add("10.01.2016");
-
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(aca, android.R.layout.simple_spinner_dropdown_item, historyList);
-        spinner.setAdapter(adapter);
-        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+        final LinearLayout linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_historic_routine);
+        final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        TextView dateView = (TextView) inflaterView.findViewById(R.id.history_date_view);
+        String dateString = DateFormat.getDateInstance().format(new Date());
+        dateView.setText(dateString);
+        dateView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                String date = (String) parent.getItemAtPosition(position);
-                //something like getDailyRoutineFromPast(date)
-                ImageView imageView = (ImageView) inflaterView.findViewById(R.id.image_view_history);
-                switch (date) {
-                    case "12.01.2016":
-                        // Whatever you want to happen when the first item gets selected
-                        imageView.setImageResource(R.drawable.daily_routine_diagram);
-                        break;
-                    case "11.01.2016":
-                        imageView.setImageResource(android.R.color.transparent);
-                        break;
-                    case "10.01.2016":
-                        imageView.setImageResource(android.R.color.holo_blue_bright);
-                        break;
-                }
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-
+            public void onClick(View v) {
+                FragmentManager fragmentManager = getFragmentManager();
+                DialogFragment datePickerFragment = new DatePickerFragment();
+                datePickerFragment.show(fragmentManager, "datePicker");
             }
         });
-        
+        onDateSelected(linearLayout, params);
+        //TODO: add history item at the point where a daily routine is completed
+
+
         // Inflate the layout for this fragment
         return inflaterView;
     }
@@ -127,22 +122,47 @@ public class HistoryFragment extends Fragment {
     }
 
     /**
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
+     * every time a date is chosen with the date picker this method is called to create the
+     * new activity list
+     *
+     * @param linearLayout the layout of the history fragment
+     * @param params       the layout parameters
+     */
+    public void onDateSelected(LinearLayout linearLayout, LinearLayout.LayoutParams params) {
+        linearLayout.removeAllViews();
+        ArrayList<String[]> day = generateRandomRoutine();
+        for (int i = 0; i < day.size(); i++) {
+            DailyRoutineView drv = new DailyRoutineView(getActivity(), Integer.valueOf(day.get(i)[0]), 0, day.get(i)[1], day.get(i)[2]);
+            drv.setState(true);
+            linearLayout.addView(drv);
+            drv.setLayoutParams(params);
+            drv.getLayoutParams().height = drv.getTotalHeight();
+            items.add(drv);
         }
-    }**/
+    }
+
+    /**
+     * @return a random generated list of activites with random start and end time and random activity type
+     */
+    public ArrayList<String[]> generateRandomRoutine() {
+        Random generator = new Random();
+        int randomActivity, randomStartMinute, randomStartHour;
+        ArrayList<String[]> day = new ArrayList<String[]>();
+        for (int i = 0; i < 10; i++) {
+            randomActivity = generator.nextInt(13) + 1;
+            randomStartMinute = generator.nextInt(59) + 1;
+            randomStartHour = generator.nextInt(23) + 1;
+            day.add(new String[]{"" + randomActivity, randomStartHour + ":" + randomStartMinute, randomStartHour + ":" + randomStartMinute});
+        }
+        return day;
+    }
 
     @Override
     public void onDetach() {
         super.onDetach();
         mListener = null;
     }
+
 
     /**
      * This interface must be implemented by activities that contain this
@@ -156,7 +176,55 @@ public class HistoryFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+         void onFragmentInteraction(Uri uri);
     }
 
+    class DatePickerFragment extends DialogFragment
+            implements DatePickerDialog.OnDateSetListener {
+
+
+        /**
+         * creates a Dialog with a Date Picker with the currently displayed day presselected
+         */
+        @Override
+        public Dialog onCreateDialog(Bundle savedInstanceState) {
+            // Use the current date as the default date in the picker
+            TextView tv = (TextView) this.getActivity().findViewById(R.id.history_date_view);
+            SimpleDateFormat simpleFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
+            Date date = null;
+            try {
+                date = simpleFormat.parse(tv.getText().toString());
+            } catch (ParseException e) {
+                e.printStackTrace();
+            }
+            GregorianCalendar calendar = new GregorianCalendar();
+            calendar.setTime(date);
+            int year = calendar.get(Calendar.YEAR);
+            int month = calendar.get(Calendar.MONTH);
+            int day = calendar.get(Calendar.DAY_OF_MONTH);
+
+            // Create a new instance of DatePickerDialog and return it
+            return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        /**
+         * @param view  the current view
+         * @param year  the selected year
+         * @param month the selected month
+         * @param day   the selected day
+         */
+        @Override
+        public void onDateSet(DatePicker view, int year, int month, int day) {
+            // Do something with the date chosen by the user
+            LinearLayout oLL = (LinearLayout) this.getActivity().findViewById(R.id.layout_historic_routine);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            onDateSelected(oLL, params);
+            TextView tv = (TextView) this.getActivity().findViewById(R.id.history_date_view);
+            GregorianCalendar calendar = new GregorianCalendar(year, month, day);
+            SimpleDateFormat simpleDate = new SimpleDateFormat();
+            simpleDate.applyPattern("dd.MM.yyyy");
+
+            tv.setText(simpleDate.format(calendar.getTime()));
+        }
+    }
 }

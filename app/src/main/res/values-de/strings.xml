@@ -3,7 +3,6 @@
     <string name="app_name">Diabetes App</string>
     <string name="navigation_drawer_close">Navigation schließen</string>
     <string name="action_settings">Einstellungen</string>
-
     <string name="hello_blank_fragment">Hallo Welt</string>
     <string name="menu_item_activity_input">Aktivitäten Eingabe</string>
     <string name="listItem123">92734098879.sqlite</string>
@@ -21,12 +20,9 @@
     <string name="pref_help_summary">Tutorial</string>
     <string name="pref_name">Vor- und Nachname</string>
     <string name="pref_name_summary">Platzhalter</string>
-
     <string name="pref_other">Anderes</string>
     <string name="pref_popup">Popup Benachrichtigungen</string>
     <string name="pref_profile">Nutzerprofil</string>
-
-
 
     <string name="pref_sound">Benachrichtigungston</string>
     <string name="pref_version">Version</string>
@@ -39,6 +35,9 @@
     <string name="username">Max Mustermann</string>
     <string name="menu_item_share">Teilen</string>
     <string name="communicate">Kommunikation</string>
+    <string name="no_data">Keine Daten vorhanden</string>
+    <string name="activity_end">End</string>
+    <string name="activity_start">Start</string>
 
     <!-- Notfications-->
     <string name="pref_notification">Benachrichtigungen</string>
@@ -57,4 +56,5 @@
     <string name="No">Nein</string>
     <string name="pref_vacation_title">Urlaubsmodus</string>
     <string name="pref_vacation_summary">Im Urlaubsmodus werden keine Daten gesammelt und das Vorhersagemodell wird nicht angewendet.</string>
+    <string name="history_choose_date">Choose a Date</string>
 </resources>

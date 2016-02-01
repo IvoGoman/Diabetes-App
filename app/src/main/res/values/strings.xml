@@ -69,7 +69,10 @@
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="menu_item_share">Share</string>
     <string name="communicate">Communicate</string>
-
+    <string name="no_data">No Data existing</string>
+    <string name="activity_end">End</string>
+    <string name="activity_start">Start</string>
+    <string name="history_choose_date">Choose a Date</string>
 
 
 </resources>
