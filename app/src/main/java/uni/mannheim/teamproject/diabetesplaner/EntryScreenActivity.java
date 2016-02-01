@@ -25,6 +25,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 
+import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.AddDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsActivity;
@@ -156,6 +157,9 @@ public class EntryScreenActivity extends AppCompatActivity
 
                 //do sth with the delete icon
                 return true;
+            case R.id.edit_icon_action_bar_routine:
+                AddDialog addDialog = new AddDialog();
+                addDialog.show(getFragmentManager(),"editDialog");
         }
 
 

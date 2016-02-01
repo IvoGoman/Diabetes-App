@@ -34,6 +34,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private String endtime;
     private int state;
     private boolean touched = false;
+    private boolean isDown = false;
 
     Paint borderPaint = new Paint();
     Paint upperPaint = new Paint();
@@ -515,9 +516,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         //makes the items selectable
         if(!selectable) {
             vibrate(this.context, 500);
-            selectedActivities.add(this);
-            isSelected = true;
-            touched = true;
             setActionBarItems();
         }
         selectable = true;
@@ -544,31 +542,32 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        Log.d(TAG, String.valueOf("on touch " + selectable));
+
         //handles if an item was touched
         //getParent().requestDisallowInterceptTouchEvent(true);
-        if(selectedActivities.size()<1){
-            selectable = false;
-        }
+
         if (selectable) {
-            if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            if (event.getAction() == MotionEvent.ACTION_UP) {
                 if (isSelected) {
                     selectedActivities.remove(this);
                     isSelected = false;
                     touched = false;
                 } else {
-                    Log.d(TAG, "added");
                     selectedActivities.add(this);
                     isSelected = true;
                     touched = true;
                 }
+
+                if(selectedActivities.size()<1){
+                    selectable = false;
+                }
             }
-            if(selectedActivities.size()<1){
-                selectable = false;
-            }
+
         } else {
             if (event.getAction() == MotionEvent.ACTION_DOWN) {
                 touched = true;
-            } else if (event.getAction() == MotionEvent.ACTION_UP) {
+            } else if (event.getAction() == MotionEvent.ACTION_UP || event.getAction() == MotionEvent.ACTION_CANCEL) {
                 touched = false;
             }
         }
@@ -576,9 +575,14 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         setActionBarItems();
         invalidate();
 
+        //states if event was handled and no other handler should handle it
+        //false because onLongClick() has to handle it too
         return false;
     }
 
+    public void setTouched(boolean isTouched){
+        touched = isTouched;
+    }
 
     /**
      * sets the add, edit and remove icons in the action bar
@@ -598,6 +602,22 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             DailyRoutineFragment.setEditIconVisible(false);
             DailyRoutineFragment.setDeleteIconVisible(true);
         }
+    }
+
+    /**
+     * return if items are selectable
+     * @return isSelectable
+     */
+    public static boolean isSelectable(){
+        return selectable;
+    }
+
+    /**
+     * sets items to isSelectable
+     * @param isSelectable isSelectable
+     */
+    public static void setSelectable(boolean isSelectable){
+        selectable = isSelectable;
     }
 
 

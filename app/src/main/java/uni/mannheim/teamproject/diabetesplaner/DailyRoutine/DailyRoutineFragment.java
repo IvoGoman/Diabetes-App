@@ -88,12 +88,12 @@ public class DailyRoutineFragment extends Fragment {
         list2.add(new String[]{"2","9:14","9:53"});
         list2.add(new String[]{"13","9:53","13:07"});
         list2.add(new String[]{"2","13:07","13:22"});
-        list2.add(new String[]{"13","13:22","15:35"});
+        list2.add(new String[]{"13", "13:22", "15:35"});
         list2.add(new String[]{"10","15:35","15:38"});
         list2.add(new String[]{"13","15:38","21:53"});
         list2.add(new String[]{"5","21:53","22:22"});
         list2.add(new String[]{"2","22:22","22:51"});
-        list2.add(new String[]{"1","22:51","23:59"});
+        list2.add(new String[]{"1", "22:51", "23:59"});
     }
 
     @Override
@@ -101,9 +101,6 @@ public class DailyRoutineFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View inflaterView = inflater.inflate(R.layout.fragment_daily_routine, container, false);
-
-        //get Scrollview
-        ScrollView scrollView = (ScrollView) inflaterView.findViewById(R.id.scroll_view_daily_routine);
 
         //get the layout
         linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_daily_routine);
@@ -119,6 +116,10 @@ public class DailyRoutineFragment extends Fragment {
             drv.getLayoutParams().height = drv.getTotalHeight();
             items.add(drv);
         }
+
+        //get Scrollview
+        ScrollView scrollView = (ScrollView) inflaterView.findViewById(R.id.scroll_view_daily_routine);
+
         return inflaterView;
     }
 
@@ -247,7 +248,7 @@ public class DailyRoutineFragment extends Fragment {
                     aca.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            for (int i = 0; i < items.size(); i++){
+                            for (int i = 0; i < items.size(); i++) {
                                 items.get(i).invalidate();
                             }
                         }
@@ -259,6 +260,10 @@ public class DailyRoutineFragment extends Fragment {
         } catch (IllegalStateException e){
             android.util.Log.e(TAG, "resume error");
         }
+    }
+
+    public static ArrayList<DailyRoutineView> getItems(){
+        return items;
     }
 
 }
