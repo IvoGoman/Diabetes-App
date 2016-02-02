@@ -10,6 +10,7 @@
 
     <string name="menu_item_daily_routine">Daily Routine</string>
     <string name="menu_item_activity_input">Activity Input</string>
+    <string name="menu_item_activity_measurement">Activity/Measurement</string>
     <string name="menu_item_statistics">Statistics</string>
     <string name="menu_item_history">History</string>
     <string name="menu_item_settings">Settings</string>
@@ -74,6 +75,14 @@
     <string name="activity_start">Start</string>
     <string name="history_choose_date">Choose a Date: </string>
     <string name="date_in_future">Date selected is in the future</string>
+
+
+    <!-- Strings related to Measurement Tab, created by: Naira-->
+    <string name="glucoseLabel">Glucose Level</string>
+    <string name="insulinLabel">Insulin Dosage</string>
+    <string name="glucoseTextField">mg/dl</string>
+    <string name="insulinTextField">Unit/mL</string>
+    <string name="DoneButton">Done</string>
 
 
 </resources>

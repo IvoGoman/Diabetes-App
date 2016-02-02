@@ -210,7 +210,15 @@ public class EntryScreenActivity extends AppCompatActivity
 
             addItem.setVisible(true);
 
-        } else if (id == R.id.nav_statistics) {
+        }else if (id == R.id.nav_activity_measurement) {
+            Toast.makeText(this, R.string.menu_item_activity_measurement, Toast.LENGTH_SHORT).show();
+
+            fragment = new ActivityMeasurementFragment();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.mainFrame, fragment);
+            ft.commit();
+        }
+        else if (id == R.id.nav_statistics) {
             Toast.makeText(this, R.string.menu_item_statistics, Toast.LENGTH_SHORT).show();
 
             fragment = new StatisticsFragment();
