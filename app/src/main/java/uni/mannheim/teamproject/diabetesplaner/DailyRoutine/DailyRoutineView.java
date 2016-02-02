@@ -228,17 +228,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         //lower done
         canvas.drawLine(getLeft(), dotOffset + radius + lineOffset, getLeft(), heightLower + heightUpper + marginTop, downline);
 
-        //activity text
-        canvas.drawText(getActivity(activity), getLeft() + getpx(10) + offsetL, (front.height() / 2) + (font.getTextSize() / 2), font);
-        //subactivity text
-        canvas.drawText(getSubactivity(subactivity), getLeft() + getpx(20) + font.measureText(getActivity(activity)) + offsetL, (front.height() / 2) + (font.getTextSize() / 2), fontSubActivity);
-        //duration text
-        canvas.drawText("Duration: " + durationAsString, getRight() - getpx(20) - fontDur.measureText("Duration: " + durationAsString), (front.height() / 2) + (font.getTextSize() / 2), fontDur);
-        //start text
-        canvas.drawText("Start: " + starttime, getLeft() + getpx(10) + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
-        //end text
-        canvas.drawText("End: " + endtime, getRight() - getpx(20) - fontDur.measureText("End: " + endtime), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
-
         if (touched) {
             //highlight clicked item
             Path hl = new Path();
@@ -254,6 +243,18 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
             canvas.drawPath(hl, highlightPaint);
         }
+
+        //activity text
+        canvas.drawText(getActivity(activity), getLeft() + getpx(10) + offsetL, (front.height() / 2) + (font.getTextSize() / 2), font);
+        //subactivity text
+        canvas.drawText(getSubactivity(subactivity), getLeft() + getpx(20) + font.measureText(getActivity(activity)) + offsetL, (front.height() / 2) + (font.getTextSize() / 2), fontSubActivity);
+        //duration text
+        canvas.drawText("Duration: " + durationAsString, getRight() - getpx(20) - fontDur.measureText("Duration: " + durationAsString), (front.height() / 2) + (font.getTextSize() / 2), fontDur);
+        //start text
+        canvas.drawText("Start: " + starttime, getLeft() + getpx(10) + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
+        //end text
+        canvas.drawText("End: " + endtime, getRight() - getpx(20) - fontDur.measureText("End: " + endtime), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
+
     }
 
     /**
