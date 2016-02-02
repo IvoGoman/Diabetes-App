@@ -10,8 +10,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -108,6 +110,10 @@ public class DailyRoutineFragment extends Fragment {
                 ViewGroup.LayoutParams.WRAP_CONTENT);
         //params.topMargin = getpx(8);
 
+        TextView textView = (TextView) inflaterView.findViewById(R.id.daily_routine_date_view);
+        Calendar cal = Calendar.getInstance();
+        textView.setText(getDayOfWeek(cal.get(Calendar.DAY_OF_WEEK)) + ", " +cal.get(Calendar.DAY_OF_MONTH)+"."+cal.get(Calendar.MONTH)+"."+cal.get(Calendar.YEAR));
+
         //create a DailyRoutineView for every list item, so for every activity in the daily routine
         for(int i=0; i<list2.size(); i++){
             DailyRoutineView drv = new DailyRoutineView(getActivity(),Integer.valueOf(list2.get(i)[0]),0,list2.get(i)[1], list2.get(i)[2]);
@@ -121,6 +127,24 @@ public class DailyRoutineFragment extends Fragment {
         ScrollView scrollView = (ScrollView) inflaterView.findViewById(R.id.scroll_view_daily_routine);
 
         return inflaterView;
+    }
+
+    /**
+     * get the day of the week
+     * @param dayOfWeek integer value
+     * @return day of the week as String
+     */
+    public String getDayOfWeek(int dayOfWeek){
+        switch (dayOfWeek){
+            case 1: return "Sunday";
+            case 2: return "Monday";
+            case 3: return "Tuesday";
+            case 4: return "Wednesday";
+            case 5: return "Thursday";
+            case 6: return "Friday";
+            case 7: return "Saturday";
+            default: return "";
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
