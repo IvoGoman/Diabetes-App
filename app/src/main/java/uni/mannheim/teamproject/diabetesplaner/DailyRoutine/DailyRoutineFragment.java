@@ -112,7 +112,7 @@ public class DailyRoutineFragment extends Fragment {
 
         TextView textView = (TextView) inflaterView.findViewById(R.id.daily_routine_date_view);
         Calendar cal = Calendar.getInstance();
-        textView.setText(getDayOfWeek(cal.get(Calendar.DAY_OF_WEEK)) + ", " +cal.get(Calendar.DAY_OF_MONTH)+"."+cal.get(Calendar.MONTH)+"."+cal.get(Calendar.YEAR));
+        textView.setText(getDayOfWeek(cal.get(Calendar.DAY_OF_WEEK)) + ", " +cal.get(Calendar.DAY_OF_MONTH)+"."+cal.get(Calendar.MONTH)+1+"."+cal.get(Calendar.YEAR));
 
         //create a DailyRoutineView for every list item, so for every activity in the daily routine
         for(int i=0; i<list2.size(); i++){
