@@ -1,3 +1,6 @@
+/gradle.properties
+/settings.gradle
+/build.gradle
 # Built application files
 /*/build/
 
