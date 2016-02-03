@@ -304,7 +304,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         Point p3 = new Point(getWidth() - borderWidth / 2, heightLower + heightUpper);
         Point p4 = new Point(0 + offsetL, heightLower + heightUpper);
 
-        setState(false);
+       // setState(false);
 
         //determine colors for state
         switch (state) {
