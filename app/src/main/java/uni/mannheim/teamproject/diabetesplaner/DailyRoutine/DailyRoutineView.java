@@ -18,6 +18,8 @@ import android.util.Log;
 import android.view.Display;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.view.WindowManager;
 
 import java.util.ArrayList;
@@ -178,10 +180,24 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
         //int desiredWidth = 200;
+
+        //get width of screen
         WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
         Display display = wm.getDefaultDisplay();
         int desiredWidth = displayWidth - getpx(16+8);
         int desiredHeight = getpx(120);
+
+        //get padding of parent
+        ViewParent parent = getParent();
+        int leftPadding = 0;
+        int rightPadding = 0;
+
+        if (parent instanceof ViewGroup) {
+            leftPadding = ((ViewGroup) parent).getPaddingLeft();
+            rightPadding = ((ViewGroup) parent).getPaddingRight();
+            Log.d(TAG, leftPadding + " "  +rightPadding);
+            Log.d(TAG, getLeft() + " " + getRight());
+        }
 
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -191,35 +207,26 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         int width;
         int height;
 
-
-
         //Measure Width
         if (widthMode == MeasureSpec.EXACTLY) {
             //Must be this size
             width = widthSize;
+            desiredHeight = getDesiredHeight(width, leftPadding, rightPadding);
 
-            int mesDur = (int)fontDur.measureText("Duration: " + durationAsString);
-            float tmpWidth = width - mesDur - 2*textPadding - paddingRight - offsetL;
-            StaticLayout tmplay = new StaticLayout(getActivity(activity), textPaint,(int) tmpWidth, Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
-            desiredHeight = tmplay.getHeight()+2*textPadding+marginTop+heightLower;
 
-        } else if (widthMode == MeasureSpec.AT_MOST) {
+        }
+        else if (widthMode == MeasureSpec.AT_MOST) {
             //Can't be bigger than...
             width = Math.min(desiredWidth, widthSize);
 
-            int mesDur = (int)fontDur.measureText("Duration: " + durationAsString);
-            float tmpWidth = width - mesDur - 2*textPadding - paddingRight - offsetL;
-            StaticLayout tmplay = new StaticLayout(getActivity(activity), textPaint,(int) tmpWidth, Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
-            desiredHeight = tmplay.getHeight()+2*textPadding+marginTop+heightLower;
+            desiredHeight = getDesiredHeight(width, leftPadding, rightPadding);
 
             //ERROR here
-        } else {
+        }
+        else {
             //Be whatever you want
             width = desiredWidth;
-            int mesDur = (int)fontDur.measureText("Duration: " + durationAsString);
-            float tmpWidth = width - mesDur - 2*textPadding - paddingRight - offsetL;
-            StaticLayout tmplay = new StaticLayout(getActivity(activity), textPaint,(int) tmpWidth, Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
-            desiredHeight = tmplay.getHeight()+2*textPadding+marginTop+heightLower;
+            desiredHeight = getDesiredHeight(width, leftPadding, rightPadding);
         }
 
         //Measure Height
@@ -236,6 +243,13 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
         //MUST CALL THIS
         setMeasuredDimension(width, height);
+    }
+
+    public int getDesiredHeight(int width, int leftPadding, int rightPadding){
+        int mesDur = (int)fontDur.measureText("Duration: " + durationAsString);
+        float tmpWidth = width - mesDur - 2*textPadding - paddingRight - offsetL - leftPadding - rightPadding;
+        StaticLayout tmplay = new StaticLayout(getActivity(activity), textPaint,(int) tmpWidth, Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
+        return tmplay.getHeight()+2*textPadding+marginTop+heightLower;
     }
 
     //TODO: initialize all objects only once maybe in the constructor

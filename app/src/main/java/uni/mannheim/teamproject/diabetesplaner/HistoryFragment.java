@@ -216,7 +216,7 @@ public class HistoryFragment extends Fragment {
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
             LinearLayout oLL = (LinearLayout) this.getActivity().findViewById(R.id.layout_historic_routine);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             TextView tv = (TextView) this.getActivity().findViewById(R.id.history_date_view);
             GregorianCalendar calendar = new GregorianCalendar(year, month, day);
             SimpleDateFormat simpleDate = new SimpleDateFormat();
