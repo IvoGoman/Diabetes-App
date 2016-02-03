@@ -60,12 +60,12 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     private int heightUpper = getpx(40);
     private int heightLower = getpx(30);
-    private int offsetL1 = getpx(11);
+    private int radius = getpx(5);
+    private int offsetL1 = getpx(11) +radius;
     private int offsetL = getpx(10) + offsetL1;
     private int dotOffset = getpx(25);
     private int lineOffset = getpx(5);
     private int marginTop = getpx(8);
-    private int radius = getpx(5);
     private int borderWidth = getpx(2);
     private Context context;
 
@@ -88,12 +88,10 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private Rect actRect;
     private int textHeight;
     private int textPadding = getpx(7);
-    private int paddingRight = getpx(8);
     private boolean initialized = false;
     private Rect front;
     private Rect front2;
     private int mesDur;
-    private int displayWidth;
 
     public DailyRoutineView(Context context) {
         super(context);
@@ -179,13 +177,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        //int desiredWidth = 200;
-
-        //get width of screen
-        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        int desiredWidth = displayWidth - getpx(16+8);
-        int desiredHeight = getpx(120);
 
         //get padding of parent
         ViewParent parent = getParent();
@@ -195,9 +186,19 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         if (parent instanceof ViewGroup) {
             leftPadding = ((ViewGroup) parent).getPaddingLeft();
             rightPadding = ((ViewGroup) parent).getPaddingRight();
-            Log.d(TAG, leftPadding + " "  +rightPadding);
-            Log.d(TAG, getLeft() + " " + getRight());
         }
+
+        //get width of screen
+        WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        int displayWidth = size.x;
+
+        //set the desiredWidth to the display width - paddings of parent
+        int desiredWidth = displayWidth - leftPadding - rightPadding;
+
+        int desiredHeight = getpx(120);
 
         int widthMode = MeasureSpec.getMode(widthMeasureSpec);
         int widthSize = MeasureSpec.getSize(widthMeasureSpec);
@@ -211,22 +212,21 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         if (widthMode == MeasureSpec.EXACTLY) {
             //Must be this size
             width = widthSize;
-            desiredHeight = getDesiredHeight(width, leftPadding, rightPadding);
-
+            desiredHeight = getDesiredHeight(width);
 
         }
         else if (widthMode == MeasureSpec.AT_MOST) {
             //Can't be bigger than...
             width = Math.min(desiredWidth, widthSize);
 
-            desiredHeight = getDesiredHeight(width, leftPadding, rightPadding);
+            desiredHeight = getDesiredHeight(width);
 
             //ERROR here
         }
         else {
             //Be whatever you want
             width = desiredWidth;
-            desiredHeight = getDesiredHeight(width, leftPadding, rightPadding);
+            desiredHeight = getDesiredHeight(width);
         }
 
         //Measure Height
@@ -245,9 +245,14 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         setMeasuredDimension(width, height);
     }
 
-    public int getDesiredHeight(int width, int leftPadding, int rightPadding){
+    /**
+     * returns the height of the StaticLayout containing the activity name
+     * @param width
+     * @return
+     */
+    public int getDesiredHeight(int width){
         int mesDur = (int)fontDur.measureText("Duration: " + durationAsString);
-        float tmpWidth = width - mesDur - 2*textPadding - paddingRight - offsetL - leftPadding - rightPadding;
+        float tmpWidth = width - mesDur - 2*textPadding - offsetL;
         StaticLayout tmplay = new StaticLayout(getActivity(activity), textPaint,(int) tmpWidth, Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
         return tmplay.getHeight()+2*textPadding+marginTop+heightLower;
     }
@@ -261,19 +266,18 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         if(mesDur<0){
             mesDur = 0;
         }
-        float durLeft = getRight() - textPadding - paddingRight - mesDur;
-        Log.d(TAG, "right: " + getRight() + " left: " + getLeft());
-        actRect = new Rect(getLeft() + textPadding + offsetL, textPadding, (int)durLeft - textPadding, heightUpper-textPadding);
+        float durLeft = getWidth() - textPadding - mesDur;
+        actRect = new Rect(0 + textPadding + offsetL, textPadding, (int)durLeft - textPadding, heightUpper-textPadding);
 
         sl = new StaticLayout(getActivity(activity), textPaint, (int)actRect.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
         heightUpper = sl.getHeight()+2*textPadding;
 
-        //getLayoutParams().height = heightLower + heightUpper + marginTop;
-
         //upper rectangle
-        front = new Rect(getLeft() + offsetL, 0, getRight() - paddingRight, heightUpper);
+        front = new Rect(0 + offsetL, 0, getWidth(), heightUpper);
         //lower rectangle
-        front2 = new Rect(getLeft() + offsetL, heightUpper, getRight() - paddingRight, heightLower + heightUpper);
+        front2 = new Rect(0 + offsetL, heightUpper, getWidth(), heightLower + heightUpper);
+
+        Log.d(TAG, "l " + getLeft() + " w " + getWidth() + " r " + getRight());
 
         canvas.drawRect(front, upperPaint);
 
@@ -281,9 +285,9 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         canvas.drawRect(front2, lowerPaint);
 
         //arrow-triangle
-        Point a = new Point(getLeft() + offsetL1, dotOffset);
-        Point b = new Point(getLeft() + offsetL, dotOffset - getpx(10));
-        Point c = new Point(getLeft() + offsetL, dotOffset + getpx(10));
+        Point a = new Point(0 + offsetL1, dotOffset);
+        Point b = new Point(0 + offsetL, dotOffset - getpx(10));
+        Point c = new Point(0 + offsetL, dotOffset + getpx(10));
 
         Path path = new Path();
         path.setFillType(Path.FillType.EVEN_ODD);
@@ -295,10 +299,10 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         canvas.drawPath(path, upperPaint);
 
         //init border points
-        Point p1 = new Point(getLeft() + offsetL, borderWidth / 2);
-        Point p2 = new Point(getRight() - getpx(8) - borderWidth / 2, borderWidth / 2);
-        Point p3 = new Point(getRight() - getpx(8) - borderWidth / 2, heightLower + heightUpper);
-        Point p4 = new Point(getLeft() + offsetL, heightLower + heightUpper);
+        Point p1 = new Point(0 + offsetL, borderWidth / 2);
+        Point p2 = new Point(getWidth() - borderWidth / 2, borderWidth / 2);
+        Point p3 = new Point(getWidth() - borderWidth / 2, heightLower + heightUpper);
+        Point p4 = new Point(0 + offsetL, heightLower + heightUpper);
 
         setState(false);
 
@@ -335,11 +339,11 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
                 break;
         }
         //dot
-        canvas.drawCircle(getLeft(), dotOffset, radius, dot);
+        canvas.drawCircle(radius, dotOffset, radius, dot);
         //upper done
-        canvas.drawLine(getLeft(), getpx(0), getLeft(), dotOffset - radius - lineOffset, upline);
+        canvas.drawLine(radius, getpx(0), radius, dotOffset - radius - lineOffset, upline);
         //lower done
-        canvas.drawLine(getLeft(), dotOffset + radius + lineOffset, getLeft(), heightLower + heightUpper + marginTop, downline);
+        canvas.drawLine(radius, dotOffset + radius + lineOffset, radius, heightLower + heightUpper + marginTop, downline);
 
         if (touched) {
             //highlight clicked item
@@ -361,13 +365,13 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         //activity text
         //canvas.drawText(getActivity(activity), getLeft() + getpx(10) + offsetL, (front.height() / 2) + (font.getTextSize() / 2), font);
         //subactivity text
-        canvas.drawText(getSubactivity(subactivity), getLeft() + textPadding + font.measureText(getActivity(activity)) + offsetL, (front.height() / 2) + (font.getTextSize() / 2), fontSubActivity);
+        canvas.drawText(getSubactivity(subactivity), textPadding + font.measureText(getActivity(activity)) + offsetL, (front.height() / 2) + (font.getTextSize() / 2), fontSubActivity);
         //duration text
-        canvas.drawText("Duration: " + durationAsString, getRight() - textPadding - paddingRight - fontDur.measureText("Duration: " + durationAsString), (front.height() / 2) + (font.getTextSize() / 2), fontDur);
+        canvas.drawText("Duration: " + durationAsString, getWidth() - textPadding - fontDur.measureText("Duration: " + durationAsString), (front.height() / 2) + (font.getTextSize() / 2), fontDur);
         //start text
-        canvas.drawText("Start: " + starttime, getLeft() + textPadding + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
+        canvas.drawText("Start: " + starttime, textPadding + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
         //end text
-        canvas.drawText("End: " + endtime, getRight() - textPadding - paddingRight - fontDur.measureText("End: " + endtime), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
+        canvas.drawText("End: " + endtime, getWidth() - textPadding - fontDur.measureText("End: " + endtime), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
 
         //draw activity text
         canvas.translate(actRect.left, actRect.top);

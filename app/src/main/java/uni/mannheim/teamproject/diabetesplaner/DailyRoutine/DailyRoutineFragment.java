@@ -118,7 +118,6 @@ public class DailyRoutineFragment extends Fragment {
             DailyRoutineView drv = new DailyRoutineView(getActivity(),Integer.valueOf(list2.get(i)[0]),0,list2.get(i)[1], list2.get(i)[2]);
             linearLayout.addView(drv);
             drv.setLayoutParams(params);
-            //drv.getLayoutParams().height = drv.getTotalHeight();
             items.add(drv);
         }
 
