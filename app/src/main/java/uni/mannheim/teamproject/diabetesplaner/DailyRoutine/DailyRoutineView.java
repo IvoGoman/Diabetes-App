@@ -98,6 +98,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private Path arrow = new Path();
     private Path border = new Path();
     private Path hl = new Path();
+    private static DailyRoutineView current;
 
 
     public DailyRoutineView(Context context) {
@@ -392,7 +393,16 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             canvas.translate(actRectSub.left, actRectSub.top);
             slsub.draw(canvas);
         }
+    }
 
+    @Override
+    protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
+        //scrolls the scrollview to focus the running activity
+        int[] loc = new int[2];
+        DailyRoutineView.getCurrentRunning().getLocationOnScreen(loc);
+        Log.d(TAG, "" + loc[1]);
+        DailyRoutineFragment.getScrollView().scrollTo(0, loc[1]);
+        super.onLayout(changed, left, top, right, bottom);
     }
 
     /**
@@ -435,6 +445,10 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             default:
                 return "unknown activity";
         }
+    }
+
+    public String getActivity(){
+        return getActivity(activity);
     }
 
     /**
@@ -594,6 +608,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
                 state = 1;
             } else if (isRunning(minutes, hour)) {
                 state = 2;
+                current = this;
             } else if (isFinished(minutes, hour)) {
                 state = 3;
             }
@@ -743,6 +758,14 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             DailyRoutineFragment.setEditIconVisible(false);
             DailyRoutineFragment.setDeleteIconVisible(true);
         }
+    }
+
+    /**
+     * returns current running view
+     * @return
+     */
+    public static DailyRoutineView getCurrentRunning(){
+        return current;
     }
 
     /**

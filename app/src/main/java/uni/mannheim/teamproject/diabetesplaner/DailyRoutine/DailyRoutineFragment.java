@@ -5,6 +5,8 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +53,8 @@ public class DailyRoutineFragment extends Fragment {
 
     private OnFragmentInteractionListener mListener;
     private DailyRoutineView dailyRoutineView;
-    private AppCompatActivity aca;
+    private static AppCompatActivity aca;
+    private static ScrollView scrollView;
 
     /**
      * Use this factory method to create a new instance of
@@ -91,8 +94,8 @@ public class DailyRoutineFragment extends Fragment {
         list2.add(new String[]{"13","9:53","13:07"});
         list2.add(new String[]{"2","13:07","13:22"});
         list2.add(new String[]{"13", "13:22", "15:35"});
-        list2.add(new String[]{"10","15:35","15:38"});
-        list2.add(new String[]{"13","15:38","21:53"});
+        list2.add(new String[]{"10", "15:35", "15:38"});
+        list2.add(new String[]{"13", "15:38", "21:53"});
         list2.add(new String[]{"5","21:53","22:22"});
         list2.add(new String[]{"2","22:22","22:51"});
         list2.add(new String[]{"1", "22:51", "23:59"});
@@ -117,14 +120,20 @@ public class DailyRoutineFragment extends Fragment {
         for(int i=0; i<list2.size(); i++){
             DailyRoutineView drv = new DailyRoutineView(getActivity(),Integer.valueOf(list2.get(i)[0]),0,list2.get(i)[1], list2.get(i)[2]);
             linearLayout.addView(drv);
+            drv.setState(false);
             drv.setLayoutParams(params);
             items.add(drv);
         }
 
         //get Scrollview
-        ScrollView scrollView = (ScrollView) inflaterView.findViewById(R.id.scroll_view_daily_routine);
+        scrollView = (ScrollView) inflaterView.findViewById(R.id.scroll_view_daily_routine);
 
         return inflaterView;
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
     }
 
     /**
@@ -253,11 +262,15 @@ public class DailyRoutineFragment extends Fragment {
         editItem.setVisible(isVisible);
     }
 
+    @Override
     public void onPause(){
+        //clears the list with the selected DailyRoutineViews
+        DailyRoutineView.getSelectedActivities().clear();
         super.onPause();
         timer.cancel();
     }
 
+    @Override
     public void onResume(){
         super.onResume();
         try {
@@ -289,4 +302,11 @@ public class DailyRoutineFragment extends Fragment {
         return items;
     }
 
+    /**
+     * returns the scrollview
+     * @return
+     */
+    public static ScrollView getScrollView(){
+        return scrollView;
+    }
 }
