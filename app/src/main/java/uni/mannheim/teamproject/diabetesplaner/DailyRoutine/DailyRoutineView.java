@@ -24,8 +24,6 @@ import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Timer;
-import java.util.TimerTask;
 
 import uni.mannheim.teamproject.diabetesplaner.R;
 
@@ -42,12 +40,13 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private String endtime;
     private int state;
     private boolean touched = false;
-    private boolean isDown = false;
 
     Paint borderPaint = new Paint();
     Paint upperPaint = new Paint();
     Paint lowerPaint = new Paint();
+    Paint arrowPaint = new Paint();
     TextPaint textPaint = new TextPaint();
+    TextPaint textPaintSub = new TextPaint();
     Paint font = new Paint(Paint.LINEAR_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
     Paint fontSubActivity = new Paint(Paint.LINEAR_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
     Paint fontDur = new Paint(Paint.LINEAR_TEXT_FLAG | Paint.ANTI_ALIAS_FLAG);
@@ -58,7 +57,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     Paint dot = open;
     Paint highlightPaint = new Paint();
 
-    private int heightUpper = getpx(40);
+    private int heightUpper;
     private int heightLower = getpx(30);
     private int radius = getpx(5);
     private int offsetL1 = getpx(11) +radius;
@@ -82,16 +81,24 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     private static ArrayList<DailyRoutineView> selectedActivities = new ArrayList<DailyRoutineView>();
 
-    private Timer timer = new Timer();
-    private TimerTask timerTask;
     private StaticLayout sl;
     private Rect actRect;
-    private int textHeight;
     private int textPadding = getpx(7);
-    private boolean initialized = false;
     private Rect front;
     private Rect front2;
-    private int mesDur;
+    private StaticLayout slsub;
+    private Rect actRectSub;
+    private Point a;
+    private Point b;
+    private Point c;
+    private Point p1;
+    private Point p2;
+    private Point p3;
+    private Point p4;
+    private Path arrow = new Path();
+    private Path border = new Path();
+    private Path hl = new Path();
+
 
     public DailyRoutineView(Context context) {
         super(context);
@@ -149,6 +156,9 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
         upperPaint.setColor(innerColor);
 
+        arrowPaint.setColor(upperPaint.getColor());
+        arrowPaint.setStyle(Paint.Style.FILL);
+
         lowerPaint.setColor(innerColor2);
 
         font.setColor(Color.BLACK);
@@ -158,6 +168,8 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         textPaint.setTextSize(getpx(20));
         textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
+        textPaintSub.setColor(Color.BLACK);
+        textPaintSub.setTextSize(getpx(14));
 
         fontSubActivity.setColor(Color.BLACK);
         fontSubActivity.setTextSize(getpx(14));
@@ -212,22 +224,20 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         if (widthMode == MeasureSpec.EXACTLY) {
             //Must be this size
             width = widthSize;
-            desiredHeight = getDesiredHeight(width);
 
         }
         else if (widthMode == MeasureSpec.AT_MOST) {
             //Can't be bigger than...
             width = Math.min(desiredWidth, widthSize);
 
-            desiredHeight = getDesiredHeight(width);
-
             //ERROR here
         }
         else {
             //Be whatever you want
             width = desiredWidth;
-            desiredHeight = getDesiredHeight(width);
         }
+
+        desiredHeight = getDesiredHeight(width);
 
         //Measure Height
         if (heightMode == MeasureSpec.EXACTLY) {
@@ -241,70 +251,101 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             height = desiredHeight;
         }
 
+        initComponents(width, height);
+
         //MUST CALL THIS
         setMeasuredDimension(width, height);
     }
 
     /**
-     * returns the height of the StaticLayout containing the activity name
+     * creates the text fields and measures the height of the StaticLayouts
      * @param width
-     * @return
+     * @return height of the View
      */
-    public int getDesiredHeight(int width){
-        int mesDur = (int)fontDur.measureText("Duration: " + durationAsString);
-        float tmpWidth = width - mesDur - 2*textPadding - offsetL;
-        StaticLayout tmplay = new StaticLayout(getActivity(activity), textPaint,(int) tmpWidth, Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
-        return tmplay.getHeight()+2*textPadding+marginTop+heightLower;
+    private int getDesiredHeight(int width){
+        //width Duration: ... + padding to right border
+        int mesDur = (int)fontDur.measureText("Duration: " + durationAsString)+textPadding;
+        //width of canvas - textPadding to duration - width duration
+        int xRight = width - textPadding - mesDur;
+
+        //initialize activity text
+        actRect = new Rect(offsetL + textPadding, textPadding, xRight, 0);
+        sl = new StaticLayout(getActivity(activity), textPaint, (int)actRect.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
+
+        if(!getSubactivity(subactivity).equals("")) {
+            //initialize subactivity test
+            actRectSub = new Rect(0, sl.getHeight() + textPadding, xRight, 0);
+            slsub = new StaticLayout(getSubactivity(subactivity), textPaintSub, (int) actRectSub.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
+
+            //height of activity text field + height of subactivity text field + textpadding above and beyond
+            heightUpper = sl.getHeight() + slsub.getHeight() + 3 * textPadding;
+        }else{
+            //height of activity text field + textpadding above and beyond
+            heightUpper = sl.getHeight() + 2 * textPadding;
+        }
+        return heightUpper+marginTop+heightLower;
+    }
+
+    private void initComponents(int width, int height){
+        //upper rectangle
+        front = new Rect(0 + offsetL, 0, width, heightUpper);
+        //lower rectangle
+        front2 = new Rect(0 + offsetL, heightUpper, width, heightLower + heightUpper);
+
+        //arrow-triangle
+        a = new Point(0 + offsetL1, dotOffset);
+        b = new Point(0 + offsetL, dotOffset - getpx(10));
+        c = new Point(0 + offsetL, dotOffset + getpx(10));
+
+        //arrow.setFillType(Path.FillType.EVEN_ODD);
+        arrow.moveTo(b.x, b.y);
+        arrow.lineTo(c.x, c.y);
+        arrow.lineTo(a.x, a.y);
+        arrow.close();
+
+        //init border points (corner points of the overall rectangle)
+        p1 = new Point(0 + offsetL, borderWidth / 2);
+        p2 = new Point(width - borderWidth / 2, borderWidth / 2);
+        p3 = new Point(width - borderWidth / 2, heightLower + heightUpper);
+        p4 = new Point(0 + offsetL, heightLower + heightUpper);
+
+        //border
+        border.moveTo(p1.x, p1.y);
+        border.lineTo(p2.x, p2.y);
+        border.lineTo(p3.x, p3.y);
+        border.lineTo(p4.x, p4.y);
+        border.lineTo(c.x, c.y);
+        border.lineTo(a.x, a.y);
+        border.lineTo(b.x, b.y);
+        border.close();
+
+        //highlight clicked item
+        hl.moveTo(p1.x, p1.y - borderWidth / 2);
+        hl.lineTo(p2.x + borderWidth / 2, p2.y - borderWidth / 2);
+        hl.lineTo(p3.x + borderWidth / 2, p3.y);
+        hl.lineTo(p4.x, p4.y);
+        hl.lineTo(c.x, c.y);
+        hl.lineTo(a.x, a.y);
+        hl.lineTo(b.x, b.y);
+        hl.close();
     }
 
     //TODO: initialize all objects only once maybe in the constructor
     @Override
     public void onDraw(Canvas canvas) {
 
-        int mesDur = (int)fontDur.measureText("Duration: " + durationAsString);
-        //temporary bugfix
-        if(mesDur<0){
-            mesDur = 0;
-        }
-        float durLeft = getWidth() - textPadding - mesDur;
-        actRect = new Rect(0 + textPadding + offsetL, textPadding, (int)durLeft - textPadding, heightUpper-textPadding);
-
-        sl = new StaticLayout(getActivity(activity), textPaint, (int)actRect.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
-        heightUpper = sl.getHeight()+2*textPadding;
-
-        //upper rectangle
-        front = new Rect(0 + offsetL, 0, getWidth(), heightUpper);
-        //lower rectangle
-        front2 = new Rect(0 + offsetL, heightUpper, getWidth(), heightLower + heightUpper);
-
-        Log.d(TAG, "l " + getLeft() + " w " + getWidth() + " r " + getRight());
-
+        //draw upper rectangle
         canvas.drawRect(front, upperPaint);
 
-        //lower rectangle
+        //draw lower rectangle
         canvas.drawRect(front2, lowerPaint);
 
-        //arrow-triangle
-        Point a = new Point(0 + offsetL1, dotOffset);
-        Point b = new Point(0 + offsetL, dotOffset - getpx(10));
-        Point c = new Point(0 + offsetL, dotOffset + getpx(10));
+        //draw arrow
+        canvas.drawPath(arrow, arrowPaint);
 
-        Path path = new Path();
-        path.setFillType(Path.FillType.EVEN_ODD);
-        path.moveTo(b.x, b.y);
-        path.lineTo(c.x, c.y);
-        path.lineTo(a.x, a.y);
-        path.close();
-
-        canvas.drawPath(path, upperPaint);
-
-        //init border points
-        Point p1 = new Point(0 + offsetL, borderWidth / 2);
-        Point p2 = new Point(getWidth() - borderWidth / 2, borderWidth / 2);
-        Point p3 = new Point(getWidth() - borderWidth / 2, heightLower + heightUpper);
-        Point p4 = new Point(0 + offsetL, heightLower + heightUpper);
-
-       // setState(false);
+        if (touched) {
+            canvas.drawPath(hl, highlightPaint);
+        }
 
         //determine colors for state
         switch (state) {
@@ -318,18 +359,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
                 downline = open;
                 dot = done;
 
-                //border
-                Path border = new Path();
-                border.moveTo(p1.x, p1.y);
-                border.lineTo(p2.x, p2.y);
-                border.lineTo(p3.x, p3.y);
-                border.lineTo(p4.x, p4.y);
-                border.lineTo(c.x, c.y);
-                border.lineTo(a.x, a.y);
-                border.lineTo(b.x, b.y);
-
-                border.close();
-
+                //draw border
                 canvas.drawPath(border, borderPaint);
                 break;
             case 3:
@@ -338,44 +368,30 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
                 dot = done;
                 break;
         }
-        //dot
+        //draw dot. dotOffset: offset from top
         canvas.drawCircle(radius, dotOffset, radius, dot);
-        //upper done
-        canvas.drawLine(radius, getpx(0), radius, dotOffset - radius - lineOffset, upline);
-        //lower done
+        //draw upper line
+        canvas.drawLine(radius, 0, radius, dotOffset - radius - lineOffset, upline);
+        // draw lower line
         canvas.drawLine(radius, dotOffset + radius + lineOffset, radius, heightLower + heightUpper + marginTop, downline);
 
-        if (touched) {
-            //highlight clicked item
-            Path hl = new Path();
-            hl.moveTo(p1.x, p1.y - borderWidth / 2);
-            hl.lineTo(p2.x + borderWidth / 2, p2.y - borderWidth / 2);
-            hl.lineTo(p3.x + borderWidth / 2, p3.y);
-            hl.lineTo(p4.x, p4.y);
-            hl.lineTo(c.x, c.y);
-            hl.lineTo(a.x, a.y);
-            hl.lineTo(b.x, b.y);
 
-            hl.close();
-
-            canvas.drawPath(hl, highlightPaint);
-        }
-
-
-        //activity text
-        //canvas.drawText(getActivity(activity), getLeft() + getpx(10) + offsetL, (front.height() / 2) + (font.getTextSize() / 2), font);
-        //subactivity text
-        canvas.drawText(getSubactivity(subactivity), textPadding + font.measureText(getActivity(activity)) + offsetL, (front.height() / 2) + (font.getTextSize() / 2), fontSubActivity);
-        //duration text
-        canvas.drawText("Duration: " + durationAsString, getWidth() - textPadding - fontDur.measureText("Duration: " + durationAsString), (front.height() / 2) + (font.getTextSize() / 2), fontDur);
-        //start text
+     //draw duration text
+        canvas.drawText("Duration: " + durationAsString, getWidth() - (int)fontDur.measureText("Duration: " + durationAsString) - textPadding, (front.height() / 2) + (font.getTextSize() / 2), fontDur);
+        //draw start text
         canvas.drawText("Start: " + starttime, textPadding + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
-        //end text
+        //draw end text
         canvas.drawText("End: " + endtime, getWidth() - textPadding - fontDur.measureText("End: " + endtime), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
 
         //draw activity text
         canvas.translate(actRect.left, actRect.top);
         sl.draw(canvas);
+
+        if(!getSubactivity(subactivity).equals("")) {
+            //draw subactivity text
+            canvas.translate(actRectSub.left, actRectSub.top);
+            slsub.draw(canvas);
+        }
 
     }
 
