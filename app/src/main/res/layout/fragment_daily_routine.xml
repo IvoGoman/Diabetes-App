@@ -34,7 +34,7 @@
                 android:id="@+id/layout_daily_routine"
                 android:orientation="vertical"
                 android:paddingRight="16dp"
-                android:paddingTop="8dp"
+                android:paddingTop="18dp"
                 android:paddingBottom="16dp"
                 android:paddingLeft="8dp">
 

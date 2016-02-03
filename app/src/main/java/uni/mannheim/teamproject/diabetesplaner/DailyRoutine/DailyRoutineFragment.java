@@ -106,20 +106,19 @@ public class DailyRoutineFragment extends Fragment {
 
         //get the layout
         linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_daily_routine);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT);
-        //params.topMargin = getpx(8);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
 
         TextView textView = (TextView) inflaterView.findViewById(R.id.daily_routine_date_view);
         Calendar cal = Calendar.getInstance();
-        textView.setText(getDayOfWeek(cal.get(Calendar.DAY_OF_WEEK)) + ", " +cal.get(Calendar.DAY_OF_MONTH)+"."+cal.get(Calendar.MONTH)+1+"."+cal.get(Calendar.YEAR));
+        textView.setText(getDayOfWeek(cal.get(Calendar.DAY_OF_WEEK)) + ", " +cal.get(Calendar.DAY_OF_MONTH)+"."+(cal.get(Calendar.MONTH)+1)+"."+cal.get(Calendar.YEAR));
 
         //create a DailyRoutineView for every list item, so for every activity in the daily routine
         for(int i=0; i<list2.size(); i++){
             DailyRoutineView drv = new DailyRoutineView(getActivity(),Integer.valueOf(list2.get(i)[0]),0,list2.get(i)[1], list2.get(i)[2]);
             linearLayout.addView(drv);
             drv.setLayoutParams(params);
-            drv.getLayoutParams().height = drv.getTotalHeight();
+            //drv.getLayoutParams().height = drv.getTotalHeight();
             items.add(drv);
         }
 

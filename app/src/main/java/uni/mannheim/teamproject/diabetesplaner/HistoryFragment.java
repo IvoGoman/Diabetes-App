@@ -91,7 +91,7 @@ public class HistoryFragment extends Fragment {
 
         final View inflaterView = inflater.inflate(R.layout.fragment_history, container, false);
         final LinearLayout linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_historic_routine);
-        final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         TextView dateView = (TextView) inflaterView.findViewById(R.id.history_date_view);
         String dateString = DateFormat.getDateInstance().format(new Date());
 
@@ -134,7 +134,7 @@ public class HistoryFragment extends Fragment {
             drv.setState(true);
             linearLayout.addView(drv);
             drv.setLayoutParams(params);
-            drv.getLayoutParams().height = drv.getTotalHeight();
+            //drv.getLayoutParams().height = drv.getTotalHeight();
             items.add(drv);
         }
     }
