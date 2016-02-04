@@ -1,10 +1,18 @@
 package uni.mannheim.teamproject.diabetesplaner.SettingsActivity;
 
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.os.Bundle;
+import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.v4.app.NotificationCompat;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -23,6 +31,34 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
 
+        //define preference for the onclick-method
+        final CheckBoxPreference pref_datacollection = (CheckBoxPreference) findPreference("pref_datacollection");
+        pref_datacollection.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                System.out.println("Test Jens"); //TODO:delete if not needed
+                CheckBoxPreference pref = (CheckBoxPreference) findPreference("checkbox_preference");
+
+                //show the notifications only if the data collection is started
+                if (pref_datacollection.isChecked()){
+                    showNotification();
+                }
+                return true;
+            }
+        });
+    }
+
+    //First Test with Notification for Data Collection
+    //TODO: Looking for other Notifications and handle them in a central and common way
+    public void showNotification() {
+        NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context
+                .NOTIFICATION_SERVICE);
+        NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getActivity())
+        //TODO:set other preferences for the notification
+                .setSmallIcon(R.drawable.side_nav_bar) //TODO:generate standard icon for the app
+                .setContentTitle("Daily Routine Planer")
+                .setContentText("Data Collection started");
+        notificationManager.notify(9999, notificationBuilder.build());
     }
 
     @Override
@@ -71,12 +107,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 }
             }
         }
-
-
-
     }
 
-
     public void onPreferenceClickListener(Preference Preference) {
+        // pref_datacollection
     }
 }
