@@ -448,7 +448,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     /**
      * returns activity as String
-     * @return
+     * @return string
      */
     public String getActivity(){
         return getActivity(activity);
