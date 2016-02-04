@@ -32,6 +32,9 @@
     <string name="pref_weight_summary">Gewicht eingeben</string>
     <string name="pref_blood_sugar_dialogtitle">Blutzuckerwert eingeben</string>
 
+    <string name="pref_weight_measurement">Gewichtseinheiten</string>
+    <string name="pref_weight_measurement_summary">Wähle eine Gewichtseinheit</string>
+
     <string name="title_activity_settings">Einstellungen</string>
     <string name="username">Max Mustermann</string>
     <string name="menu_item_share">Teilen</string>

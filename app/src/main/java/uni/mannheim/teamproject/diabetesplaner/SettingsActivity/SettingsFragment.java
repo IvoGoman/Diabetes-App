@@ -1,12 +1,8 @@
 package uni.mannheim.teamproject.diabetesplaner.SettingsActivity;
 
-import android.app.Notification;
 import android.app.NotificationManager;
-import android.app.PendingIntent;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -23,6 +19,8 @@ import uni.mannheim.teamproject.diabetesplaner.R;
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String TAG = SettingsFragment.class.getSimpleName();
+
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -41,8 +39,11 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
                 //show the notifications only if the data collection is started
                 if (pref_datacollection.isChecked()){
-                    showNotification();
+                    showNotification(1);
+                }else{
+                    showNotification(2);
                 }
+
                 return true;
             }
         });
@@ -50,15 +51,21 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     //First Test with Notification for Data Collection
     //TODO: Looking for other Notifications and handle them in a central and common way
-    public void showNotification() {
+    public void showNotification(int fall) {
         NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context
                 .NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getActivity())
         //TODO:set other preferences for the notification
                 .setSmallIcon(R.drawable.side_nav_bar) //TODO:generate standard icon for the app
                 .setContentTitle("Daily Routine Planer")
-                .setContentText("Data Collection started");
-        notificationManager.notify(9999, notificationBuilder.build());
+                .setContentText("Data Collection started")
+                .setOngoing(true);
+
+        if (fall==1){
+            notificationManager.notify(9999, notificationBuilder.build());
+        }else{
+            notificationManager.cancel(9999);
+        }
     }
 
     @Override
