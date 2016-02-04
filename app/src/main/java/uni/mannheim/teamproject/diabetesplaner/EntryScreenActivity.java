@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.AddDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
+import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.EditDialog;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsFragment;
 import uni.mannheim.teamproject.diabetesplaner.StatisticsFragment.StatisticsFragment;
@@ -144,6 +145,7 @@ public class EntryScreenActivity extends AppCompatActivity
 
                 return true;
             case R.id.delete_icon_action_bar:
+                //Get the currently selected items and removes them
                 ArrayList<DailyRoutineView> dailyRoutine = DailyRoutineFragment.getActivityList();
                 LinearLayout linearLayout = DailyRoutineFragment.getLinearLayout();
                 for(int i=0; i<dailyRoutine.size();i++){
@@ -158,9 +160,22 @@ public class EntryScreenActivity extends AppCompatActivity
                 //do sth with the delete icon
                 return true;
             case R.id.edit_icon_action_bar_routine:
+                //create an EditDialog, set the starttime and endtime to the starttime and endtime
+                //of the activity to edit
+                EditDialog editDialog = new EditDialog();
+                editDialog.setStarttime(DailyRoutineView.getSelectedActivities().get(0).getStartTime());
+                editDialog.setEndtime(DailyRoutineView.getSelectedActivities().get(0).getEndTime());
+                editDialog.setActivity(DailyRoutineView.getSelectedActivities().get(0).getActivityID()-1);
+                editDialog.show(getFragmentManager(),"editDialog");
+                return true;
+
+            case R.id.add_icon_action_bar_routine:
+                //create an AddDialog
                 AddDialog addDialog = new AddDialog();
-                addDialog.show(getFragmentManager(),"editDialog");
+                addDialog.show(getFragmentManager(),"addDialog");
+                return true;
         }
+
 
 
         return super.onOptionsItemSelected(item);
@@ -233,6 +248,8 @@ public class EntryScreenActivity extends AppCompatActivity
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
+
+            addItemRoutine.setVisible(true);
 
         } else if (id == R.id.nav_settings) {
             Toast.makeText(this, R.string.menu_item_settings, Toast.LENGTH_SHORT).show();

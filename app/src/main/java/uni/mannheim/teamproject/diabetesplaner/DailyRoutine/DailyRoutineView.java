@@ -7,7 +7,6 @@ import android.graphics.Paint;
 import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
-import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Vibrator;
 import android.support.v4.content.ContextCompat;
@@ -167,7 +166,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
         textPaint.setColor(Color.BLACK);
         textPaint.setTextSize(getpx(20));
-        textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
+        //textPaint.setTypeface(Typeface.create(Typeface.DEFAULT, Typeface.BOLD));
 
         textPaintSub.setColor(Color.BLACK);
         textPaintSub.setTextSize(getpx(14));
@@ -447,8 +446,20 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         }
     }
 
+    /**
+     * returns activity as String
+     * @return
+     */
     public String getActivity(){
         return getActivity(activity);
+    }
+
+    /**
+     * returns activity id
+     * @return
+     */
+    public int getActivityID(){
+        return activity;
     }
 
     /**
@@ -799,6 +810,14 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      */
     public static ArrayList<DailyRoutineView> getSelectedActivities(){
         return selectedActivities;
+    }
+
+    public String getStartTime(){
+        return starttime;
+    }
+
+    public String getEndTime(){
+        return endtime;
     }
 
 }

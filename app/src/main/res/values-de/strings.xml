@@ -62,4 +62,12 @@
     <string name="pref_vacation_summary">Im Urlaubsmodus werden keine Daten gesammelt und das Vorhersagemodell wird nicht angewendet.</string>
     <string name="history_choose_date">Datum auswählen:</string>
     <string name="date_in_future">Gewähltes Datum liegt in der Zukunft</string>
+    <string name="add_dialog_title">Aktivität hinzufügen</string>
+    <string name="activity">Aktivität</string>
+    <string name="subactivity">Unteraktivität</string>
+    <string name="edit">Ändern</string>
+    <string name="add">Hinzufügen</string>
+    <string name="edit_dialog_title">Aktivität ändern</string>
+    <string name="endtime">Endzeit</string>
+    <string name="starttime">Startzeit</string>
 </resources>
