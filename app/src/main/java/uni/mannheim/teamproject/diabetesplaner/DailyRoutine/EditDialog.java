@@ -11,24 +11,24 @@ import uni.mannheim.teamproject.diabetesplaner.R;
 /**
  * Created by Stefan on 31.01.2016.
  */
-public class AddDialog extends InputDialog {
+public class EditDialog extends InputDialog {
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.add_dialog_title);
+        builder.setTitle(R.string.edit_dialog_title);
 
         View view = getLayout();
 
         builder.setView(view);
 
 
-        builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // FIRE ZE MISSILES!
-                    }
-                })
+        builder.setPositiveButton(R.string.edit, new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int id) {
+                // FIRE ZE MISSILES!
+            }
+        })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog

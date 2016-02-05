@@ -1,5 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner;
 
+import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.net.Uri;
@@ -14,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -41,16 +43,11 @@ public class HistoryFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private OnFragmentInteractionListener mListener;
     private AppCompatActivity aca;
-    //    private ArrayList<String> historyList = new ArrayList<String>();
-
-
     private ArrayList<DailyRoutineView> items = new ArrayList<DailyRoutineView>();
 
     /**
@@ -94,9 +91,13 @@ public class HistoryFragment extends Fragment {
 
         final View inflaterView = inflater.inflate(R.layout.fragment_history, container, false);
         final LinearLayout linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_historic_routine);
-        final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         TextView dateView = (TextView) inflaterView.findViewById(R.id.history_date_view);
-        String dateString = DateFormat.getDateInstance().format(new Date());
+       // String dateString = DateFormat.getDateInstance().format(new Date());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        Date date = Calendar.getInstance(Locale.getDefault()).getTime();
+      String dateString = sdf.format(date);
+    //    String dateString = DateFormat.getDateInstance().format(date);
         dateView.setText(dateString);
         dateView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -136,7 +137,7 @@ public class HistoryFragment extends Fragment {
             drv.setState(true);
             linearLayout.addView(drv);
             drv.setLayoutParams(params);
-            drv.getLayoutParams().height = drv.getTotalHeight();
+            //drv.getLayoutParams().height = drv.getTotalHeight();
             items.add(drv);
         }
     }
@@ -179,6 +180,7 @@ public class HistoryFragment extends Fragment {
          void onFragmentInteraction(Uri uri);
     }
 
+    @SuppressLint("ValidFragment")
     class DatePickerFragment extends DialogFragment
             implements DatePickerDialog.OnDateSetListener {
 
@@ -190,7 +192,7 @@ public class HistoryFragment extends Fragment {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
             TextView tv = (TextView) this.getActivity().findViewById(R.id.history_date_view);
-            SimpleDateFormat simpleFormat = new SimpleDateFormat("dd.MM.yyyy", Locale.GERMANY);
+            SimpleDateFormat simpleFormat = new SimpleDateFormat("dd.MM.yyyy",Locale.getDefault());
             Date date = null;
             try {
                 date = simpleFormat.parse(tv.getText().toString());
@@ -217,14 +219,19 @@ public class HistoryFragment extends Fragment {
         public void onDateSet(DatePicker view, int year, int month, int day) {
             // Do something with the date chosen by the user
             LinearLayout oLL = (LinearLayout) this.getActivity().findViewById(R.id.layout_historic_routine);
-            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-            onDateSelected(oLL, params);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             TextView tv = (TextView) this.getActivity().findViewById(R.id.history_date_view);
             GregorianCalendar calendar = new GregorianCalendar(year, month, day);
             SimpleDateFormat simpleDate = new SimpleDateFormat();
             simpleDate.applyPattern("dd.MM.yyyy");
-
-            tv.setText(simpleDate.format(calendar.getTime()));
+            Date dateToday = Calendar.getInstance(Locale.getDefault()).getTime();
+            Date dateSelected = calendar.getTime();
+            if (dateToday.after(dateSelected)) {
+                onDateSelected(oLL, params);
+                tv.setText(simpleDate.format(calendar.getTime()));
+            }else{
+                Toast.makeText(getContext(), R.string.date_in_future, Toast.LENGTH_SHORT).show();
+            }
         }
     }
 }

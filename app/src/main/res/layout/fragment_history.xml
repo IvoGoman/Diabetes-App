@@ -4,37 +4,38 @@
     android:layout_height="match_parent"
     tools:context="uni.mannheim.teamproject.diabetesplaner.HistoryFragment">
 
-
-    <!--Spinner
-        android:id="@+id/spinner_history"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@android:drawable/btn_dropdown"
-        android:spinnerMode="dropdown" /-->
     <LinearLayout
         android:id="@+id/history_date_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content">
-
-        <TextView
-            android:id="@+id/history_date_view"
-            android:layout_width="match_parent"
+        <!--TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:textSize="28sp"
+            android:labelFor="@+id/history_date_view"
+            android:text="@string/history_choose_date"
+            android:textSize="18sp"
             android:textStyle="bold"
             android:paddingTop="5dp"
             android:paddingBottom="5dp"
-
-            />
-        <!--DatePicker
+            android:paddingLeft="5dp"
+            android:paddingRight="2dp"
+            android:textColor="@color/textColorPrimary"
+            android:background="@color/colorPrimary"
+            /-->
+        <TextView
+            android:id="@+id/history_date_view"
+            android:gravity="center"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/history_date_picker"
-            android:datePickerMode="spinner"
-            android:calendarViewShown="false"
-
-            ></DatePicker-->
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:drawableLeft="@android:drawable/ic_menu_my_calendar"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
+            android:textColor="@color/textColorPrimary"
+            android:background="@color/colorPrimary"
+            />
 
     </LinearLayout>
 

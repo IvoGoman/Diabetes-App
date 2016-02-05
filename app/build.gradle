@@ -2,7 +2,7 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion "23.0.1"
+    buildToolsVersion '23.0.1'
 
     defaultConfig {
         applicationId "uni.mannheim.teamproject.diabetesplaner"
@@ -29,4 +29,5 @@ dependencies {
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
     compile files('src/main/java/libr/opencsv-3.6.jar')
     provided files('src/main/java/libr/rapidminer-RapidProM-2.0.2.jar')
+    compile files('libs/mpandroidchartlibrary-2-1-6.jar')
 }

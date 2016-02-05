@@ -15,6 +15,10 @@ import android.widget.TextView;
 import java.util.ArrayList;
 
 /**
+ * Created by Stefan
+ */
+
+/**
  * A fragment representing a list of Items.
  * <p/>
  * Large screen devices (such as tablets) are supported by replacing the ListView

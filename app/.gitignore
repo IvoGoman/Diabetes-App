@@ -1,3 +1,5 @@
+/proguard-rules.pro
+/build.gradle
 /build
 # Built application files
 /*/build/
