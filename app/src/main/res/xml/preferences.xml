@@ -73,6 +73,14 @@
         android:title="@string/pref_other"
         android:key="pref_key_other">
 
+        <ListPreference
+            android:entries="@array/weightOptions"
+            android:entryValues="@array/weightOptions"
+            android:key="pref_weightOptions"
+            android:summary="@string/pref_weight_measurement_summary"
+            android:title="@string/pref_weight_measurement" />
+            //TODO: Saving for this point is missing
+
         <uni.mannheim.teamproject.diabetesplaner.SettingsActivity.MyDialogPreference
             android:key="pref_key_help"
             android:title="@string/pref_help"
