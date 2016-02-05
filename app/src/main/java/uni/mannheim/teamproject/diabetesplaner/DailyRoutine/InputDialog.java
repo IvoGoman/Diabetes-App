@@ -18,6 +18,9 @@ public class InputDialog extends DialogFragment {
     private String starttime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + ":" + Calendar.getInstance().get(Calendar.MINUTE);
     private String endtime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + ":" + Calendar.getInstance().get(Calendar.MINUTE);
     private int activity = 0;
+    private TimePickerFragment timePickerFragmentStart;
+    private TimePickerFragment timePickerFragmentEnd;
+
 
     /**
      * creates the layout and returns the view object that contains it
@@ -44,9 +47,10 @@ public class InputDialog extends DialogFragment {
         startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TimePickerFragment timePickerFragment = new TimePickerFragment();
-                timePickerFragment.setButton(startTimeButton);
-                timePickerFragment.show(getFragmentManager(), "timePicker");
+                timePickerFragmentStart = new TimePickerFragment();
+                timePickerFragmentStart.setButton(startTimeButton);
+                timePickerFragmentStart.setTime(starttime);
+                timePickerFragmentStart.show(getFragmentManager(), "timePicker");
             }
         });
 
@@ -56,9 +60,11 @@ public class InputDialog extends DialogFragment {
         endTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TimePickerFragment timePickerFragment = new TimePickerFragment();
-                timePickerFragment.setButton(endTimeButton);
-                timePickerFragment.show(getFragmentManager(), "timePicker");
+                timePickerFragmentEnd = new TimePickerFragment();
+                timePickerFragmentEnd.setButton(endTimeButton);
+                timePickerFragmentEnd.setTime(endtime);
+                timePickerFragmentEnd.show(getFragmentManager(), "timePicker");
+
             }
         });
 
@@ -97,7 +103,27 @@ public class InputDialog extends DialogFragment {
         this.starttime = starttime;
     }
 
+    /**
+     * set the activity of the input dialog
+     * @param activity activity id
+     */
     public void setActivity(int activity){
         this.activity = activity;
+    }
+
+    /**
+     * returns the TimePickerFragment
+     * @return
+     */
+    public TimePickerFragment getTimePickerFragmentStart(){
+        return timePickerFragmentStart;
+    }
+
+    /**
+     * returns the TimePickerFragment
+     * @return
+     */
+    public TimePickerFragment getTimePickerFragmentEnd(){
+        return timePickerFragmentStart;
     }
 }
