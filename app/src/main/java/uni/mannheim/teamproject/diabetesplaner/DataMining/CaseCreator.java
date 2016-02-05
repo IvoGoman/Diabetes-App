@@ -1,0 +1,216 @@
+package uni.mannheim.teamproject.diabetesplaner.DataMining;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
+/**
+ * Created by Stefan
+ */
+public class CaseCreator {
+
+	private ArrayList<String[]> list2 = new ArrayList<String[]>();
+	private int starttimeIndex = 0;
+	private int endtimeIndex = 0;
+
+	/**
+	 * creates the cases and splits an activity going over two days
+	 * @param list that contains event logs
+	 */
+	private void createCases(ArrayList<String[]> list) {
+		int caseCounter = 1;
+		int eventID = 1;
+
+		Calendar calActual = Calendar.getInstance();
+		Calendar calPrev = Calendar.getInstance();
+		
+		
+		// finds 00:00
+		for (int i = 0; i < list.size(); i++) {
+			String[] tmp = list.get(i);
+			if (i == 0) {			
+				for (int j = 0; j < tmp.length; j++) {
+	
+						if (tmp[j].equals("starttime")) {
+							starttimeIndex = j;
+						} else if (tmp[j].equals("endtime")) {
+							endtimeIndex = j;
+						}
+					}
+				list2.add(insertCase(list.get(i), 0, true));
+			}else if (i == 1) {
+				//init date with starttime of first entry
+				Date date = new Date(Long.parseLong(tmp[starttimeIndex]));
+				calActual.setTime(date);
+				
+				list2.add(insertCase(list.get(i),caseCounter, false));
+				list2.get(list2.size()-1)[1]=String.valueOf(eventID);
+				eventID++;
+			} else{
+				calPrev.setTime(calActual.getTime());
+				//init starttime of current activity
+				Date date = new Date(Long.parseLong(tmp[starttimeIndex]));
+				calActual.setTime(date);
+								
+				int dayActual = calActual.get(Calendar.DAY_OF_MONTH);
+				int dayPrev = calPrev.get(Calendar.DAY_OF_MONTH);
+
+				
+				System.out.println("Previous: " + calPrev.getTime() + " Actual: " + calActual.getTime());
+				//if days follow each other
+				if (dayActual == dayPrev+1) {					
+					//remove last activity in list, which is the last activity of the day. 
+					//It gets split and added in the next steps.
+					list2.remove(list2.size()-1);	
+					eventID--;
+					
+					//add last activity of day
+					String[] end = editEndOfDay(list.get(i-1), calPrev, starttimeIndex, endtimeIndex);			
+					String[] copyEnd = new String[end.length];
+					for(int k=0; k<copyEnd.length; k++){
+						copyEnd[k] = end[k];
+					}
+					list2.add(insertCase(copyEnd, caseCounter, false));	
+					list2.get(list2.size()-1)[1]=String.valueOf(eventID);
+					eventID++;
+					
+					caseCounter++;
+					
+					//add first activity of day
+					String[] begin = editBeginOfDay(list.get(i-1), calActual, starttimeIndex, endtimeIndex);		
+					list2.add(insertCase(begin, caseCounter, false));
+					list2.get(list2.size()-1)[1]=String.valueOf(eventID);
+					eventID++;
+
+				}
+				list2.add(insertCase(list.get(i),caseCounter, false));
+				list2.get(list2.size()-1)[1]=String.valueOf(eventID);
+				eventID++;
+			}
+		}
+	}
+	
+	/**
+	 * prints a single activity log entry
+	 * @param activity
+	 */
+	private void printActivity(String[] activity){
+		for(int j=0; j<activity.length; j++){
+			if(j==0){
+				System.out.println("CaseID: " + activity[j] + " ");
+			}else if(j==1){
+				System.out.println("EventID: " + activity[j] + " ");
+			}else if(j==2){
+				System.out.println("ActivityID: " + activity[j] + " ");
+			}else if(j==3){
+				System.out.println("SubactivityID: " + activity[j] + " ");
+			}else if(j==4){
+				Date date = new Date(Long.parseLong(activity[j]));
+				System.out.println("Starttime: " + date);
+			}else if(j==5){
+				Date date = new Date(Long.parseLong(activity[j]));
+				System.out.println("Endtime: " + date);					
+			}
+		}
+	}
+	
+	/**
+	 * Makes the last activity log of the day end in 23:59:59 and returns the activity log entry
+	 * @param calPrev
+	 * @param starttimeIndex
+	 * @param endtimeIndex
+	 * @return last activity of day edited
+	 */
+	private String[] editEndOfDay(String[] lastActivityPreviousDay, Calendar calPrev, int starttimeIndex, int endtimeIndex){
+		//change endtime of last activity of day
+		Calendar last = Calendar.getInstance();
+		last.setTime(calPrev.getTime());
+		last.set(last.get(Calendar.YEAR), last.get(Calendar.MONTH), last.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
+		String[] endOfDay = lastActivityPreviousDay;
+		endOfDay[endtimeIndex] = String.valueOf(last.getTimeInMillis());
+		
+		return endOfDay;
+	}
+	
+	/**
+	 * Creates the activity for the beginning of the day 
+	 * @param calActual
+	 * @param starttimeIndex
+	 * @param endtimeIndex
+	 * @return first activity of the day
+	 */
+	private String[] editBeginOfDay(String[] lastActiviyPreviousDay, Calendar calActual, int starttimeIndex, int endtimeIndex){
+		//copy last activity and let it start at 00:00
+		Calendar startNextEvent = Calendar.getInstance();
+		startNextEvent.setTime(calActual.getTime());
+		
+		Calendar startBeginOfDay = Calendar.getInstance();		
+		Calendar endBeginOfDay = Calendar.getInstance();
+		
+		startBeginOfDay.set(startNextEvent.get(Calendar.YEAR), startNextEvent.get(Calendar.MONTH), startNextEvent.get(Calendar.DAY_OF_MONTH), 00, 00, 00);
+		endBeginOfDay.set(startNextEvent.get(Calendar.YEAR), startNextEvent.get(Calendar.MONTH), startNextEvent.get(Calendar.DAY_OF_MONTH), startNextEvent.get(Calendar.HOUR), startNextEvent.get(Calendar.MINUTE), startNextEvent.get(Calendar.SECOND)-1);					
+		String[] beginOfDay = lastActiviyPreviousDay;
+		beginOfDay[starttimeIndex] = String.valueOf(startBeginOfDay.getTimeInMillis());
+		beginOfDay[endtimeIndex] = String.valueOf(endBeginOfDay.getTimeInMillis());
+		
+		return beginOfDay;
+	}
+	
+	/**
+	 * inserts caseID into a single event log entry
+	 * @param activity
+	 * @param caseID
+	 */
+	private String[] insertCase(String[] activity, int caseID, boolean initial){
+		String[] withCase = new String[activity.length+1];
+		for(int i=0; i<withCase.length; i++){
+			if(i==0){
+				if(initial){
+					withCase[i] = "caseID";
+				}else{
+					withCase[i] = String.valueOf(caseID);
+				}
+			}else{
+				withCase[i] = activity[i-1];
+			}
+		}
+		
+		return withCase;
+	}
+	
+	/**
+	 * It splits the activity into days and creates a unique case id for every day.
+	 * @param source Path to an activity log in csv format
+	 * @return ArrayList that contains the activity list divided into cases
+	 */
+	public ArrayList<String[]> getActivityListWithCases(String source){
+		ArrayList<String[]> list = Util.read(source);
+		createCases(list);
+		return list2;
+	}
+	
+	/**
+	 * It splits the activity into days and creates a unique case id for every day.
+	 * @param source Path to an activity log in csv format
+	 * @param target Path for saving the resulting csv file
+	 */
+	public void saveActivityWithCases(String source, String target){
+		ArrayList<String[]> list = Util.read(source);
+
+		createCases(list);
+		
+		for(int i=1; i<list2.size();i++){
+			printActivity(list2.get(i));
+			System.out.println();
+		}
+		
+		Util.write(list2,target);
+	}
+	
+	public Integer getStarttimeIndexInListWithCases(){
+		return starttimeIndex+1;
+	}
+	
+	public Integer getEndtimeIndexInListWithCases(){
+		return endtimeIndex+1;
+	}
+}

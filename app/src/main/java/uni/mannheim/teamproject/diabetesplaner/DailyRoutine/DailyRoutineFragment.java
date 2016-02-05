@@ -22,6 +22,9 @@ import java.util.TimerTask;
 import uni.mannheim.teamproject.diabetesplaner.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
+/**
+ * Created by Stefan
+ */
 
 /**
  * A simple {@link Fragment} subclass.

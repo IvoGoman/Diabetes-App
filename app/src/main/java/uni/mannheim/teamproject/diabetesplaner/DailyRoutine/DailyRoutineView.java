@@ -26,7 +26,9 @@ import java.util.Calendar;
 
 import uni.mannheim.teamproject.diabetesplaner.R;
 
-
+/**
+ * Created by Stefan
+ */
 public class DailyRoutineView extends View implements View.OnLongClickListener, View.OnClickListener, View.OnTouchListener {
 
     public static final String TAG = DailyRoutineView.class.getSimpleName();
