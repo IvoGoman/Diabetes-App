@@ -90,9 +90,16 @@ public class ActivityMeasurementFragment extends Fragment {
         tabLayout = (TabLayout) inflaterView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
+        
         // Inflate the layout for this fragment
         return inflaterView;
     }
+
+    String fromActivity = "";
+    public void setData(String u){
+        fromActivity = u;
+    }
+
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(aca.getSupportFragmentManager());
         adapter.addFragment(new ActivityFragment(), "Activity");

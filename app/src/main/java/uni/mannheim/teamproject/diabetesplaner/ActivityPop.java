@@ -1,9 +1,11 @@
 package uni.mannheim.teamproject.diabetesplaner;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.app.Activity;
 
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
@@ -27,17 +29,23 @@ public class ActivityPop extends AppCompatActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.pop_activity_window);
+
+        // adjust the format of the popup
         DisplayMetrics dm= new DisplayMetrics();
         getWindowManager().getDefaultDisplay().getMetrics(dm);
         int width = dm.widthPixels;
         int height = dm.heightPixels;
+        getWindow().setLayout((int) (width * .8), (int) (height * .4));
 
-        getWindow().setLayout((int) (width * .8), (int) (height * .8));
+        //view the list on to the pop up
+        populateListView();
 
-
+        //set action bar title
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setTitle("Activities");
     }
 
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+   /* public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View inflaterView = inflater.inflate(R.layout.pop_activity_window, container, false);
@@ -48,6 +56,7 @@ public class ActivityPop extends AppCompatActivity {
                 "Sports",
                 "Socializing",
         };
+
       /*  List<String> activityList = new ArrayList<String>(Arrays.asList(activities));
         final ArrayAdapter<String> mActivityAdapter =
                 new ArrayAdapter<String>(
@@ -67,7 +76,35 @@ public class ActivityPop extends AppCompatActivity {
 
             }
         });*/
-        return inflaterView;
+     //   return inflaterView;
+
+   // }
+
+    private void populateListView(){
+        final String[] activities = {
+                "Jogging",
+                "Eating",
+                "Sports",
+                "Socializing"
+        };
+        final ArrayAdapter<String> mActivityAdapter =
+                new ArrayAdapter<String>(
+                        this,
+                        R.layout.activity_layout,
+                        activities);
+        ListView listView = (ListView) findViewById(R.id.ActivitylistView);
+        listView.setAdapter(mActivityAdapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                String activityItem= mActivityAdapter.getItem(position);
+               // Toast.makeText(ActivityPop.this, "activity added", Toast.LENGTH_SHORT).show();
+                ActivityMeasurementFragment fragment = (ActivityMeasurementFragment) getSupportFragmentManager().findFragmentById(R.id.listView);
+                fragment.setData(activityItem);
+
+            }
+        });
 
     }
 
