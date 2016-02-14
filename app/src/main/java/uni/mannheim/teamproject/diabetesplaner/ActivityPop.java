@@ -25,6 +25,9 @@ import java.util.List;
  */
 public class ActivityPop extends AppCompatActivity {
 
+    String activityItem;
+    ListView listView;
+    public ArrayAdapter<String> mActivityAdapter;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -44,6 +47,7 @@ public class ActivityPop extends AppCompatActivity {
         ActionBar actionBar = getSupportActionBar();
         actionBar.setTitle("Activities");
     }
+
 
    /* public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -87,26 +91,56 @@ public class ActivityPop extends AppCompatActivity {
                 "Sports",
                 "Socializing"
         };
-        final ArrayAdapter<String> mActivityAdapter =
+         mActivityAdapter =
                 new ArrayAdapter<String>(
                         this,
                         R.layout.activity_layout,
                         activities);
-        ListView listView = (ListView) findViewById(R.id.ActivitylistView);
+        listView = (ListView) findViewById(R.id.ActivitylistView);
         listView.setAdapter(mActivityAdapter);
 
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                String activityItem= mActivityAdapter.getItem(position);
+                 activityItem= mActivityAdapter.getItem(position);
                // Toast.makeText(ActivityPop.this, "activity added", Toast.LENGTH_SHORT).show();
-                ActivityMeasurementFragment fragment = (ActivityMeasurementFragment) getSupportFragmentManager().findFragmentById(R.id.listView);
-                fragment.setData(activityItem);
-
-            }
+                Bundle bundle=new Bundle();
+                bundle.putString("activityItem", activityItem);
+                //set Fragmentclass Arguments
+                ActivityFragment fragobj=new ActivityFragment();
+                fragobj.setArguments(bundle);
+               }
         });
 
     }
+
+    /*public String DoSomething() {
+        final String[] activities = {
+                "Jogging",
+                "Eating",
+                "Sports",
+                "Socializing"
+        };
+        mActivityAdapter =
+                new ArrayAdapter<String>(
+                        this,
+                        R.layout.activity_layout,
+                        activities);
+        listView = (ListView) findViewById(R.id.ActivitylistView);
+        listView.setAdapter(mActivityAdapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
+                activityItem= mActivityAdapter.getItem(position);
+                // Toast.makeText(ActivityPop.this, "activity added", Toast.LENGTH_SHORT).show();
+            }
+        });
+        return activityItem;
+
+    }*/
+
+
+
 
 
 
