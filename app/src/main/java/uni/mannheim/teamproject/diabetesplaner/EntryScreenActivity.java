@@ -144,6 +144,7 @@ public class EntryScreenActivity extends AppCompatActivity
                 ActivityInputFragment.addListItem(mAdapter);
 
                 return true;
+
             case R.id.delete_icon_action_bar:
                 //Get the currently selected items and removes them
                 ArrayList<DailyRoutineView> dailyRoutine = DailyRoutineFragment.getActivityList();
