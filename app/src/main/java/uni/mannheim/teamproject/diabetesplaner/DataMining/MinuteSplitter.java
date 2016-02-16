@@ -55,6 +55,7 @@ public class MinuteSplitter {
 					}
 				}
 				listFinal.add(Util.toArray(tmp));
+
 			}else{
 				Timestamp starttime = new Timestamp(Long.parseLong(list.get(i)[starttimeIndex]));
 				Timestamp endtime = new Timestamp(Long.parseLong(list.get(i)[endtimeIndex]));
