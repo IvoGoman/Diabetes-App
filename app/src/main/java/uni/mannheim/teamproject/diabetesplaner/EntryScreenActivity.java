@@ -151,6 +151,7 @@ public class EntryScreenActivity extends AppCompatActivity
                 LinearLayout linearLayout = DailyRoutineFragment.getLinearLayout();
                 for(int i=0; i<dailyRoutine.size();i++){
                     if(dailyRoutine.get(i).isSelected()){
+                        DailyRoutineView.setSelectable(false);
                         DailyRoutineView.getSelectedActivities().remove(dailyRoutine.get(i));
                         DailyRoutineView.setActionBarItems();
                         linearLayout.removeView(dailyRoutine.get(i));
