@@ -6,7 +6,12 @@ import com.opencsv.CSVWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created by Stefan
  * Class with utility functions
@@ -14,13 +19,81 @@ import java.util.ArrayList;
 public class Util {
 
 	/**
-	 * converts a ArrayList<String> to String array
+	 * converts an ArrayList<String> to String array
 	 * @param tmpList ArrayList<String>
 	 * @return String[]
 	 */
 	public static String[] toArray(ArrayList<String> tmpList){
 		String[] stockArr = new String[tmpList.size()];
 		return tmpList.toArray(stockArr);
+	}
+
+	/**
+	 * converts a timestamp String to a Calendar instance
+	 * @param timestamp as String
+	 * @return Calendar object
+	 */
+	public static Calendar getCalendar(String timestamp){
+		Date date = new Date(Long.parseLong(timestamp));
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		return cal;
+	}
+
+	/**
+	 * converts a timestamp String to a Date instance
+	 * @param timestamp as String
+	 * @return Date object
+	 */
+	public static Date getDate(String timestamp){
+		Date date = new Date(Long.parseLong(timestamp));
+		return date;
+	}
+
+	/**
+	 * writes a ArrayList into another ArrayList
+	 * @param source ArrayList
+	 * @param dest ArrayList
+	 */
+	public static void writeListToList(ArrayList<String[]> source, ArrayList<String[]> dest){
+		dest.clear();
+		for(int i=0; i<source.size(); i++){
+			dest.add(source.get(i));
+		}
+	}
+
+	/**
+	 * converts a string time into a timestamp
+	 * @param time
+	 * @return
+	 */
+	public static long stringToTimestamp(String time){
+		SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy");
+		Date d = null;
+		try {
+			d = sdf.parse(time);
+		} catch (ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		Calendar c = Calendar.getInstance();
+		c.setTime(d);
+		long time2 = c.getTimeInMillis()/1000;
+		return time2;
+	}
+
+	/**
+	 * converts a String[] to an ArrayList<String>
+	 * @param array String[]
+	 * @return ArrayList<String>
+	 */
+	public static ArrayList<String> toArrayList(String[] array){
+		ArrayList<String> list = new ArrayList<>();
+		for(int i=0; i<array.length; i++){
+			list.add(array[i]);
+		}
+		return list;
 	}
 
 	/**
@@ -103,7 +176,79 @@ public class Util {
 	}
 
 	/**
-	 * prints a String[]
+	 * creates a test data sheet with attributes "minuteOfDay" and "dayOfWeek"
+	 * @param dest destination path
+	 * @param dayOfWeek actual day
+	 */
+	public static void createTestData(String dest, int dayOfWeek){
+		ArrayList<String[]> list = new ArrayList<>();
+		//init first line
+		String[] firstLine = new String[2];
+		firstLine[0] = "minuteOfDay";
+		firstLine[1] = "dayOfWeek";
+		list.add(firstLine);
+
+		for(int i=0; i<1440; i++){
+			String[] tmp = new String[2];
+			tmp[0] = String.valueOf(i);
+			tmp[1] = String.valueOf(dayOfWeek);
+			list.add(tmp);
+		}
+		write(list, dest);
+	}
+
+	/**
+	 * finds column that is called "starttime"
+	 * @param list
+	 * @return
+	 */
+	public static Integer getStartTimeIndex(ArrayList<String[]> list){
+		for(int i=0; i<list.get(0).length; i++){
+			if(list.get(0)[i].equals("starttime")){
+				return i;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * finds column that is called "endtime"
+	 * @param list
+	 * @return
+	 */
+	public static Integer getEndTimeIndex(ArrayList<String[]> list){
+		for(int i=0; i<list.get(0).length; i++){
+			if(list.get(0)[i].equals("endtime")){
+				return i;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * prints a csv file and converts the start and end date from a timestamp to a readable date
+	 * @param list
+	 */
+	public static void printList(ArrayList<String[]> list){
+		int startIndex = getStartTimeIndex(list);
+		int endIndex = getEndTimeIndex(list);
+
+		for(int i=1; i<list.size(); i++){
+			for(int j=0; j<list.get(i).length; j++){
+				String name = list.get(0)[j];
+				String cell = list.get(i)[j];
+				if(j==startIndex || j== endIndex){
+					System.out.println(name + ": " + getDate(cell));
+				}else {
+					System.out.println(name + ": " + cell);
+				}
+			}
+			System.out.println();
+		}
+	}
+
+	/**
+	 * prints the final list with the model
 	 * @param list
 	 */
 	public static void print(ArrayList<String[]> list){
