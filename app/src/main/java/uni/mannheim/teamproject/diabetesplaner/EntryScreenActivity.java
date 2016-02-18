@@ -144,12 +144,14 @@ public class EntryScreenActivity extends AppCompatActivity
                 ActivityInputFragment.addListItem(mAdapter);
 
                 return true;
+
             case R.id.delete_icon_action_bar:
                 //Get the currently selected items and removes them
                 ArrayList<DailyRoutineView> dailyRoutine = DailyRoutineFragment.getActivityList();
                 LinearLayout linearLayout = DailyRoutineFragment.getLinearLayout();
                 for(int i=0; i<dailyRoutine.size();i++){
                     if(dailyRoutine.get(i).isSelected()){
+                        DailyRoutineView.setSelectable(false);
                         DailyRoutineView.getSelectedActivities().remove(dailyRoutine.get(i));
                         DailyRoutineView.setActionBarItems();
                         linearLayout.removeView(dailyRoutine.get(i));

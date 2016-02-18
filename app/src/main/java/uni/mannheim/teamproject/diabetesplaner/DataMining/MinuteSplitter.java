@@ -1,11 +1,9 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining;
 
 import java.sql.Timestamp;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 
 /**
  * Created by Stefan
@@ -20,13 +18,25 @@ public class MinuteSplitter {
 	/**
 	 * takes an eventlog and splits it into minutes
 	 * @param list list with each row in the csv file as String array and devided into cases
-	 * @param starttimeIndex index in the string array of the starttime
-	 * @param endtimeIndex index in the string array of the endtime
 	 */
-	public MinuteSplitter(ArrayList<String[]> list, int starttimeIndex, int endtimeIndex){
+	public MinuteSplitter(ArrayList<String[]> list){
 		this.list = list;
-		this.starttimeIndex = starttimeIndex;
-		this.endtimeIndex = endtimeIndex;
+		initStartAndEndtimeIndex(list.get(0));
+	}
+
+	/**
+	 * inits the indexes of start and endtime
+	 * @param array first line of csv file
+	 */
+	private void initStartAndEndtimeIndex(String[]array){
+		for (int j = 0; j < array.length; j++) {
+
+			if (array[j].equals("starttime")) {
+				starttimeIndex = j;
+			} else if (array[j].equals("endtime")) {
+				endtimeIndex = j;
+			}
+		}
 	}
 
 	private void convertToMinutes(){
@@ -55,13 +65,16 @@ public class MinuteSplitter {
 					}
 				}
 				listFinal.add(Util.toArray(tmp));
+
+
 			}else{
 				Timestamp starttime = new Timestamp(Long.parseLong(list.get(i)[starttimeIndex]));
 				Timestamp endtime = new Timestamp(Long.parseLong(list.get(i)[endtimeIndex]));
 				long iterations = (endtime.getTime()-starttime.getTime())/1000/60;
-				System.out.println(starttime + " " + endtime + " " + iterations);
+				//System.out.println(starttime + " " + endtime + " " + iterations);
 				
 				for(int j=0; j<iterations; j++){
+					//list for minutes
 					ArrayList<String> tmp = new ArrayList<String>();
 					for(int k=0; k<list.get(i).length; k++){
 						if(!(k == endtimeIndex)){
@@ -73,19 +86,20 @@ public class MinuteSplitter {
 								Calendar cal = Calendar.getInstance();
 								cal.setTime(timestamp);
 								int nrOfMinute = cal.get(Calendar.MINUTE)+Integer.parseInt(srg)*60;
-								System.out.println(cal.get(Calendar.MINUTE) + " " + cal.get(Calendar.HOUR));
-								System.out.println(timestamp);
+								//System.out.println(cal.get(Calendar.MINUTE) + " " + cal.get(Calendar.HOUR));
+								//System.out.println(timestamp);
 								tmp.add(String.valueOf(nrOfMinute));
 							}else{
 								tmp.add(list.get(i)[k]);
 							}
 						}
 					}
-					printActivity(Util.toArray(tmp));
+					//printActivity(Util.toArray(tmp));
 					listFinal.add(Util.toArray(tmp));
 				}
 			}
 		}
+		Util.writeListToList(listFinal, list);
 	}
 
 	/**
@@ -116,26 +130,5 @@ public class MinuteSplitter {
 				System.out.println("Starttime: " + activity[j]);
 			}
 		}
-	}
-
-	/**
-	 * converts a string time into a timestamp
-	 * @param time
-	 * @return
-	 */
-	private long stringToTimestamp(String time){
-	    SimpleDateFormat sdf = new SimpleDateFormat("EEE MMM dd kk:mm:ss z yyyy");
-	    Date d = null;
-		try {
-			d = sdf.parse(time);
-		} catch (ParseException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-	    Calendar c = Calendar.getInstance();
-	    c.setTime(d);
-	    long time2 = c.getTimeInMillis()/1000;
-	    return time2;
 	}
 }

@@ -15,9 +15,14 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+
+import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -44,6 +49,8 @@ public class ActivityMeasurementFragment extends Fragment {
     private AppCompatActivity aca;
     private static AbsListView mListView;
     private static View view;
+
+    private static ArrayList<String> activityList = new ArrayList<String>();
 
     /**
      * Use this factory method to create a new instance of
@@ -79,6 +86,7 @@ public class ActivityMeasurementFragment extends Fragment {
         aca.getSupportActionBar().setTitle(R.string.menu_item_activity_measurement);
     }
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -90,9 +98,12 @@ public class ActivityMeasurementFragment extends Fragment {
         tabLayout = (TabLayout) inflaterView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
+
+
         // Inflate the layout for this fragment
         return inflaterView;
     }
+
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(aca.getSupportFragmentManager());
         adapter.addFragment(new ActivityFragment(), "Activity");
