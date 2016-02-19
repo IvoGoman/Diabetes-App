@@ -26,6 +26,14 @@ public class EditDialog extends InputDialog {
 
         builder.setPositiveButton(R.string.edit, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
+                //TODODODODODODO
+                String starttime = String.valueOf(getStarttimeButton().getText());
+                String endtime = String.valueOf(getEndtimeButton().getText());
+                int activity = getChosenActivity();
+                DailyRoutineView.getSelectedActivities().get(0).setStarttime(starttime);
+                DailyRoutineView.getSelectedActivities().get(0).setEndtime(endtime);
+                DailyRoutineView.getSelectedActivities().get(0).setActivity(activity);
+
                 // FIRE ZE MISSILES!
             }
         })

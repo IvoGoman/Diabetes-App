@@ -683,11 +683,13 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     @Override
     public boolean onLongClick(View v) {
         //makes the items selectable
+        //TODO setActionBarItems does not work because no items selected here (get selected in onTouch)
         if(!selectable) {
             vibrate(this.context, 500);
+            selectable = true;
             setActionBarItems();
+            invalidate();
         }
-        selectable = true;
 
         return true;
     }
@@ -758,14 +760,14 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * depending on the selected activities
      */
     public static void setActionBarItems() {
-        if(selectedActivities.size()<1){
-            DailyRoutineFragment.setAddItemVisible(true);
-            DailyRoutineFragment.setEditIconVisible(false);
-            DailyRoutineFragment.setDeleteIconVisible(false);
-        }else if(selectedActivities.size()==1) {
+        if(selectedActivities.size()==1 || (selectedActivities.size()==0 && selectable)) {
             DailyRoutineFragment.setAddItemVisible(false);
             DailyRoutineFragment.setEditIconVisible(true);
             DailyRoutineFragment.setDeleteIconVisible(true);
+        }else if(selectedActivities.size()<1){
+            DailyRoutineFragment.setAddItemVisible(true);
+            DailyRoutineFragment.setEditIconVisible(false);
+            DailyRoutineFragment.setDeleteIconVisible(false);
         }else if(selectedActivities.size()>1){
             DailyRoutineFragment.setAddItemVisible(false);
             DailyRoutineFragment.setEditIconVisible(false);
@@ -818,8 +820,19 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         return starttime;
     }
 
+    public void setStarttime(String starttime){
+        this.starttime = starttime;
+    }
+
     public String getEndTime(){
         return endtime;
     }
 
+    public void setEndtime(String endtime){
+        this.endtime = endtime;
+    }
+
+    public void setActivity(int activity){
+        this.activity = activity;
+    }
 }

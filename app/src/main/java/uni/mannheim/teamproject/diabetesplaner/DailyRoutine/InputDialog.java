@@ -20,6 +20,8 @@ public class InputDialog extends DialogFragment {
     private int activity = 0;
     private TimePickerFragment timePickerFragmentStart;
     private TimePickerFragment timePickerFragmentEnd;
+    private Button startTimeButton;
+    private Button endTimeButton;
 
 
     /**
@@ -42,7 +44,7 @@ public class InputDialog extends DialogFragment {
         spinner.setSelection(activity);
 
         //button for starttime TimePicker
-        final Button startTimeButton = (Button) v.findViewById(R.id.start_button);
+        startTimeButton = (Button) v.findViewById(R.id.start_button);
         startTimeButton.setText(getStarttime());
         startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -55,7 +57,7 @@ public class InputDialog extends DialogFragment {
         });
 
         //button for endtime TimePicker
-        final Button endTimeButton = (Button) v.findViewById(R.id.end_button);
+        endTimeButton = (Button) v.findViewById(R.id.end_button);
         endTimeButton.setText(getEndtime());
         endTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -111,6 +113,10 @@ public class InputDialog extends DialogFragment {
         this.activity = activity;
     }
 
+    public int getChosenActivity(){
+        return activity;
+    }
+
     /**
      * returns the TimePickerFragment
      * @return
@@ -125,5 +131,13 @@ public class InputDialog extends DialogFragment {
      */
     public TimePickerFragment getTimePickerFragmentEnd(){
         return timePickerFragmentStart;
+    }
+
+    public Button getEndtimeButton(){
+        return endTimeButton;
+    }
+
+    public Button getStarttimeButton(){
+        return startTimeButton;
     }
 }

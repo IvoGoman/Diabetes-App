@@ -8,15 +8,42 @@ import java.util.Date;
  */
 public class CaseCreator {
 
-	private ArrayList<String[]> list2 = new ArrayList<String[]>();
 	private int starttimeIndex = 0;
 	private int endtimeIndex = 0;
+	private ArrayList<String[]> list;
+
+	/**
+	 * Constructor
+	 * @param list CSV file as ArrayList<String[]>
+	 */
+	public CaseCreator(ArrayList<String[]> list){
+		this.list = list;
+	}
+
+	/**
+	 * inits the indexes of start and endtime
+	 * @param array first line of csv file
+	 */
+	private void initStartAndEndtimeIndex(String[]array){
+		for (int j = 0; j < array.length; j++) {
+
+			if (array[j].equals("starttime")) {
+				starttimeIndex = j;
+			} else if (array[j].equals("endtime")) {
+				endtimeIndex = j;
+			}
+		}
+	}
 
 	/**
 	 * creates the cases and splits an activity going over two days
-	 * @param list that contains event logs
+	 * TODO bug: does not work from last to first day of two years
+	 * does not handle logging mistakes like an activity that goes accidental over many days
+	 * or a break of some days!
 	 */
-	private void createCases(ArrayList<String[]> list) {
+	public void createCases() {
+		ArrayList<String[]> list2 = new ArrayList<String[]>();
+
 		int caseCounter = 1;
 		int eventID = 1;
 
@@ -28,14 +55,7 @@ public class CaseCreator {
 		for (int i = 0; i < list.size(); i++) {
 			String[] tmp = list.get(i);
 			if (i == 0) {			
-				for (int j = 0; j < tmp.length; j++) {
-	
-						if (tmp[j].equals("starttime")) {
-							starttimeIndex = j;
-						} else if (tmp[j].equals("endtime")) {
-							endtimeIndex = j;
-						}
-					}
+				initStartAndEndtimeIndex(tmp);
 				list2.add(insertCase(list.get(i), 0, true));
 			}else if (i == 1) {
 				//init date with starttime of first entry
@@ -51,11 +71,11 @@ public class CaseCreator {
 				Date date = new Date(Long.parseLong(tmp[starttimeIndex]));
 				calActual.setTime(date);
 								
-				int dayActual = calActual.get(Calendar.DAY_OF_MONTH);
-				int dayPrev = calPrev.get(Calendar.DAY_OF_MONTH);
+				int dayActual = calActual.get(Calendar.DAY_OF_YEAR);
+				int dayPrev = calPrev.get(Calendar.DAY_OF_YEAR);
 
 				
-				System.out.println("Previous: " + calPrev.getTime() + " Actual: " + calActual.getTime());
+				//System.out.println("Previous: " + calPrev.getTime() + " Actual: " + calActual.getTime());
 				//if days follow each other
 				if (dayActual == dayPrev+1) {					
 					//remove last activity in list, which is the last activity of the day. 
@@ -87,8 +107,35 @@ public class CaseCreator {
 				eventID++;
 			}
 		}
+		Util.writeListToList(list2, list);
 	}
-	
+
+	/**
+	 * Adds day of week to the CSV file. Should be called after cases are created!
+	 * Sunday = 1
+	 * Monday = 2
+	 * Tuesday = 3
+	 * Wednesday = 4
+	 * Thursday = 5
+	 * Friday = 6
+	 * Saturday = 7
+	 */
+	public void addDayOfWeek(){
+		initStartAndEndtimeIndex(list.get(0));
+
+		for(int i=0; i<list.size(); i++){
+			ArrayList<String> item = Util.toArrayList(list.get(i));
+			if(i==0){
+				item.add("dayOfWeek");
+			}else{
+				Calendar cal = Util.getCalendar(item.get(starttimeIndex));
+				int day = cal.get(Calendar.DAY_OF_WEEK);
+				item.add(String.valueOf(day));
+			}
+			list.set(i, Util.toArray(item));
+		}
+	}
+
 	/**
 	 * prints a single activity log entry
 	 * @param activity
@@ -184,33 +231,34 @@ public class CaseCreator {
 	 */
 	public ArrayList<String[]> getActivityListWithCases(String source){
 		ArrayList<String[]> list = Util.read(source);
-		createCases(list);
-		return list2;
+		createCases();
+		return list;
 	}
 	
 	/**
 	 * It splits the activity into days and creates a unique case id for every day.
+	 * Also another column is created and filled with the day of the weak
 	 * @param source Path to an activity log in csv format
 	 * @param target Path for saving the resulting csv file
 	 */
 	public void saveActivityWithCases(String source, String target){
 		ArrayList<String[]> list = Util.read(source);
 
-		createCases(list);
+		createCases();
+		addDayOfWeek();
 		
-		for(int i=1; i<list2.size();i++){
-			printActivity(list2.get(i));
-			System.out.println();
-		}
+//		for(int i=1; i<list2.size();i++){
+//			printActivity(list2.get(i));
+//			System.out.println();
+//		}
 		
-		Util.write(list2,target);
+		Util.write(list, target);
 	}
-	
-	public Integer getStarttimeIndexInListWithCases(){
-		return starttimeIndex+1;
-	}
-	
-	public Integer getEndtimeIndexInListWithCases(){
-		return endtimeIndex+1;
+
+	/**
+	 * @return list
+	 */
+	public ArrayList<String[]> getList(){
+		return this.list;
 	}
 }
