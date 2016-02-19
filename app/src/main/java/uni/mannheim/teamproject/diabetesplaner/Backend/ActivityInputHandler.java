@@ -50,14 +50,38 @@ public class ActivityInputHandler {
     private static void readCSV(String filepath){
         ArrayList<String[]> list = Util.read(filepath);
 
+        int activityIndex = 0;
+        int subactivityIndex = 0;
+        int startIndex = 0;
+        int endIndex = 0;
+
+
         //header that contains all attributes
         String[] header = list.get(0);
+
+        for(int i=0; i<header.length; i++){
+            switch(header[i]){
+                case "activityId":
+                    activityIndex = i;
+                case "subactivityid":
+                    subactivityIndex = i;
+                case "starttime":
+                    startIndex = i;
+                case "endtime":
+                    endIndex = i;
+            }
+        }
 
         //TODO: check if attributes match the database table (consider order!)
 
         //iterate over all lines of the CSV file
         for(int i=1; i<list.size(); i++){
-            //TODO: load list into database
+            String activityid = list.get(i)[activityIndex];
+            String subactivityid = list.get(i)[subactivityIndex];
+            String starttime = list.get(i)[startIndex];
+            String endtime = list.get(i)[endIndex];
+
+            //TODO something like: Database.addActivity(activityid, subactivityid, starttime, endtime);
         }
     }
 
