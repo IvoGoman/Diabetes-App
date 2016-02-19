@@ -13,11 +13,6 @@ import android.os.IBinder;
 import android.provider.Settings;
 
 
-
-import static uni.mannheim.teamproject.diabetesplaner.Backend.LocationLogic.distance;
-import static uni.mannheim.teamproject.diabetesplaner.Backend.LocationLogic.similarLocations;
-
-
 /** GPS tracker class that is used to provide a GPS tracking service for our android application.
  *  Providing the location constantly on the request of the user.
 
@@ -184,11 +179,11 @@ public class GPSTracker extends Service implements LocationListener {
     public void onLocationChanged(Location location) {
         // TODO Auto-generated method stub
 
-        int Location_ID = similarLocations(Helper1, location.getLatitude(), location.getLongitude());
+        int Location_ID = LocationLogic.similarLocations(Helper1, location.getLatitude(), location.getLongitude());
         if ( Location_ID < 0 )
         {
             if (AppGlobal.getLastLocation() != null) {
-                if (distance(AppGlobal.getLastLocation().getLatitude(), AppGlobal.getLastLocation().getLongitude(), location.getLatitude(), location.getLongitude())<0.1)
+                if (LocationLogic.distance(AppGlobal.getLastLocation().getLatitude(), AppGlobal.getLastLocation().getLongitude(), location.getLatitude(), location.getLongitude())<0.1)
                 {
                     long a = location.getTime() - AppGlobal.getLastLocation().getTime();
                     AppGlobal.setTime(AppGlobal.getTime() + a);
@@ -205,6 +200,10 @@ public class GPSTracker extends Service implements LocationListener {
             }
         }
         AppGlobal.setLastLocation(location);
+    }
+
+    public int getLocation(DataBaseHandler helper){
+        return LocationLogic.similarLocations(Helper1, location.getLatitude(), location.getLongitude());
     }
 
     @Override

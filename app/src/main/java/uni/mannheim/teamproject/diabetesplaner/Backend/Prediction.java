@@ -1,4 +1,4 @@
-package uni.mannheim.teamproject.diabetesplaner.BackEnd;
+package uni.mannheim.teamproject.diabetesplaner.Backend;
 
 import android.content.Context;
 import android.database.Cursor;
@@ -180,8 +180,7 @@ public class Prediction {
                     int Hours = (int) TimeAction1.get(i).Time / 60;
                     int Minutes = TimeAction1.get(i).Time - Hours * 60;
                     Start = Integer.toString(Hours) + ":" + Integer.toString(Minutes);
-                    //PA.Start = Integer.toString(Hours) + ":" + Integer.toString(Minutes);
-                    //PA1.add(PA);
+
                 }
                 if (i<TimeAction1.size()-1) {
                     if (TimeAction1.get(i+1).Action != TimeAction1.get(i).Action){
