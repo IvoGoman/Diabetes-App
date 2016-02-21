@@ -1,4 +1,4 @@
-package uni.mannheim.teamproject.diabetesplaner;
+package uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag;
 
 
 import android.os.Bundle;
@@ -8,13 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import uni.mannheim.teamproject.diabetesplaner.CustomListView;
+import uni.mannheim.teamproject.diabetesplaner.R;
 
 
 /**
@@ -34,6 +36,7 @@ public class ActivityFragment extends Fragment  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
 
     }
 

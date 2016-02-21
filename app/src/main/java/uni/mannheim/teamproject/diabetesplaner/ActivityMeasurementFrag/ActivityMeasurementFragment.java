@@ -1,4 +1,4 @@
-package uni.mannheim.teamproject.diabetesplaner;
+package uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag;
 
 import android.net.Uri;
 import android.os.Bundle;
@@ -15,14 +15,11 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
-import android.widget.ListView;
-import android.widget.TextView;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
-import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
+import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
  * A simple {@link Fragment} subclass.

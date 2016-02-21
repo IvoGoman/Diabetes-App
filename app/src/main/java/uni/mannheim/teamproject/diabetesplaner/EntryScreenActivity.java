@@ -25,6 +25,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 
+import uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag.ActivityMeasurementFragment;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.AddDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;

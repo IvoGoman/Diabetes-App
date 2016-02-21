@@ -1,24 +1,16 @@
 package uni.mannheim.teamproject.diabetesplaner;
 
-import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
 
-import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag.ActivityMeasurementFragment;
 
 /**
  * created by Naira
@@ -107,8 +99,8 @@ public class ActivityPop extends AppCompatActivity {
                 Bundle bundle=new Bundle();
                 bundle.putString("activityItem", activityItem);
                 //set Fragmentclass Arguments
-                ActivityFragment fragobj=new ActivityFragment();
-                fragobj.setArguments(bundle);
+              //  ActivityMeasurementFragment.ActivityFragment fragobj=new ActivityMeasurementFragment.ActivityFragment();
+               // fragobj.setArguments(bundle);
                }
         });
 
