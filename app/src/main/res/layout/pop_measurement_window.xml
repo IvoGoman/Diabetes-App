@@ -7,69 +7,74 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Glucose Level"
-        android:id="@+id/textView"
-        android:layout_alignParentTop="true"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Insulin Dosage"
+        android:paddingLeft="15dp"
+        android:textColor="#050000"
+        android:id="@+id/textView2"
+        android:layout_marginTop="40dp"
+        android:layout_below="@+id/textView"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_marginLeft="42dp"
-        android:layout_marginStart="42dp"
-        android:layout_marginTop="67dp" />
+        android:layout_alignParentStart="true" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:paddingRight="12dp"
+        android:id="@+id/editText"
+        android:layout_alignParentTop="true"
+        android:layout_alignLeft="@+id/textView3"
+        android:layout_alignStart="@+id/textView3" />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:inputType="numberDecimal"
+        android:ems="10"
+        android:paddingRight="12dp"
+        android:id="@+id/editText2"
+        android:layout_alignTop="@+id/textView2"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_toEndOf="@+id/textView3"
+        android:layout_alignLeft="@+id/editText"
+        android:layout_alignStart="@+id/editText" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Insulin Dosage"
-        android:id="@+id/textView2"
-        android:layout_below="@+id/textView"
-        android:layout_alignLeft="@+id/textView"
-        android:layout_alignStart="@+id/textView"
-        android:layout_marginTop="64dp" />
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Glucose Level"
+        android:id="@+id/textView"
+        android:textColor="#050000"
+        android:layout_alignBottom="@+id/editText"
+        android:layout_alignRight="@+id/textView2"
+        android:layout_alignEnd="@+id/textView2" />
 
-    <EditText
+    <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/editText"
-        android:layout_above="@+id/textView2"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:text="mg/dl"
-        android:layout_toRightOf="@+id/textView2"
-        android:layout_toEndOf="@+id/textView2"
-        android:enabled="false"
-        android:editable="true"
-        android:clickable="true"
-        android:contextClickable="true"
-        android:inputType="number"
-        android:textAlignment="center" />
-
-    <EditText
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:id="@+id/editText2"
-        android:layout_alignBottom="@+id/textView2"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:text="Unit/mL"
-        android:layout_alignLeft="@+id/editText"
-        android:layout_alignStart="@+id/editText"
-        android:textAlignment="center"
-        android:inputType="number"
-        android:enabled="false"
-        android:editable="true"
-        android:clickable="true"
-        android:contextClickable="true" />
-
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Done"
-        android:id="@+id/button"
-        android:layout_below="@+id/textView2"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Add"
+        android:id="@+id/textView3"
+        android:layout_below="@+id/editText2"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="153dp" />
+        android:layout_marginTop="42dp"
+        android:textColor="#e8e8e8" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Add"
+        android:id="@+id/textView4"
+        android:paddingRight="16dp"
+        android:textColor="#c723681a"
+        android:layout_alignTop="@+id/textView3"
+        android:layout_alignRight="@+id/editText2"
+        android:layout_alignEnd="@+id/editText2" />
 
 </RelativeLayout>
     <!-- created by Naira-->

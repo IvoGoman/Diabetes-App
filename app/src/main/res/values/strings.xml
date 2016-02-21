@@ -98,6 +98,7 @@
     <string name="glucoseTextField">mg/dl</string>
     <string name="insulinTextField">Unit/mL</string>
     <string name="DoneButton">Done</string>
+    <string name="gl">Glucose Level</string>
 
     <!-- temporary should be accessed from database-->
     <string-array name="activity_array">
@@ -116,6 +117,7 @@
         <item>Schreibtischarbeit</item>
         <item>Sport</item>
     </string-array>
+    <string name="title_activity_main2">Main2Activity</string>
 
 
 </resources>

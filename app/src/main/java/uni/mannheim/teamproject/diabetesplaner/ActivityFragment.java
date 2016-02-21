@@ -44,7 +44,7 @@ public class ActivityFragment extends Fragment  {
         // Inflate the layout for this fragment
 
         inflaterView = inflater.inflate(R.layout.fragment_activity, container, false);
-        ImageButton dirChooserButton = (ImageButton) inflaterView.findViewById(R.id.imageButton);
+        ImageButton dirChooserButton = (ImageButton) inflaterView.findViewById(R.id.add_button);
         lv = (ListView) inflaterView.findViewById(R.id.listView);
         adapter = new CustomListView(getActivity(), FileList);
 
