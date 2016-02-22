@@ -40,7 +40,6 @@
     <string name="pref_weight_measurement_summary">Choose your measurement</string>
 
 
-
     <!-- Prediction Model -->
     <string name="pref_reset">Prediction Model Reset</string>
     <string name="reset">Reset</string>
@@ -76,12 +75,11 @@
     <string name="pref_version_summary">1.0.1</string>
 
 
-
     <string name="listItem123">92734098879.sqlite</string>
 
     <string name="no_activities">No activity logs added yet.</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="menu_item_share">Share</string>
     <string name="communicate">Communicate</string>
@@ -118,6 +116,17 @@
         <item>Sport</item>
     </string-array>
     <string name="title_activity_main2">Main2Activity</string>
+
+    <!-- days -->
+    <string name="Monday">Monday</string>
+    <string name="Tuesday">Tuesday</string>
+    <string name="Wednesday">Wednesday</string>
+    <string name="Thursday">Thursday</string>
+    <string name="Friday">Friday</string>
+    <string name="Saturday">Saturday</string>
+    <string name="Sunday">Sunday</string>
+
+    <string name="invalid_time">Starttime must be before endtime!</string>
 
 
 </resources>
