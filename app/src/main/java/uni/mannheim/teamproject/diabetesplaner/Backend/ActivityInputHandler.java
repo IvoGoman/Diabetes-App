@@ -67,7 +67,7 @@ public class ActivityInputHandler {
             java.util.Date StartD = new Date();
             java.util.Date EndD = new Date();
             StartD.setTime(Long.valueOf(list.get(i)[3]));
-            EndD.setTime(Long.valueOf(list.get(i)[3]));
+            EndD.setTime(Long.valueOf(list.get(i)[4]));
             String Start = format.format(StartD);
             String End = format.format(EndD);
             helper.InsertActivity(helper,IdActivity,1,Start,End);
