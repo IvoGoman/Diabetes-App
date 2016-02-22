@@ -1,4 +1,4 @@
-package uni.mannheim.teamproject.diabetesplaner;
+package uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag;
 
 
 import android.os.Bundle;
@@ -8,13 +8,15 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+
+import uni.mannheim.teamproject.diabetesplaner.CustomListView;
+import uni.mannheim.teamproject.diabetesplaner.R;
 
 
 /**
@@ -35,6 +37,7 @@ public class ActivityFragment extends Fragment  {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+
     }
 
 
@@ -44,7 +47,7 @@ public class ActivityFragment extends Fragment  {
         // Inflate the layout for this fragment
 
         inflaterView = inflater.inflate(R.layout.fragment_activity, container, false);
-        ImageButton dirChooserButton = (ImageButton) inflaterView.findViewById(R.id.imageButton);
+        ImageButton dirChooserButton = (ImageButton) inflaterView.findViewById(R.id.add_button);
         lv = (ListView) inflaterView.findViewById(R.id.listView);
         adapter = new CustomListView(getActivity(), FileList);
 
