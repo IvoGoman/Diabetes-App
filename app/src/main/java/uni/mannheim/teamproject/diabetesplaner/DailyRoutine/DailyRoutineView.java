@@ -266,7 +266,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      */
     private int getDesiredHeight(int width){
         //width Duration: ... + padding to right border
-        int mesDur = (int)fontDur.measureText("Duration: " + durationAsString)+textPadding;
+        int mesDur = (int)fontDur.measureText(getResources().getString(R.string.duration)+": " + durationAsString)+textPadding;
         //width of canvas - textPadding to duration - width duration
         int xRight = width - textPadding - mesDur;
 
@@ -379,11 +379,11 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
 
      //draw duration text
-        canvas.drawText("Duration: " + durationAsString, getWidth() - (int)fontDur.measureText("Duration: " + durationAsString) - textPadding, (front.height() / 2) + (font.getTextSize() / 2), fontDur);
+        canvas.drawText(getResources().getString(R.string.duration)+": " + durationAsString, getWidth() - (int)fontDur.measureText(getResources().getString(R.string.duration)+": " + durationAsString) - textPadding, (front.height() / 2) + (font.getTextSize() / 2), fontDur);
         //draw start text
-        canvas.drawText("Start: " + starttime, textPadding + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
+        canvas.drawText(getResources().getString(R.string.start)+": " + starttime, textPadding + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
         //draw end text
-        canvas.drawText("End: " + endtime, getWidth() - textPadding - fontDur.measureText("End: " + endtime), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
+        canvas.drawText(getResources().getString(R.string.end)+": " + endtime, getWidth() - textPadding - fontDur.measureText(getResources().getString(R.string.end)+": " + endtime), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
 
         //draw activity text
         canvas.translate(actRect.left, actRect.top);

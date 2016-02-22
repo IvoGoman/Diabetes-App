@@ -40,7 +40,7 @@
     <string name="menu_item_share">Teilen</string>
     <string name="communicate">Kommunikation</string>
     <string name="no_data">Keine Daten vorhanden</string>
-    <string name="activity_end">End</string>
+    <string name="activity_end">Ende</string>
     <string name="activity_start">Start</string>
 
     <!-- Notfications-->
@@ -70,7 +70,7 @@
     <string name="edit_dialog_title">Aktivität ändern</string>
     <string name="endtime">Endzeit</string>
     <string name="starttime">Startzeit</string>
-    <string name="DoneButton"></string>
+    <string name="DoneButton">Fertig</string>
     <string name="Friday">Freitag</string>
     <string name="Monday">Montag</string>
     <string name="Saturday">Samstag</string>
@@ -80,4 +80,7 @@
     <string name="Wednesday">Mittwoch</string>
     <string name="Sunday">Sonntag</string>
     <string name="invalid_time">Startzeit muss vor Endzeit liegen!</string>
+    <string name="duration">Dauer</string>
+    <string name="end">Ende</string>
+    <string name="start">Start</string>
 </resources>
