@@ -5,9 +5,8 @@ import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
@@ -74,10 +73,8 @@ public class StatisticsFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
-        //add title to the ActionBar
         aca = (AppCompatActivity) getActivity();
-        final ActionBar actionBar = aca.getSupportActionBar();
+//        final ActionBar actionBar = aca.getSupportActionBar();
         aca.getSupportActionBar().setTitle(R.string.menu_item_statistics);
 
     }
@@ -85,7 +82,7 @@ public class StatisticsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View inflaterView = inflater.inflate(R.layout.fragment_statistics, container, false);
+        final View inflaterView = inflater.inflate(R.layout.fragment_statistics, container, false);
 
         //setup tablayout
         viewPager = (ViewPager) inflaterView.findViewById(R.id.viewpager);
@@ -113,7 +110,7 @@ public class StatisticsFragment extends Fragment {
     /**
      * class needed for the TapLayout
      */
-    class ViewPagerAdapter extends FragmentPagerAdapter {
+    class ViewPagerAdapter extends FragmentStatePagerAdapter {
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
 
@@ -179,7 +176,7 @@ public class StatisticsFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(Uri uri);
     }
 
 }

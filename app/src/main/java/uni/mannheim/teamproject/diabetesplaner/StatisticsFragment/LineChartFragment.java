@@ -2,13 +2,13 @@ package uni.mannheim.teamproject.diabetesplaner.StatisticsFragment;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.RelativeLayout;
 
 import com.github.mikephil.charting.charts.CombinedChart;
+import com.github.mikephil.charting.components.XAxis;
+import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
 import com.github.mikephil.charting.data.BarDataSet;
 import com.github.mikephil.charting.data.BarEntry;
@@ -78,9 +78,19 @@ public class LineChartFragment extends Fragment{
 
         // getting the reference to the chart and setting the data
         CombinedChart chart = (CombinedChart) inflaterView.findViewById(R.id.combinedInsulinGlucoseChart);
+        chart.setDrawOrder(new CombinedChart.DrawOrder[]{CombinedChart.DrawOrder.BAR, CombinedChart.DrawOrder.LINE});
         chart.setData(combinedData);
         chart.setDescription("Combination of Glucose and Insulin Levels");
+        chart.setDrawGridBackground(false);
+        chart.setDrawHighlightArrow(false);
+        YAxis yAxisL = chart.getAxisLeft();
+        yAxisL.setDrawGridLines(false);
+        YAxis yAxisR = chart.getAxisRight();
+        yAxisR.setDrawGridLines(false);
+        XAxis xAxis = chart.getXAxis();
+        xAxis.setDrawGridLines(false);
 
+        chart.invalidate();
         return inflaterView;
     }
 
