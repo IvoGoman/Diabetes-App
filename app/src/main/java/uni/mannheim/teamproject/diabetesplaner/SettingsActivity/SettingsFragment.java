@@ -20,8 +20,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     public static final String TAG = SettingsFragment.class.getSimpleName();
 
-
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,6 +45,23 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 return true;
             }
         });
+
+        //Write User Data in the Summary Fields
+
+        SharedPreferences sharedPrefs = getPreferenceManager().getSharedPreferences();
+
+        final EditTextPreference pref_name = (EditTextPreference) findPreference("pref_key_name");
+        String Test1 = sharedPrefs.getString("pref_key_name", "Vorname, Name");
+        pref_name.setSummary(Test1);
+
+        final EditTextPreference pref_weight = (EditTextPreference) findPreference("pref_key_weight");
+        String Test2 = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
+        pref_weight.setSummary(Test2 + " kg");
+
+        final EditTextPreference pref_bloodsugar = (EditTextPreference) findPreference("pref_key_bloodsugar");
+        String Test3 = sharedPrefs.getString("pref_key_bloodsugar", "Blutzuckerwert eingeben");
+        pref_bloodsugar.setSummary(Test3 + " mmol/L");
+
     }
 
     //First Test with Notification for Data Collection
