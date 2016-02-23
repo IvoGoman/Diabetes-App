@@ -51,6 +51,7 @@ public class CustomListView extends ArrayAdapter<String>{
 
         //create delete icon and adds onClickListener to it
         ImageView deleteIcon = (ImageView) rowView.findViewById(R.id.delete_icon_activity_input);
+
         deleteIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

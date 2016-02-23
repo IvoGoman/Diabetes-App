@@ -1,8 +1,4 @@
 package uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag;
-
-/**
- * Created by Dell on 2/16/2016.
- */
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -112,15 +108,24 @@ public class DirectoryChooserDialog
         }
 
         m_dir = dir;
-        m_subdirs = getDirectories(dir);
+        m_subdirs = new ArrayList<String>();
+        if (hasParent(m_dir)) {
+            m_subdirs.add("..");
+        }
+        m_subdirs.addAll(getDirectories(dir));
 
         class DirectoryOnClickListener implements DialogInterface.OnClickListener
         {
             public void onClick(DialogInterface dialog, int item)
             {
-                // Navigate into the sub-directory
-                m_dir += "/" + ((AlertDialog) dialog).getListView().getAdapter().getItem(item);
-                updateDirectory();
+                if (item == 0 && hasParent(m_dir) ) {
+                    m_dir = new File(m_dir).getParent();
+                    updateDirectory();
+                } else {
+                    // Navigate into the sub-directory
+                    m_dir += "/" + ((AlertDialog) dialog).getListView().getAdapter().getItem(item);
+                    updateDirectory();
+                }
             }
         }
 
@@ -141,8 +146,6 @@ public class DirectoryChooserDialog
             }
         }).setNegativeButton("Cancel", null);
 
-
-
         final AlertDialog dirsDialog = dialogBuilder.create();
 
         dirsDialog.setOnKeyListener(new OnKeyListener()
@@ -153,7 +156,7 @@ public class DirectoryChooserDialog
                 if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN)
                 {
                     // Back button pressed
-                    if ( m_dir.equals(m_sdcardDirectory) )
+                    if ( ! hasParent(m_dir) )
                     {
                         // The very top level directory, do nothing
                         return false;
@@ -224,6 +227,7 @@ public class DirectoryChooserDialog
         return dirs;
     }
 
+    @SuppressWarnings("deprecation")
     private AlertDialog.Builder createDirectoryChooserDialog(String title, List<String> listItems,
                                                              DialogInterface.OnClickListener onClickListener)
     {
@@ -300,10 +304,18 @@ public class DirectoryChooserDialog
     private void updateDirectory()
     {
         m_subdirs.clear();
+        if (hasParent(m_dir)) {
+            m_subdirs.add("..");
+        }
         m_subdirs.addAll( getDirectories(m_dir) );
         m_titleView.setText(m_dir);
 
         m_listAdapter.notifyDataSetChanged();
+    }
+
+    private Boolean hasParent(String directory) {
+        String parent = new File(directory).getParent();
+        return parent != null;
     }
 
     private ArrayAdapter<String> createListAdapter(List<String> items)
