@@ -24,6 +24,7 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
@@ -32,6 +33,7 @@ import uni.mannheim.teamproject.diabetesplaner.R;
 public class DailyRoutineView extends View implements View.OnLongClickListener, View.OnClickListener, View.OnTouchListener {
 
     public static final String TAG = DailyRoutineView.class.getSimpleName();
+    private ActivityItem activityItem;
     private int endInMinOfDay;
     private int startInMinOfDay;
     private String durationAsString;
@@ -114,8 +116,27 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         this.activity = activity;
         this.subactivity = subactivity;
         this.starttime = starttime;
-        this.startInMinOfDay = getMinutesOfDay(starttime);
         this.endtime = endtime;
+        init();
+    }
+
+    public DailyRoutineView(Context context, ActivityItem activityItem){
+        super(context);
+        this.context = context;
+        this.activityItem = activityItem;
+        this.activity = activityItem.getActivityId();
+        this.subactivity = activityItem.getSubactivityId();
+        this.starttime = activityItem.getStarttimeAsString();
+        this.endtime = activityItem.getEndtimeAsString();
+
+        init();
+    }
+
+    /**
+     * inits additional combonents
+     */
+    public void init(){
+        this.startInMinOfDay = getMinutesOfDay(starttime);
         this.endInMinOfDay = getMinutesOfDay(endtime);
         durationAsString = getDuration();
         setState(false);
@@ -872,5 +893,13 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     public void setActivity(int activity){
         this.activity = activity;
+    }
+
+    public static void setSelectedActivities(ArrayList<DailyRoutineView> drv) {
+        selectedActivities = drv;
+    }
+
+    public static void clearSelectedActivities() {
+        selectedActivities.clear();
     }
 }

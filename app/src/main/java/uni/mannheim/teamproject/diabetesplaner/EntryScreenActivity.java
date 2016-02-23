@@ -12,9 +12,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.LinearLayout;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -26,6 +26,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag.ActivityMeasurementFragment;
+import uni.mannheim.teamproject.diabetesplaner.Backend.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.AddDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
@@ -47,6 +48,7 @@ public class EntryScreenActivity extends AppCompatActivity
      * See https://g.co/AppIndexing/AndroidStudio for more information.
      */
     private GoogleApiClient client;
+    private Fragment fragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +73,7 @@ public class EntryScreenActivity extends AppCompatActivity
 
 
         //create a DailyRoutineFragment (start page)
-        Fragment fragment = new DailyRoutineFragment();
+        fragment = new DailyRoutineFragment();
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
         ft.replace(R.id.mainFrame, fragment);
         ft.commit();
@@ -154,16 +156,24 @@ public class EntryScreenActivity extends AppCompatActivity
 
             case R.id.delete_icon_action_bar:
                 //Get the currently selected items and removes them
-                ArrayList<DailyRoutineView> dailyRoutine = DailyRoutineFragment.getActivityList();
-                LinearLayout linearLayout = DailyRoutineFragment.getLinearLayout();
-                for(int i=0; i<dailyRoutine.size();i++){
-                    if(dailyRoutine.get(i).isSelected()){
-                        DailyRoutineView.setSelectable(false);
-                        DailyRoutineView.getSelectedActivities().remove(dailyRoutine.get(i));
-                        DailyRoutineView.setActionBarItems();
-                        linearLayout.removeView(dailyRoutine.get(i));
-                        //TODO handle the remove event within the database
+                ArrayList<DailyRoutineView> items = DailyRoutineFragment.getActivityList();
+//                LinearLayout linearLayout = DailyRoutineFragment.getLinearLayout();
+                if(fragment instanceof DailyRoutineFragment) {
+                    ArrayList<Integer> indexes = new ArrayList<>();
+                    for (int i = 0; i < items.size(); i++) {
+                        if (items.get(i).isSelected()) {
+                            Log.d(TAG, "isSelected: "+ items.get(i).getActivity() + " index: " + i);
+                            indexes.add(i);
+//                            DailyRoutineView.setSelectable(false);
+//                            DailyRoutineView.getSelectedActivities().remove(dailyRoutine.get(i));
+//                            DailyRoutineView.setActionBarItems();
+
+//                            linearLayout.removeView(dailyRoutine.get(i));
+                            //TODO handle the remove event within the database
+                        }
                     }
+                    DailyRoutineHandler drHandler = ((DailyRoutineFragment) fragment).getDrHandler();
+                    drHandler.delete(indexes);
                 }
 
                 //do sth with the delete icon
@@ -182,6 +192,9 @@ public class EntryScreenActivity extends AppCompatActivity
             case R.id.add_icon_action_bar_routine:
                 //create an AddDialog
                 AddDialog addDialog = new AddDialog();
+                if(fragment instanceof DailyRoutineFragment) {
+                    addDialog.setDailyRoutineHandler(((DailyRoutineFragment) fragment).getDrHandler());
+                }
                 addDialog.show(getFragmentManager(),"addDialog");
                 return true;
         }
@@ -203,7 +216,7 @@ public class EntryScreenActivity extends AppCompatActivity
         // Handle navigation view item clicks here.
         int id = item.getItemId();
         actualMenuItem = item;
-        Fragment fragment = null;
+        fragment = null;
 
         //set all action items to invisible
         MenuItem addItem = optionsMenu.findItem(R.id.add_icon_action_bar);

@@ -7,7 +7,6 @@ import android.os.Bundle;
 import android.view.View;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.Backend.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
@@ -33,7 +32,7 @@ public class AddDialog extends InputDialog {
                             InvalidTimeDialog itd = new InvalidTimeDialog();
                             itd.show(getFragmentManager(),"invalidTime");
                         }else {
-                            DailyRoutineHandler.add(activityItem);
+                            getDrHandler().add(activityItem);
                         }
                     }
                 })
