@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +21,7 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Backend.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.R;
@@ -44,6 +46,7 @@ public class DailyRoutineFragment extends Fragment {
 
     private static final String ARG_LIST = "list";
     private ArrayList<String[]> list2 = new ArrayList<String[]>();
+    //private ArrayList<ActivityItem> listItems;
     private static ArrayList<DailyRoutineView> items = new ArrayList<DailyRoutineView>();
     private static LinearLayout linearLayout;
 
@@ -60,6 +63,7 @@ public class DailyRoutineFragment extends Fragment {
     private DailyRoutineView dailyRoutineView;
     private static AppCompatActivity aca;
     private static ScrollView scrollView;
+    private DailyRoutineHandler drHandler;
 
     /**
      * Use this factory method to create a new instance of
@@ -92,9 +96,8 @@ public class DailyRoutineFragment extends Fragment {
         aca = (AppCompatActivity) getActivity();
         aca.getSupportActionBar().setTitle(R.string.menu_item_daily_routine);
 
-        //get predicted routine
-        DailyRoutineHandler.predictDailyRoutine();
-        list2 = DailyRoutineHandler.getDailyRoutineAsList();
+        drHandler = new DailyRoutineHandler(this);
+
     }
 
     @Override
@@ -105,25 +108,54 @@ public class DailyRoutineFragment extends Fragment {
 
         //get the layout
         linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_daily_routine);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT);
 
         TextView textView = (TextView) inflaterView.findViewById(R.id.daily_routine_date_view);
         textView.setText(getDate());
 
         //create a DailyRoutineView for every list item, so for every activity in the daily routine
-        for(int i=0; i<list2.size(); i++){
-            DailyRoutineView drv = new DailyRoutineView(getActivity(),Integer.valueOf(list2.get(i)[0]),0,list2.get(i)[1], list2.get(i)[2]);
+//        for(int i=0; i<list2.size(); i++){
+//            DailyRoutineView drv = new DailyRoutineView(getActivity(),Integer.valueOf(list2.get(i)[0]),0,list2.get(i)[1], list2.get(i)[2]);
+//            linearLayout.addView(drv);
+//            drv.setState(false);
+//            drv.setLayoutParams(params);
+//            items.add(drv);
+//        }
+
+        drHandler.predictDailyRoutine();
+        updateView();
+
+
+        //get Scrollview
+        scrollView = (ScrollView) inflaterView.findViewById(R.id.scroll_view_daily_routine);
+
+        return inflaterView;
+    }
+
+    /**
+     * updates View
+     */
+    public void updateView(){
+        //get predicted routine
+        linearLayout.removeAllViews();
+        items.clear();
+        ArrayList<ActivityItem> listItems = new ArrayList<>();
+        listItems = drHandler.getDailyRoutine();
+        Log.d(TAG, "list size after update: " +listItems.size());
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+
+        for(int i=0; i<listItems.size(); i++){
+            DailyRoutineView drv = new DailyRoutineView(getActivity(), listItems.get(i));
             linearLayout.addView(drv);
             drv.setState(false);
             drv.setLayoutParams(params);
             items.add(drv);
         }
 
-        //get Scrollview
-        scrollView = (ScrollView) inflaterView.findViewById(R.id.scroll_view_daily_routine);
-
-        return inflaterView;
+        //DailyRoutineView.getSelectedActivities().clear();
+        //DailyRoutineView.setSelectable(false);
+        //DailyRoutineView.setActionBarItems();
     }
 
 
@@ -179,6 +211,8 @@ public class DailyRoutineFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        linearLayout = null;
+        drHandler.clearDailyRoutine();
     }
 
     /**
@@ -313,5 +347,9 @@ public class DailyRoutineFragment extends Fragment {
      */
     public static ScrollView getScrollView(){
         return scrollView;
+    }
+
+    public DailyRoutineHandler getDrHandler(){
+        return drHandler;
     }
 }

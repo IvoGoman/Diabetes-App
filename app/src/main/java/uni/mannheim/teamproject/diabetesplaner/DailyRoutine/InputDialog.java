@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Backend.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
@@ -33,6 +34,7 @@ public class InputDialog extends DialogFragment {
     private String selectedItem;
 
     private ActivityItem activityItem;
+    private DailyRoutineHandler drHandler;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -199,6 +201,14 @@ public class InputDialog extends DialogFragment {
      */
     public Integer getSelectedItem() {
         return activity;
+    }
+
+    public void setDailyRoutineHandler(DailyRoutineHandler drHandler){
+        this.drHandler = drHandler;
+    }
+
+    public DailyRoutineHandler getDrHandler(){
+        return drHandler;
     }
 }
 

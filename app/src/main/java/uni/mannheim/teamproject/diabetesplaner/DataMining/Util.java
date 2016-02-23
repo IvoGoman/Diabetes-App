@@ -327,7 +327,7 @@ public class Util {
 	public static Date addMinuteFromDate(Date date, int minutes){
 		Calendar cal = Calendar.getInstance();
 		cal.setTime(date);
-		cal.add(Calendar.HOUR, minutes);
+		cal.add(Calendar.MINUTE, minutes);
 		return cal.getTime();
 	}
 }
