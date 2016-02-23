@@ -5,8 +5,6 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,11 +12,15 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import uni.mannheim.teamproject.diabetesplaner.Backend.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
@@ -90,18 +92,9 @@ public class DailyRoutineFragment extends Fragment {
         aca = (AppCompatActivity) getActivity();
         aca.getSupportActionBar().setTitle(R.string.menu_item_daily_routine);
 
-        //hardcoded ArrayList with a daily routine
-        //TODO get the list from the prediction model
-        list2.add(new String[]{"1", "0:00", "9:14"});
-        list2.add(new String[]{"2","9:14","9:53"});
-        list2.add(new String[]{"13","9:53","13:07"});
-        list2.add(new String[]{"2","13:07","13:22"});
-        list2.add(new String[]{"13", "13:22", "15:35"});
-        list2.add(new String[]{"10", "15:35", "15:38"});
-        list2.add(new String[]{"13", "15:38", "21:53"});
-        list2.add(new String[]{"5","21:53","22:22"});
-        list2.add(new String[]{"2","22:22","22:51"});
-        list2.add(new String[]{"1", "22:51", "23:59"});
+        //get predicted routine
+        DailyRoutineHandler.predictDailyRoutine();
+        list2 = DailyRoutineHandler.getDailyRoutineAsList();
     }
 
     @Override
@@ -116,8 +109,7 @@ public class DailyRoutineFragment extends Fragment {
                 ViewGroup.LayoutParams.MATCH_PARENT);
 
         TextView textView = (TextView) inflaterView.findViewById(R.id.daily_routine_date_view);
-        Calendar cal = Calendar.getInstance();
-        textView.setText(getDayOfWeek(cal.get(Calendar.DAY_OF_WEEK)) + ", " +cal.get(Calendar.DAY_OF_MONTH)+"."+(cal.get(Calendar.MONTH)+1)+"."+cal.get(Calendar.YEAR));
+        textView.setText(getDate());
 
         //create a DailyRoutineView for every list item, so for every activity in the daily routine
         for(int i=0; i<list2.size(); i++){
@@ -134,9 +126,17 @@ public class DailyRoutineFragment extends Fragment {
         return inflaterView;
     }
 
-    @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
+
+    /**
+     * Returns the date adapted to the phones date format
+     * @return date as String
+     */
+    public String getDate(){
+        Date date = Calendar.getInstance(Locale.getDefault()).getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, dd.MM.yyyy");
+        String dateString = dateFormat.format(date);
+
+        return dateString;
     }
 
     /**
@@ -146,13 +146,13 @@ public class DailyRoutineFragment extends Fragment {
      */
     public String getDayOfWeek(int dayOfWeek){
         switch (dayOfWeek){
-            case 1: return "Sunday";
-            case 2: return "Monday";
-            case 3: return "Tuesday";
-            case 4: return "Wednesday";
-            case 5: return "Thursday";
-            case 6: return "Friday";
-            case 7: return "Saturday";
+            case 1: return getString(R.string.Sunday);
+            case 2: return getString(R.string.Monday);
+            case 3: return getString(R.string.Tuesday);
+            case 4: return getString(R.string.Wednesday);
+            case 5: return getString(R.string.Thursday);
+            case 6: return getString(R.string.Friday);
+            case 7: return getString(R.string.Saturday);
             default: return "";
         }
     }
@@ -300,6 +300,8 @@ public class DailyRoutineFragment extends Fragment {
             android.util.Log.e(TAG, "resume error");
         }
     }
+
+
 
     public static ArrayList<DailyRoutineView> getItems(){
         return items;

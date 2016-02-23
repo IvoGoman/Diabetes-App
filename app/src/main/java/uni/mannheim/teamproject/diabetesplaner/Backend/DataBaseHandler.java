@@ -86,13 +86,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     public Cursor getAllLocations (DataBaseHandler helper){
         SQLiteDatabase db = helper.getWritableDatabase();
-
         //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select * from " + LOCATION_TABLE_NAME, null);
         return cursor;
     }
 
+    public Cursor getAllActions (DataBaseHandler helper){
+        SQLiteDatabase db = helper.getWritableDatabase();
+        //Create a Cursor that contains all records from the locations table
+        Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
+        return cursor;
+    }
 
+    public Cursor getAllRoutine (DataBaseHandler helper){
+        SQLiteDatabase db = helper.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select ActivityList.id, Activities.title, Location.Title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id inner join Location on ActivityList.id_Location = Location.id", null);
+        return cursor;
+    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {   //when the App is first installed
@@ -100,8 +110,20 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         // Create Activity Table
         db.execSQL(ACTIVITIES_CREATE_TABLE);
         Log.d("Database", "Temp Activity Table Created");
-        //db.execSQL("insert into Activities(Title) values('walking'); ");
-
+        db.execSQL("insert into Activities(Title) values('Schlafen'); ");
+        db.execSQL("insert into Activities(Title) values('Essen/Trinken'); ");
+        db.execSQL("insert into Activities(Title) values('Körperpflege'); ");
+        db.execSQL("insert into Activities(Title) values('Transportmittel benutzen'); ");
+        db.execSQL("insert into Activities(Title) values('Entspannen'); ");
+        db.execSQL("insert into Activities(Title) values('Fortbewegen(mit Gehilfe)'); ");
+        db.execSQL("insert into Activities(Title) values('Medicamente einnehmen'); ");
+        db.execSQL("insert into Activities(Title) values('Einkaufen'); ");
+        db.execSQL("insert into Activities(Title) values('Hausarbeit'); ");
+        db.execSQL("insert into Activities(Title) values('Essen zubereiten'); ");
+        db.execSQL("insert into Activities(Title) values('Geselligkeit'); ");
+        db.execSQL("insert into Activities(Title) values('Fortbewegen'); ");
+        db.execSQL("insert into Activities(Title) values('Schreibtischarbeit'); ");
+        db.execSQL("insert into Activities(Title) values('Sport'); ");
         // Create SubActivities Table
         db.execSQL(SUB_ACTIVITIES_CREATE_TABLE);
         Log.d("Database", "Sub Activities Table Created");
@@ -114,10 +136,46 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         //Create ActivityList Table
         db.execSQL(ACTIVITYLIST_CREATE_TABLE);
         Log.d("Database", "Routine Table Created");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 09:05' , '2016-01-01 09:30'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 09:30' , '2016-01-01 10:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 10:03' , '2016-01-01 13:55'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 13:55' , '2016-01-01 14:45'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 15:00' , '2016-01-01 19:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 19:03' , '2016-01-01 19:40'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 19:45' , '2016-01-01 20:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-02 09:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 09:05' , '2016-01-01 09:30'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 09:30' , '2016-01-01 10:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 10:03' , '2016-01-01 13:55'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 13:55' , '2016-01-01 14:45'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 15:00' , '2016-01-01 19:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 19:03' , '2016-01-01 19:40'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 19:45' , '2016-01-01 20:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-02 09:00'); ");        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 09:05' , '2016-01-01 09:30'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 09:30' , '2016-01-01 10:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 10:03' , '2016-01-01 13:55'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 13:55' , '2016-01-01 14:45'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 15:00' , '2016-01-01 19:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 19:03' , '2016-01-01 19:40'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 19:45' , '2016-01-01 20:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-02 09:00'); ");        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 09:05' , '2016-01-01 09:30'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 09:30' , '2016-01-01 10:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 10:03' , '2016-01-01 13:55'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 13:55' , '2016-01-01 14:45'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 15:00' , '2016-01-01 19:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 19:03' , '2016-01-01 19:40'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 19:45' , '2016-01-01 20:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-02 09:00'); ");
+
+        //db.close();
 
         //Create Profile Table
-        db.execSQL(PROFILE_CREATE_TABLE);
-        Log.d("Database", "Profile Table Created");
+        //db.execSQL(PROFILE_CREATE_TABLE);
+        //Log.d("Database", "Profile Table Created");
 
         //Create BloodSugar Table
         //db.execSQL(BLOODSUGAR_CREATE_TABLE);
@@ -149,8 +207,48 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
-    public void ReplaceActivity(DataBaseHandler handler ,int idActivity, int idLocation, String Start, String End){
-    //under construction
+    public void ReplaceActivity(DataBaseHandler handler, int idActivity, int idLocation, String Start, String End){
+        findActionbyStartTime(handler, Start);
+        findActionbyEndTime(handler, End);
+
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        InsertActivity (handler ,idActivity, idLocation,Start,End);
+        //UPDATE tbl_info SET age=12 WHERE _id=1;
+        db1.execSQL("update ActivityList set(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '"+ Start + "','" + End  +"' ); ");
+        db1.close();
+    }
+
+    private void findActionbyStartTime(DataBaseHandler handler, String Start) {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select id from ActivityList where Start <= " + Start + " and End >= " + Start + "; ", null);
+        if (cursor.moveToFirst()) {
+            do {
+                db1.execSQL("update ActivityList set End = " + Start + " where id = '" + cursor.getString(0) + "';");
+            } while (cursor.moveToNext());
+            db1.close();
+        }
+    }
+
+    private void findActionbyEndTime(DataBaseHandler handler,String End){
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select id from ActivityList where Start <= " + End + " and End >= " + End + "; ", null);
+        if (cursor.moveToFirst()) {
+            do {
+                db1.execSQL("update ActivityList set Start = " + End + " where id = '" + cursor.getString(0) + "';");
+            } while (cursor.moveToNext());
+            db1.close();
+        }
+    }
+
+    private void findActionbyStartEndTime(DataBaseHandler handler,String Start, String End){
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select id from ActivityList where Start >= " + Start + " and End <= " + End + "; ", null);
+        if (cursor.moveToFirst()) {
+            do {
+                db1.execSQL("delete from ActivityList where id = '" + cursor.getString(0) + "';");
+            } while (cursor.moveToNext());
+            db1.close();
+        }
     }
 
     public void InsertProfile (DataBaseHandler handler ,int age, int dt, double abl){

@@ -40,17 +40,23 @@
     <string name="pref_weight_measurement_summary">Choose your measurement</string>
 
 
-
     <!-- Prediction Model -->
     <string name="pref_reset">Prediction Model Reset</string>
-    <string name="reset">Reset</string>
-    <string name="cancel">Cancel</string>
+
+    <!--Daily Routine-->
     <string name="add_dialog_title">Add activity</string>
     <string name="edit_dialog_title">Edit activity</string>
     <string name="starttime">Starttime</string>
     <string name="endtime">Endtime</string>
+    <string name="duration">Duration</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
+
+    <!--Utility-->
     <string name="edit">Edit</string>
     <string name="add">Add</string>
+    <string name="reset">Reset</string>
+    <string name="cancel">Cancel</string>
 
     <string name="pref_reset_summary">Resets the prediction model</string>
     <string name="pref_reset_dialog_message">Are you sure you want to reset the prediction model?</string>
@@ -76,12 +82,11 @@
     <string name="pref_version_summary">1.0.1</string>
 
 
-
     <string name="listItem123">92734098879.sqlite</string>
 
     <string name="no_activities">No activity logs added yet.</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="menu_item_share">Share</string>
     <string name="communicate">Communicate</string>
@@ -98,6 +103,7 @@
     <string name="glucoseTextField">mg/dl</string>
     <string name="insulinTextField">Unit/mL</string>
     <string name="DoneButton">Done</string>
+    <string name="gl">Glucose Level</string>
 
     <!-- temporary should be accessed from database-->
     <string-array name="activity_array">
@@ -116,6 +122,18 @@
         <item>Schreibtischarbeit</item>
         <item>Sport</item>
     </string-array>
+    <string name="title_activity_main2">Main2Activity</string>
+
+    <!-- days -->
+    <string name="Monday">Monday</string>
+    <string name="Tuesday">Tuesday</string>
+    <string name="Wednesday">Wednesday</string>
+    <string name="Thursday">Thursday</string>
+    <string name="Friday">Friday</string>
+    <string name="Saturday">Saturday</string>
+    <string name="Sunday">Sunday</string>
+
+    <string name="invalid_time">Starttime must be before endtime!</string>
 
 
 </resources>

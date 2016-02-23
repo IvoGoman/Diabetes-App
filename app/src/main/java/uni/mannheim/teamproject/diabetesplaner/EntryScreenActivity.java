@@ -25,12 +25,12 @@ import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
 
+import uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag.ActivityMeasurementFragment;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.AddDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.EditDialog;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsActivity;
-import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsFragment;
 import uni.mannheim.teamproject.diabetesplaner.StatisticsFragment.StatisticsFragment;
 
 public class EntryScreenActivity extends AppCompatActivity
@@ -41,7 +41,7 @@ public class EntryScreenActivity extends AppCompatActivity
     public static NavigationView navigationView;
     public static TextView username;
 
-    public static final String TAG = SettingsFragment.class.getSimpleName();
+    public static final String TAG = EntryScreenActivity.class.getSimpleName();
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -88,7 +88,9 @@ public class EntryScreenActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        } else {
+        }else if(DailyRoutineView.getSelectedActivities().size()>0){
+            DailyRoutineView.deselectAll();
+        }else{
             super.onBackPressed();
         }
     }
@@ -135,6 +137,11 @@ public class EntryScreenActivity extends AppCompatActivity
 
         //handles event when add button in the ActionBar on the ActivityInputFragment page was clicked
         switch (id){
+//            case android.R.id.home:
+//                // app icon in action bar clicked; go home
+//                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
+//                Log.d(TAG, "back button clicked");
+//                return false;
             case R.id.add_icon_action_bar:
                 //TODO: add activity log
                 ActivityInputFragment.list.add("ActivityData.csv");
@@ -169,6 +176,7 @@ public class EntryScreenActivity extends AppCompatActivity
                 editDialog.setEndtime(DailyRoutineView.getSelectedActivities().get(0).getEndTime());
                 editDialog.setActivity(DailyRoutineView.getSelectedActivities().get(0).getActivityID()-1);
                 editDialog.show(getFragmentManager(),"editDialog");
+
                 return true;
 
             case R.id.add_icon_action_bar_routine:

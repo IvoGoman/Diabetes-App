@@ -1,28 +1,48 @@
 package uni.mannheim.teamproject.diabetesplaner.DailyRoutine;
 
 import android.app.DialogFragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
+import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
  * Created by Stefan on 04.02.2016.
  */
 public class InputDialog extends DialogFragment {
-    private String starttime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + ":" + Calendar.getInstance().get(Calendar.MINUTE);
-    private String endtime = Calendar.getInstance().get(Calendar.HOUR_OF_DAY) + ":" + Calendar.getInstance().get(Calendar.MINUTE);
+    private static final String TAG = InputDialog.class.getSimpleName();
+    private String starttime;
+    private String endtime;
     private int activity = 0;
     private TimePickerFragment timePickerFragmentStart;
     private TimePickerFragment timePickerFragmentEnd;
     private Button startTimeButton;
     private Button endTimeButton;
+    private String selectedItem;
 
+    private ActivityItem activityItem;
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        //init times
+        Date date = Calendar.getInstance(Locale.getDefault()).getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+        starttime = dateFormat.format(date);
+        endtime = dateFormat.format(date);
+        super.onCreate(savedInstanceState);
+    }
 
     /**
      * creates the layout and returns the view object that contains it
@@ -42,6 +62,18 @@ public class InputDialog extends DialogFragment {
         // Apply the adapter to the spinner
         spinner.setAdapter(adapter);
         spinner.setSelection(activity);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView adapter, View view, int position, long id) {
+                activity = ActivityItem.getActivityId(adapter.getItemAtPosition(position).toString());
+                //TODO catch endtime < starttime!!
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
 
         //button for starttime TimePicker
         startTimeButton = (Button) v.findViewById(R.id.start_button);
@@ -50,7 +82,8 @@ public class InputDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 timePickerFragmentStart = new TimePickerFragment();
-                timePickerFragmentStart.setButton(startTimeButton);
+                timePickerFragmentStart.setInputDialog(InputDialog.this);
+                timePickerFragmentStart.setStart(true);
                 timePickerFragmentStart.setTime(starttime);
                 timePickerFragmentStart.show(getFragmentManager(), "timePicker");
             }
@@ -63,7 +96,8 @@ public class InputDialog extends DialogFragment {
             @Override
             public void onClick(View v) {
                 timePickerFragmentEnd = new TimePickerFragment();
-                timePickerFragmentEnd.setButton(endTimeButton);
+                timePickerFragmentEnd.setInputDialog(InputDialog.this);
+                timePickerFragmentEnd.setStart(false);
                 timePickerFragmentEnd.setTime(endtime);
                 timePickerFragmentEnd.show(getFragmentManager(), "timePicker");
 
@@ -71,6 +105,20 @@ public class InputDialog extends DialogFragment {
         });
 
         return v;
+    }
+
+    public boolean isTimeValid() {
+        Date starttime = null;
+        Date endtime = null;
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+            starttime = dateFormat.parse(getStarttime());
+            endtime = dateFormat.parse(getEndtime());
+            return starttime.before(endtime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     /**
@@ -140,4 +188,17 @@ public class InputDialog extends DialogFragment {
     public Button getStarttimeButton(){
         return startTimeButton;
     }
+
+    public void setActivityItem(ActivityItem activityItem) {
+        this.activityItem = activityItem;
+    }
+
+    /**
+     * returns id of selected activity
+     * @return
+     */
+    public Integer getSelectedItem() {
+        return activity;
+    }
 }
+

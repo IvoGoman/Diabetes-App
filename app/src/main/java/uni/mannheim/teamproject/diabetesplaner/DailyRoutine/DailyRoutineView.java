@@ -67,7 +67,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private int lineOffset = getpx(5);
     private int marginTop = getpx(8);
     private int borderWidth = getpx(2);
-    private Context context;
+    private static Context context;
 
     int innerColor = Color.parseColor("#f2f2f2");
     int innerColor2 = Color.parseColor("#d8d8d8");
@@ -266,7 +266,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      */
     private int getDesiredHeight(int width){
         //width Duration: ... + padding to right border
-        int mesDur = (int)fontDur.measureText("Duration: " + durationAsString)+textPadding;
+        int mesDur = (int)fontDur.measureText(getResources().getString(R.string.duration)+": " + durationAsString)+textPadding;
         //width of canvas - textPadding to duration - width duration
         int xRight = width - textPadding - mesDur;
 
@@ -379,11 +379,11 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
 
      //draw duration text
-        canvas.drawText("Duration: " + durationAsString, getWidth() - (int)fontDur.measureText("Duration: " + durationAsString) - textPadding, (front.height() / 2) + (font.getTextSize() / 2), fontDur);
+        canvas.drawText(getResources().getString(R.string.duration)+": " + durationAsString, getWidth() - (int)fontDur.measureText(getResources().getString(R.string.duration)+": " + durationAsString) - textPadding, (front.height() / 2) + (font.getTextSize() / 2), fontDur);
         //draw start text
-        canvas.drawText("Start: " + starttime, textPadding + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
+        canvas.drawText(getResources().getString(R.string.start)+": " + starttime, textPadding + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
         //draw end text
-        canvas.drawText("End: " + endtime, getWidth() - textPadding - fontDur.measureText("End: " + endtime), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
+        canvas.drawText(getResources().getString(R.string.end)+": " + endtime, getWidth() - textPadding - fontDur.measureText(getResources().getString(R.string.end)+": " + endtime), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
 
         //draw activity text
         canvas.translate(actRect.left, actRect.top);
@@ -401,7 +401,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         //scrolls the scrollview to focus the running activity
         int[] loc = new int[2];
         DailyRoutineView.getCurrentRunning().getLocationOnScreen(loc);
-        Log.d(TAG, "" + loc[1]);
         DailyRoutineFragment.getScrollView().scrollTo(0, loc[1]);
         super.onLayout(changed, left, top, right, bottom);
     }
@@ -548,8 +547,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * @return total height
      */
     public int getTotalHeight() {
-        Log.d(TAG, "total height: " + (heightLower + heightUpper + marginTop));
-
         return (int) (heightLower + heightUpper + marginTop);
     }
 
@@ -713,7 +710,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     @Override
     public boolean onTouch(View v, MotionEvent event) {
-        Log.d(TAG, String.valueOf("on touch " + selectable));
+        //Log.d(TAG, String.valueOf("on touch " + selectable));
 
         //handles if an item was touched
         //getParent().requestDisallowInterceptTouchEvent(true);
@@ -808,6 +805,47 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         return isSelected;
     }
 
+    /**
+     * Sets an item to be selected or not.
+     * ActionBar items and the list selectedActivities
+     * @param isSelected
+     */
+    public void setSelected(boolean isSelected) {
+        Log.d(TAG,"deselected: " + this.getActivity(activity));
+
+        this.isSelected = isSelected;
+        if(!isSelected){
+            if(selectedActivities.contains(this)) {
+                touched = false;
+                selectedActivities.remove(this);
+
+                if(selectedActivities.size() == 0){
+                    selectable = false;
+                }
+            }
+        }else{
+            if(!selectedActivities.contains(this)) {
+                selectedActivities.add(this);
+                touched = true;
+                selectable = true;
+            }
+        }
+        setActionBarItems();
+        invalidate();
+    }
+
+    /**
+     * deselects all items
+     */
+    public static void deselectAll(){
+
+        //run through the list from last to first item,
+        //because last item will be removed and would shift the index if done in the other direction
+        for(int i=selectedActivities.size()-1; i>=0; i--){
+            Log.d(TAG, selectedActivities.get(i).getActivity());
+            selectedActivities.get(i).setSelected(false);
+        }
+    }
     /**
      * getter for the isSelected activity list
      * @return list with isSelected activities

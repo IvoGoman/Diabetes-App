@@ -5,13 +5,28 @@
     android:layout_height="match_parent"
     tools:context="info.androidhive.materialtabs.fragments.OneFragment">
 
-    <ImageButton
+    <ListView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/imageButton"
-        android:layout_alignParentTop="true"
+        android:id="@+id/MListView"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <ImageButton
+        android:id="@+id/add_button"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_gravity="end|bottom"
+        android:layout_marginBottom="42dp"
+        android:layout_marginEnd="46dp"
+        android:src="@android:drawable/ic_input_add"
+        android:tint="@android:color/white"
+        android:background="@drawable/oval"
+        android:elevation="@dimen/elevation_low"
+        android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:background="@android:drawable/ic_input_add" />
+        android:layout_marginRight="46dp" />
+
 
 </RelativeLayout>

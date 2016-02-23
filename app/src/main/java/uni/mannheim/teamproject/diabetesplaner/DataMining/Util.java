@@ -282,4 +282,52 @@ public class Util {
 			System.out.println();
 		}
 	}
+
+	/**
+	 * converts a string time to a date time
+	 * @param time a String time in format HH:mm
+	 * @return time as a Date object
+	 */
+	public static Date getTime(String time){
+		Date timeAsDate = null;
+		try {
+			SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+			timeAsDate = dateFormat.parse(time);
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return timeAsDate;
+	}
+
+	/**
+	 * converts a time in HH:mm to String
+	 * @param date
+	 * @return
+	 */
+	public static String timeToString(Date date) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+		String tmp = dateFormat.format(date);
+//		if(tmp.charAt(0) == '0'){
+//			Log.d("Meins","hier");
+//			StringBuilder sb = new StringBuilder(tmp);
+//			sb.delete(0,1);
+//			tmp = sb.toString();
+//		}
+//		Log.d("Meins",tmp);
+
+		return tmp;
+	}
+
+	/**
+	 * add or subtract minutes from a day time
+	 * @param date the time
+	 * @param minutes number of minutes to add/subtract
+	 * @return edited date
+	 */
+	public static Date addMinuteFromDate(Date date, int minutes){
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.add(Calendar.HOUR, minutes);
+		return cal.getTime();
+	}
 }

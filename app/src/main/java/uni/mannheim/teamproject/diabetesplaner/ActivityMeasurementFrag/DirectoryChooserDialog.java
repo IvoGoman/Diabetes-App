@@ -1,4 +1,4 @@
-package uni.mannheim.teamproject.diabetesplaner;
+package uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag;
 
 /**
  * Created by Dell on 2/16/2016.

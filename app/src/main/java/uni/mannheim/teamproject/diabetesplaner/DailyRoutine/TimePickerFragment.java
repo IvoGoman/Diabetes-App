@@ -9,7 +9,10 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TimePicker;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by Stefan on 04.02.2016.
@@ -20,6 +23,8 @@ public class TimePickerFragment extends DialogFragment
     private Button button;
     private Integer hour;
     private Integer minute;
+    private boolean isStart;
+    private InputDialog dialog;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -37,22 +42,24 @@ public class TimePickerFragment extends DialogFragment
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
         // Do something with the time chosen by the user
-        if(button != null) {
-            if(minute<10){
-                button.setText(hourOfDay + ":0" + minute);
-            }else {
-                button.setText(hourOfDay + ":" + minute);
-            }
+        String dateString = "";
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
+            Date date = dateFormat.parse(hourOfDay+":"+minute);
+            dateString = dateFormat.format(date);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+        if(isStart){
+            dialog.setStarttime(dateString);
+            dialog.getStarttimeButton().setText(dateString);
+        }else{
+            dialog.setEndtime(dateString);
+            dialog.getEndtimeButton().setText(dateString);
         }
         Log.d(this.getClass().getSimpleName(),hourOfDay + ":" + minute);
-    }
-
-    /**
-     * setter for button that is related to the timePicker object
-     * @param button
-     */
-    public void setButton(Button button){
-        this.button = button;
     }
 
     /**
@@ -87,4 +94,17 @@ public class TimePickerFragment extends DialogFragment
             setMinute(Integer.valueOf(tmp[1]));
         }
     }
+
+    /**
+     * sets if timepicker is for starttime or endtime
+     * @param isStart
+     */
+    public void setStart(boolean isStart){
+        this.isStart = isStart;
+    }
+    
+    public void setInputDialog(InputDialog dialog){
+        this.dialog = dialog;
+    }
+
 }
