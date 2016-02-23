@@ -9,6 +9,7 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -43,6 +44,7 @@ public class HistoryFragment extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
+    private static final String TAG = "history";
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
@@ -94,9 +96,10 @@ public class HistoryFragment extends Fragment {
         final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         TextView dateView = (TextView) inflaterView.findViewById(R.id.history_date_view);
        // String dateString = DateFormat.getDateInstance().format(new Date());
-        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        //SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        DateFormat df = DateFormat.getDateInstance();
         Date date = Calendar.getInstance(Locale.getDefault()).getTime();
-      String dateString = sdf.format(date);
+      String dateString = df.format(date);
     //    String dateString = DateFormat.getDateInstance().format(date);
         dateView.setText(dateString);
         dateView.setOnClickListener(new View.OnClickListener() {
@@ -192,10 +195,13 @@ public class HistoryFragment extends Fragment {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
             TextView tv = (TextView) this.getActivity().findViewById(R.id.history_date_view);
-            SimpleDateFormat simpleFormat = new SimpleDateFormat("dd.MM.yyyy",Locale.getDefault());
+            Log.i(TAG,"textview:"+tv.getText().toString());
+            //SimpleDateFormat simpleFormat = new SimpleDateFormat("dd.MM.yyyy",Locale.getDefault());
+            DateFormat simpleFormat = DateFormat.getDateInstance();
             Date date = null;
             try {
                 date = simpleFormat.parse(tv.getText().toString());
+                Log.i(TAG,"datefromtv:"+date.toString());
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -222,10 +228,14 @@ public class HistoryFragment extends Fragment {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             TextView tv = (TextView) this.getActivity().findViewById(R.id.history_date_view);
             GregorianCalendar calendar = new GregorianCalendar(year, month, day);
-            SimpleDateFormat simpleDate = new SimpleDateFormat();
-            simpleDate.applyPattern("dd.MM.yyyy");
+            //SimpleDateFormat simpleDate = new SimpleDateFormat();
+            DateFormat simpleDate = DateFormat.getDateInstance();
+            //simpleDate.applyPattern("dd.MM.yyyy");
+
             Date dateToday = Calendar.getInstance(Locale.getDefault()).getTime();
+            Log.i(TAG,"today:"+dateToday.toString());
             Date dateSelected = calendar.getTime();
+            Log.i(TAG,"selected:"+dateSelected.toString());
             if (dateToday.after(dateSelected)) {
                 onDateSelected(oLL, params);
                 tv.setText(simpleDate.format(calendar.getTime()));
