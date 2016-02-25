@@ -98,7 +98,7 @@
 
 
     <!-- Strings related to Measurement Tab, created by: Naira-->
-    <string name="glucoseLabel">Glucose Level</string>
+    <string name="bloodSugar">Blood Sugar</string>
     <string name="insulinLabel">Insulin Dosage</string>
     <string name="glucoseTextField">mg/dl</string>
     <string name="insulinTextField">Unit/mL</string>

@@ -47,7 +47,7 @@ public class CustomListView extends ArrayAdapter<String>{
         //set the subtitle
         DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         Date date = new Date();
-        txtSubTitle.setText("Added: " + dateFormat.format(date));
+        txtSubTitle.setText("  Added: " + dateFormat.format(date));
 
         //create delete icon and adds onClickListener to it
         ImageView deleteIcon = (ImageView) rowView.findViewById(R.id.delete_icon_activity_input);

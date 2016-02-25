@@ -9,10 +9,10 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="Insulin Dosage"
-        android:paddingLeft="15dp"
+        android:paddingLeft="16dp"
         android:textColor="#050000"
         android:id="@+id/textView2"
-        android:layout_marginTop="40dp"
+        android:layout_marginTop="60dp"
         android:layout_below="@+id/textView"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
@@ -21,24 +21,21 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
-        android:ems="10"
-        android:paddingRight="12dp"
+        android:ems="8"
+        android:paddingRight="15dp"
         android:id="@+id/editText"
         android:layout_alignParentTop="true"
-        android:layout_alignLeft="@+id/textView3"
-        android:layout_alignStart="@+id/textView3" />
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
 
     <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
         android:ems="10"
-        android:paddingRight="12dp"
+        android:paddingRight="15dp"
         android:id="@+id/editText2"
-        android:layout_alignTop="@+id/textView2"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentEnd="true"
-        android:layout_toEndOf="@+id/textView3"
+        android:layout_alignBottom="@+id/textView2"
         android:layout_alignLeft="@+id/editText"
         android:layout_alignStart="@+id/editText" />
 
@@ -46,23 +43,13 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Glucose Level"
+        android:text="@string/bloodSugar"
         android:id="@+id/textView"
+         android:paddingLeft="12dp"
         android:textColor="#050000"
         android:layout_alignBottom="@+id/editText"
-        android:layout_alignRight="@+id/textView2"
-        android:layout_alignEnd="@+id/textView2" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Add"
-        android:id="@+id/textView3"
-        android:layout_below="@+id/editText2"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="42dp"
-        android:textColor="#e8e8e8" />
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
 
     <TextView
         android:layout_width="wrap_content"
@@ -72,9 +59,10 @@
         android:id="@+id/textView4"
         android:paddingRight="16dp"
         android:textColor="#c723681a"
-        android:layout_alignTop="@+id/textView3"
-        android:layout_alignRight="@+id/editText2"
-        android:layout_alignEnd="@+id/editText2" />
+        android:layout_below="@+id/textView2"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginTop="42dp" />
 
 </RelativeLayout>
     <!-- created by Naira-->

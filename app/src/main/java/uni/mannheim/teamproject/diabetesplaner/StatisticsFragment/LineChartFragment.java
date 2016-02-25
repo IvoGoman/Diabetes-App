@@ -68,7 +68,9 @@ public class LineChartFragment extends Fragment{
         lineValues.add(new Entry(110f, 2));
         lineValues.add(new Entry(130f, 3));
         lineValues.add(new Entry(100f, 4));
-        LineDataSet lineDataSet = new LineDataSet(lineValues, "Glucose Level");
+        //changed by Naira, the official name for sugar level is Blood Sugar Level
+        //LineDataSet lineDataSet = new LineDataSet(lineValues, "Glucose Level");
+        LineDataSet lineDataSet = new LineDataSet(lineValues, "Blood Sugar Level");
         LineData lineData = new LineData(labels, lineDataSet);
 
         //creating CombinedData for the Chart with Bar and Line Data

@@ -25,6 +25,8 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import uni.mannheim.teamproject.diabetesplaner.R;
+
 public class DirectoryChooserDialog
 {
     private boolean m_isNewFolderEnabled = true;
@@ -33,6 +35,7 @@ public class DirectoryChooserDialog
     private TextView m_titleView;
 
     private String m_dir = "";
+    private String chosenFile = "";
     private List<String> m_subdirs = null;
     private ChosenDirectoryListener m_chosenDirectoryListener = null;
     private ArrayAdapter<String> m_listAdapter = null;
@@ -110,7 +113,7 @@ public class DirectoryChooserDialog
         m_dir = dir;
         m_subdirs = new ArrayList<String>();
         if (hasParent(m_dir)) {
-            m_subdirs.add("..");
+            m_subdirs.add("<<");
         }
         m_subdirs.addAll(getDirectories(dir));
 
@@ -124,6 +127,7 @@ public class DirectoryChooserDialog
                 } else {
                     // Navigate into the sub-directory
                     m_dir += "/" + ((AlertDialog) dialog).getListView().getAdapter().getItem(item);
+                    chosenFile = (String)((AlertDialog) dialog).getListView().getAdapter().getItem(item);
                     updateDirectory();
                 }
             }
@@ -141,7 +145,8 @@ public class DirectoryChooserDialog
                 if (m_chosenDirectoryListener != null)
                 {
                     // Call registered listener supplied with the chosen directory
-                    m_chosenDirectoryListener.onChosenDir(m_dir);
+                   // m_chosenDirectoryListener.onChosenDir(m_dir);
+                    m_chosenDirectoryListener.onChosenDir(chosenFile);
                 }
             }
         }).setNegativeButton("Cancel", null);
@@ -238,16 +243,17 @@ public class DirectoryChooserDialog
         // Current directory TextView allows long directory path to be wrapped to multiple lines.
         LinearLayout titleLayout = new LinearLayout(m_context);
         titleLayout.setOrientation(LinearLayout.VERTICAL);
+        titleLayout.setBackgroundColor(titleLayout.getResources().getColor(R.color.colorPrimary));
 
         m_titleView = new TextView(m_context);
         m_titleView.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
-        m_titleView.setTextAppearance(m_context, android.R.style.TextAppearance_Large);
-        m_titleView.setTextColor( m_context.getResources().getColor(android.R.color.white) );
+        m_titleView.setTextAppearance(m_context, android.R.style.TextAppearance_DeviceDefault_Widget_ActionBar_Title);
+        m_titleView.setTextColor(m_context.getResources().getColor(android.R.color.black));
         m_titleView.setGravity(Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL);
         m_titleView.setText(title);
 
         Button newDirButton = new Button(m_context);
-        newDirButton.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
+        newDirButton.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.MATCH_PARENT));
         newDirButton.setText("New folder");
         newDirButton.setOnClickListener(new View.OnClickListener()
         {
@@ -305,7 +311,7 @@ public class DirectoryChooserDialog
     {
         m_subdirs.clear();
         if (hasParent(m_dir)) {
-            m_subdirs.add("..");
+            m_subdirs.add("<<");
         }
         m_subdirs.addAll( getDirectories(m_dir) );
         m_titleView.setText(m_dir);
