@@ -6,12 +6,15 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 
+import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
  * Created by Stefan on 31.01.2016.
  */
 public class EditDialog extends InputDialog {
+
+    private int indexSelected;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -23,17 +26,16 @@ public class EditDialog extends InputDialog {
 
         builder.setView(view);
 
-
         builder.setPositiveButton(R.string.edit, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
-                //TODODODODODODO
-                String starttime = String.valueOf(getStarttimeButton().getText());
-                String endtime = String.valueOf(getEndtimeButton().getText());
-                int activity = getChosenActivity();
-                DailyRoutineView.getSelectedActivities().get(0).setStarttime(starttime);
-                DailyRoutineView.getSelectedActivities().get(0).setEndtime(endtime);
-                DailyRoutineView.getSelectedActivities().get(0).setActivity(activity);
 
+                ActivityItem activityItem = new ActivityItem(getSelectedItem(), 0, getStarttime(), getEndtime());
+                if(!isTimeValid()){
+                    InvalidTimeDialog itd = new InvalidTimeDialog();
+                    itd.show(getFragmentManager(),"invalidTime");
+                }else {
+                    getDrHandler().edit(indexSelected, activityItem);
+                }
                 // FIRE ZE MISSILES!
             }
         })
@@ -44,5 +46,13 @@ public class EditDialog extends InputDialog {
                 });
         // Create the AlertDialog object and return it
         return builder.create();
+    }
+
+    /**
+     * set the index of the activity that is selected
+     * @param indexSelected
+     */
+    public void setSelected(int indexSelected){
+        this.indexSelected = indexSelected;
     }
 }
