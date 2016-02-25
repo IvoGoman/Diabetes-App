@@ -23,6 +23,8 @@ import android.view.WindowManager;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
@@ -573,14 +575,16 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     /**
      * checks if actual time is inbetween
-     *
-     * @param minutes minutes of the actual time
-     * @param hour    hours of the actual time
      * @return if this is the actual activity
      */
-    private boolean isRunning(int minutes, int hour) {
+    private boolean isRunning() {
+        Date date = new Date();
+        Calendar calendar = GregorianCalendar.getInstance();
+        calendar.setTime(date);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY);
+        int minutes = calendar.get(Calendar.MINUTE);
         int time = getMinutesOfDay(hour + ":" + minutes);
-        if (startInMinOfDay <= time && time < endInMinOfDay) {
+        if (startInMinOfDay <= time && time <= endInMinOfDay) {
             return true;
         } else {
             return false;
@@ -637,7 +641,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         } else {
             if (isRemaining(minutes, hour)) {
                 state = 1;
-            } else if (isRunning(minutes, hour)) {
+            } else if (isRunning()) {
                 state = 2;
                 current = this;
             } else if (isFinished(minutes, hour)) {

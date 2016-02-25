@@ -68,7 +68,6 @@ public class InputDialog extends DialogFragment {
             @Override
             public void onItemSelected(AdapterView adapter, View view, int position, long id) {
                 activity = ActivityItem.getActivityId(adapter.getItemAtPosition(position).toString());
-                //TODO catch endtime < starttime!!
             }
 
             @Override

@@ -13,8 +13,8 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
  * Created by Stefan on 24.02.2016.
  */
 public class DayHandler {
-    private static ArrayList<ActivityItem> dailyRoutine = new ArrayList<>();
-    public static final String TAG = DailyRoutineHandler.class.getSimpleName();
+    private ArrayList<ActivityItem> dailyRoutine = new ArrayList<>();
+    public static final String TAG = DayHandler.class.getSimpleName();
     private static DailyRoutineFragment drFragment;
 
     public DayHandler(DailyRoutineFragment drFragment){
@@ -34,37 +34,42 @@ public class DayHandler {
 
         //adapt times TODO
         for(int i=0; i<dailyRoutine.size(); i++){
-            //first item
-            if(i==0 && dailyRoutine.get(i).getStarttime().compareTo(Util.getTime("00:00"))!=1){
+            if(i==0 && dailyRoutine.get(i).getStarttime().compareTo(Util.getTime("00:00"))!=0){
+                //first activity of the day
                 dailyRoutine.get(i).setStarttime(Util.getTime("00:00"));
-            }else if(i < dailyRoutine.size()-1 && dailyRoutine.get(i+1).getStarttime().compareTo(Util.addMinuteFromDate(dailyRoutine.get(i).getEndtime(), 1))!=1){
-                //all items in between
-
+            }else if(i < dailyRoutine.size()-1 && dailyRoutine.get(i+1).getStarttime().compareTo(Util.addMinuteFromDate(dailyRoutine.get(i).getEndtime(), 1))!=0){
+                //all activities within first and last activity of the day
                 dailyRoutine.get(i+1).setStarttime(Util.addMinuteFromDate(dailyRoutine.get(i).getEndtime(), +1));
             }else if(i == dailyRoutine.size()-1){
-                //last item
-                dailyRoutine.get(i).setStarttime(Util.getTime("23:59"));
+                //last activity of the day
+                dailyRoutine.get(i).setEndtime(Util.getTime("23:59"));
             }
         }
 
-        drFragment.updateView();
 
         //handle the actionBar items and selected activities
         DailyRoutineView.clearSelectedActivities();
         DailyRoutineView.setSelectable(false);
         DailyRoutineView.setActionBarItems();
+
+        drFragment.updateView();
         //TODO combine with backend, adapt the daily routine
     }
 
 
     /**
      * TODO
-     * Edits one item of the daily routine
-     * @param index in the list
+     * Edits one item of the daily routine.
+     * First removes the item to edit, then adds new one
+     * @param indexSelected in the list
      * @param activityItem
      */
-    public void edit(int index, ActivityItem activityItem){
+    public void edit(int indexSelected, ActivityItem activityItem){
         //TODO edit the daily routine
+        ArrayList<Integer> selected = new ArrayList<Integer>();
+        selected.add(indexSelected);
+        delete(selected);
+        add(activityItem);
     }
 
     /**
@@ -96,12 +101,13 @@ public class DayHandler {
         itemStart.setEndtime(Util.addMinuteFromDate(start, -1));
 
         //set starttime of next activity
+        //TODO BUG here endindex == dailyRoutine.size()
         ActivityItem itemEnd = dailyRoutine.get(endindex);
         itemEnd.setStarttime(Util.addMinuteFromDate(end, 1));
 
         //remove items in between
         if(endindex-startindex>1){
-            for(int i=startindex+1; i<endindex;i++){
+            for(int i=endindex-1; i>=startindex+1;i--){
                 dailyRoutine.remove(i);
             }
         }
@@ -123,7 +129,7 @@ public class DayHandler {
      * returns the daily routine as arraylist
      * @return
      */
-    public static ArrayList<String[]> getDailyRoutineAsList(){
+    public ArrayList<String[]> getDailyRoutineAsList(){
         //TODO only hardcoded yet
         ArrayList<String[]> list2 = new ArrayList<>();
 
@@ -138,5 +144,9 @@ public class DayHandler {
 
     public void clearDailyRoutine(){
         dailyRoutine.clear();
+    }
+
+    public void setDailyRoutine(ArrayList<ActivityItem>dailyRoutine){
+        this.dailyRoutine = dailyRoutine;
     }
 }

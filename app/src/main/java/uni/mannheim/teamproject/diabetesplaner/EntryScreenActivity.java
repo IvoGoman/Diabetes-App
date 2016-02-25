@@ -12,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListAdapter;
@@ -139,11 +138,6 @@ public class EntryScreenActivity extends AppCompatActivity
 
         //handles event when add button in the ActionBar on the ActivityInputFragment page was clicked
         switch (id){
-//            case android.R.id.home:
-//                // app icon in action bar clicked; go home
-//                getSupportActionBar().setDisplayHomeAsUpEnabled(false);
-//                Log.d(TAG, "back button clicked");
-//                return false;
             case R.id.add_icon_action_bar:
                 //TODO: add activity log
                 ActivityInputFragment.list.add("ActivityData.csv");
@@ -156,36 +150,24 @@ public class EntryScreenActivity extends AppCompatActivity
 
             case R.id.delete_icon_action_bar:
                 //Get the currently selected items and removes them
-                ArrayList<DailyRoutineView> items = DailyRoutineFragment.getActivityList();
-//                LinearLayout linearLayout = DailyRoutineFragment.getLinearLayout();
                 if(fragment instanceof DailyRoutineFragment) {
-                    ArrayList<Integer> indexes = new ArrayList<>();
-                    for (int i = 0; i < items.size(); i++) {
-                        if (items.get(i).isSelected()) {
-                            Log.d(TAG, "isSelected: "+ items.get(i).getActivity() + " index: " + i);
-                            indexes.add(i);
-//                            DailyRoutineView.setSelectable(false);
-//                            DailyRoutineView.getSelectedActivities().remove(dailyRoutine.get(i));
-//                            DailyRoutineView.setActionBarItems();
-
-//                            linearLayout.removeView(dailyRoutine.get(i));
-                            //TODO handle the remove event within the database
-                        }
-                    }
                     DailyRoutineHandler drHandler = ((DailyRoutineFragment) fragment).getDrHandler();
-                    drHandler.delete(indexes);
+                    drHandler.delete(getIndexesOfSelected());
                 }
 
                 //do sth with the delete icon
                 return true;
             case R.id.edit_icon_action_bar_routine:
-                //create an EditDialog, set the starttime and endtime to the starttime and endtime
-                //of the activity to edit
+
                 EditDialog editDialog = new EditDialog();
-                editDialog.setStarttime(DailyRoutineView.getSelectedActivities().get(0).getStartTime());
-                editDialog.setEndtime(DailyRoutineView.getSelectedActivities().get(0).getEndTime());
-                editDialog.setActivity(DailyRoutineView.getSelectedActivities().get(0).getActivityID()-1);
-                editDialog.show(getFragmentManager(),"editDialog");
+                if(fragment instanceof DailyRoutineFragment){
+                    editDialog.setDailyRoutineHandler(((DailyRoutineFragment) fragment).getDrHandler());
+                    editDialog.setSelected(getIndexesOfSelected().get(0));
+                    editDialog.setActivity(DailyRoutineView.getSelectedActivities().get(0).getActivityID() - 1);
+                    editDialog.setStarttime(DailyRoutineView.getSelectedActivities().get(0).getStartTime());
+                    editDialog.setEndtime(DailyRoutineView.getSelectedActivities().get(0).getEndTime());
+                    editDialog.show(getFragmentManager(), "editDialog");
+                }
 
                 return true;
 
@@ -202,6 +184,21 @@ public class EntryScreenActivity extends AppCompatActivity
 
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Returns the indexes of the items that were selected by the user
+     * @return
+     */
+    public ArrayList<Integer> getIndexesOfSelected(){
+        ArrayList<DailyRoutineView> items = DailyRoutineFragment.getActivityList();
+        ArrayList<Integer> indexes = new ArrayList<>();
+        for (int i = 0; i < items.size(); i++) {
+            if (items.get(i).isSelected()) {
+                indexes.add(i);
+            }
+        }
+        return indexes;
     }
 
     /**
