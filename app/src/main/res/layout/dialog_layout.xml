@@ -32,14 +32,14 @@
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="102dp"
-            android:text="mg/dl"
+            android:text="@string/milligram_dl"
             android:id="@+id/bs_mg"
             android:checked="true" />
 
         <RadioButton
             android:layout_width="152dp"
             android:layout_height="129dp"
-            android:text="mmol/dl"
+            android:text="@string/mmol_l"
             android:id="@+id/bs_mm"
             android:checked="false" />
     </RadioGroup>

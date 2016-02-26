@@ -29,6 +29,10 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         return view;
     }
 
+    /***
+     * Click Handler for the dialog.
+     * @param view
+     */
     @Override
     public void onClick(View view)
     {
@@ -40,5 +44,25 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         {
             dismiss();
         }
+    }
+
+    /***
+     * Converts mg/dl in mmol/l
+     * @param mg
+     * @return mmol/l
+     */
+    private double miligram_to_mol(double mg)
+    {
+        return mg * 0.0555;
+    }
+
+    /***
+     * Converts mmol/l in mg/dl
+     * @param mmol
+     * @return mg/dl
+     */
+    private double mmol_to_milligram(double mmol)
+    {
+        return mmol * 18.0182;
     }
 }
