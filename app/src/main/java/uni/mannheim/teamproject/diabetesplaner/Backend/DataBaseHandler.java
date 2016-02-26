@@ -6,6 +6,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.sql.Date;
+
 
 /**
  * Created by leonidgunko on 31.10.15.
@@ -68,18 +70,31 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public static final String ACTIVITYLIST_DELETE_TABLE =
             "DROP TABLE IF EXISTS " + ACTIVITYLIST_TABLE_NAME + ";";
 
+    /* JW: Added Bloodsugar_History Table
+    */
+
+    //Bloodsugar History
+    public static final String BLOODSUGAR_TABLE_NAME = "History_Bloodsugar";
+    public static final String BLOODSUGAR_CREATE_TABLE = " CREATE TABLE IF NOT EXISTS " + BLOODSUGAR_TABLE_NAME +
+            "( id_bloodsugar INTEGER PRIMARY KEY, bloodsugar_level double, timestamp DateTime)";
+
+    public static final String BLOODSUGAR_SELECT =
+            "SELECT * FROM " + BLOODSUGAR_TABLE_NAME + ";";
+    public static final String BLOODSUGAR_DELETE_TABLE =
+            "DROP TABLE IF EXISTS " + BLOODSUGAR_TABLE_NAME + ";";
+
     //Profile Table
     private static final String PROFILE_TABLE_NAME = "Profile";
     private static final String PROFILE_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " +
                     PROFILE_TABLE_NAME +
-                    " (id INTEGER PRIMARY KEY, age INTEGER, diabetes_type INTEGER, average_bloodsugar_level double);";
+                    " (id INTEGER PRIMARY KEY, age INTEGER, diabetes_type INTEGER, current_bloodsugar_level double, FOREIGN KEY (FK_history_bloodsugar_level) REFERENCES History_Bloodsugar(id_bloodsugar));";
     public static final String PROFILE_SELECT =
             "SELECT * FROM " + PROFILE_TABLE_NAME + ";";
     public static final String PROFILE_DELETE_TABLE =
             "DROP TABLE IF EXISTS " + PROFILE_TABLE_NAME + ";";
 
-    public static final String BLOODSUGAR_CREATE_TABLE = "";
+
 
 
     //METHODS
@@ -204,6 +219,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void InsertActivity (DataBaseHandler handler ,int idActivity, int idLocation, String Start, String End){
         SQLiteDatabase db1 = handler.getWritableDatabase();
         db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '"+ Start + "','" + End  +"' ); ");
+        db1.close();
+    }
+
+    /*
+    JW: Inserts a new bloodsugar entry
+     */
+    public void InsertBloodsugar(DataBaseHandler handler, int idBloodsugar, double bloodsugar_level){
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        long tslong = System.currentTimeMillis()/1000;
+        db1.execSQL("insert into History_Bloodsugar(id_bloodsugar, bloodsugar_level, timestamp) values(" + idBloodsugar + "," + bloodsugar_level + " , '"+ tslong +"' ); ");
         db1.close();
     }
 

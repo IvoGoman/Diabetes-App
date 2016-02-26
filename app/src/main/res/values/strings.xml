@@ -136,6 +136,7 @@
     <string name="Sunday">Sunday</string>
 
     <string name="invalid_time">Starttime must be before endtime!</string>
+    <string name="submit">submit</string>
 
 
 </resources>
