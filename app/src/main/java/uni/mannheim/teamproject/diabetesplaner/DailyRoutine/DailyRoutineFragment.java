@@ -147,6 +147,16 @@ public class DailyRoutineFragment extends Fragment {
 
         for(int i=0; i<listItems.size(); i++){
             DailyRoutineView drv = new DailyRoutineView(getActivity(), listItems.get(i));
+
+            //-----for testing--------------
+            if(i==1) {
+                drv.setSubactivity(4);
+            }else if(i==3){
+                drv.setBloodsugar(4.0);
+                drv.setSubactivity(5);
+                drv.setMeal("Kartoffeln mit Speck, Schweinshaxen und Salatbeilage");
+            }
+
             linearLayout.addView(drv);
             drv.setState(false);
             drv.setLayoutParams(params);

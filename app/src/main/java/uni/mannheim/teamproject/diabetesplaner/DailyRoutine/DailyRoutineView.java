@@ -43,6 +43,8 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private int subactivity;
     private String starttime;
     private String endtime;
+    private Double bloodsugar;
+    private String meal;
     private int state;
     private boolean touched = false;
 
@@ -69,6 +71,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private int offsetL = getpx(10) + offsetL1;
     private int dotOffset = getpx(25);
     private int lineOffset = getpx(5);
+    private int textPadding = getpx(7);
     private int marginTop = getpx(8);
     private int borderWidth = getpx(2);
     private static Context context;
@@ -88,7 +91,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     private StaticLayout sl;
     private Rect actRect;
-    private int textPadding = getpx(7);
     private Rect front;
     private Rect front2;
     private StaticLayout slsub;
@@ -104,6 +106,10 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private Path border = new Path();
     private Path hl = new Path();
     private static DailyRoutineView current;
+    private Rect actRectBlood;
+    private StaticLayout slBlood;
+    private Rect actRectMeal;
+    private StaticLayout slMeal;
 
 
     public DailyRoutineView(Context context) {
@@ -291,24 +297,52 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         //width Duration: ... + padding to right border
         int mesDur = (int)fontDur.measureText(getResources().getString(R.string.duration)+": " + durationAsString)+textPadding;
         //width of canvas - textPadding to duration - width duration
-        int xRight = width - textPadding - mesDur;
+        int xRight = width - 3*textPadding - mesDur;
 
         //initialize activity text
         actRect = new Rect(offsetL + textPadding, textPadding, xRight, 0);
         sl = new StaticLayout(getActivity(activity), textPaint, (int)actRect.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
+        heightUpper = sl.getHeight() + textPadding;
+        int heightPrev = sl.getHeight();
 
+        xRight = width-2*textPadding;
+
+        //measure subactivity if it exists
         if(!getSubactivity(subactivity).equals("")) {
-            //initialize subactivity test
-            actRectSub = new Rect(0, sl.getHeight() + textPadding, xRight, 0);
+            //initialize subactivity text
+            actRectSub = new Rect(0, heightPrev + textPadding, xRight, 0);
             slsub = new StaticLayout(getSubactivity(subactivity), textPaintSub, (int) actRectSub.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
+            heightPrev = slsub.getHeight();
 
             //height of activity text field + height of subactivity text field + textpadding above and beyond
-            heightUpper = sl.getHeight() + slsub.getHeight() + 3 * textPadding;
-        }else{
-            //height of activity text field + textpadding above and beyond
-            heightUpper = sl.getHeight() + 2 * textPadding;
+            heightUpper += slsub.getHeight() + textPadding;
         }
-        return heightUpper+marginTop+heightLower;
+
+        //measure meal if it exists
+        if(meal != null) {
+            //initialize bloodsugar text
+            actRectMeal = new Rect(0, heightPrev+textPadding, xRight, 0);
+            slMeal = new StaticLayout(getMeal(), textPaintSub, (int) actRectMeal.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
+            heightPrev = slMeal.getHeight();
+
+            //height + meal text field height
+            heightUpper += slMeal.getHeight() + textPadding;
+        }
+
+        //measure bloodsugar if it exists
+        if(bloodsugar != null) {
+            //initialize bloodsugar text
+            actRectBlood = new Rect(0, heightPrev+textPadding, xRight, 0);
+            slBlood = new StaticLayout(getBloodsugar(), textPaintSub, (int) actRectBlood.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
+            heightPrev = slBlood.getHeight();
+
+            //height + bloodsugar text field height
+            heightUpper += slBlood.getHeight() + textPadding;
+        }
+
+        //padding bottom
+        heightUpper += textPadding;
+        return heightUpper + marginTop + heightLower;
     }
 
     private void initComponents(int width, int height){
@@ -402,11 +436,11 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
 
      //draw duration text
-        canvas.drawText(getResources().getString(R.string.duration)+": " + durationAsString, getWidth() - (int)fontDur.measureText(getResources().getString(R.string.duration)+": " + durationAsString) - textPadding, (front.height() / 2) + (font.getTextSize() / 2), fontDur);
+        canvas.drawText(getResources().getString(R.string.duration) + ": " + durationAsString, getWidth() - (int) fontDur.measureText(getResources().getString(R.string.duration) + ": " + durationAsString) - textPadding, sl.getHeight(), fontDur);
         //draw start text
-        canvas.drawText(getResources().getString(R.string.start)+": " + starttime, textPadding + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
+        canvas.drawText(getResources().getString(R.string.start) + ": " + starttime, textPadding + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
         //draw end text
-        canvas.drawText(getResources().getString(R.string.end)+": " + endtime, getWidth() - textPadding - fontDur.measureText(getResources().getString(R.string.end)+": " + endtime), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
+        canvas.drawText(getResources().getString(R.string.end) + ": " + endtime, getWidth() - textPadding - fontDur.measureText(getResources().getString(R.string.end) + ": " + endtime), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
 
         //draw activity text
         canvas.translate(actRect.left, actRect.top);
@@ -416,6 +450,18 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             //draw subactivity text
             canvas.translate(actRectSub.left, actRectSub.top);
             slsub.draw(canvas);
+        }
+
+        if(meal != null) {
+            //draw bloodsugar text
+            canvas.translate(actRectMeal.left, actRectMeal.top);
+            slMeal.draw(canvas);
+        }
+
+        if(bloodsugar != null) {
+            //draw meal text
+            canvas.translate(actRectBlood.left, actRectBlood.top);
+            slBlood.draw(canvas);
         }
     }
 
@@ -536,6 +582,10 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
                 return "Biken";
             case 3:
                 return "Climbing";
+            case 4:
+                return "Frühstück";
+            case 5:
+                return "Mittagessen";
             default:
                 return "";
         }
@@ -911,5 +961,47 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     public static void clearSelectedActivities() {
         selectedActivities.clear();
+    }
+
+    /**
+     * returns the bloodsugarlevel as string
+     * @return
+     */
+    public String getBloodsugar() {
+        //TODO getTimeMeasured + bloodsugarlevel + getMeasurementUnit()
+        return "Blutzuckerspiegel um 13:10: \n" + bloodsugar + " mmol/L";
+    }
+
+    /**
+     * set bloodsugar level
+     * @param bloodsugarlevel
+     */
+    public void setBloodsugar(double bloodsugarlevel){
+        this.bloodsugar = bloodsugarlevel;
+    }
+
+    public void setSubactivity(int id){
+        this.subactivity = id;
+    }
+
+    public String getMeal() {
+        return meal;
+    }
+
+    public void setMeal(String meal){
+        this.meal = meal;
+    }
+
+    /**
+     * returns height of StaticLayout component
+     * @param sl
+     * @return 0 if sl ==null else height of sl
+     */
+    public int getHeightComp(StaticLayout sl){
+        if(sl == null){
+            return 0;
+        }else {
+            return sl.getHeight();
+        }
     }
 }
