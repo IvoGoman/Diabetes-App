@@ -1,5 +1,7 @@
 package uni.mannheim.teamproject.diabetesplaner.SettingsActivity;
 
+import android.app.Dialog;
+import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -20,12 +22,26 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     public static final String TAG = SettingsFragment.class.getSimpleName();
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
+
+        final EditTextPreference pref_EditText = (EditTextPreference) findPreference("pref_key_bloodsugar");
+        //pref_EditText.setDialogLayoutResource(1);
+        pref_EditText.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                FragmentManager manager = getFragmentManager();
+                bloodsugar_dialog bs = new bloodsugar_dialog();
+                bs.show(manager,"Test");
+                return true;
+            }
+        });
 
         //define preference for the onclick-method
         final CheckBoxPreference pref_datacollection = (CheckBoxPreference) findPreference("pref_datacollection");
@@ -34,6 +50,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             public boolean onPreferenceClick(Preference preference) {
                 System.out.println("Test Jens"); //TODO:delete if not needed
                 CheckBoxPreference pref = (CheckBoxPreference) findPreference("checkbox_preference");
+
 
                 //show the notifications only if the data collection is started
                 if (pref_datacollection.isChecked()){
@@ -113,7 +130,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 View header = EntryScreenActivity.navigationView.getHeaderView(0);
                 TextView name = (TextView) header.findViewById(R.id.username);
                 name.setText(nameDialog.getText());
-               // Log.d(TAG, String.valueOf(getActivity().findViewById(R.id.username)));
+                // Log.d(TAG, String.valueOf(getActivity().findViewById(R.id.username)));
 
             } else if (editTextPref.getKey().equals("pref_key_weight")) {
                 if (nameDialog.getText().toString().matches("\\d+\\s?kg")) {
@@ -128,10 +145,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                     editTextPref.setSummary(nameDialog.getText() + " mmol/L");
                 }
             }
-        }
-    }
 
-    public void onPreferenceClickListener(Preference Preference) {
-        // pref_datacollection
+        }
     }
 }

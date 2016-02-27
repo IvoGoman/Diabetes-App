@@ -83,5 +83,7 @@
     <string name="duration">Dauer</string>
     <string name="end">Ende</string>
     <string name="start">Start</string>
-    <string name="activity_limit">Eine Aktivity muss bestehen bleiben.</string>
+    <string name="add_activity">Aktivität hinzufügen</string>
+    <string name="milligram_dl">mg/dl</string>
+    <string name="mmol_l">mmol/l</string>
 </resources>
