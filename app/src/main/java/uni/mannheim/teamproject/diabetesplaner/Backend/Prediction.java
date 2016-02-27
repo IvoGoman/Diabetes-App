@@ -67,10 +67,10 @@ public class Prediction {
         return inputReader;
     }
 
-    public ArrayList<PeriodAction> GetRoutine1() throws Exception {
+    public ArrayList<PeriodAction> GetRoutine1(DataBaseHandler helper) throws Exception {
         // Creates ARFF file for the instances to be saved to
 Context c = AppGlobal.getcontext();
-        DataBaseHandler helper = AppGlobal.getHandler();
+
         OutputStreamWriter output = new OutputStreamWriter(c.openFileOutput(FILENAME, Context.MODE_ENABLE_WRITE_AHEAD_LOGGING));
 
         String Actions = "{";

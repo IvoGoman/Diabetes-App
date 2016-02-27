@@ -1,8 +1,12 @@
 package uni.mannheim.teamproject.diabetesplaner.Backend;
 
 import android.content.Context;
+import android.util.Log;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
 
@@ -17,7 +21,8 @@ public class DailyRoutineHandler extends DayHandler{
     private static DailyRoutineFragment drFragment;
 
     public DailyRoutineHandler(DailyRoutineFragment drFragment) {
-        super(drFragment);
+        //super(drFragment);
+        super();
         dailyRoutine = getDailyRoutine();
     }
 
@@ -32,16 +37,16 @@ public class DailyRoutineHandler extends DayHandler{
         DataBaseHandler handler = null;
         Context context = AppGlobal.getcontext();
         Prediction prediction1 = new Prediction();
-        try{
+        /** try{
         if (AppGlobal.getHandler()!=null){
-            //handler = AppGlobal.getHandler()
+         handler = AppGlobal.getHandler();
 
-           prediction1.GetRoutine1();
+         prediction1.GetRoutine1(handler);
         }
         else{
             AppGlobal.getHandler().onCreate(AppGlobal.getHandler().db);
-           // handler = AppGlobal.getHandler();
-             prediction1.GetRoutine1();
+         handler = AppGlobal.getHandler();
+         prediction1.GetRoutine1(handler);
         }
 
 
@@ -49,7 +54,7 @@ public class DailyRoutineHandler extends DayHandler{
         catch(Exception e)
         {
         e.printStackTrace();
-        }
+         }**/
         //TODO get daily routine from model
         dailyRoutine.add(new ActivityItem(1,0,"0:00","9:14"));
         dailyRoutine.add(new ActivityItem(2,0,"9:15","9:53"));
