@@ -136,9 +136,6 @@
     <string name="Sunday">Sunday</string>
 
     <string name="invalid_time">Starttime must be before endtime!</string>
-    <string name="submit">submit</string>
-    <string name="milligram_dl">mg/dl</string>
-    <string name="mmol_l">mmol/l</string>
 
 
 </resources>

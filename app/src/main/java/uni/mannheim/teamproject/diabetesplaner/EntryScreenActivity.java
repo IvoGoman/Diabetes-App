@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag.ActivityMeasurementFragment;
 import uni.mannheim.teamproject.diabetesplaner.Backend.DailyRoutineHandler;
+import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.ActivityLimitDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.AddDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
@@ -152,7 +153,12 @@ public class EntryScreenActivity extends AppCompatActivity
                 //Get the currently selected items and removes them
                 if(fragment instanceof DailyRoutineFragment) {
                     DailyRoutineHandler drHandler = ((DailyRoutineFragment) fragment).getDrHandler();
-                    drHandler.delete(getIndexesOfSelected());
+                    if(drHandler.getDailyRoutine().size() == 1 || getIndexesOfSelected().size() == drHandler.getDailyRoutine().size()){
+                        ActivityLimitDialog ald = new ActivityLimitDialog();
+                        ald.show(getFragmentManager(), "editDialog");
+                    }else {
+                        drHandler.delete(getIndexesOfSelected());
+                    }
                 }
 
                 //do sth with the delete icon
