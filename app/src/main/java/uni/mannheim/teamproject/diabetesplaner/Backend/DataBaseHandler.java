@@ -6,7 +6,9 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 
 /**
@@ -19,7 +21,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public DataBaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
-        Log.d("Database","MySQLiteHelper Constructor Started");
+        Log.d("Database", "MySQLiteHelper Constructor Started");
     }
 
     // Database Constants
@@ -95,25 +97,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + PROFILE_TABLE_NAME + ";";
 
 
-
-
     //METHODS
 
-    public Cursor getAllLocations (DataBaseHandler helper){
+    public Cursor getAllLocations(DataBaseHandler helper) {
         SQLiteDatabase db = helper.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select * from " + LOCATION_TABLE_NAME, null);
         return cursor;
     }
 
-    public Cursor getAllActions (DataBaseHandler helper){
+    public Cursor getAllActions(DataBaseHandler helper) {
         SQLiteDatabase db = helper.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
         return cursor;
     }
 
-    public Cursor getAllRoutine (DataBaseHandler helper){
+    public Cursor getAllRoutine(DataBaseHandler helper) {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.rawQuery("select ActivityList.id, Activities.title, Location.Title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id inner join Location on ActivityList.id_Location = Location.id", null);
         return cursor;
@@ -168,7 +168,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 15:00' , '2016-01-01 19:00'); ");
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 19:03' , '2016-01-01 19:40'); ");
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 19:45' , '2016-01-01 20:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-02 09:00'); ");        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-02 09:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 09:05' , '2016-01-01 09:30'); ");
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 09:30' , '2016-01-01 10:00'); ");
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 10:03' , '2016-01-01 13:55'); ");
@@ -176,7 +177,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 15:00' , '2016-01-01 19:00'); ");
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 19:03' , '2016-01-01 19:40'); ");
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 19:45' , '2016-01-01 20:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-02 09:00'); ");        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-02 09:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 09:05' , '2016-01-01 09:30'); ");
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 09:30' , '2016-01-01 10:00'); ");
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 10:03' , '2016-01-01 13:55'); ");
@@ -210,36 +212,36 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Log.d("Database", "Database Upgraded, All Tables Dropped");
     }
 
-    public void InsertLocation (DataBaseHandler handler ,double lat, double longt, String title){
+    public void InsertLocation(DataBaseHandler handler, double lat, double longt, String title) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         db1.execSQL("insert into Location(Latitude, Longtitude, Title) values(" + lat + "," + longt + "," + "'" + title + "'" + "); ");
         db1.close();
     }
 
-    public void InsertActivity (DataBaseHandler handler ,int idActivity, int idLocation, String Start, String End){
+    public void InsertActivity(DataBaseHandler handler, int idActivity, int idLocation, String Start, String End) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '"+ Start + "','" + End  +"' ); ");
+        db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '" + Start + "','" + End + "' ); ");
         db1.close();
     }
 
     /*
     JW: Inserts a new bloodsugar entry
      */
-    public void InsertBloodsugar(DataBaseHandler handler, int idBloodsugar, double bloodsugar_level){
+    public void InsertBloodsugar(DataBaseHandler handler, int idBloodsugar, double bloodsugar_level) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        long tslong = System.currentTimeMillis()/1000;
-        db1.execSQL("insert into History_Bloodsugar(id_bloodsugar, bloodsugar_level, timestamp) values(" + idBloodsugar + "," + bloodsugar_level + " , '"+ tslong +"' ); ");
+        long tslong = System.currentTimeMillis() / 1000;
+        db1.execSQL("insert into History_Bloodsugar(id_bloodsugar, bloodsugar_level, timestamp) values(" + idBloodsugar + "," + bloodsugar_level + " , '" + tslong + "' ); ");
         db1.close();
     }
 
-    public void ReplaceActivity(DataBaseHandler handler, int idActivity, int idLocation, String Start, String End){
+    public void ReplaceActivity(DataBaseHandler handler, int idActivity, int idLocation, String Start, String End) {
         findActionbyStartTime(handler, Start);
         findActionbyEndTime(handler, End);
 
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        InsertActivity (handler ,idActivity, idLocation,Start,End);
+        InsertActivity(handler, idActivity, idLocation, Start, End);
         //UPDATE tbl_info SET age=12 WHERE _id=1;
-        db1.execSQL("update ActivityList set(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '"+ Start + "','" + End  +"' ); ");
+        db1.execSQL("update ActivityList set(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '" + Start + "','" + End + "' ); ");
         db1.close();
     }
 
@@ -254,7 +256,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    private void findActionbyEndTime(DataBaseHandler handler,String End){
+    private void findActionbyEndTime(DataBaseHandler handler, String End) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         Cursor cursor = db.rawQuery("select id from ActivityList where Start <= " + End + " and End >= " + End + "; ", null);
         if (cursor.moveToFirst()) {
@@ -265,7 +267,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    private void findActionbyStartEndTime(DataBaseHandler handler,String Start, String End){
+    private void findActionbyStartEndTime(DataBaseHandler handler, String Start, String End) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         Cursor cursor = db.rawQuery("select id from ActivityList where Start >= " + Start + " and End <= " + End + "; ", null);
         if (cursor.moveToFirst()) {
@@ -276,10 +278,65 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    public void InsertProfile (DataBaseHandler handler ,int age, int dt, double abl){
+    public void InsertProfile(DataBaseHandler handler, int age, int dt, double abl) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         db1.execSQL("insert into Profile(age, diabetes_type, average_bloodsugar_level) values(" + age + "," + dt + "," + "'" + abl + "'" + "); ");
         db1.close();
     }
 
+    public ArrayList<Prediction.PeriodAction> GetDay(DataBaseHandler handler, Date Date) {
+        String StartOfDay, EndOfDay;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(Date);
+        int Year = calendar.get(Calendar.YEAR);
+        int Month = calendar.get(Calendar.MONTH);
+        int Day = calendar.get(Calendar.DAY_OF_MONTH);
+        StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
+        EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
+
+        //String S = "select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.Start > '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "'";
+
+        SQLiteDatabase db = handler.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.Start > '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "'", null);
+        return GetArrayFromCursor(cursor);
+    }
+
+    public ArrayList<Prediction.PeriodAction> GetArrayFromCursor(Cursor cursor) {
+        String ActionTitle;
+        String Start;
+        String End;
+        ArrayList<Prediction.PeriodAction> Activities = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                ActionTitle = cursor.getString(0);
+                Start = cursor.getString(1);
+                End = cursor.getString(2);
+                Prediction.PeriodAction PA = new Prediction.PeriodAction();
+                PA.setAction(ActionTitle);
+                PA.setStart(Start);
+                PA.setEnd(End);
+                Activities.add(PA);
+            }
+            while (cursor.moveToNext());
+        }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return Activities;
+    }
 }
+    /*
+    if (cursor.moveToFirst()) {
+        do {
+            String ActionId = cursor.getString(0);
+            String Start = cursor.getString(1);
+            String End = cursor.getString(2);
+        }
+        while (cursor1.moveToNext());
+    }
+    // close cursor
+    if (!cursor.isClosed()) {
+        cursor.close();
+    }
+    */
