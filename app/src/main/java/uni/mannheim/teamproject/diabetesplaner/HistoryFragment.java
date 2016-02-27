@@ -1,6 +1,7 @@
 package uni.mannheim.teamproject.diabetesplaner;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.net.Uri;
@@ -9,7 +10,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -142,17 +145,11 @@ public class HistoryFragment extends Fragment {
     public void onDateSelected(LinearLayout linearLayout, LinearLayout.LayoutParams params, Date date) {
         linearLayout.removeAllViews();
         //TODO: Move Data creation to a Utility Class for unified creation over all classes
-        SimpleDateFormat sdf = new SimpleDateFormat();
-        sdf.applyPattern("yyyy-MM-dd HH:mm");
-        String dateString = sdf.format(date);
-        try {
-            date = sdf.parse(dateString);
-
             Log.i(TAG, date.toString());
             ArrayList<ActivityItem> day = dayHandler.getDayRoutine(date);
 
 //  ArrayList<String[]> day = generateRandomRoutine();
-            if (day != null) {
+        if (day.size() > 0) {
                 for (int i = 0; i < day.size(); i++) {
                     DailyRoutineView drv = new DailyRoutineView(getActivity(), Integer.valueOf(day.get(i).getActivityId()), 0, day.get(i).getStarttimeAsString(), day.get(i).getEndtimeAsString());
                     drv.setState(true);
@@ -162,13 +159,12 @@ public class HistoryFragment extends Fragment {
                     items.add(drv);
                 }
             } else {
-                TextView tv = new TextView(getActivity());
+            TextView tv = new TextView(getContext());
                 tv.setText(R.string.no_data);
                 linearLayout.addView(tv);
+            tv.setLayoutParams(params);
+            tv.setGravity(Gravity.CENTER);
             }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
     }
 
     /**
