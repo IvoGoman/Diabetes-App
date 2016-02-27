@@ -56,9 +56,9 @@ public class CustomListView extends ArrayAdapter<String>{
             @Override
             public void onClick(View v) {
                 remove(files.get(position));
-                if(files.size() == 0){
+               /* if(files.size() == 0){
                     context.findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
-                }
+                }*/
             }
         });
 
