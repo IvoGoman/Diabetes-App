@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Locale;
 
+import uni.mannheim.teamproject.diabetesplaner.Backend.DataBaseHandler;
 import weka.classifiers.trees.J48;
 import weka.core.Instance;
 import weka.core.Instances;
@@ -27,6 +28,8 @@ public class Prediction {
     private static String Start;
     private static String End;
     private static String Action;
+
+    private static ArrayList<PeriodAction> PA1 = new ArrayList<PeriodAction>();
 
     private static class TimeAction{
         int Time;
@@ -64,9 +67,10 @@ public class Prediction {
         return inputReader;
     }
 
-    public static ArrayList<PeriodAction> GetRoutine1(DataBaseHandler helper, Context c) throws Exception {
+    public ArrayList<PeriodAction> GetRoutine1() throws Exception {
         // Creates ARFF file for the instances to be saved to
-
+Context c = AppGlobal.getcontext();
+        DataBaseHandler helper = AppGlobal.getHandler();
         OutputStreamWriter output = new OutputStreamWriter(c.openFileOutput(FILENAME, Context.MODE_ENABLE_WRITE_AHEAD_LOGGING));
 
         String Actions = "{";
@@ -189,7 +193,7 @@ public class Prediction {
         }
 
 
-        ArrayList<PeriodAction> PA1 = new ArrayList<PeriodAction>();
+//        ArrayList<PeriodAction> PA1 = new ArrayList<PeriodAction>();
         for (int i =0;i<TimeAction1.size();i++) {
             int ind = (int)TimeAction1.get(i).Action;
 
