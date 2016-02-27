@@ -465,6 +465,12 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
                 return "Schreibtischarbeit";
             case 14:
                 return "Sport";
+            //for debugging:------------------
+            case 15:
+                return "Previous Activity";
+            case 16:
+                return "Next Activity";
+            //--------------------------------
             default:
                 return "unknown activity";
         }

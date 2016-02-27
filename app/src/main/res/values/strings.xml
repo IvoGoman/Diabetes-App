@@ -135,7 +135,8 @@
     <string name="Saturday">Saturday</string>
     <string name="Sunday">Sunday</string>
 
-    <string name="invalid_time">Starttime must be before endtime!</string>
+    <string name="invalid_time">Starttime must be before endtime.</string>
+    <string name="activity_limit">One activity has to be left.</string>
 
 
 </resources>

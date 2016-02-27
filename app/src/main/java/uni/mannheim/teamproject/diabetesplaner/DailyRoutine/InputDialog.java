@@ -78,7 +78,7 @@ public class InputDialog extends DialogFragment {
 
         //button for starttime TimePicker
         startTimeButton = (Button) v.findViewById(R.id.start_button);
-        startTimeButton.setText(getStarttime());
+        startTimeButton.setText(endtime);
         startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +92,7 @@ public class InputDialog extends DialogFragment {
 
         //button for endtime TimePicker
         endTimeButton = (Button) v.findViewById(R.id.end_button);
-        endTimeButton.setText(getEndtime());
+        endTimeButton.setText(starttime);
         endTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
