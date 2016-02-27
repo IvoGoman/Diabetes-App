@@ -13,8 +13,12 @@ import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
+import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityInputHandler;
+import uni.mannheim.teamproject.diabetesplaner.Backend.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.CustomListView;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
@@ -28,6 +32,9 @@ public class ActivityFragment extends Fragment  {
     private static ListAdapter adapter;
     public static AbsListView lv;
     public static ArrayList<String> FileList = new ArrayList<String>();
+    ActivityInputHandler ActivityInputHndlr = new ActivityInputHandler ();
+    final DataBaseHandler DBHandler = new DataBaseHandler(getContext());
+
 
     public ActivityFragment() {
         // Required empty public constructor
@@ -60,30 +67,22 @@ public class ActivityFragment extends Fragment  {
             @Override
             public void onClick(View v)
             {
-                // Create DirectoryChooserDialog and register a callback
-                DirectoryChooserDialog directoryChooserDialog =
-                        new DirectoryChooserDialog(getActivity(),
-                                new DirectoryChooserDialog.ChosenDirectoryListener()
-                                {
-                                    @Override
-                                    public void onChosenDir(String chosenDir)
-                                    {
-                                        m_chosenDir = chosenDir;
-                                        FileList.add(chosenDir);
-                                        ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
-                                        Toast.makeText(
-                                                getActivity(), "Chosen directory: " +
-                                                        chosenDir, Toast.LENGTH_LONG).show();
-                                    }
-                                });
-                // Toggle new folder button enabling
-                directoryChooserDialog.setNewFolderEnabled(m_newFolderEnabled);
-                // Load directory chooser dialog for initial 'm_chosenDir' directory.
-                // The registered callback will be called upon final directory selection.
-                directoryChooserDialog.chooseDirectory(m_chosenDir);
-                m_newFolderEnabled = ! m_newFolderEnabled;
+                new FileChooser(getActivity()).setFileListener(new FileChooser.FileSelectedListener() {
+                    @Override
+                    public void fileSelected(final File file) {
+                        String s = (String) file.toString();
+                        String[] parts = s.split("/");
+                        String part1 = parts[parts.length-1];
+                        if ((ActivityInputHndlr.isFileFormatValid(s))== true){
+                            FileList.add(part1);
+                            ActivityInputHndlr.loadIntoDatabase(part1,DBHandler);
+                            ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
+                        }
+                    }
+                    }).showDialog();
+
             }
-        });
+            });
 
         return inflaterView;
     }
