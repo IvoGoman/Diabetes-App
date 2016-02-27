@@ -6,9 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 
 
 /**
@@ -284,7 +287,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
-    public ArrayList<Prediction.PeriodAction> GetDay(DataBaseHandler handler, Date Date) {
+    public ArrayList<ActivityItem> GetDay(DataBaseHandler handler, Date Date) {
         String StartOfDay, EndOfDay;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(Date);
@@ -298,24 +301,28 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         SQLiteDatabase db = handler.getReadableDatabase();
         Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.Start > '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "'", null);
+
         return GetArrayFromCursor(cursor);
     }
 
-    public ArrayList<Prediction.PeriodAction> GetArrayFromCursor(Cursor cursor) {
-        String ActionTitle;
-        String Start;
-        String End;
-        ArrayList<Prediction.PeriodAction> Activities = new ArrayList<>();
+    public ArrayList<ActivityItem> GetArrayFromCursor(Cursor cursor) {
+        int ActionID;
+        Date Start;
+        Date End;
+        ArrayList<ActivityItem> Activities = new ArrayList<>();
         if (cursor.moveToFirst()) {
             do {
-                ActionTitle = cursor.getString(0);
-                Start = cursor.getString(1);
-                End = cursor.getString(2);
-                Prediction.PeriodAction PA = new Prediction.PeriodAction();
-                PA.setAction(ActionTitle);
-                PA.setStart(Start);
-                PA.setEnd(End);
+                try {
+                ActionID = cursor.getInt(0);
+                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                Start = format.parse(cursor.getString(1));
+
+                End = format.parse(cursor.getString(2));
+                ActivityItem PA = new ActivityItem(ActionID,0,Start,End);
                 Activities.add(PA);
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
             while (cursor.moveToNext());
         }
