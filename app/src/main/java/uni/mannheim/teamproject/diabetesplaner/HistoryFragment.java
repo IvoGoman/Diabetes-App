@@ -18,6 +18,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Time;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -231,6 +232,8 @@ public class HistoryFragment extends Fragment {
             //SimpleDateFormat simpleDate = new SimpleDateFormat();
             DateFormat simpleDate = DateFormat.getDateInstance();
             //simpleDate.applyPattern("dd.MM.yyyy");
+            DateFormat timeDAte  = DateFormat.getTimeInstance();
+            Log.i(TAG, timeDAte.format(calendar.getTime()));
 
             Date dateToday = Calendar.getInstance(Locale.getDefault()).getTime();
             Log.i(TAG,"today:"+dateToday.toString());

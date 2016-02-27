@@ -27,8 +27,15 @@ public class DailyRoutineHandler extends DayHandler{
      */
     public void predictDailyRoutine(){
         ArrayList<Prediction.PeriodAction> Prediction = new ArrayList<Prediction.PeriodAction>();
+        DataBaseHandler handler = null;
+        if (AppGlobal.getHandler()!=null){
+            handler = AppGlobal.getHandler();
+        }
+        else{
+            AppGlobal.getHandler().onCreate(AppGlobal.getHandler().db);
+        }
         try{
-            Prediction = GetRoutine1(AppGlobal.getHandler(), AppGlobal.getcontext());
+            Prediction = GetRoutine1(handler, AppGlobal.getcontext());
         }
         catch(Exception e)
         {

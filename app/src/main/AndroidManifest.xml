@@ -15,7 +15,8 @@
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:name="uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal">
         <activity
             android:name=".EntryScreenActivity"
             android:label="@string/app_name"
