@@ -29,6 +29,13 @@ public class ActivityItem {
         this.endtime = endtime;
     }
 
+    public ActivityItem(ActivityItem activityItem){
+        this.activityId = activityItem.getActivityId();
+        this.subactivityId = activityItem.getSubactivityId();
+        this.starttime = activityItem.getStarttime();
+        this.endtime = activityItem.getEndtime();
+    }
+
     /**
      * constructor for an Activity Item with times as String
      * @param activityId
@@ -117,6 +124,10 @@ public class ActivityItem {
                 return "Schreibtischarbeit";
             case 14:
                 return "Sport";
+            case 15:
+                return "Previous Activity";
+            case 16:
+                return "Next Activity";
             default:
                 return "unknown activity";
         }

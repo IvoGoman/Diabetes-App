@@ -301,8 +301,6 @@ public class DailyRoutineFragment extends Fragment {
 
     @Override
     public void onPause(){
-        //clears the list with the selected DailyRoutineViews
-        DailyRoutineView.getSelectedActivities().clear();
         super.onPause();
         timer.cancel();
     }

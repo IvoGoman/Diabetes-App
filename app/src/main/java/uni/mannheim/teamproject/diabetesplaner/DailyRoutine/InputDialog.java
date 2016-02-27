@@ -17,6 +17,7 @@ import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Backend.DailyRoutineHandler;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
@@ -41,8 +42,12 @@ public class InputDialog extends DialogFragment {
         //init times
         Date date = Calendar.getInstance(Locale.getDefault()).getTime();
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
-        starttime = dateFormat.format(date);
-        endtime = dateFormat.format(date);
+        if(starttime == null) {
+            starttime = dateFormat.format(date);
+        }
+        if(endtime == null) {
+            endtime = dateFormat.format(date);
+        }
         super.onCreate(savedInstanceState);
     }
 
@@ -78,7 +83,7 @@ public class InputDialog extends DialogFragment {
 
         //button for starttime TimePicker
         startTimeButton = (Button) v.findViewById(R.id.start_button);
-        startTimeButton.setText(getStarttime());
+        startTimeButton.setText(starttime);
         startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -92,7 +97,7 @@ public class InputDialog extends DialogFragment {
 
         //button for endtime TimePicker
         endTimeButton = (Button) v.findViewById(R.id.end_button);
-        endTimeButton.setText(getEndtime());
+        endTimeButton.setText(endtime);
         endTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -143,6 +148,14 @@ public class InputDialog extends DialogFragment {
      * @param endtime
      */
     public void setEndtime(String endtime){
+        if(endTimeButton != null){
+            endTimeButton.setText(endtime);
+        }
+        if(starttime != null) {
+            if (Util.getTime(starttime).after(Util.getTime(endtime))){
+                setStarttime(endtime);
+            }
+        }
         this.endtime = endtime;
     }
 
@@ -151,6 +164,14 @@ public class InputDialog extends DialogFragment {
      * @param starttime
      */
     public void setStarttime(String starttime){
+        if(startTimeButton != null) {
+            startTimeButton.setText(starttime);
+        }
+        if(endtime != null) {
+            if (Util.getTime(starttime).after(Util.getTime(endtime))){
+                setEndtime(starttime);
+            }
+        }
         this.starttime = starttime;
     }
 

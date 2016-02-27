@@ -15,7 +15,7 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 public class DayHandler {
     private ArrayList<ActivityItem> dailyRoutine = new ArrayList<>();
     public static final String TAG = DayHandler.class.getSimpleName();
-    private static DailyRoutineFragment drFragment;
+    private DailyRoutineFragment drFragment;
 
     public DayHandler(DailyRoutineFragment drFragment){
         this.drFragment = drFragment;
@@ -78,42 +78,75 @@ public class DayHandler {
      * @param activityItem
      */
     public void add(ActivityItem activityItem){
+        //get the start and endtime of the new activity
         Date start = activityItem.getStarttime();
         Date end = activityItem.getEndtime();
 
+        //find the index of the item before and after the position where the item should be inserted
         int startindex=0;
         int endindex=0;
         for(int i=0; i<dailyRoutine.size(); i++){
 
+            //get the start and end time of item i
             Date startItem = dailyRoutine.get(i).getStarttime();
             Date endItem = dailyRoutine.get(i).getEndtime();
 
-            if(startItem.before(start) && endItem.after(start)){
+            //check if starttime of item to add is during time of item i
+            if(startItem.compareTo(start) < 0 && endItem.compareTo(start) >= 0) {
                 startindex = i;
+
+            }else if(startItem.compareTo(start) == 0){
+                startindex = i-1;
             }
-            if(startItem.before(end) && endItem.after(end)){
+
+            //check if endtime of item to add is during time of item i
+            if(startItem.compareTo(end) <= 0 && endItem.compareTo(end) > 0){
+                endindex = i;
+            }else if(endItem.compareTo(end) == 0){
                 endindex = i+1;
             }
         }
 
-        //set endtime of previous activity
-        ActivityItem itemStart = dailyRoutine.get(startindex);
-        itemStart.setEndtime(Util.addMinuteFromDate(start, -1));
+        //added activity is during one single activity
+        if(startindex == endindex){
+            ActivityItem prev = new ActivityItem(dailyRoutine.get(startindex));
+            ActivityItem next = new ActivityItem(dailyRoutine.get(startindex));
 
-        //set starttime of next activity
-        //TODO BUG here endindex == dailyRoutine.size()
-        ActivityItem itemEnd = dailyRoutine.get(endindex);
-        itemEnd.setStarttime(Util.addMinuteFromDate(end, 1));
+            dailyRoutine.remove(startindex);
 
-        //remove items in between
-        if(endindex-startindex>1){
-            for(int i=endindex-1; i>=startindex+1;i--){
-                dailyRoutine.remove(i);
+            prev.setEndtime(Util.addMinuteFromDate(start, -1));
+            next.setStarttime(Util.addMinuteFromDate(end, 1));
+
+            //order vice verse!
+            dailyRoutine.add(startindex, next);
+            dailyRoutine.add(startindex, activityItem);
+            dailyRoutine.add(startindex, prev);
+
+
+        }else {
+
+            //set endtime of previous activity
+            if (startindex >= 0) {
+                ActivityItem itemStart = dailyRoutine.get(startindex);
+                itemStart.setEndtime(Util.addMinuteFromDate(start, -1));
             }
-        }
 
-        //add activity
-        dailyRoutine.add(startindex+1, activityItem);
+            //set starttime of next activity
+            if (endindex < dailyRoutine.size()) {
+                ActivityItem itemEnd = dailyRoutine.get(endindex);
+                itemEnd.setStarttime(Util.addMinuteFromDate(end, 1));
+            }
+
+            //remove items in between
+            if (endindex - startindex > 1) {
+                for (int i = endindex - 1; i > startindex; i--) {
+                    dailyRoutine.remove(i);
+                }
+            }
+
+            //add activity
+            dailyRoutine.add(startindex + 1, activityItem);
+        }
         drFragment.updateView();
     }
 

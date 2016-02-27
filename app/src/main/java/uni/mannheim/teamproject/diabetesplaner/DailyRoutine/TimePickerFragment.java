@@ -54,10 +54,8 @@ public class TimePickerFragment extends DialogFragment
 
         if(isStart){
             dialog.setStarttime(dateString);
-            dialog.getStarttimeButton().setText(dateString);
         }else{
             dialog.setEndtime(dateString);
-            dialog.getEndtimeButton().setText(dateString);
         }
         Log.d(this.getClass().getSimpleName(),hourOfDay + ":" + minute);
     }

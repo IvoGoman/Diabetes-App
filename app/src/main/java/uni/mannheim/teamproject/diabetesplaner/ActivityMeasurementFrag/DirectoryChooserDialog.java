@@ -1,11 +1,4 @@
 package uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,6 +18,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+
+import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityInputHandler;
+import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 public class DirectoryChooserDialog
@@ -129,6 +131,7 @@ public class DirectoryChooserDialog
                     m_dir += "/" + ((AlertDialog) dialog).getListView().getAdapter().getItem(item);
                     chosenFile = (String)((AlertDialog) dialog).getListView().getAdapter().getItem(item);
                     updateDirectory();
+                    ActivityInputHandler.loadIntoDatabase(chosenFile, AppGlobal.getHandler());
                 }
             }
         }
@@ -147,6 +150,7 @@ public class DirectoryChooserDialog
                     // Call registered listener supplied with the chosen directory
                    // m_chosenDirectoryListener.onChosenDir(m_dir);
                     m_chosenDirectoryListener.onChosenDir(chosenFile);
+                    ActivityInputHandler.loadIntoDatabase("/storage/emulated/0/Download/SDC_ActivityData.csv", AppGlobal.getHandler());
                 }
             }
         }).setNegativeButton("Cancel", null);
