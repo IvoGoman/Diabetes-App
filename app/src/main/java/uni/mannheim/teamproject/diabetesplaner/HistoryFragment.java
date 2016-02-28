@@ -1,6 +1,7 @@
 package uni.mannheim.teamproject.diabetesplaner;
 
 import android.annotation.SuppressLint;
+import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.net.Uri;
@@ -9,7 +10,9 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +30,8 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Random;
 
+import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Backend.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
 
 
@@ -50,6 +55,7 @@ public class HistoryFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
     private AppCompatActivity aca;
     private ArrayList<DailyRoutineView> items = new ArrayList<DailyRoutineView>();
+    private DayHandler dayHandler;
 
     /**
      * Use this factory method to create a new instance of
@@ -82,7 +88,7 @@ public class HistoryFragment extends Fragment {
         }
         aca = (AppCompatActivity) getActivity();
         aca.getSupportActionBar().setTitle(R.string.menu_item_history);
-
+        dayHandler = new DayHandler();
 
     }
 
@@ -94,12 +100,15 @@ public class HistoryFragment extends Fragment {
         final LinearLayout linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_historic_routine);
         final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         TextView dateView = (TextView) inflaterView.findViewById(R.id.history_date_view);
-       // String dateString = DateFormat.getDateInstance().format(new Date());
-        //SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy");
+        String dateString = DateFormat.getDateInstance().format(new Date());
+        ;
+        //TODO: move formatter util class
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date dateToday = sdf.getCalendar().getTime();
         DateFormat df = DateFormat.getDateInstance();
         Date date = Calendar.getInstance(Locale.getDefault()).getTime();
-      String dateString = df.format(date);
-    //    String dateString = DateFormat.getDateInstance().format(date);
+        dateString = df.format(date);
+        //    String dateString = DateFormat.getDateInstance().format(date);
         dateView.setText(dateString);
         dateView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -109,7 +118,7 @@ public class HistoryFragment extends Fragment {
                 datePickerFragment.show(fragmentManager, "datePicker");
             }
         });
-        onDateSelected(linearLayout, params);
+        onDateSelected(linearLayout, params, dateToday);
         //TODO: add history item at the point where a daily routine is completed
 
 
@@ -131,17 +140,29 @@ public class HistoryFragment extends Fragment {
      * @param linearLayout the layout of the history fragment
      * @param params       the layout parameters
      */
-    public void onDateSelected(LinearLayout linearLayout, LinearLayout.LayoutParams params) {
+    public void onDateSelected(LinearLayout linearLayout, LinearLayout.LayoutParams params, Date date) {
         linearLayout.removeAllViews();
-        ArrayList<String[]> day = generateRandomRoutine();
-        for (int i = 0; i < day.size(); i++) {
-            DailyRoutineView drv = new DailyRoutineView(getActivity(), Integer.valueOf(day.get(i)[0]), 0, day.get(i)[1], day.get(i)[2]);
-            drv.setState(true);
-            linearLayout.addView(drv);
-            drv.setLayoutParams(params);
-            //drv.getLayoutParams().height = drv.getTotalHeight();
-            items.add(drv);
-        }
+        //TODO: Move Data creation to a Utility Class for unified creation over all classes
+            Log.i(TAG, date.toString());
+            ArrayList<ActivityItem> day = dayHandler.getDayRoutine(date);
+
+//  ArrayList<String[]> day = generateRandomRoutine();
+        if (day.size() > 0) {
+                for (int i = 0; i < day.size(); i++) {
+                    DailyRoutineView drv = new DailyRoutineView(getActivity(), Integer.valueOf(day.get(i).getActivityId()), 0, day.get(i).getStarttimeAsString(), day.get(i).getEndtimeAsString());
+                    drv.setState(true);
+                    linearLayout.addView(drv);
+                    drv.setLayoutParams(params);
+                    //drv.getLayoutParams().height = drv.getTotalHeight();
+                    items.add(drv);
+                }
+            } else {
+            TextView tv = new TextView(getContext());
+                tv.setText(R.string.no_data);
+                linearLayout.addView(tv);
+            tv.setLayoutParams(params);
+            tv.setGravity(Gravity.CENTER);
+            }
     }
 
     /**
@@ -179,7 +200,7 @@ public class HistoryFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-         void onFragmentInteraction(Uri uri);
+        void onFragmentInteraction(Uri uri);
     }
 
     @SuppressLint("ValidFragment")
@@ -194,13 +215,13 @@ public class HistoryFragment extends Fragment {
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
             TextView tv = (TextView) this.getActivity().findViewById(R.id.history_date_view);
-            Log.i(TAG,"textview:"+tv.getText().toString());
+            Log.i(TAG, "textview:" + tv.getText().toString());
             //SimpleDateFormat simpleFormat = new SimpleDateFormat("dd.MM.yyyy",Locale.getDefault());
             DateFormat simpleFormat = DateFormat.getDateInstance();
             Date date = null;
             try {
                 date = simpleFormat.parse(tv.getText().toString());
-                Log.i(TAG,"datefromtv:"+date.toString());
+                Log.i(TAG, "datefromtv:" + date.toString());
             } catch (ParseException e) {
                 e.printStackTrace();
             }
@@ -230,17 +251,18 @@ public class HistoryFragment extends Fragment {
             //SimpleDateFormat simpleDate = new SimpleDateFormat();
             DateFormat simpleDate = DateFormat.getDateInstance();
             //simpleDate.applyPattern("dd.MM.yyyy");
-            DateFormat timeDAte  = DateFormat.getTimeInstance();
+            DateFormat timeDAte = DateFormat.getTimeInstance();
             Log.i(TAG, timeDAte.format(calendar.getTime()));
 
             Date dateToday = Calendar.getInstance(Locale.getDefault()).getTime();
-            Log.i(TAG,"today:"+dateToday.toString());
+            Log.i(TAG, "today:" + dateToday.toString());
             Date dateSelected = calendar.getTime();
-            Log.i(TAG,"selected:"+dateSelected.toString());
+            Log.i(TAG, "selected:" + dateSelected.toString());
             if (dateToday.after(dateSelected)) {
-                onDateSelected(oLL, params);
+                onDateSelected(oLL, params, dateSelected);
                 tv.setText(simpleDate.format(calendar.getTime()));
-            }else{
+
+            } else {
                 Toast.makeText(getContext(), R.string.date_in_future, Toast.LENGTH_SHORT).show();
             }
         }
