@@ -23,14 +23,13 @@ public class AppGlobal extends Application {
         singleton = this;
         time=0;
         AppGlobal.context = getApplicationContext();
-       Handler1 = new DataBaseHandler(context);
-       Handler1.getAllRoutine(Handler1);
-
+        Handler1 = new DataBaseHandler(context);
+        Handler1.getAllRoutine(Handler1);
         //android.database.sqlite.SQLiteDatabase db;
     }
 
     public static DataBaseHandler getHandler(){
-        return AppGlobal.Handler1;
+        return Handler1;
     }
 
     public static Context getcontext(){

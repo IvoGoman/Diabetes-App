@@ -1,6 +1,5 @@
 package uni.mannheim.teamproject.diabetesplaner.SettingsActivity;
 
-import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.content.Context;

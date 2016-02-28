@@ -36,12 +36,12 @@ public class DailyRoutineHandler extends DayHandler{
         if (AppGlobal.getHandler()!=null){
             //handler = AppGlobal.getHandler()
 
-           prediction1.GetRoutine1();
+           prediction = prediction1.GetRoutine1();
         }
         else{
             AppGlobal.getHandler().onCreate(AppGlobal.getHandler().db);
            // handler = AppGlobal.getHandler();
-             prediction1.GetRoutine1();
+             //prediction1.GetRoutine1();
         }
 
 
@@ -51,7 +51,11 @@ public class DailyRoutineHandler extends DayHandler{
         e.printStackTrace();
         }
         //TODO get daily routine from model
-        dailyRoutine.add(new ActivityItem(1,0,"0:00","9:14"));
+        for (int i=0;i<prediction.size();i++)
+        {
+            dailyRoutine.add(new ActivityItem(prediction.get(i).Action+1,0,prediction.get(i).Start,prediction.get(i).End));
+        }
+        /*dailyRoutine.add(new ActivityItem(1,0,"0:00","9:14"));
         dailyRoutine.add(new ActivityItem(2,0,"9:15","9:53"));
         dailyRoutine.add(new ActivityItem(13,0,"9:54","13:07"));
         dailyRoutine.add(new ActivityItem(2,0,"13:08","13:22"));
@@ -60,7 +64,7 @@ public class DailyRoutineHandler extends DayHandler{
         dailyRoutine.add(new ActivityItem(13,0, "15:39", "21:53"));
         dailyRoutine.add(new ActivityItem(5,0,"21:54","22:22"));
         dailyRoutine.add(new ActivityItem(2,0,"22:23","22:51"));
-        dailyRoutine.add(new ActivityItem(1,0, "22:52", "23:59"));
+        dailyRoutine.add(new ActivityItem(1,0, "22:52", "23:59"));*/
     }
 
     public void clearDailyRoutine(){

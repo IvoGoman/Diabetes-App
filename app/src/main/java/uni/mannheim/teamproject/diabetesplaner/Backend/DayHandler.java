@@ -146,6 +146,7 @@ public class DayHandler {
 
             //add activity
             dailyRoutine.add(startindex + 1, activityItem);
+
         }
         drFragment.updateView();
     }
@@ -155,6 +156,7 @@ public class DayHandler {
      * @return
      */
     public ArrayList<ActivityItem> getDailyRoutine(){
+
         return dailyRoutine;
     }
 

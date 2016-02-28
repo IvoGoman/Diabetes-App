@@ -293,6 +293,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         calendar.setTime(Date);
         int Year = calendar.get(Calendar.YEAR);
         int Month = calendar.get(Calendar.MONTH);
+
         int Day = calendar.get(Calendar.DAY_OF_MONTH);
         StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
         EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
@@ -313,16 +314,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 try {
-                ActionID = cursor.getInt(0);
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-                Start = format.parse(cursor.getString(1));
+                    ActionID = cursor.getInt(0);
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                    Start = format.parse(cursor.getString(1));
 
-                End = format.parse(cursor.getString(2));
-                ActivityItem PA = new ActivityItem(ActionID,0,Start,End);
-                Activities.add(PA);
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                    End = format.parse(cursor.getString(2));
+                    Calendar calendar1 = Calendar.getInstance();
+                    calendar1.setTime(Start);
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(End);
+                    if (calendar.get(Calendar.DAY_OF_MONTH) > calendar1.get(Calendar.DAY_OF_MONTH)){
+                        //End = format.parse();
+                    }
+                    ActivityItem PA = new ActivityItem(ActionID,0,Start,End);
+                    Activities.add(PA);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
             }
             while (cursor.moveToNext());
         }
