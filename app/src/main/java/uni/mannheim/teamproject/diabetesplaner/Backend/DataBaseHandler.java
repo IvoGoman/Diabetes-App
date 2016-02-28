@@ -232,6 +232,21 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
+    /***
+     * returns the ID of the current user
+     * @param handler
+     * @param name
+     * @param surename
+     * @return UserID
+     */
+    public String GetProfileId(DataBaseHandler handler,String name, String surename)
+    {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        Cursor cursor = db.rawQuery("select id from "+ PROFILE_TABLE_NAME+ ";",null);
+        db1.close();
+        return cursor.getString(1);
+    }
+
     public void ReplaceActivity(DataBaseHandler handler, int idActivity, int idLocation, String Start, String End){
         findActionbyStartTime(handler, Start);
         findActionbyEndTime(handler, End);

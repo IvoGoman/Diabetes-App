@@ -20,6 +20,7 @@
     <string name="activity">Activity</string>
     <string name="subactivity">Subactivity</string>
 
+
     <!-- Strings related to Settings -->
     <string name="pref_profile">User Profile</string>
     <string name="pref_name">Name</string>
@@ -39,6 +40,12 @@
     <string name="pref_weight_measurement">Weight Measuremen</string>
     <string name="pref_weight_measurement_summary">Choose your measurement</string>
 
+    <!-- Blood sugar input screen-->
+    <string name="submit">Submit</string>
+    <string name="milligram_dl">mg/dl</string>
+    <string name="mmol_l">mmol/l</string>
+
+    <string name="percentage">in %</string>
 
     <!-- Prediction Model -->
     <string name="pref_reset">Prediction Model Reset</string>

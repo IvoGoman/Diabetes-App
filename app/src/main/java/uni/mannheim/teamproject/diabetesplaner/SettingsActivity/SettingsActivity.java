@@ -10,7 +10,7 @@ import android.view.MenuItem;
 
 import uni.mannheim.teamproject.diabetesplaner.R;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends AppCompatActivity implements Dialog_communicator {
 
     public static final String TAG = SettingsActivity.class.getSimpleName();
 
@@ -46,6 +46,11 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+    }
+
+    @Override
+    public void respond(String data) {
 
     }
 }
