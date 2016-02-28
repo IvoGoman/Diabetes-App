@@ -300,28 +300,42 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         //String S = "select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.Start > '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "'";
 
         SQLiteDatabase db = handler.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.Start >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "';", null);
-
-        return GetArrayFromCursor(cursor);
+        String S = "select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where (ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "') or (ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "');";
+        Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where (ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "') or (ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "');", null);
+                                                                                                                                                                                    //(ActivityList.End > '2016-01-01 00:00' and ActivityList.Start < '2016-01-01 23:59') or (ActivityList.Start < '2016-01-01 23:59' and ActivityList.Start > '2016-01-01 00:00')
+        return GetArrayFromCursor(cursor, Date);
     }
 
-    public ArrayList<ActivityItem> GetArrayFromCursor(Cursor cursor) {
+    public ArrayList<ActivityItem> GetArrayFromCursor(Cursor cursor, Date Date) {
         int ActionID;
         Date Start;
         Date End;
+        Date EndOfDay,StartOfDay;
         ArrayList<ActivityItem> Activities = new ArrayList<>();
         if (cursor.moveToFirst()) {
             do {
                 try {
-                ActionID = cursor.getInt(0);
-                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-                Start = format.parse(cursor.getString(1));
+                    ActionID = cursor.getInt(0);
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                    Start = format.parse(cursor.getString(1));
+                    End = format.parse(cursor.getString(2));
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(Date);
+                    calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 23, 59);
+                    EndOfDay = calendar.getTime();
+                    calendar.set(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH), 00,00);
+                    StartOfDay = calendar.getTime();
 
-                End = format.parse(cursor.getString(2));
-                ActivityItem PA = new ActivityItem(ActionID,0,Start,End);
-                Activities.add(PA);
-                } catch (ParseException e) {
-                    e.printStackTrace();
+                    if (End.after(EndOfDay)){
+                        End = EndOfDay;
+                    }
+                    if (Start.before(StartOfDay)){
+                        Start = StartOfDay;
+                    }
+                    ActivityItem PA = new ActivityItem(ActionID,0,Start,End);
+                    Activities.add(PA);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
                 }
             }
             while (cursor.moveToNext());
