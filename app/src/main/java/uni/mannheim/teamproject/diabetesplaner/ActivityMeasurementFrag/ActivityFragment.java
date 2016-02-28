@@ -54,15 +54,13 @@ public class ActivityFragment extends Fragment  {
         // Inflate the layout for this fragment
 
         inflaterView = inflater.inflate(R.layout.fragment_activity, container, false);
-        ImageButton dirChooserButton = (ImageButton) inflaterView.findViewById(R.id.add_button);
+        ImageButton floatingButton = (ImageButton) inflaterView.findViewById(R.id.add_button);
         lv = (ListView) inflaterView.findViewById(R.id.listView);
         adapter = new CustomListView(getActivity(), FileList);
 
 
-        dirChooserButton.setOnClickListener(new View.OnClickListener()
+        floatingButton.setOnClickListener(new View.OnClickListener()
         {
-            private String m_chosenDir = "";
-            private boolean m_newFolderEnabled = true;
 
             @Override
             public void onClick(View v)
@@ -70,13 +68,16 @@ public class ActivityFragment extends Fragment  {
                 new FileChooser(getActivity()).setFileListener(new FileChooser.FileSelectedListener() {
                     @Override
                     public void fileSelected(final File file) {
-                        String s = (String) file.toString();
-                        String[] parts = s.split("/");
-                        String part1 = parts[parts.length-1];
-                        if ((ActivityInputHndlr.isFileFormatValid(s))== true){
-                            FileList.add(part1);
-                            ActivityInputHndlr.loadIntoDatabase(part1,DBHandler);
+                        String fileString = (String) file.toString();
+                        String[] fileStringSplit = fileString.split("/");
+                        String requiredSplitPart = fileStringSplit[fileStringSplit.length-1];
+                        if ((ActivityInputHndlr.isFileFormatValid(fileString))== true){
+                            FileList.add(requiredSplitPart);
+                            Toast.makeText(getActivity(), "Chosen File:" + requiredSplitPart , Toast.LENGTH_LONG).show();
+                            ActivityInputHndlr.loadIntoDatabase(requiredSplitPart,DBHandler);
                             ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
+                        }else{
+                            Toast.makeText(getActivity(), "File is not in the correct format", Toast.LENGTH_LONG).show();
                         }
                     }
                     }).showDialog();

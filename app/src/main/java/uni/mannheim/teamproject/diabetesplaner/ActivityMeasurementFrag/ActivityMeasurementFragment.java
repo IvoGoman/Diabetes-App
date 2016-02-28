@@ -95,8 +95,6 @@ public class ActivityMeasurementFragment extends Fragment {
         tabLayout = (TabLayout) inflaterView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
 
-
-
         // Inflate the layout for this fragment
         return inflaterView;
     }

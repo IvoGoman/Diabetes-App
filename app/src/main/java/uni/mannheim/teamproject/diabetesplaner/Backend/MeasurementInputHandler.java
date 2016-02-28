@@ -1,0 +1,47 @@
+package uni.mannheim.teamproject.diabetesplaner.Backend;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
+
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
+
+/**
+ * Created by Naira
+ */
+public class MeasurementInputHandler {
+
+    public static void loadIntoDatabase(String Measurement, DataBaseHandler helper) {
+        readMeasurement(Measurement, helper);
+
+    }
+
+
+    private static void readMeasurement(String Measurement, DataBaseHandler helper) {
+        ArrayList<String[]> list = Util.read(Measurement);
+
+        //header that contains all attributes
+        String[] header = list.get(0);
+
+
+        //TODO: check if attributes match the database table (consider order!)
+
+        //iterate over all lines of the CSV file
+        for (int i = 1; i < list.size(); i++) {
+            int IdMeasurement = Integer.valueOf(list.get(i)[1]);
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+            java.util.Date StartD = new Date();
+            java.util.Date EndD = new Date();
+            StartD.setTime(Long.valueOf(list.get(i)[3]));
+            EndD.setTime(Long.valueOf(list.get(i)[4]));
+            String Start = format.format(StartD);
+            String End = format.format(EndD);
+            helper.InsertActivity(helper, IdMeasurement, 1, Start, End);
+        }
+    }
+
+}
+
+
+

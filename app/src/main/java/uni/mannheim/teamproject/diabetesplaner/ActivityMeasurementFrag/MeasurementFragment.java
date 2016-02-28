@@ -17,6 +17,9 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 
+import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityInputHandler;
+import uni.mannheim.teamproject.diabetesplaner.Backend.DataBaseHandler;
+import uni.mannheim.teamproject.diabetesplaner.Backend.MeasurementInputHandler;
 import uni.mannheim.teamproject.diabetesplaner.CustomListView;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
@@ -35,6 +38,9 @@ public class MeasurementFragment extends Fragment {
     private String mParam2;
 
     private static View inflaterView;
+
+    MeasurementInputHandler MeasurementInputHandlr= new MeasurementInputHandler();
+    final DataBaseHandler DBHandler = new DataBaseHandler(getContext());
 
     public static MeasurementFragment newInstance(String param1, String param2) {
         MeasurementFragment fragment = new MeasurementFragment();
@@ -93,6 +99,7 @@ public class MeasurementFragment extends Fragment {
 
                         String s = GlucoseInput.getText().toString() + " mg/dl"+"," +" "+ InsulinInput.getText().toString()+" units";
                         measurementList.add(s);
+                        MeasurementInputHandlr.loadIntoDatabase(s, DBHandler);
                         ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
                         dialog.dismiss();
                     }
