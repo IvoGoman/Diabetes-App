@@ -51,6 +51,7 @@ public class DailyRoutineHandler extends DayHandler{
             e.printStackTrace();
         }
         //TODO get daily routine from model
+        dailyRoutine.clear();
         for (int i=0;i<prediction.size();i++)
         {
             dailyRoutine.add(new ActivityItem(prediction.get(i).Action+1,0,prediction.get(i).Start,prediction.get(i).End));

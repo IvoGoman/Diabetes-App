@@ -334,7 +334,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     public String formatMonthOrDay(int i) {
-        if (i > 10) {
+        if (i > 9) {
             return String.valueOf(i);
         } else {
             return "0" + String.valueOf(i);
