@@ -1,7 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner;
 
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.net.Uri;
@@ -10,7 +9,6 @@ import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutCompat;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -23,6 +21,7 @@ import android.widget.Toast;
 
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
