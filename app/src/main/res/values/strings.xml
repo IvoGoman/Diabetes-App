@@ -57,6 +57,7 @@
     <string name="duration">Duration</string>
     <string name="start">Start</string>
     <string name="end">End</string>
+    <string name="meal">Meal</string>
 
     <!--Utility-->
     <string name="edit">Edit</string>
@@ -144,6 +145,7 @@
 
     <string name="invalid_time">Starttime must be before endtime!</string>
     <string name="activity_limit">One activity has to be left.</string>
+    <string name="image_failed">Failed to take an image.</string>
 
 
 </resources>

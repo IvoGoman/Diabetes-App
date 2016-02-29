@@ -1,6 +1,7 @@
 package uni.mannheim.teamproject.diabetesplaner.DailyRoutine;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -8,6 +9,7 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
 import android.os.Vibrator;
 import android.support.v4.content.ContextCompat;
 import android.text.Layout;
@@ -110,6 +112,12 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private StaticLayout slBlood;
     private Rect actRectMeal;
     private StaticLayout slMeal;
+    private Bitmap mealImage;
+    private Uri imageUri;
+    private Rect actRectImage;
+    private Rect src;
+    private Rect dest;
+
 
 
     public DailyRoutineView(Context context) {
@@ -136,6 +144,9 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         this.subactivity = activityItem.getSubactivityId();
         this.starttime = activityItem.getStarttimeAsString();
         this.endtime = activityItem.getEndtimeAsString();
+        this.meal = activityItem.getMeal();
+        this.mealImage = activityItem.getMealImage();
+        this.imageUri = activityItem.getImageUri();
 
         init();
     }
@@ -305,7 +316,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         heightUpper = sl.getHeight() + textPadding;
         int heightPrev = sl.getHeight();
 
-        xRight = width-2*textPadding;
+        xRight = width-2*textPadding-offsetL;
 
         //measure subactivity if it exists
         if(!getSubactivity(subactivity).equals("")) {
@@ -320,13 +331,35 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
         //measure meal if it exists
         if(meal != null) {
-            //initialize bloodsugar text
-            actRectMeal = new Rect(0, heightPrev+textPadding, xRight, 0);
-            slMeal = new StaticLayout(getMeal(), textPaintSub, (int) actRectMeal.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
-            heightPrev = slMeal.getHeight();
+            if(!meal.equals("")) {
+                //initialize bloodsugar text
+                actRectMeal = new Rect(0, heightPrev + textPadding, xRight, 0);
+                slMeal = new StaticLayout(getMeal(), textPaintSub, (int) actRectMeal.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
+                heightPrev = slMeal.getHeight();
 
-            //height + meal text field height
-            heightUpper += slMeal.getHeight() + textPadding;
+                //height + meal text field height
+                heightUpper += slMeal.getHeight() + textPadding;
+            }
+        }
+
+        //measure meal image if it exists
+        if(mealImage != null) {
+            src = new Rect(0,0,mealImage.getWidth(), mealImage.getHeight());
+            Log.d(TAG, "width: " + mealImage.getWidth() + " height: " + mealImage.getHeight());
+            float ratio = (float)mealImage.getWidth()/(float)mealImage.getHeight();
+            Log.d(TAG, "ratio: " + ratio);
+            int height = (int)((float)xRight/(float)ratio);
+
+            Log.d(TAG, "xRight: " + xRight);
+            Log.d(TAG, "ratio: " + ratio);
+            Log.d(TAG, "height: " + height);
+
+            dest = new Rect(0,heightPrev+textPadding, xRight, height+heightPrev+textPadding);
+            Log.d(TAG, "Bitmap: " + mealImage.getWidth() + "x" + mealImage.getHeight());
+            Log.d(TAG, "Rect: " + dest.width() + "x" + dest.height());
+
+            heightPrev += dest.height() + textPadding;
+            heightUpper += dest.height() + textPadding;
         }
 
         //measure bloodsugar if it exists
@@ -453,13 +486,19 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         }
 
         if(meal != null) {
-            //draw bloodsugar text
-            canvas.translate(actRectMeal.left, actRectMeal.top);
-            slMeal.draw(canvas);
+            if(!meal.equals("")) {
+                //draw meal text
+                canvas.translate(actRectMeal.left, actRectMeal.top);
+                slMeal.draw(canvas);
+            }
+        }
+
+        if(mealImage != null) {
+            canvas.drawBitmap(mealImage, src, dest, null);
         }
 
         if(bloodsugar != null) {
-            //draw meal text
+            //draw bloodsugar text
             canvas.translate(actRectBlood.left, actRectBlood.top);
             slBlood.draw(canvas);
         }
@@ -1003,5 +1042,13 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         }else {
             return sl.getHeight();
         }
+    }
+
+    public Bitmap getImage() {
+        return mealImage;
+    }
+
+    public Uri getImageUri(){
+        return imageUri;
     }
 }

@@ -54,6 +54,8 @@ public class DailyRoutineFragment extends Fragment {
 
     private Timer timer;
     private TimerTask timerTask;
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private static Uri imageURI;
 
     // TODO: Rename and change types of parameters
     private ArrayList<String> arglist;
@@ -153,8 +155,8 @@ public class DailyRoutineFragment extends Fragment {
                 drv.setSubactivity(4);
             }else if(i==3){
                 drv.setBloodsugar(4.0);
-                drv.setSubactivity(5);
-                drv.setMeal("Kartoffeln mit Speck, Schweinshaxen und Salatbeilage");
+               // drv.setSubactivity(5);
+               // drv.setMeal("Kartoffeln mit Speck, Schweinshaxen und Salatbeilage");
             }
 
             linearLayout.addView(drv);
@@ -360,4 +362,5 @@ public class DailyRoutineFragment extends Fragment {
     public DailyRoutineHandler getDrHandler(){
         return drHandler;
     }
+
 }
