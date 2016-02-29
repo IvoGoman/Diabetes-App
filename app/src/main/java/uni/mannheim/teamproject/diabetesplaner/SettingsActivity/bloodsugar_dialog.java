@@ -107,6 +107,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                 }
             }
             bloodsugar_level.setDisplayedValues(nums);
+
             measure = "mg";
         }
         //Percentage is clicked
@@ -149,8 +150,6 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
             bloodsugar_level.setDisplayedValues(nums);
             measure = "mmol";
         }
-
-        bloodsugar_level.setWrapSelectorWheel(true);
 
     }
 

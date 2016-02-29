@@ -31,9 +31,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
 
-        final EditTextPreference pref_EditText = (EditTextPreference) findPreference("pref_key_bloodsugar");
-        //pref_EditText.setDialogLayoutResource(1);
-        pref_EditText.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+        final Preference pref_bloodsugar = (Preference) findPreference("pref_key_bloodsugar");
+
+        pref_bloodsugar.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
                 FragmentManager manager = getFragmentManager();
@@ -75,7 +75,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         String Test2 = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
         pref_weight.setSummary(Test2 + " kg");
 
-        final EditTextPreference pref_bloodsugar = (EditTextPreference) findPreference("pref_key_bloodsugar");
+
         String Test3 = sharedPrefs.getString("pref_key_bloodsugar", "Blutzuckerwert eingeben");
         pref_bloodsugar.setSummary(Test3 + " mmol/L");
 
@@ -119,7 +119,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         //checks if Preference with key is EditTextPreference
         //if so puts the edited text to the summary field. Checks valid input
         //TODO save and handle the settings. Check valid input for all possible scenarios
-        if(findPreference(key) instanceof EditTextPreference) {
+        /*if(findPreference(key) instanceof EditTextPreference) {
             EditTextPreference editTextPref = (EditTextPreference) findPreference(key);
             EditText nameDialog = editTextPref.getEditText();
 
@@ -146,7 +146,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 }
             }
 
-        }
+        }*/
     }
 
 

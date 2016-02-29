@@ -12,7 +12,7 @@
             android:key="pref_key_weight"
             android:summary="@string/pref_weight_summary"
             android:title="@string/pref_weight"/>
-        <EditTextPreference
+        <Preference
             android:key="pref_key_bloodsugar"
             android:summary="@string/pref_blood_sugar_summary"
             android:title="@string/pref_blood_sugar"/>
