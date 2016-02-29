@@ -30,7 +30,7 @@ public class SettingsActivity extends AppCompatActivity implements Dialog_commun
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Display the settingsFragment as the content.
-
+        
         setFrag = new SettingsFragment();
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, setFrag)

@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
     Dialog_communicator communicator;
     private String measure;
 
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -41,26 +43,23 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         View view= inflater.inflate(R.layout.dialog_layout, null);
 
         setCancelable(false);
-        measure = "%";
+        measure = "mg/dl";
+
         submit = (Button) view.findViewById(R.id.bs_submit);
         cancel = (Button) view.findViewById(R.id.bs_cancel);
         mg = (RadioButton) view.findViewById(R.id.bs_mg);
         mmol = (RadioButton) view.findViewById(R.id.bs_mm);
         percentage = (RadioButton) view.findViewById(R.id.bs_percentage);
         bloodsugar_level = (NumberPicker) view.findViewById(R.id.numberPicker);
+
         String[] nums = new String[50];
         for(int i = 0;i<nums.length;i++)
         {
-            nums[i] = Double.toString(Math.round((4.7 + 0.1 * i)*10d)/10d);
+            nums[i] = Double.toString(Math.round(percentage_to_mg(4.7 + 0.1 * i) * 10d) / 10d);
         }
         bloodsugar_level.setWrapSelectorWheel(false);
         bloodsugar_level.setDisplayedValues(nums);
-        /*bloodsugar_level.setFormatter(new NumberPicker.Formatter() {
-            @Override
-            public String format(int i) {
-                return String.format("%02d", i);
-            }
-        });*/
+
         bloodsugar_level.setMinValue(0);
         bloodsugar_level.setMaxValue(49);
         submit.setOnClickListener(this);
@@ -134,7 +133,6 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         //mmol/l is clicked
         else if(view.getId() == R.id.bs_mm)
         {
-
             if(measure == "mg/dl") {
                 //convert mg to mmol
                 for (int i = 0; i < nums.length; i++) {
