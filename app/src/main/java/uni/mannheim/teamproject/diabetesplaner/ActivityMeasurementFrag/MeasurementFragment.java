@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -64,7 +65,6 @@ public class MeasurementFragment extends Fragment {
         }
         adapter = new CustomListView(getActivity(), measurementList);
 
-
     }
 
     @Override
@@ -91,15 +91,14 @@ public class MeasurementFragment extends Fragment {
                 lv = (AbsListView) inflaterView.findViewById(R.id.MListView);
                 adapter = new CustomListView(getActivity(), measurementList);
 
-
-
                 Add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
 
-                        String s = GlucoseInput.getText().toString() + " mg/dl"+"," +" "+ InsulinInput.getText().toString()+" units";
-                        measurementList.add(s);
-                        MeasurementInputHandlr.loadIntoDatabase(s, DBHandler);
+                        String MeasurementString = GlucoseInput.getText().toString() + " mg/dl"+"," +" "+ InsulinInput.getText().toString()+" units";
+                        measurementList.add(MeasurementString);
+                        Toast.makeText(getActivity(), "Measurements have been added", Toast.LENGTH_LONG).show();
+                        MeasurementInputHandlr.loadIntoDatabase(MeasurementString, DBHandler);
                         ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
                         dialog.dismiss();
                     }
