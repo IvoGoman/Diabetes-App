@@ -76,7 +76,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     //Bloodsugar History
     public static final String BLOODSUGAR_TABLE_NAME = "History_Bloodsugar";
     public static final String BLOODSUGAR_CREATE_TABLE = " CREATE TABLE IF NOT EXISTS " + BLOODSUGAR_TABLE_NAME +
-            "( id_bloodsugar INTEGER PRIMARY KEY, bloodsugar_level double, timestamp DateTime)";
+            "( id_bloodsugar INTEGER PRIMARY KEY, bloodsugar_level double, timestamp DateTime);";
 
     public static final String BLOODSUGAR_SELECT =
             "SELECT * FROM " + BLOODSUGAR_TABLE_NAME + ";";
@@ -88,7 +88,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String PROFILE_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " +
                     PROFILE_TABLE_NAME +
-                    " (id INTEGER PRIMARY KEY, age INTEGER, diabetes_type INTEGER, current_bloodsugar_level double, FOREIGN KEY (FK_history_bloodsugar_level) REFERENCES History_Bloodsugar(id_bloodsugar));";
+                    " (id INTEGER PRIMARY KEY, age INTEGER, diabetes_type INTEGER, current_bloodsugar_level double, " +
+                    "FOREIGN KEY (FK_history_bloodsugar_level) REFERENCES History_Bloodsugar(id_bloodsugar));";
     public static final String PROFILE_SELECT =
             "SELECT * FROM " + PROFILE_TABLE_NAME + ";";
     public static final String PROFILE_DELETE_TABLE =
@@ -189,12 +190,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         //db.close();
 
         //Create Profile Table
-        //db.execSQL(PROFILE_CREATE_TABLE);
-        //Log.d("Database", "Profile Table Created");
+        db.execSQL(PROFILE_CREATE_TABLE);
+        Log.d("Database", "Profile Table Created");
 
         //Create BloodSugar Table
-        //db.execSQL(BLOODSUGAR_CREATE_TABLE);
-        //Log.d("Location db", "Bloodsugar Table Created");
+        db.execSQL(BLOODSUGAR_CREATE_TABLE);
+        Log.d("Location db", "Bloodsugar Table Created");
+        db.close();
     }
 
     @Override

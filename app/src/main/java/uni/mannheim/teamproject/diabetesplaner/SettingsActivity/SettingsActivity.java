@@ -8,6 +8,8 @@ import android.support.v4.app.NavUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.view.MenuItem;
 
+import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Backend.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 public class SettingsActivity extends AppCompatActivity implements Dialog_communicator {
@@ -51,6 +53,8 @@ public class SettingsActivity extends AppCompatActivity implements Dialog_commun
 
     @Override
     public void respond(String data) {
-
+        System.out.println("Interface");
+        DataBaseHandler database = AppGlobal.getHandler();
+        database.InsertBloodsugar(database, 1, Double.parseDouble(data));
     }
 }
