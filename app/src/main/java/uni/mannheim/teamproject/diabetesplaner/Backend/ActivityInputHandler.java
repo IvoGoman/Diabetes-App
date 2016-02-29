@@ -37,9 +37,7 @@ public class ActivityInputHandler {
      * @return true: valid /false: not valid
      */
     public static boolean isFileFormatValid(String filepath){
-        if(filepath.matches(".*\\.csv")){
-            return true;
-        }else if(filepath.matches(".*\\.sqlite")){
+        if(filepath.matches(".*\\.csv") || filepath.matches(".*\\.sqlite")){
             return true;
         }else {
             return false;
