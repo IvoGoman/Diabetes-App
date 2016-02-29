@@ -37,7 +37,7 @@
     <string name="pref_sound">Notification Sound</string>
     <string name="pref_vibration">Notification Vibration</string>
 
-    <string name="pref_weight_measurement">Weight Measuremen</string>
+    <string name="pref_weight_measurement">Weight Measurement</string>
     <string name="pref_weight_measurement_summary">Choose your measurement</string>
 
     <!-- Blood sugar input screen-->

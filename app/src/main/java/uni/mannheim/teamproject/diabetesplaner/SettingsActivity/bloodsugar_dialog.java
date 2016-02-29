@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.ListPreference;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +31,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
     Dialog_communicator communicator;
     private String measure;
 
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -42,12 +44,14 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
 
         setCancelable(false);
         measure = "mg/dl";
+
         submit = (Button) view.findViewById(R.id.bs_submit);
         cancel = (Button) view.findViewById(R.id.bs_cancel);
         mg = (RadioButton) view.findViewById(R.id.bs_mg);
         mmol = (RadioButton) view.findViewById(R.id.bs_mm);
         percentage = (RadioButton) view.findViewById(R.id.bs_percentage);
         bloodsugar_level = (NumberPicker) view.findViewById(R.id.numberPicker);
+
         String[] nums = new String[50];
         for(int i = 0;i<nums.length;i++)
         {
