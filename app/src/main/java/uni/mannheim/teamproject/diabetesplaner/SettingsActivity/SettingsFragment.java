@@ -1,5 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.SettingsActivity;
 
+import android.app.Activity;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.NotificationManager;
@@ -11,10 +12,13 @@ import android.preference.EditTextPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
 import android.support.v4.app.NotificationCompat;
+import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.preference.Preference;
+import android.widget.Toast;
 
 import uni.mannheim.teamproject.diabetesplaner.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.R;
@@ -23,8 +27,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     public static final String TAG = SettingsFragment.class.getSimpleName();
     private Preference pref_bloodsugar;
-
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -135,19 +137,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 // Log.d(TAG, String.valueOf(getActivity().findViewById(R.id.username)));
 
             } else if (editTextPref.getKey().equals("pref_key_weight")) {
-                if (nameDialog.getText().toString().matches("\\d+\\s?kg")) {
-                    editTextPref.setSummary(nameDialog.getText());
-                } else if (nameDialog.getText().toString().matches("\\d+")) {
-                    editTextPref.setSummary(nameDialog.getText() + " kg");
-                }
-            } else if (editTextPref.getKey().equals("pref_key_bloodsugar")) {
-                if (nameDialog.getText().toString().matches("\\d+\\s?mmol/L")) {
-                    editTextPref.setSummary(nameDialog.getText());
-                } else if (nameDialog.getText().toString().matches("\\d+")) {
-                    editTextPref.setSummary(nameDialog.getText() + " mmol/L");
-                }
+                editTextPref.setSummary(nameDialog.getText());
             }
-
         }
     }
 

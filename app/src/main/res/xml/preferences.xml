@@ -7,11 +7,13 @@
         <EditTextPreference
             android:key="pref_key_name"
             android:summary="@string/pref_name_summary"
-            android:title="@string/pref_name"/>
+            android:title="@string/pref_name"
+            android:inputType="textPersonName"/>
         <EditTextPreference
             android:key="pref_key_weight"
             android:summary="@string/pref_weight_summary"
-            android:title="@string/pref_weight"/>
+            android:title="@string/pref_weight"
+            android:inputType="numberDecimal"/>
         <Preference
             android:key="pref_key_bloodsugar"
             android:summary="@string/pref_blood_sugar_summary"
