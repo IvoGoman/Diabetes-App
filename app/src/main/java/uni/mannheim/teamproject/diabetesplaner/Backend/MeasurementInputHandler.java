@@ -24,9 +24,6 @@ public class MeasurementInputHandler {
         //header that contains all attributes
         String[] header = list.get(0);
 
-
-        //TODO: check if attributes match the database table (consider order!)
-
         //iterate over all lines of the CSV file
         for (int i = 1; i < list.size(); i++) {
             int IdMeasurement = Integer.valueOf(list.get(i)[1]);
