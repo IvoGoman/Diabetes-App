@@ -2,8 +2,10 @@ package uni.mannheim.teamproject.diabetesplaner;
 
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -22,6 +24,7 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.io.IOException;
 import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag.ActivityMeasurementFragment;
@@ -31,6 +34,7 @@ import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.AddDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.EditDialog;
+import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.InputDialog;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.StatisticsFragment.StatisticsFragment;
 
@@ -41,8 +45,12 @@ public class EntryScreenActivity extends AppCompatActivity
     private static MenuItem actualMenuItem;
     public static NavigationView navigationView;
     public static TextView username;
+    private static Uri imageURI;
 
     public static final String TAG = EntryScreenActivity.class.getSimpleName();
+
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -172,6 +180,9 @@ public class EntryScreenActivity extends AppCompatActivity
                     editDialog.setActivity(DailyRoutineView.getSelectedActivities().get(0).getActivityID() - 1);
                     editDialog.setStarttime(DailyRoutineView.getSelectedActivities().get(0).getStartTime());
                     editDialog.setEndtime(DailyRoutineView.getSelectedActivities().get(0).getEndTime());
+                    editDialog.setImage(DailyRoutineView.getSelectedActivities().get(0).getImage());
+                    editDialog.setImageUri(DailyRoutineView.getSelectedActivities().get(0).getImageUri());
+                    editDialog.setMeal(DailyRoutineView.getSelectedActivities().get(0).getMeal());
                     editDialog.show(getFragmentManager(), "editDialog");
                 }
 
@@ -340,4 +351,40 @@ public class EntryScreenActivity extends AppCompatActivity
         return optionsMenu;
     }
 
+    /**
+     * returns URI of image captured
+     * @return
+     */
+    public static Uri getImageURI(){
+        return imageURI;
+    }
+
+
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
+            if (resultCode == RESULT_OK) {
+                // Image captured and saved to fileUri specified in the Intent
+                imageURI = data.getData();
+                try {
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageURI);
+                    InputDialog.setImage(bitmap);
+                    InputDialog.displayImageFromUri(imageURI);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                Toast.makeText(this, "Image saved to:\n" +
+                        imageURI, Toast.LENGTH_SHORT).show();
+            } else if (resultCode == RESULT_CANCELED) {
+                // User cancelled the image capture
+                imageURI = null;
+            } else {
+                // Image capture failed, advise user
+                imageURI = null;
+                Toast.makeText(this, R.string.image_failed, Toast.LENGTH_LONG).show();
+            }
+        }
+    }
 }

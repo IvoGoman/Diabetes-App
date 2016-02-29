@@ -86,4 +86,5 @@
     <string name="add_activity">Aktivität hinzufügen</string>
     <string name="milligram_dl">mg/dl</string>
     <string name="mmol_l">mmol/l</string>
+    <string name="meal">Mahlzeit</string>
 </resources>

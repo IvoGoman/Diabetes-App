@@ -1,5 +1,8 @@
 package uni.mannheim.teamproject.diabetesplaner.Backend;
 
+import android.graphics.Bitmap;
+import android.net.Uri;
+
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
@@ -12,8 +15,10 @@ public class ActivityItem {
     private int activityId;
     private int subactivityId;
     private Date starttime;
-
     private Date endtime;
+    private Bitmap mealImage;
+    private String meal;
+    private Uri imageUri;
 
     /**
      * constructor for an Activity Item with times as Date
@@ -48,6 +53,16 @@ public class ActivityItem {
         this.subactivityId = subactivityId;
         this.starttime = Util.getTime(starttime);
         this.endtime = Util.getTime(endtime);
+    }
+
+    public ActivityItem(int activityId, int subactivityId, String starttime, String endtime, Uri imageUri, Bitmap mealImage, String meal){
+        this.activityId = activityId;
+        this.subactivityId = subactivityId;
+        this.starttime = Util.getTime(starttime);
+        this.endtime = Util.getTime(endtime);
+        this.mealImage = mealImage;
+        this.meal = meal;
+        this.imageUri = imageUri;
     }
 
     public int getActivityId() {
@@ -172,5 +187,17 @@ public class ActivityItem {
             default:
                 return 0;
         }
+    }
+
+    public Bitmap getMealImage() {
+        return mealImage;
+    }
+
+    public String getMeal(){
+        return meal;
+    }
+
+    public Uri getImageUri(){
+        return imageUri;
     }
 }

@@ -1,13 +1,20 @@
 package uni.mannheim.teamproject.diabetesplaner.DailyRoutine;
 
 import android.app.DialogFragment;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.Spinner;
+import android.widget.TextView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -28,14 +35,26 @@ public class InputDialog extends DialogFragment {
     private String starttime;
     private String endtime;
     private int activity = 0;
+    private String meal;
+
     private TimePickerFragment timePickerFragmentStart;
     private TimePickerFragment timePickerFragmentEnd;
     private Button startTimeButton;
     private Button endTimeButton;
     private String selectedItem;
+    private static Uri imageUri;
 
     private ActivityItem activityItem;
     private DailyRoutineHandler drHandler;
+
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+    private static ImageView mealInputImage;
+    private EditText mealInputText;
+    private static Bitmap image;
+
+    public static void setImage(Bitmap image) {
+        InputDialog.image = image;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,7 +76,33 @@ public class InputDialog extends DialogFragment {
      */
     public View getLayout(){
         LayoutInflater inflater = (LayoutInflater) getActivity().getLayoutInflater();
-        View v = inflater.inflate(R.layout.add_dialog, null);
+        View v = inflater.inflate(R.layout.input_dialog, null);
+
+        final TextView mealInput = (TextView) v.findViewById(R.id.meal_input_text);
+        mealInputText = (EditText) v.findViewById(R.id.meal_input);
+        final ImageButton mealInputCam = (ImageButton) v.findViewById(R.id.meal_input_cam);
+        mealInputImage = (ImageView) v.findViewById(R.id.meal_image);
+
+        if(imageUri != null){
+            displayImageFromUri(imageUri);
+        }else{
+            mealInputImage.setVisibility(View.GONE);
+        }
+        if(meal != null){
+            mealInputText.setText(meal);
+        }
+
+        mealInput.setVisibility(View.GONE);
+        mealInputText.setVisibility(View.GONE);
+        mealInputCam.setVisibility(View.GONE);
+        mealInputCam.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
+                getActivity().startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+
+            }
+        });
 
         //spinner menu with the activities
         Spinner spinner = (Spinner) v.findViewById(R.id.add_dialog_spinner);
@@ -73,6 +118,22 @@ public class InputDialog extends DialogFragment {
             @Override
             public void onItemSelected(AdapterView adapter, View view, int position, long id) {
                 activity = ActivityItem.getActivityId(adapter.getItemAtPosition(position).toString());
+                if(activity == 2){
+                    mealInput.setVisibility(View.VISIBLE);
+                    mealInputText.setVisibility(View.VISIBLE);
+                    mealInputCam.setVisibility(View.VISIBLE);
+                    mealInputImage.setVisibility(View.VISIBLE);
+
+                }else{
+                    mealInput.setVisibility(View.GONE);
+                    mealInputText.setVisibility(View.GONE);
+                    mealInputText.setText("");
+                    mealInputCam.setVisibility(View.GONE);
+                    mealInputImage.setVisibility(View.GONE);
+                    imageUri = null;
+                    image = null;
+                    meal = null;
+                }
             }
 
             @Override
@@ -113,6 +174,10 @@ public class InputDialog extends DialogFragment {
         return v;
     }
 
+    /**
+     * checks if time is valid
+     * @return
+     */
     public boolean isTimeValid() {
         Date starttime = null;
         Date endtime = null;
@@ -229,6 +294,42 @@ public class InputDialog extends DialogFragment {
 
     public DailyRoutineHandler getDrHandler(){
         return drHandler;
+    }
+
+    /**
+     * displays the image form an uri, sets the ImageView of the meal visible and the imagesource
+     * @param uri
+     */
+    public static void displayImageFromUri(Uri uri){
+        imageUri = uri;
+        mealInputImage.setVisibility(View.VISIBLE);
+        mealInputImage.setImageURI(uri);
+    }
+
+    public void setImageUri(Uri uri){
+        imageUri = uri;
+    }
+
+    public Uri getImageUri(){
+        return imageUri;
+    }
+
+    public Bitmap getImage(){
+        return image;
+    }
+
+    /**
+     * sets the meal and replaces linebreaks with a space
+     * @return
+     */
+    public String getMeal(){
+        String text = String.valueOf(mealInputText.getText());
+        text = text.replaceAll("\n+", " ").replaceAll("\r+", " ");
+        return text;
+    }
+
+    public void setMeal(String meal) {
+        this.meal = meal;
     }
 }
 

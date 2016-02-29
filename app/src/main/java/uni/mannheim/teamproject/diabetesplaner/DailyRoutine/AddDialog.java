@@ -27,7 +27,7 @@ public class AddDialog extends InputDialog {
 
         builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        ActivityItem activityItem = new ActivityItem(getSelectedItem(), 0, getStarttime(), getEndtime());
+                        ActivityItem activityItem = new ActivityItem(getSelectedItem(), 0, getStarttime(), getEndtime(), getImageUri(), getImage(), getMeal());
                         if(!isTimeValid()){
                             InvalidTimeDialog itd = new InvalidTimeDialog();
                             itd.show(getFragmentManager(),"invalidTime");
