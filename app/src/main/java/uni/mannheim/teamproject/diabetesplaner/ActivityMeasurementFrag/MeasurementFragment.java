@@ -98,7 +98,7 @@ public class MeasurementFragment extends Fragment {
                         String MeasurementString = GlucoseInput.getText().toString() + " mg/dl"+"," +" "+ InsulinInput.getText().toString()+" units";
                         measurementList.add(MeasurementString);
                         Toast.makeText(getActivity(), "Measurements have been added", Toast.LENGTH_LONG).show();
-                        MeasurementInputHandlr.loadIntoDatabase(MeasurementString, DBHandler);
+                       // MeasurementInputHandlr.loadIntoDatabase(MeasurementString, DBHandler);
                         ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
                         dialog.dismiss();
                     }
