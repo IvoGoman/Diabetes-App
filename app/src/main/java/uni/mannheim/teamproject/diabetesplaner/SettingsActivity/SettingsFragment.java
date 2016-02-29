@@ -14,6 +14,7 @@ import android.support.v4.app.NotificationCompat;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.preference.Preference;
 
 import uni.mannheim.teamproject.diabetesplaner.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.R;
@@ -21,6 +22,7 @@ import uni.mannheim.teamproject.diabetesplaner.R;
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String TAG = SettingsFragment.class.getSimpleName();
+    private Preference pref_bloodsugar;
 
 
 
@@ -31,7 +33,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         // Load the preferences from an XML resource
         addPreferencesFromResource(R.xml.preferences);
 
-        final Preference pref_bloodsugar = (Preference) findPreference("pref_key_bloodsugar");
+        pref_bloodsugar = (Preference) findPreference("pref_key_bloodsugar");
 
         pref_bloodsugar.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
@@ -119,7 +121,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         //checks if Preference with key is EditTextPreference
         //if so puts the edited text to the summary field. Checks valid input
         //TODO save and handle the settings. Check valid input for all possible scenarios
-        /*if(findPreference(key) instanceof EditTextPreference) {
+        if(findPreference(key) instanceof EditTextPreference) {
             EditTextPreference editTextPref = (EditTextPreference) findPreference(key);
             EditText nameDialog = editTextPref.getEditText();
 
@@ -146,8 +148,16 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 }
             }
 
-        }*/
+        }
     }
 
 
+    /***
+     * JW: Communication of blood sugar dialog and settingsFragement
+     * @param data entered blood sugar level
+     * @param measure the entered measurement
+     */
+    public void bloodsugar_change(String data, String measure) {
+        pref_bloodsugar.setSummary(data + " " + measure);
+    }
 }

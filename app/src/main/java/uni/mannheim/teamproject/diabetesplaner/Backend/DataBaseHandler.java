@@ -14,7 +14,7 @@ import java.sql.Date;
  */
 public class DataBaseHandler extends SQLiteOpenHelper {
 
-    SQLiteDatabase db;
+    public SQLiteDatabase db;
 
     public DataBaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

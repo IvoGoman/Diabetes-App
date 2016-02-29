@@ -41,7 +41,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         View view= inflater.inflate(R.layout.dialog_layout, null);
 
         setCancelable(false);
-        measure = "percentage";
+        measure = "%";
         submit = (Button) view.findViewById(R.id.bs_submit);
         cancel = (Button) view.findViewById(R.id.bs_cancel);
         mg = (RadioButton) view.findViewById(R.id.bs_mg);
@@ -78,15 +78,15 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
     @Override
     public void onClick(View view)
     {
+        String[] nums = bloodsugar_level.getDisplayedValues();
         //DataBaseHandler database = AppGlobal.getHandler();
         if(view.getId() == R.id.bs_submit)
         {
             //database.InsertBloodsugar(database, 1, (double) bloodsugar_level.getValue());
-            communicator.respond(String.valueOf(bloodsugar_level.getValue()));
-            Toast.makeText(getActivity(),"Blood sugar level saved.",Toast.LENGTH_SHORT);
-            dismiss();
-            // Insert bloodsugar level to database
-
+            communicator.respond(String.valueOf(nums[bloodsugar_level.getValue()]),measure);
+            Toast.makeText(getActivity(), "Blood sugar level: " + String.valueOf(bloodsugar_level.getValue()) + " stored"
+                    , Toast.LENGTH_LONG);
+                    dismiss();
         }
         else if(view.getId() == R.id.bs_cancel)
         {
@@ -95,13 +95,13 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         //mg/dl is clicked
         else if(view.getId() == R.id.bs_mg)
         {
-            String[] nums = bloodsugar_level.getDisplayedValues();
-            if (measure=="percentage") {
+
+            if (measure=="%") {
                 for (int i = 0; i < nums.length; i++) {
                     //Convert from percetage to mg
                     nums[i] = Double.toString(Math.round(percentage_to_mg(Double.parseDouble(nums[i]))));
                 }
-            }else if(measure == "mmol")
+            }else if(measure == "mmol/l")
             {
                 for (int i = 0; i < nums.length; i++) {
                     //Convert from mmol to mg
@@ -109,18 +109,18 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                 }
             }
             bloodsugar_level.setDisplayedValues(nums);
-            measure = "mg";
+            measure = "mg/dl";
         }
         //Percentage is clicked
         else if(view.getId() == R.id.bs_percentage)
         {
-            String[] nums = bloodsugar_level.getDisplayedValues();
-            if(measure == "mg") {
+
+            if(measure == "mg/dl") {
                 for (int i = 0; i < nums.length; i++) {
                     //Convert from mg to percentage
                     nums[i] = Double.toString(Math.round(mg_to_percentage(Double.parseDouble(nums[i]))*10d)/10d);
                 }
-            } else if(measure == "mmol")
+            } else if(measure == "mmol/l")
             {
                 for (int i = 0; i < nums.length; i++) {
                     //Convert from mmol to mg to percentage
@@ -129,27 +129,27 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
             }
 
             bloodsugar_level.setDisplayedValues(nums);
-            measure = "percentage";
+            measure = "%";
         }
         //mmol/l is clicked
         else if(view.getId() == R.id.bs_mm)
         {
-            String[] nums = bloodsugar_level.getDisplayedValues();
-            if(measure == "mg") {
+
+            if(measure == "mg/dl") {
                 //convert mg to mmol
                 for (int i = 0; i < nums.length; i++) {
                     nums[i] = Double.toString(Math.round(miligram_to_mol(Double.parseDouble(nums[i]))*10d)/10d);
                 }
                 bloodsugar_level.setDisplayedValues(nums);
 
-            }else if (measure=="percentage") {
+            }else if (measure=="%") {
                 for (int i = 0; i < nums.length; i++) {
                     //Convert from percentage to mg to mmol
                     nums[i] = Double.toString(Math.round(miligram_to_mol(percentage_to_mg(Double.parseDouble(nums[i])))*10d)/10d);
                 }
             }
             bloodsugar_level.setDisplayedValues(nums);
-            measure = "mmol";
+            measure = "mmol/l";
         }
 
     }
