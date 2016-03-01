@@ -1,11 +1,15 @@
 package uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag;
 
 
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ImageButton;
@@ -54,9 +58,27 @@ public class ActivityFragment extends Fragment  {
         // Inflate the layout for this fragment
 
         inflaterView = inflater.inflate(R.layout.fragment_activity, container, false);
-        ImageButton floatingButton = (ImageButton) inflaterView.findViewById(R.id.add_button);
+        final FloatingActionButton floatingButton = (FloatingActionButton) inflaterView.findViewById(R.id.add_button);
         lv = (ListView) inflaterView.findViewById(R.id.listView);
         adapter = new CustomListView(getActivity(), FileList);
+
+        ViewTreeObserver viewTreeObserver = floatingButton.getViewTreeObserver();
+        if (viewTreeObserver.isAlive()) {
+            viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+                @Override
+                public void onGlobalLayout() {
+                    if (Build.VERSION.SDK_INT < Build.VERSION_CODES.JELLY_BEAN) {
+                        floatingButton.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+                    } else {
+                        floatingButton.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                    }
+                    // not sure the above is equivalent, but that's beside the point for this example...
+                    CoordinatorLayout.LayoutParams params = (CoordinatorLayout.LayoutParams) floatingButton.getLayoutParams();
+                    params.setMargins(0, 0, 16, 16); // (int left, int top, int right, int bottom)
+                    floatingButton.setLayoutParams(params);
+                }
+            });
+        }
 
 
         floatingButton.setOnClickListener(new View.OnClickListener()
