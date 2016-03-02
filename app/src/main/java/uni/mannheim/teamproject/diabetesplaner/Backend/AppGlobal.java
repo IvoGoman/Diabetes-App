@@ -24,7 +24,7 @@ public class AppGlobal extends Application {
         time=0;
         DataBaseHandler Handler1 = new DataBaseHandler(this);
         AppGlobal.context = getApplicationContext();
-        //android.database.sqlite.SQLiteDatabase db;
+        android.database.sqlite.SQLiteDatabase db;
     }
 
     public static DataBaseHandler getHandler(){

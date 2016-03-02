@@ -83,8 +83,6 @@ public class HistoryFragment extends Fragment {
         }
         aca = (AppCompatActivity) getActivity();
         aca.getSupportActionBar().setTitle(R.string.menu_item_history);
-
-
     }
 
     @Override
@@ -167,7 +165,6 @@ public class HistoryFragment extends Fragment {
         mListener = null;
     }
 
-
     /**
      * This interface must be implemented by activities that contain this
      * fragment to allow an interaction in this fragment to be communicated
@@ -178,6 +175,7 @@ public class HistoryFragment extends Fragment {
      * "http://developer.android.com/training/basics/fragments/communicating.html"
      * >Communicating with Other Fragments</a> for more information.
      */
+
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
          void onFragmentInteraction(Uri uri);
@@ -191,6 +189,7 @@ public class HistoryFragment extends Fragment {
         /**
          * creates a Dialog with a Date Picker with the currently displayed day presselected
          */
+
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker
