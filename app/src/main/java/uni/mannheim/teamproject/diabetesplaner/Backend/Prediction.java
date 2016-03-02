@@ -265,7 +265,7 @@ public class Prediction {
 
     public static ArrayList<PeriodAction> GetRoutine1() throws Exception {
 
-
+      if(PA1.isEmpty()==false){ PA1.clear();}
         FastVector Activities = new FastVector();
 
         Cursor cursor1 = AppGlobal.getHandler().getAllActions(AppGlobal.getHandler());
