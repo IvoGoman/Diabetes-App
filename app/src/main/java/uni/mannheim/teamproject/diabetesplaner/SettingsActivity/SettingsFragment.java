@@ -38,10 +38,26 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             public boolean onPreferenceClick(Preference preference) {
                 FragmentManager manager = getFragmentManager();
                 bloodsugar_dialog bs = new bloodsugar_dialog();
-                bs.show(manager,"Test");
+                bs.show(manager, "Test");
                 return true;
             }
         });
+
+
+        final Preference pref_add_Activity = findPreference("pref_add_activity");
+        //pref_EditText.setDialogLayoutResource(1);
+        pref_add_Activity.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                FragmentManager manager = getFragmentManager();
+                edit_activitylist_dialog ea = new edit_activitylist_dialog();
+                ea.show(manager,"Test");
+                return true;
+            }
+        });
+
+
+
 
         //define preference for the onclick-method
         final CheckBoxPreference pref_datacollection = (CheckBoxPreference) findPreference("pref_datacollection");

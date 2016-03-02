@@ -71,6 +71,13 @@
         android:title="@string/pref_other"
         android:key="pref_key_other">
 
+        <Preference
+            android:key="pref_add_activity"
+            android:summary="Erstelle neue Aktivität für die Auswahl"
+            android:title="Aktivität hinzufügen" />
+
+            //TODO: String.xml anpassen
+
         <ListPreference
             android:entries="@array/weightOptions"
             android:entryValues="@array/weightOptions"
