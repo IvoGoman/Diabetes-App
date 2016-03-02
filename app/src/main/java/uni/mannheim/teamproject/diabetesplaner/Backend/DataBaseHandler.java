@@ -241,7 +241,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
-    public void ReplaceActivity(DataBaseHandler handler, int idActivity, int idLocation, String Start, String End) {
     /***
      * returns the ID of the current user
      * @param handler
