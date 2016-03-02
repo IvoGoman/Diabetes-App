@@ -93,7 +93,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String PROFILE_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " +
                     PROFILE_TABLE_NAME +
-                    " (id INTEGER PRIMARY KEY, age INTEGER, diabetes_type INTEGER, current_bloodsugar_level double, " +
+                    " (id INTEGER PRIMARY KEY, FK_history_bloodsugar_level INTEGER, age INTEGER, diabetes_type INTEGER, current_bloodsugar_level double, " +
                     "FOREIGN KEY (FK_history_bloodsugar_level) REFERENCES History_Bloodsugar(id_bloodsugar));";
     public static final String PROFILE_SELECT =
             "SELECT * FROM " + PROFILE_TABLE_NAME + ";";
@@ -203,7 +203,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         //Create BloodSugar Table
         db.execSQL(BLOODSUGAR_CREATE_TABLE);
         Log.d("Location db", "Bloodsugar Table Created");
-        db.close();
+       // db.close();
     }
 
     @Override
