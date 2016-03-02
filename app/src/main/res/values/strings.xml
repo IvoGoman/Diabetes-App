@@ -145,6 +145,10 @@
 
     <string name="invalid_time">Starttime must be before endtime!</string>
     <string name="activity_limit">One activity has to be left.</string>
+    <string name="submit">Submit</string>
+    <string name="milligram_dl">mg/dl</string>
+    <string name="mmol_l">mmol/l</string>
+    <string name="activity_limit">One activity has to be left.</string>
     <string name="image_failed">Failed to take an image.</string>
 
 

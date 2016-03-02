@@ -24,6 +24,7 @@ import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Backend.DailyRoutineHandler;
+import uni.mannheim.teamproject.diabetesplaner.Backend.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
@@ -45,7 +46,7 @@ public class InputDialog extends DialogFragment {
     private static Uri imageUri;
 
     private ActivityItem activityItem;
-    private DailyRoutineHandler drHandler;
+    private DayHandler drHandler;
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static ImageView mealInputImage;
@@ -288,11 +289,11 @@ public class InputDialog extends DialogFragment {
         return activity;
     }
 
-    public void setDailyRoutineHandler(DailyRoutineHandler drHandler){
+    public void setDayHandler(DayHandler drHandler){
         this.drHandler = drHandler;
     }
 
-    public DailyRoutineHandler getDrHandler(){
+    public DayHandler getDrHandler(){
         return drHandler;
     }
 

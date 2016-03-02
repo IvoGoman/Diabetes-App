@@ -1,10 +1,13 @@
 package uni.mannheim.teamproject.diabetesplaner.Backend;
 
+import android.content.Context;
+import android.util.Log;
+
 import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
 
-import static uni.mannheim.teamproject.diabetesplaner.Backend.Prediction.GetRoutine1;
+
 
 /**
  * Created by Stefan on 22.02.2016.
@@ -26,16 +29,36 @@ public class DailyRoutineHandler extends DayHandler{
      * @return
      */
     public void predictDailyRoutine(){
-        ArrayList<Prediction.PeriodAction> Prediction = new ArrayList<Prediction.PeriodAction>();
+        ArrayList<Prediction.PeriodAction> prediction = new ArrayList<Prediction.PeriodAction>();
+        DataBaseHandler handler = null;
+        Context context = AppGlobal.getcontext();
+        Prediction prediction1 = new Prediction();
         try{
-            Prediction = GetRoutine1(AppGlobal.getHandler(), AppGlobal.getcontext());
+            if (AppGlobal.getHandler()!=null){
+                //handler = AppGlobal.getHandler()
+
+                prediction = prediction1.GetRoutine1();
+            }
+            else{
+                AppGlobal.getHandler().onCreate(AppGlobal.getHandler().db);
+                // handler = AppGlobal.getHandler();
+                //prediction1.GetRoutine1();
+            }
+
+
         }
         catch(Exception e)
         {
-
+            e.printStackTrace();
         }
         //TODO get daily routine from model
-        dailyRoutine.add(new ActivityItem(1,0,"0:00","9:14"));
+        dailyRoutine.clear();
+        for (int i=0;i<prediction.size();i++)
+        {
+            dailyRoutine.add(new ActivityItem(prediction.get(i).Action+1,0,prediction.get(i).Start,prediction.get(i).End));
+        }
+        Log.i(TAG,dailyRoutine.toString());
+        /*dailyRoutine.add(new ActivityItem(1,0,"0:00","9:14"));
         dailyRoutine.add(new ActivityItem(2,0,"9:15","9:53"));
         dailyRoutine.add(new ActivityItem(13,0,"9:54","13:07"));
         dailyRoutine.add(new ActivityItem(2,0,"13:08","13:22"));
@@ -44,7 +67,7 @@ public class DailyRoutineHandler extends DayHandler{
         dailyRoutine.add(new ActivityItem(13,0, "15:39", "21:53"));
         dailyRoutine.add(new ActivityItem(5,0,"21:54","22:22"));
         dailyRoutine.add(new ActivityItem(2,0,"22:23","22:51"));
-        dailyRoutine.add(new ActivityItem(1,0, "22:52", "23:59"));
+        dailyRoutine.add(new ActivityItem(1,0, "22:52", "23:59"));*/
     }
 
     public void clearDailyRoutine(){

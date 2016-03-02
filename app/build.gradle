@@ -8,9 +8,18 @@ android {
         applicationId "uni.mannheim.teamproject.diabetesplaner"
         minSdkVersion 16
         targetSdkVersion 23
+        // Enabling multidex support.
+        multiDexEnabled true
         versionCode 1
         versionName "1.0"
     }
+
+    dexOptions {
+        incremental true
+        javaMaxHeapSize "2048M"
+        jumboMode = true
+    }
+
     buildTypes {
         release {
             minifyEnabled false
@@ -20,10 +29,11 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'uni.mannheim.teamproject.diabetesplaner.libs')
+    compile fileTree(dir: 'uni.mannheim.teamproject.diabetesplaner.libs', include: ['*.jar'])
     testCompile 'junit:junit:4.12'
     compile files('src/main/java/libr/opencsv-3.6.jar')
-    provided files('src/main/java/libr/rapidminer-RapidProM-2.0.2.jar')
+    compile files('src/main/java/libr/weka.jar')
+    //provided files('src/main/java/libr/rapidminer-RapidProM-2.0.2.jar')
     compile files('libs/mpandroidchartlibrary-2-1-6.jar')
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'

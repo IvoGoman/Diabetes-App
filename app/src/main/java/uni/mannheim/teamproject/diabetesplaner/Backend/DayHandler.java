@@ -17,9 +17,10 @@ public class DayHandler {
     public static final String TAG = DayHandler.class.getSimpleName();
     private DailyRoutineFragment drFragment;
 
-    public DayHandler(DailyRoutineFragment drFragment){
+        public DayHandler(DailyRoutineFragment drFragment){
         this.drFragment = drFragment;
     }
+
 
     /**
      * TODO
@@ -155,6 +156,15 @@ public class DayHandler {
      * @return
      */
     public ArrayList<ActivityItem> getDailyRoutine(){
+
+
+        return dailyRoutine;
+    }
+
+    public ArrayList<ActivityItem> getDayRoutine(Date date) {
+        DataBaseHandler handler = AppGlobal.getHandler();
+
+        dailyRoutine = handler.GetDay(handler, date);
         return dailyRoutine;
     }
 
