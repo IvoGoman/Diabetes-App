@@ -30,6 +30,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private Preference pref_bloodsugar;
     private ListPreference pref_weight_measurement;
     private EditTextPreference pref_weight;
+    private SharedPreferences sharedPrefs;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +76,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         //Write User Data in the Summary Fields
 
-        SharedPreferences sharedPrefs = getPreferenceManager().getSharedPreferences();
+        sharedPrefs = getPreferenceManager().getSharedPreferences();
 
         final EditTextPreference pref_name = (EditTextPreference) findPreference("pref_key_name");
         String Test1 = sharedPrefs.getString("pref_key_name", "Vorname, Name");
@@ -83,7 +84,11 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
 
         String Test2 = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
-        pref_weight.setSummary(Test2 + " kg");
+        if (pref_weight_measurement.getValue().equals("Kilogram")) {
+            pref_weight.setSummary(Test2 + " kg");
+        } else if (pref_weight_measurement.getValue().equals("Pound")) {
+            pref_weight.setSummary(Test2 + " lbs");
+        }
 
         String Test3 = sharedPrefs.getString("pref_key_bloodsugar", "Blutzuckerwert eingeben");
         pref_bloodsugar.setSummary(Test3 + " mmol/L");
@@ -95,10 +100,15 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
 
     public boolean onPreferenceChanged(Preference.OnPreferenceChangeListener preference) {
+        String old_weight = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
+        SharedPreferences.Editor edit_value = sharedPrefs.edit();
+        String new_weight = "";
         if (pref_weight_measurement.getValue() == "kg") {
-
+            new_weight = String.valueOf(lbs_to_kg(Double.parseDouble(old_weight)));
+            sharedPrefs.edit().putString("pref_weightOptions",new_weight);
         } else if (pref_weight_measurement.getValue() == "Pound") {
-
+            new_weight = String.valueOf(kg_to_lbs(Double.parseDouble(old_weight)));
+            sharedPrefs.edit().putString("pref_weightOptions",new_weight);
         }
         return true;
     }
@@ -157,42 +167,43 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
             } else if (editTextPref.getKey().equals("pref_key_weight"))
             {
-                if(pref_weight_measurement.getValue().equals("Kilogram")) {
-                    weight[1]="kg";
-                    pref_weight_measurement.setSummary("Kilogram");
-                    pref_weight.setSummary(nameDialog.getText() + " " + weight[1]);
-
+                if(pref_weight_measurement.getValue() == "Kilogram")
+                {
+                    editTextPref.setSummary(nameDialog.getText() + " kg");
+                }else
+                {
+                    editTextPref.setSummary(nameDialog.getText() + " lbs");
                 }
-                else if(pref_weight_measurement.getValue().equals("Pound")) {
-                    weight[1]="lbs";
-                    pref_weight_measurement.setSummary("Pound");
-                    pref_weight.setSummary(nameDialog.getText() + " " + weight[1]);
-
-                }
-                ;
             }
         }
 
         //converts the current weight
         if(findPreference(key) == pref_weight_measurement)
         {
-            EditText nameDialog = pref_weight.getEditText();
+            SharedPreferences pref_weight = getActivity().getSharedPreferences("pref_key_weight", 0);
+            SharedPreferences.Editor pref_weight_editor = pref_weight.edit();
+            EditTextPreference prefweight = (EditTextPreference) findPreference("pref_key_weight");
+            String old_weight = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
+            String new_weight = "";
             if(pref_weight_measurement.getValue().equals("Kilogram")) {
-                weight[0] = String.valueOf(lbs_to_kg(Double.parseDouble(pref_weight.getText())));
-                weight[1]="kg";
+                new_weight = String.valueOf(lbs_to_kg(Double.parseDouble(old_weight)));
+                prefweight.setText(new_weight);
+                prefweight.setSummary(new_weight + " kg");
                 pref_weight_measurement.setSummary("Kilogram");
-                pref_weight.setSummary(weight[0] + " " + weight[1]);
-                pref_weight.getEditText().setText(weight[0]);
+                //Test if necessary
+                pref_weight_editor.putFloat("pref_key_weight", Float.parseFloat(new_weight));
+                pref_weight_editor.commit();
+                pref_weight_editor.apply();
             }
             else if(pref_weight_measurement.getValue().equals("Pound")) {
-                weight[0] = String.valueOf(kg_to_lbs(Double.parseDouble(pref_weight.getText())));
-                weight[1]="lbs";
+                new_weight = String.valueOf(kg_to_lbs(Double.parseDouble(old_weight)));
                 pref_weight_measurement.setSummary("Pound");
-                pref_weight.setSummary(weight[0] + " " + weight[1]);
-                pref_weight.getEditText().setText(weight[0]);
-
+                prefweight.setText(new_weight);
+                prefweight.setSummary(new_weight + " lbs");
+                pref_weight_editor.putFloat("pref_key_weight", Float.parseFloat(new_weight));
+                pref_weight_editor.commit();
+                pref_weight_editor.apply();
             }
-
         }
     }
 
