@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.view.View;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
@@ -27,6 +28,9 @@ public class AddDialog extends InputDialog {
 
         builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
+
+                        AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), getSelectedItem(), 1, "2015-11-05 " + getStarttime(), "2015-11-05 " + getEndtime());
+
                         ActivityItem activityItem = new ActivityItem(getSelectedItem(), 0, getStarttime(), getEndtime());
                         if(!isTimeValid()){
                             InvalidTimeDialog itd = new InvalidTimeDialog();
