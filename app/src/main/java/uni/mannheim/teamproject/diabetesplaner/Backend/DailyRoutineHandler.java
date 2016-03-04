@@ -1,6 +1,7 @@
 package uni.mannheim.teamproject.diabetesplaner.Backend;
 
 import android.content.Context;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -17,7 +18,7 @@ public class DailyRoutineHandler extends DayHandler{
     private static DailyRoutineFragment drFragment;
 
     public DailyRoutineHandler(DailyRoutineFragment drFragment) {
-        super();
+        super(drFragment);
         dailyRoutine = getDailyRoutine();
     }
 
@@ -56,6 +57,7 @@ public class DailyRoutineHandler extends DayHandler{
         {
             dailyRoutine.add(new ActivityItem(prediction.get(i).Action+1,0,prediction.get(i).Start,prediction.get(i).End));
         }
+        Log.i(TAG,dailyRoutine.toString());
         /*dailyRoutine.add(new ActivityItem(1,0,"0:00","9:14"));
         dailyRoutine.add(new ActivityItem(2,0,"9:15","9:53"));
         dailyRoutine.add(new ActivityItem(13,0,"9:54","13:07"));

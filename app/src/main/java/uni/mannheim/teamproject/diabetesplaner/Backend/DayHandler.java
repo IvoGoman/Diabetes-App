@@ -14,14 +14,12 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 public class DayHandler {
     private ArrayList<ActivityItem> dailyRoutine = new ArrayList<>();
     public static final String TAG = DayHandler.class.getSimpleName();
-//    private DailyRoutineFragment drFragment;
+    private DailyRoutineFragment drFragment;
 
-    //    public DayHandler(DailyRoutineFragment drFragment){
-//        this.drFragment = drFragment;
-//    }
-    public DayHandler() {
-
+        public DayHandler(DailyRoutineFragment drFragment){
+        this.drFragment = drFragment;
     }
+
 
     /**
      * TODO
@@ -54,7 +52,7 @@ public class DayHandler {
         DailyRoutineView.setSelectable(false);
         DailyRoutineView.setActionBarItems();
 
-//        drFragment.updateView();
+        drFragment.updateView();
         //TODO combine with backend, adapt the daily routine
     }
 
@@ -149,7 +147,7 @@ public class DayHandler {
             //add activity
             dailyRoutine.add(startindex + 1, activityItem);
         }
-//        drFragment.updateView();
+        drFragment.updateView();
     }
 
     /**
@@ -165,7 +163,7 @@ public class DayHandler {
     public ArrayList<ActivityItem> getDayRoutine(Date date) {
         DataBaseHandler handler = AppGlobal.getHandler();
 
-        ArrayList<ActivityItem> dailyRoutine = handler.GetDay(handler, date);
+        dailyRoutine = handler.GetDay(handler, date);
         return dailyRoutine;
     }
 

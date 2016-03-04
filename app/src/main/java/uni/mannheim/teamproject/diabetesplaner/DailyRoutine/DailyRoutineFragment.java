@@ -23,6 +23,7 @@ import java.util.TimerTask;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Backend.DailyRoutineHandler;
+import uni.mannheim.teamproject.diabetesplaner.Backend.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
@@ -260,7 +261,7 @@ public class DailyRoutineFragment extends Fragment {
      * returns the list with all activity views of the dailyroutine
      * @return DailyRoutineView
      */
-    public static ArrayList<DailyRoutineView> getActivityList(){
+    public ArrayList<DailyRoutineView> getActivityList(){
         return items;
     }
 
@@ -349,7 +350,8 @@ public class DailyRoutineFragment extends Fragment {
         return scrollView;
     }
 
-    public DailyRoutineHandler getDrHandler(){
+    public DayHandler getDrHandler(){
         return drHandler;
     }
+
 }

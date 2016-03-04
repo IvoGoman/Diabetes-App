@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,6 +32,7 @@ import java.util.Random;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Backend.DayHandler;
+import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
 
 
@@ -42,7 +44,7 @@ import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
  * Use the {@link HistoryFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class HistoryFragment extends Fragment {
+public class HistoryFragment extends DailyRoutineFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -53,8 +55,11 @@ public class HistoryFragment extends Fragment {
     private String mParam2;
     private OnFragmentInteractionListener mListener;
     private AppCompatActivity aca;
-    private ArrayList<DailyRoutineView> items = new ArrayList<DailyRoutineView>();
+    private static ArrayList<DailyRoutineView> items_history = new ArrayList<DailyRoutineView>();
+    private static LinearLayout linearLayout;
+    private static ScrollView scrollView;
     private DayHandler dayHandler;
+
 
     /**
      * Use this factory method to create a new instance of
@@ -87,7 +92,7 @@ public class HistoryFragment extends Fragment {
         }
         aca = (AppCompatActivity) getActivity();
         aca.getSupportActionBar().setTitle(R.string.menu_item_history);
-        dayHandler = new DayHandler();
+        dayHandler = new DayHandler(this);
 
     }
 
@@ -96,11 +101,11 @@ public class HistoryFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         final View inflaterView = inflater.inflate(R.layout.fragment_history, container, false);
-        final LinearLayout linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_historic_routine);
+        linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_historic_routine);
         final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         TextView dateView = (TextView) inflaterView.findViewById(R.id.history_date_view);
         String dateString = DateFormat.getDateInstance().format(new Date());
-        ;
+
         //TODO: move formatter util class
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date dateToday = sdf.getCalendar().getTime();
@@ -109,6 +114,7 @@ public class HistoryFragment extends Fragment {
         dateString = df.format(date);
         //    String dateString = DateFormat.getDateInstance().format(date);
         dateView.setText(dateString);
+        onDateSelected(linearLayout, params, dateToday);
         dateView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -117,10 +123,9 @@ public class HistoryFragment extends Fragment {
                 datePickerFragment.show(fragmentManager, "datePicker");
             }
         });
-        onDateSelected(linearLayout, params, dateToday);
         //TODO: add history item at the point where a daily routine is completed
 
-
+        scrollView = (ScrollView) inflaterView.findViewById(R.id.history_scrollview);
         // Inflate the layout for this fragment
         return inflaterView;
     }
@@ -131,7 +136,32 @@ public class HistoryFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
+    public static ArrayList<DailyRoutineView> getItems(){return items_history;}
+    public ArrayList<DailyRoutineView> getActivityList(){
+        return items_history;}
+    @Override
+    public DayHandler getDrHandler(){
+        return dayHandler;
+    }
+    @Override
+    public void updateView(){
+        //get predicted routine
+        linearLayout.removeAllViews();
+        items_history.clear();
+        ArrayList<ActivityItem> listItems = new ArrayList<>();
+        listItems = dayHandler.getDailyRoutine();
+        Log.d(TAG, "list size after update: " +listItems.size());
 
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+
+        for(int i=0; i<listItems.size(); i++){
+            DailyRoutineView drv = new DailyRoutineView(getActivity(), listItems.get(i));
+            linearLayout.addView(drv);
+            drv.setState(false);
+            drv.setLayoutParams(params);
+            items_history.add(drv);
+        }}
     /**
      * every time a date is chosen with the date picker this method is called to create the
      * new activity list
@@ -153,8 +183,10 @@ public class HistoryFragment extends Fragment {
                     linearLayout.addView(drv);
                     drv.setLayoutParams(params);
                     //drv.getLayoutParams().height = drv.getTotalHeight();
-                    items.add(drv);
+                   items_history.add(drv);
+
                 }
+         //   DailyRoutineFragment.setItems(items_history);
             } else {
             TextView tv = new TextView(getContext());
                 tv.setText(R.string.no_data);
@@ -184,6 +216,8 @@ public class HistoryFragment extends Fragment {
     public void onDetach() {
         super.onDetach();
         mListener = null;
+        linearLayout = null;
+        dayHandler.clearDailyRoutine();
     }
 
 
