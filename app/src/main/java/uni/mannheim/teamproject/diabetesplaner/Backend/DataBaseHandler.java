@@ -101,8 +101,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + PROFILE_TABLE_NAME + ";";
 
 
-
-
     //METHODS
 
     public Cursor getAllLocations(DataBaseHandler helper) {
@@ -257,22 +255,35 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     public void ReplaceActivity(DataBaseHandler handler, int idActivity, int idLocation, String Start, String End){
+        //String start, end;
+        //Calendar calendar = Calendar.getInstance();
+        //calendar.setTime(Start);
+        //start = calendar.toString();
+        //calendar.setTime(End);
+        //start = calendar.toString();
+        //int Year = calendar.get(Calendar.YEAR);
+        //String Month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+        //String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+        //start = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
+        //end = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
+
         findActionbyStartTime(handler, Start);
         findActionbyEndTime(handler, End);
+        findActionbyStartEndTime(handler, Start, End);
 
         SQLiteDatabase db1 = handler.getWritableDatabase();
         InsertActivity(handler, idActivity, idLocation, Start, End);
         //UPDATE tbl_info SET age=12 WHERE _id=1;
-        db1.execSQL("update ActivityList set(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '" + Start + "','" + End + "' ); ");
+        //db1.execSQL("update ActivityList set(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '" + Start + "','" + End + "' ); ");
         db1.close();
     }
 
     private void findActionbyStartTime(DataBaseHandler handler, String Start) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select id from ActivityList where Start <= " + Start + " and End >= " + Start + "; ", null);
+        Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + Start + "' and End >= '" + Start + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                db1.execSQL("update ActivityList set End = " + Start + " where id = '" + cursor.getString(0) + "';");
+                db1.execSQL("update ActivityList set End = '" + Start + "' where id = '" + cursor.getString(0) + "';");
             } while (cursor.moveToNext());
             db1.close();
         }
@@ -280,10 +291,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     private void findActionbyEndTime(DataBaseHandler handler, String End) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select id from ActivityList where Start <= " + End + " and End >= " + End + "; ", null);
+        Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + End + "' and End >= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                db1.execSQL("update ActivityList set Start = " + End + " where id = '" + cursor.getString(0) + "';");
+                db1.execSQL("update ActivityList set Start = '" + End + "' where id = '" + cursor.getString(0) + "';");
             } while (cursor.moveToNext());
             db1.close();
         }
@@ -291,7 +302,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     private void findActionbyStartEndTime(DataBaseHandler handler, String Start, String End) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select id from ActivityList where Start >= " + Start + " and End <= " + End + "; ", null);
+        Cursor cursor = db1.rawQuery("select id from ActivityList where Start >= '" + Start + "' and End <= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
                 db1.execSQL("delete from ActivityList where id = '" + cursor.getString(0) + "';");
@@ -320,7 +331,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         SQLiteDatabase db = handler.getReadableDatabase();
         String S = "select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where (ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "') or (ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "');";
-        Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where (ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "') or (ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "');", null);
+        Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "' or ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "' order by ActivityList.Start;", null);
                                                                                                                                                                                     //(ActivityList.End > '2016-01-01 00:00' and ActivityList.Start < '2016-01-01 23:59') or (ActivityList.Start < '2016-01-01 23:59' and ActivityList.Start > '2016-01-01 00:00')
         return GetArrayFromCursor(cursor, Date);
     }
