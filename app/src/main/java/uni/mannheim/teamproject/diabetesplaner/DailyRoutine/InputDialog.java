@@ -23,7 +23,6 @@ import java.util.Date;
 import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.Backend.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.Backend.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 import uni.mannheim.teamproject.diabetesplaner.R;
@@ -37,6 +36,9 @@ public class InputDialog extends DialogFragment {
     private String endtime;
     private int activity = 0;
     private String meal;
+    private String date;
+    private Date startDate;
+    private Date endDate;
 
     private TimePickerFragment timePickerFragmentStart;
     private TimePickerFragment timePickerFragmentEnd;
@@ -242,6 +244,27 @@ public class InputDialog extends DialogFragment {
     }
 
     /**
+     * Ivo Gosemann
+     * sets the date of the activity
+     *
+     * @param date
+     */
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    /**
+     * Ivo Gosemann
+     * gets the date of the activity
+     *
+     * @return date
+     */
+    public String getDate() {
+        return date;
+    }
+
+
+    /**
      * set the activity of the input dialog
      * @param activity activity id
      */
@@ -331,6 +354,25 @@ public class InputDialog extends DialogFragment {
 
     public void setMeal(String meal) {
         this.meal = meal;
+    }
+
+    public Date getStartDate() {
+        startDate = Util.setTime(date, starttime);
+        return startDate;
+    }
+
+    public void setStartDate(Date startDate) {
+
+
+        this.startDate = startDate;
+    }
+
+    public Date getEndDate() {
+        return endDate;
+    }
+
+    public void setEndDate(Date endDate) {
+        this.endDate = endDate;
     }
 }
 

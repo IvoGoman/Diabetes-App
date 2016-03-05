@@ -59,6 +59,7 @@ public class HistoryFragment extends DailyRoutineFragment {
     private static LinearLayout linearLayout;
     private static ScrollView scrollView;
     private DayHandler dayHandler;
+    private static Date date;
 
 
     /**
@@ -82,6 +83,11 @@ public class HistoryFragment extends DailyRoutineFragment {
     public HistoryFragment() {
         // Required empty public constructor
     }
+
+    public void setDate(Date date) {
+        HistoryFragment.date = date;
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -174,11 +180,12 @@ public class HistoryFragment extends DailyRoutineFragment {
         //TODO: Move Data creation to a Utility Class for unified creation over all classes
             Log.i(TAG, date.toString());
             ArrayList<ActivityItem> day = dayHandler.getDayRoutine(date);
+        setDate(date);
 
 //  ArrayList<String[]> day = generateRandomRoutine();
         if (day.size() > 0) {
                 for (int i = 0; i < day.size(); i++) {
-                    DailyRoutineView drv = new DailyRoutineView(getActivity(), Integer.valueOf(day.get(i).getActivityId()), 0, day.get(i).getStarttimeAsString(), day.get(i).getEndtimeAsString());
+                    DailyRoutineView drv = new DailyRoutineView(getActivity(), Integer.valueOf(day.get(i).getActivityId()), 0, day.get(i).getStarttimeAsString(), day.get(i).getEndtimeAsString(), date);
                     drv.setState(true);
                     linearLayout.addView(drv);
                     drv.setLayoutParams(params);
@@ -268,6 +275,14 @@ public class HistoryFragment extends DailyRoutineFragment {
 
             // Create a new instance of DatePickerDialog and return it
             return new DatePickerDialog(getActivity(), this, year, month, day);
+        }
+
+        /**
+         * Ivo Gosemann
+         * get the Date selected in the History Fragment
+         */
+        public Date getDate() {
+            return date;
         }
 
         /**

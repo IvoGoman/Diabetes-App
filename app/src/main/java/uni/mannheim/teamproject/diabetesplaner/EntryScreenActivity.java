@@ -28,7 +28,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag.ActivityMeasurementFragment;
-import uni.mannheim.teamproject.diabetesplaner.Backend.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.Backend.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.ActivityLimitDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.AddDialog;
@@ -184,6 +183,7 @@ public class EntryScreenActivity extends AppCompatActivity
                     editDialog.setImage(DailyRoutineView.getSelectedActivities().get(0).getImage());
                     editDialog.setImageUri(DailyRoutineView.getSelectedActivities().get(0).getImageUri());
                     editDialog.setMeal(DailyRoutineView.getSelectedActivities().get(0).getMeal());
+
                     editDialog.show(getFragmentManager(), "editDialog");
                 }
 

@@ -52,7 +52,7 @@ public class DailyRoutineFragment extends Fragment {
     private static LinearLayout linearLayout;
 
     public static final String TAG = DailyRoutineFragment.class.getSimpleName();
-
+    private Date date;
     private Timer timer;
     private TimerTask timerTask;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
@@ -124,7 +124,7 @@ public class DailyRoutineFragment extends Fragment {
 //            items.add(drv);
 //        }
 
-        drHandler.predictDailyRoutine();
+        drHandler.predictDailyRoutine(this.date);
         updateView();
 
 
@@ -178,6 +178,7 @@ public class DailyRoutineFragment extends Fragment {
      */
     public String getDate(){
         Date date = Calendar.getInstance(Locale.getDefault()).getTime();
+        this.date = date;
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, dd.MM.yyyy");
         String dateString = dateFormat.format(date);
 

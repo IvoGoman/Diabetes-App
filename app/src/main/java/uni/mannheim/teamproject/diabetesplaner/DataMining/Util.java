@@ -330,4 +330,25 @@ public class Util {
 		cal.add(Calendar.MINUTE, minutes);
 		return cal.getTime();
 	}
+
+	public static Date setTime(String dateString, String starttime) {
+		Date date = null;
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		dateString = dateString + " " + starttime;
+		try {
+			date = dateFormat.parse(dateString);
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return date;
+	}
+
+	public static String convertDateToDateString(Date date) {
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		String dateString = dateFormat.format(date);
+
+		return dateString;
+	}
 }

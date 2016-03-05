@@ -9,6 +9,7 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 
 /**
  * Created by Stefan on 22.02.2016.
+ * ActivityItem is used to represent the Activities of a Daily Routine
  */
 public class ActivityItem {
 
@@ -19,6 +20,7 @@ public class ActivityItem {
     private Bitmap mealImage;
     private String meal;
     private Uri imageUri;
+    private Date date;
 
     /**
      * constructor for an Activity Item with times as Date
@@ -32,6 +34,17 @@ public class ActivityItem {
         this.subactivityId = subactivityId;
         this.starttime = starttime;
         this.endtime = endtime;
+//        this.date = date;
+    }
+
+    public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime, Uri imageUri, Bitmap mealImage, String meal) {
+        this.activityId = activityId;
+        this.subactivityId = subactivityId;
+        this.starttime = starttime;
+        this.endtime = endtime;
+        this.mealImage = mealImage;
+        this.meal = meal;
+        this.imageUri = imageUri;
     }
 
     public ActivityItem(ActivityItem activityItem){
@@ -39,6 +52,7 @@ public class ActivityItem {
         this.subactivityId = activityItem.getSubactivityId();
         this.starttime = activityItem.getStarttime();
         this.endtime = activityItem.getEndtime();
+        this.date = activityItem.getDate();
     }
 
     /**
@@ -86,6 +100,10 @@ public class ActivityItem {
 
     public Date getEndtime() {
         return endtime;
+    }
+
+    public Date getDate() {
+        return date;
     }
 
     public void setStarttime(Date date){
