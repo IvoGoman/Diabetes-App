@@ -270,7 +270,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         findActionbyStartTime(handler, Start);
         findActionbyEndTime(handler, End);
         findActionbyStartEndTime(handler, Start, End);
-
+        findActionbyStartEndTime2(handler, Start, End);
         SQLiteDatabase db1 = handler.getWritableDatabase();
         InsertActivity(handler, idActivity, idLocation, Start, End);
         //UPDATE tbl_info SET age=12 WHERE _id=1;
@@ -310,6 +310,68 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             db1.close();
         }
     }
+
+
+    private void findActionbyStartEndTime2(DataBaseHandler handler, String Start, String End) {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        Cursor cursor = db1.rawQuery("select * from ActivityList where Start <= '" + Start + "' and End >= '" + End + "'; ", null);
+        if (cursor.moveToFirst()) {
+            do {
+                String id = cursor.getString(0);
+                int idActivity = cursor.getInt(1);
+                int idLocation = cursor.getInt(2);
+                String Start1 = cursor.getString(3);
+                String End1 = cursor.getString(4);
+                db1.execSQL("update ActivityList set End = '" + Start + "' where id = '" + cursor.getString(0) + "';");
+                InsertActivity(handler, idActivity, idLocation, End, End1);
+            } while (cursor.moveToNext());
+            db1.close();
+        }
+    }
+
+    public boolean CheckRoutineAdded(DataBaseHandler handler){
+        String StartOfDay, EndOfDay;
+        Calendar calendar = Calendar.getInstance();
+        int Year = calendar.get(Calendar.YEAR);
+        String Month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+        String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+        StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
+        EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
+        SQLiteDatabase db = handler.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from ActivityList where Start>= '" + StartOfDay + "' and End<= '" + EndOfDay + "'", null);
+        if (cursor.getCount() < 1)
+        {
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+
+    public void InsertNewRoutine(DataBaseHandler handler, ArrayList<Prediction.PeriodAction> prediction) {
+        int idActivity;
+        int idLocation;
+        String Start;
+        String End;
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        for(int i=0;i<prediction.size();i++){
+            idActivity =prediction.get(i).Action+1;
+            idLocation = 1;
+            String StartOfDay, EndOfDay;
+            Calendar calendar = Calendar.getInstance();
+            int Year = calendar.get(Calendar.YEAR);
+            String Month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+            String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+            StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day);
+            EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day);
+            Start = StartOfDay.toString() + " " + prediction.get(i).Start;
+            End = EndOfDay.toString()  + " " + prediction.get(i).End;
+            db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '" + Start + "','" + End + "' ); ");
+        }
+        db1.close();
+    }
+
 
     public void InsertProfile(DataBaseHandler handler, int age, int dt, double abl) {
         SQLiteDatabase db1 = handler.getWritableDatabase();

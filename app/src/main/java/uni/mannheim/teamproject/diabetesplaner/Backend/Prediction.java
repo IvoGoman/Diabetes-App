@@ -323,7 +323,7 @@ public class Prediction {
                     calendar.setTime(Start);
 
                     int minutesleftfrommidnight = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
-                    duration += 10;
+                    duration += 1;
                     //inst.instance(0).setValue(0,minutesleftfrommidnight);
                     //inst.instance(0).setValue(1,duration);
                     //inst.instance(0).setValue(2,ActivityCur);
@@ -339,7 +339,7 @@ public class Prediction {
                     inst.add(newInstance);
                     inst.add(newInstance);
 
-                    CurDate.setTime(CurDate.getTime() + 10 * 60 * 1000);
+                    CurDate.setTime(CurDate.getTime() + 1 * 60 * 1000);
                     ActivityBefore1 = ActivityCur;
                 }
             }
@@ -355,9 +355,9 @@ public class Prediction {
                 tree.buildClassifier(inst);
 
         ArrayList<TimeAction>TimeAction1 = new ArrayList<TimeAction>();
-        int Duration = 10;
+        int Duration = 1;
         double lastactionpr = 0.0;
-        for (int i = 0; i< 1440; i+=10){
+        for (int i = 0; i< 1440; i+=1){
             //Instance inst1 = new Instance(2);
             newInstance.setValue(0, i);
             newInstance.setValue(1, Duration);
@@ -367,10 +367,10 @@ public class Prediction {
             double curentaction = tree.classifyInstance(newInstance);
 
             if (lastactionpr ==curentaction){
-                Duration +=10;
+                Duration +=1;
             }
             else{
-                Duration = 10;
+                Duration = 1;
             }
             lastactionpr = curentaction;
             TimeAction T1 = new TimeAction();

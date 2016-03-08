@@ -4,19 +4,21 @@ import android.content.Context;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
-import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
+
 
 
 /**
  * Created by Stefan on 22.02.2016.
  */
-public class DailyRoutineHandler extends DayHandler {
+public class DailyRoutineHandler extends DayHandler{
     private ArrayList<ActivityItem> dailyRoutine;
     public static final String TAG = DailyRoutineHandler.class.getSimpleName();
     private static DailyRoutineFragment drFragment;
+    public Date date;
 
     public DailyRoutineHandler(DailyRoutineFragment drFragment) {
         super(drFragment);
@@ -27,38 +29,67 @@ public class DailyRoutineHandler extends DayHandler {
     /**
      * TODO
      * returns the predicted DailyRoutine from the model
-     *
      * @return
      */
-    public void predictDailyRoutine(Date date) {
-        this.setDate(date);
+    public void predictDailyRoutine(){
         ArrayList<Prediction.PeriodAction> prediction = new ArrayList<Prediction.PeriodAction>();
         DataBaseHandler handler = null;
         Context context = AppGlobal.getcontext();
         Prediction prediction1 = new Prediction();
-        try {
-            if (AppGlobal.getHandler() != null) {
+        try{
+            if (AppGlobal.getHandler()!=null){
                 //handler = AppGlobal.getHandler()
-
-                prediction = prediction1.GetRoutine1();
-            } else {
+                if (!AppGlobal.getHandler().CheckRoutineAdded(AppGlobal.getHandler())){
+                    prediction = prediction1.GetRoutine1();
+                    AppGlobal.getHandler().InsertNewRoutine(AppGlobal.getHandler(), prediction);
+                    dailyRoutine.clear();
+                    for (int i=0;i<prediction.size();i++)
+                    {
+                        dailyRoutine.add(new ActivityItem(prediction.get(i).Action+1,0,prediction.get(i).Start,prediction.get(i).End));
+                    }
+                    Log.i(TAG, dailyRoutine.toString());
+                }
+                else{
+                    Calendar calendar = Calendar.getInstance();
+                    Date date = calendar.getTime();
+                    dailyRoutine.clear();
+                    for (int i=0;i<prediction.size();i++) {
+                        dailyRoutine = AppGlobal.getHandler().GetDay(AppGlobal.getHandler(), date);
+                    }
+                    Log.i(TAG, dailyRoutine.toString());
+                }
+            }
+            else{
                 AppGlobal.getHandler().onCreate(AppGlobal.getHandler().db);
-                // handler = AppGlobal.getHandler();
-                //prediction1.GetRoutine1();
+                if (!AppGlobal.getHandler().CheckRoutineAdded(AppGlobal.getHandler())){
+                    prediction = prediction1.GetRoutine1();
+                    AppGlobal.getHandler().InsertNewRoutine(AppGlobal.getHandler(), prediction);
+                    dailyRoutine.clear();
+                    for (int i=0;i<prediction.size();i++)
+                    {
+                        dailyRoutine.add(new ActivityItem(prediction.get(i).Action+1,0,prediction.get(i).Start,prediction.get(i).End));
+                    }
+                    Log.i(TAG, dailyRoutine.toString());
+                }
+                else{
+                    Calendar calendar = Calendar.getInstance();
+                    Date date = calendar.getTime();
+                    dailyRoutine.clear();
+                    for (int i=0;i<prediction.size();i++) {
+                        dailyRoutine = AppGlobal.getHandler().GetDay(AppGlobal.getHandler(), date);
+                    }
+                    Log.i(TAG, dailyRoutine.toString());
+                }
             }
 
 
-        } catch (Exception e) {
+        }
+        catch(Exception e)
+        {
             e.printStackTrace();
         }
         //TODO get daily routine from model
-        dailyRoutine.clear();
-        String dateString = null;
-        for (int i = 0; i < prediction.size(); i++) {
-            dateString = Util.convertDateToDateString(date);
-            dailyRoutine.add(new ActivityItem(prediction.get(i).Action + 1, 0, Util.setTime(dateString, prediction.get(i).Start), Util.setTime(dateString, prediction.get(i).End)));
-        }
-        Log.i(TAG, dailyRoutine.toString());
+
         /*dailyRoutine.add(new ActivityItem(1,0,"0:00","9:14"));
         dailyRoutine.add(new ActivityItem(2,0,"9:15","9:53"));
         dailyRoutine.add(new ActivityItem(13,0,"9:54","13:07"));
@@ -71,8 +102,7 @@ public class DailyRoutineHandler extends DayHandler {
         dailyRoutine.add(new ActivityItem(1,0, "22:52", "23:59"));*/
     }
 
-
-    public void clearDailyRoutine() {
+    public void clearDailyRoutine(){
         dailyRoutine.clear();
     }
 }
