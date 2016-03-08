@@ -31,7 +31,7 @@ public class DailyRoutineHandler extends DayHandler{
      * returns the predicted DailyRoutine from the model
      * @return
      */
-    public void predictDailyRoutine(){
+    public void predictDailyRoutine(Date date){
         ArrayList<Prediction.PeriodAction> prediction = new ArrayList<Prediction.PeriodAction>();
         DataBaseHandler handler = null;
         Context context = AppGlobal.getcontext();
@@ -51,11 +51,13 @@ public class DailyRoutineHandler extends DayHandler{
                 }
                 else{
                     Calendar calendar = Calendar.getInstance();
-                    Date date = calendar.getTime();
+                    //Date date = calendar.getTime();
+                    ArrayList<ActivityItem> Day1 = AppGlobal.getHandler().GetDay(AppGlobal.getHandler(),date);
                     dailyRoutine.clear();
-                    for (int i=0;i<prediction.size();i++) {
-                        dailyRoutine = AppGlobal.getHandler().GetDay(AppGlobal.getHandler(), date);
+                    for (int i=0;i<Day1.size();i++) {
+                        dailyRoutine.add(new ActivityItem(Day1.get(i).getActivityId(),0,Day1.get(i).getStarttimeAsString(),Day1.get(i).getEndtimeAsString()));
                     }
+
                     Log.i(TAG, dailyRoutine.toString());
                 }
             }
@@ -73,10 +75,11 @@ public class DailyRoutineHandler extends DayHandler{
                 }
                 else{
                     Calendar calendar = Calendar.getInstance();
-                    Date date = calendar.getTime();
+                    //Date date = calendar.getTime();
+                    ArrayList<ActivityItem> Day1 = AppGlobal.getHandler().GetDay(AppGlobal.getHandler(),date);
                     dailyRoutine.clear();
-                    for (int i=0;i<prediction.size();i++) {
-                        dailyRoutine = AppGlobal.getHandler().GetDay(AppGlobal.getHandler(), date);
+                    for (int i=0;i<Day1.size();i++) {
+                        dailyRoutine.add(new ActivityItem(Day1.get(i).getActivityId(),0,Day1.get(i).getStarttimeAsString(),Day1.get(i).getEndtimeAsString()));
                     }
                     Log.i(TAG, dailyRoutine.toString());
                 }

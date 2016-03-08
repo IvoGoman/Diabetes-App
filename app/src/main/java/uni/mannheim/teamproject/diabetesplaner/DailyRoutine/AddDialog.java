@@ -6,8 +6,12 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
@@ -27,19 +31,23 @@ public class AddDialog extends InputDialog {
 
 
         builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
+            public void onClick(DialogInterface dialog, int id) {
 
+                Date date = getDrHandler().getDate();
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                String dateString = sdf.format(date);
 
-                        ActivityItem activityItem = new ActivityItem(getSelectedItem(), 0, getStarttime(), getEndtime(), getImageUri(), getImage(), getMeal());
-                        if(!isTimeValid()){
-                            InvalidTimeDialog itd = new InvalidTimeDialog();
-                            itd.show(getFragmentManager(),"invalidTime");
-                        }else {
-                            AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), getSelectedItem(), 1, "2015-11-05 " + getStarttime(), "2015-11-05 " + getEndtime());
-                            getDrHandler().add(activityItem);
-                        }
-                    }
-                })
+                if(!isTimeValid()){
+                    InvalidTimeDialog itd = new InvalidTimeDialog();
+                    itd.show(getFragmentManager(),"invalidTime");
+                }else {
+                    AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), getSelectedItem(), 1, dateString + " " + getStarttime(), dateString + " " + getEndtime());
+                    ActivityItem activityItem = new ActivityItem(getSelectedItem(), 0, Util.setTime(dateString, getStarttime()), Util.setTime(dateString, getEndtime()), getImageUri(), getImage(), getMeal());
+                    getDrHandler().add(activityItem);
+
+                }
+            }
+        })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog

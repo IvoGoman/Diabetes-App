@@ -178,29 +178,29 @@ public class HistoryFragment extends DailyRoutineFragment {
     public void onDateSelected(LinearLayout linearLayout, LinearLayout.LayoutParams params, Date date) {
         linearLayout.removeAllViews();
         //TODO: Move Data creation to a Utility Class for unified creation over all classes
-            Log.i(TAG, date.toString());
-            ArrayList<ActivityItem> day = dayHandler.getDayRoutine(date);
+        Log.i(TAG, date.toString());
+        ArrayList<ActivityItem> day = dayHandler.getDayRoutine(date);
         setDate(date);
 
 //  ArrayList<String[]> day = generateRandomRoutine();
         if (day.size() > 0) {
-                for (int i = 0; i < day.size(); i++) {
-                    DailyRoutineView drv = new DailyRoutineView(getActivity(), Integer.valueOf(day.get(i).getActivityId()), 0, day.get(i).getStarttimeAsString(), day.get(i).getEndtimeAsString(), date);
-                    drv.setState(true);
-                    linearLayout.addView(drv);
-                    drv.setLayoutParams(params);
-                    //drv.getLayoutParams().height = drv.getTotalHeight();
-                   items_history.add(drv);
+            for (int i = 0; i < day.size(); i++) {
+                DailyRoutineView drv = new DailyRoutineView(getActivity(), Integer.valueOf(day.get(i).getActivityId()), 0, day.get(i).getStarttimeAsString(), day.get(i).getEndtimeAsString(), date);
+                drv.setState(true);
+                linearLayout.addView(drv);
+                drv.setLayoutParams(params);
+                //drv.getLayoutParams().height = drv.getTotalHeight();
+                items_history.add(drv);
 
-                }
-         //   DailyRoutineFragment.setItems(items_history);
-            } else {
+            }
+            //   DailyRoutineFragment.setItems(items_history);
+        } else {
             TextView tv = new TextView(getContext());
-                tv.setText(R.string.no_data);
-                linearLayout.addView(tv);
+            tv.setText(R.string.no_data);
+            linearLayout.addView(tv);
             tv.setLayoutParams(params);
             tv.setGravity(Gravity.CENTER);
-            }
+        }
     }
 
     /**
