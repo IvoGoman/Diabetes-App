@@ -267,10 +267,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         //start = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
         //end = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
 
-        findActionbyStartTime(handler, Start);
-        findActionbyEndTime(handler, End);
         findActionbyStartEndTime(handler, Start, End);
         findActionbyStartEndTime2(handler, Start, End);
+        findActionbyStartTime(handler, Start);
+        findActionbyEndTime(handler, End);
+
         SQLiteDatabase db1 = handler.getWritableDatabase();
         InsertActivity(handler, idActivity, idLocation, Start, End);
         //UPDATE tbl_info SET age=12 WHERE _id=1;
@@ -354,6 +355,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         int idLocation;
         String Start;
         String End;
+
         SQLiteDatabase db1 = handler.getWritableDatabase();
         for(int i=0;i<prediction.size();i++){
             idActivity =prediction.get(i).Action+1;
@@ -365,8 +367,53 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
             StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day);
             EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day);
-            Start = StartOfDay.toString() + " " + prediction.get(i).Start;
-            End = EndOfDay.toString()  + " " + prediction.get(i).End;
+            Start =prediction.get(i).Start;
+            End =prediction.get(i).End;
+            if (Start.charAt(1) == ':' && Start.length()==3){
+                String Start2 ="";
+                Start2+="0"+Start.charAt(0)+":0"+Start.charAt(2);
+                Start=Start2;
+            }
+            if (Start.charAt(1) == ':' && Start.length()==4){
+                String Start2 ="";
+                Start2+="0"+Start.charAt(0)+":"+Start.charAt(2)+Start.charAt(3);
+                Start=Start2;
+            }
+            if (Start.charAt(2) == ':' && Start.length()==4){
+                String Start2 ="";
+                Start2+=Start+"0";
+                Start=Start2;
+            }
+            if (Start.charAt(2) == ':' && Start.length()==4){
+                String Start2 ="";
+                Start2+=Start.charAt(0)+Start.charAt(1)+":0"+Start.charAt(3);
+                Start=Start2;
+            }
+
+            if (End.charAt(1) == ':' && End.length()==3){
+                String End2 ="";
+                End2+="0"+End.charAt(0)+":0"+End.charAt(2);
+                End=End2;
+            }
+            if (End.charAt(1) == ':' && End.length()==4){
+                String End2 ="";
+                End2+="0"+End.charAt(0)+":"+End.charAt(2)+End.charAt(3);
+                End=End2;
+            }
+            if (End.charAt(2) == ':' && End.length()==4){
+                String End2 ="";
+                End2+=End+"0";
+                End=End2;
+            }
+            if (End.charAt(2) == ':' && End.length()==4){
+                String End2 ="";
+                End2+=End.charAt(0)+End.charAt(1)+":0"+End.charAt(3);
+                End=End2;
+            }
+
+
+            Start = StartOfDay.toString() + " " + Start;
+            End = EndOfDay.toString()  + " " + End;
             db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '" + Start + "','" + End + "' ); ");
         }
         db1.close();
