@@ -21,6 +21,8 @@ import android.widget.TextView;
 import android.preference.Preference;
 import android.widget.Toast;
 
+import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Backend.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
@@ -31,6 +33,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private ListPreference pref_weight_measurement;
     private EditTextPreference pref_weight;
     private SharedPreferences sharedPrefs;
+    private DataBaseHandler database;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -40,7 +43,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         addPreferencesFromResource(R.xml.preferences);
         pref_weight_measurement = (ListPreference) findPreference("pref_weightOptions");
         pref_weight = (EditTextPreference) findPreference("pref_key_weight");
-
+        database = new DataBaseHandler(getActivity().getApplicationContext());
 
         pref_bloodsugar = (Preference) findPreference("pref_key_bloodsugar");
 
@@ -61,7 +64,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             public boolean onPreferenceClick(Preference preference) {
                 System.out.println("Test Jens"); //TODO:delete if not needed
                 CheckBoxPreference pref = (CheckBoxPreference) findPreference("checkbox_preference");
-
 
                 //show the notifications only if the data collection is started
                 if (pref_datacollection.isChecked()){
@@ -91,6 +93,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         }
 
         String Test3 = sharedPrefs.getString("pref_key_bloodsugar", "Blutzuckerwert eingeben");
+
         pref_bloodsugar.setSummary(Test3 + " mmol/L");
 
 
