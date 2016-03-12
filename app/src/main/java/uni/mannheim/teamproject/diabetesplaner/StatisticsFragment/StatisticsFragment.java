@@ -101,8 +101,8 @@ public class StatisticsFragment extends Fragment {
      */
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(aca.getSupportFragmentManager());
-        adapter.addFragment(new RingChartFragment(), "Ring Chart");
-        adapter.addFragment(new LineChartFragment(), "Line Chart");
+        adapter.addFragment(new RingChartFragment(), "Activities");
+        adapter.addFragment(new LineChartFragment(), "Glucose & Insulin");
         //adapter.addFragment(new ThreeFragment(), "THREE");
         viewPager.setAdapter(adapter);
     }

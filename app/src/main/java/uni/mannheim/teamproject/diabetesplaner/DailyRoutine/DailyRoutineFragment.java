@@ -23,6 +23,7 @@ import java.util.TimerTask;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Backend.DailyRoutineHandler;
+import uni.mannheim.teamproject.diabetesplaner.Backend.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
@@ -51,7 +52,7 @@ public class DailyRoutineFragment extends Fragment {
     private static LinearLayout linearLayout;
 
     public static final String TAG = DailyRoutineFragment.class.getSimpleName();
-
+    private Date date;
     private Timer timer;
     private TimerTask timerTask;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
@@ -123,7 +124,7 @@ public class DailyRoutineFragment extends Fragment {
 //            items.add(drv);
 //        }
 
-        drHandler.predictDailyRoutine();
+        drHandler.predictDailyRoutine(this.date);
         updateView();
 
 
@@ -177,6 +178,7 @@ public class DailyRoutineFragment extends Fragment {
      */
     public String getDate(){
         Date date = Calendar.getInstance(Locale.getDefault()).getTime();
+        this.date = date;
         SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, dd.MM.yyyy");
         String dateString = dateFormat.format(date);
 
@@ -272,7 +274,7 @@ public class DailyRoutineFragment extends Fragment {
      * returns the list with all activity views of the dailyroutine
      * @return DailyRoutineView
      */
-    public static ArrayList<DailyRoutineView> getActivityList(){
+    public ArrayList<DailyRoutineView> getActivityList(){
         return items;
     }
 
@@ -359,7 +361,7 @@ public class DailyRoutineFragment extends Fragment {
         return scrollView;
     }
 
-    public DailyRoutineHandler getDrHandler(){
+    public DayHandler getDrHandler(){
         return drHandler;
     }
 
