@@ -21,6 +21,7 @@ public class DayHandler {
     private Date date;
 
     public DayHandler(DailyRoutineFragment drFragment) {
+        DailyRoutineView.clearSelectedActivities();
         this.drFragment = drFragment;
     }
 
@@ -61,6 +62,14 @@ public class DayHandler {
         //TODO combine with backend, adapt the daily routine
     }
 
+    public void update() {
+        DailyRoutineView.clearSelectedActivities();
+        DailyRoutineView.setSelectable(false);
+        DailyRoutineView.setActionBarItems();
+        this.clearDailyRoutine();
+        this.getDayRoutine(date);
+        this.drFragment.updateView();
+    }
 
     /**
      * TODO
@@ -115,20 +124,25 @@ public class DayHandler {
             }
         }
 
-        //added activity is during one single activity
-        if (startindex == endindex) {
-            ActivityItem prev = new ActivityItem(dailyRoutine.get(startindex));
-            ActivityItem next = new ActivityItem(dailyRoutine.get(startindex));
+        //added activity is during one single activity & the activities are not the same
+        if (startindex == endindex && dailyRoutine.get(startindex).getActivityId() != activityItem.getActivityId()) {
+            if ((dailyRoutine.get(startindex).getStarttime().compareTo(activityItem.getStarttime()) == 0) && (dailyRoutine.get(startindex).getEndtime().compareTo(activityItem.getEndtime()) == 0)) {
+                dailyRoutine.remove(startindex);
+                dailyRoutine.add(startindex, activityItem);
+            } else {
+                ActivityItem prev = new ActivityItem(dailyRoutine.get(startindex));
+                ActivityItem next = new ActivityItem(dailyRoutine.get(startindex));
 
-            dailyRoutine.remove(startindex);
+                dailyRoutine.remove(startindex);
 
-            prev.setEndtime(Util.addMinuteFromDate(start, -1));
-            next.setStarttime(Util.addMinuteFromDate(end, 1));
+                prev.setEndtime(Util.addMinuteFromDate(start, -1));
+                next.setStarttime(Util.addMinuteFromDate(end, 1));
 
-            //order vice verse!
-            dailyRoutine.add(startindex, next);
-            dailyRoutine.add(startindex, activityItem);
-            dailyRoutine.add(startindex, prev);
+                //order vice verse!
+                dailyRoutine.add(startindex, next);
+                dailyRoutine.add(startindex, activityItem);
+                dailyRoutine.add(startindex, prev);
+            }
 
 
         } else {

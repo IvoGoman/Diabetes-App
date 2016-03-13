@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
+import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 
 
@@ -23,6 +24,7 @@ public class DailyRoutineHandler extends DayHandler{
     public DailyRoutineHandler(DailyRoutineFragment drFragment) {
         super(drFragment);
         dailyRoutine = getDailyRoutine();
+
     }
 
 
@@ -59,7 +61,7 @@ public class DailyRoutineHandler extends DayHandler{
                     String dateString = null;
                     for (int i = 0; i < Day1.size(); i++) {
                         dateString = Util.convertDateToDateString(date);
-                        dailyRoutine.add(new ActivityItem(Day1.get(i).getActivityId(),0,Day1.get(i).getStarttimeAsString(),Day1.get(i).getEndtimeAsString()));
+                        dailyRoutine.add(new ActivityItem(Day1.get(i).getActivityId(), 0, Day1.get(i).getStarttime(), Day1.get(i).getEndtime()));
                     }
 
                     Log.i(TAG, dailyRoutine.toString());
@@ -98,18 +100,6 @@ public class DailyRoutineHandler extends DayHandler{
         {
             e.printStackTrace();
         }
-        //TODO get daily routine from model
-
-        /*dailyRoutine.add(new ActivityItem(1,0,"0:00","9:14"));
-        dailyRoutine.add(new ActivityItem(2,0,"9:15","9:53"));
-        dailyRoutine.add(new ActivityItem(13,0,"9:54","13:07"));
-        dailyRoutine.add(new ActivityItem(2,0,"13:08","13:22"));
-        dailyRoutine.add(new ActivityItem(13,0, "13:23", "15:35"));
-        dailyRoutine.add(new ActivityItem(10,0, "15:36", "15:38"));
-        dailyRoutine.add(new ActivityItem(13,0, "15:39", "21:53"));
-        dailyRoutine.add(new ActivityItem(5,0,"21:54","22:22"));
-        dailyRoutine.add(new ActivityItem(2,0,"22:23","22:51"));
-        dailyRoutine.add(new ActivityItem(1,0, "22:52", "23:59"));*/
     }
 
     public void clearDailyRoutine(){

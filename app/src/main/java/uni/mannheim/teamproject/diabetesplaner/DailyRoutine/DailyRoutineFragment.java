@@ -125,6 +125,7 @@ public class DailyRoutineFragment extends Fragment {
 //        }
 
         drHandler.predictDailyRoutine(this.date);
+        DailyRoutineView.clearSelectedActivities();
         updateView();
 
 
@@ -165,7 +166,7 @@ public class DailyRoutineFragment extends Fragment {
             drv.setLayoutParams(params);
             items.add(drv);
         }
-
+        DailyRoutineView.clearSelectedActivities();
         //DailyRoutineView.getSelectedActivities().clear();
         //DailyRoutineView.setSelectable(false);
         //DailyRoutineView.setActionBarItems();

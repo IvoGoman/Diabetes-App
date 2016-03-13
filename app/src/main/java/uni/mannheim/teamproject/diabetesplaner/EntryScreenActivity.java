@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag.ActivityMeasurementFragment;
+import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Backend.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.ActivityLimitDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.AddDialog;
@@ -35,6 +36,7 @@ import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.EditDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.InputDialog;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.StatisticsFragment.StatisticsFragment;
 
@@ -165,7 +167,15 @@ public class EntryScreenActivity extends AppCompatActivity
                         ActivityLimitDialog ald = new ActivityLimitDialog();
                         ald.show(getFragmentManager(), "editDialog");
                     }else {
-                        drHandler.delete(getIndexesOfSelected(((DailyRoutineFragment) fragment)));
+                        //  drHandler.delete(getIndexesOfSelected(((DailyRoutineFragment) fragment)));
+                        ArrayList<Integer> selected = getIndexesOfSelected((DailyRoutineFragment) fragment);
+                        for (int i = 0; i < selected.size(); i++) {
+                            String start = Util.dateToDateTimeString(drHandler.getDailyRoutine().get(selected.get(i)).getStarttime());
+                            String end = Util.dateToDateTimeString(drHandler.getDailyRoutine().get(selected.get(i)).getEndtime());
+                            AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(), start, end);
+                        }
+                        drHandler.update();
+
                     }
                 }
 
