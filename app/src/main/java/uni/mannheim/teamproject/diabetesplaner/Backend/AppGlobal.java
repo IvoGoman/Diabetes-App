@@ -22,8 +22,9 @@ public class AppGlobal extends Application {
         super.onCreate();
         singleton = this;
         time=0;
-        DataBaseHandler Handler1 = new DataBaseHandler(this);
         AppGlobal.context = getApplicationContext();
+        Handler1 = new DataBaseHandler(context);
+        Handler1.getAllRoutine(Handler1);
         android.database.sqlite.SQLiteDatabase db;
     }
 
