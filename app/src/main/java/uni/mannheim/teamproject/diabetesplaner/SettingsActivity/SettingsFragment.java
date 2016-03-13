@@ -59,7 +59,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         pref_datacollection.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                System.out.println("Test Jens"); //TODO:delete if not needed
                 CheckBoxPreference pref = (CheckBoxPreference) findPreference("checkbox_preference");
 
 
@@ -84,7 +83,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
 
         String Test2 = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
-        if (pref_weight_measurement.getValue().equals("Kilogram")) {
+        if (pref_weight_measurement.getValue() == null) {
+            pref_weight.setSummary(Test2 + "kg");
+        } else if (pref_weight_measurement.getValue().equals("Kilogram")) {
             pref_weight.setSummary(Test2 + " kg");
         } else if (pref_weight_measurement.getValue().equals("Pound")) {
             pref_weight.setSummary(Test2 + " lbs");
