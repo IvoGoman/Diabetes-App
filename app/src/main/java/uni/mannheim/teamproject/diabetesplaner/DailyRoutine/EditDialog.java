@@ -6,7 +6,12 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
@@ -34,7 +39,14 @@ public class EditDialog extends InputDialog {
                     InvalidTimeDialog itd = new InvalidTimeDialog();
                     itd.show(getFragmentManager(),"invalidTime");
                 }else {
-                    getDrHandler().edit(indexSelected, activityItem);
+                    // getDrHandler().edit(indexSelected, activityItem);
+                    ActivityItem item = getDrHandler().getDailyRoutine().get(indexSelected);
+                    String dateStart = Util.dateToDateTimeString(item.getStarttime());
+                    String dateEnd = Util.dateToDateTimeString(item.getEndtime());
+
+                    AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(), dateStart, dateEnd);
+                    AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), getSelectedItem(), 1, dateStart, dateEnd);
+                    getDrHandler().update();
                 }
                 // FIRE ZE MISSILES!
             }
