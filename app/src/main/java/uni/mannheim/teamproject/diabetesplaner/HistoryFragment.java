@@ -116,7 +116,9 @@ public class HistoryFragment extends DailyRoutineFragment {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date dateToday = sdf.getCalendar().getTime();
         DateFormat df = DateFormat.getDateInstance();
-        Date date = Calendar.getInstance(Locale.getDefault()).getTime();
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        Date date = calendar.getTime();
         dateString = df.format(date);
         //    String dateString = DateFormat.getDateInstance().format(date);
         dateView.setText(dateString);
@@ -177,9 +179,13 @@ public class HistoryFragment extends DailyRoutineFragment {
      */
     public void onDateSelected(LinearLayout linearLayout, LinearLayout.LayoutParams params, Date date) {
         linearLayout.removeAllViews();
+        DailyRoutineView.clearSelectedActivities();
         //TODO: Move Data creation to a Utility Class for unified creation over all classes
         Log.i(TAG, date.toString());
         ArrayList<ActivityItem> day = dayHandler.getDayRoutine(date);
+        DailyRoutineView.clearSelectedActivities();
+        DailyRoutineView.setSelectable(false);
+        DailyRoutineView.setActionBarItems();
         setDate(date);
 
 //  ArrayList<String[]> day = generateRandomRoutine();
@@ -303,8 +309,9 @@ public class HistoryFragment extends DailyRoutineFragment {
             //simpleDate.applyPattern("dd.MM.yyyy");
             DateFormat timeDAte = DateFormat.getTimeInstance();
             Log.i(TAG, timeDAte.format(calendar.getTime()));
-
-            Date dateToday = Calendar.getInstance(Locale.getDefault()).getTime();
+            Calendar calendar2 = Calendar.getInstance(Locale.getDefault());
+            calendar2.add(Calendar.DAY_OF_MONTH, -1);
+            Date dateToday = calendar2.getTime();
             Log.i(TAG, "today:" + dateToday.toString());
             Date dateSelected = calendar.getTime();
             Log.i(TAG, "selected:" + dateSelected.toString());
