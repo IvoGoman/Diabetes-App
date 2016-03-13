@@ -83,6 +83,11 @@ public class Util {
 		return time2;
 	}
 
+	public static String dateToDateTimeString(Date date) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		String dateString = sdf.format(date);
+		return dateString;
+	}
 	/**
 	 * converts a String[] to an ArrayList<String>
 	 * @param array String[]
