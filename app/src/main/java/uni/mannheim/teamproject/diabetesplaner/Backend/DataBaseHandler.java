@@ -229,6 +229,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
+    public void DeleteActivity(DataBaseHandler handler, String Start, String End) {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
+        db1.close();
+    }
+
     /*
     JW: Inserts a new bloodsugar entry
      */
