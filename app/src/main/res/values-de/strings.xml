@@ -87,4 +87,19 @@
     <string name="milligram_dl">mg/dl</string>
     <string name="mmol_l">mmol/l</string>
     <string name="meal">Mahlzeit</string>
+    <string name="Description">Beschreibung</string>
+    <string name="insulin">Insulin Dosis</string>
+    <string name="bloodsugar_prompt">Bitte das aktuelle Blutzuckerlevel eintragen:</string>
+    <string name="activity_limit">Eine Aktivität muss übrig bleiben</string>
+    <string name="bloodSugar">Blutzucker</string>
+    <string name="gl">Glukoselevel</string>
+    <string name="glucoseTextField">mg/dl</string>
+    <string name="image_failed">Foto schießen fehlgeschlagen</string>
+    <string name="insulinLabel">Insulin Dosis</string>
+    <string name="menu_item_activity_measurement">Aktivität/ Messwert</string>
+    <string name="percentage">in %</string>
+    <string name="pref_blood_sugar_dialogtitel">Blutzuckerwert</string>
+    <string name="pref_predModel">Vorhersagen</string>
+    <string name="insulinTextField">Einheit/mL</string>
+    <string name="submit">Absenden</string>
 </resources>
