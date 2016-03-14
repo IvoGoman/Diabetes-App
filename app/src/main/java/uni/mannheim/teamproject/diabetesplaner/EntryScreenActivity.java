@@ -1,6 +1,8 @@
 package uni.mannheim.teamproject.diabetesplaner;
 
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -397,5 +399,13 @@ public class EntryScreenActivity extends AppCompatActivity
                 Toast.makeText(this, R.string.image_failed, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(9999);
+
     }
 }

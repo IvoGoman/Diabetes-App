@@ -191,7 +191,7 @@ public class HistoryFragment extends DailyRoutineFragment {
 //  ArrayList<String[]> day = generateRandomRoutine();
         if (day.size() > 0) {
             for (int i = 0; i < day.size(); i++) {
-                DailyRoutineView drv = new DailyRoutineView(getActivity(), day.get(i).getActivityId(), 0, day.get(i).getStarttimeAsString(), day.get(i).getEndtimeAsString(), date);
+                DailyRoutineView drv = new DailyRoutineView(getActivity(), day.get(i));
                 drv.setState(true);
                 linearLayout.addView(drv);
                 drv.setLayoutParams(params);

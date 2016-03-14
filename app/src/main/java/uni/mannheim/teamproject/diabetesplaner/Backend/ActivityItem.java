@@ -2,6 +2,7 @@ package uni.mannheim.teamproject.diabetesplaner.Backend;
 
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.util.Log;
 
 import java.util.Date;
 
@@ -12,6 +13,8 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
  * ActivityItem is used to represent the Activities of a Daily Routine
  */
 public class ActivityItem {
+
+    public static final String TAG = ActivityItem.class.getSimpleName();
 
     private int activityId;
     private int subactivityId;
@@ -34,7 +37,14 @@ public class ActivityItem {
         this.subactivityId = subactivityId;
         this.starttime = starttime;
         this.endtime = endtime;
-//        this.date = date;
+    }
+
+    public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime, Date date){
+        this.activityId = activityId;
+        this.subactivityId = subactivityId;
+        this.starttime = starttime;
+        this.endtime = endtime;
+        this.date = date;
     }
 
     public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime, Uri imageUri, Bitmap mealImage, String meal) {
@@ -127,42 +137,69 @@ public class ActivityItem {
      * @return
      */
     public static String getActivityString(int id){
-        //TODO access the activity name from the database table
+        Log.d(TAG, "called");
+        DataBaseHandler dbHandler = AppGlobal.getHandler();
+        return dbHandler.getActionById(dbHandler, id);
+
+//        //TODO access the activity name from the database table
+//        switch (id) {
+//            case 1:
+//                return "Schlafen";
+//            case 2:
+//                return "Essen/Trinken";
+//            case 3:
+//                return "Körperpflege";
+//            case 4:
+//                return "Transportmittel benutzen";
+//            case 5:
+//                return "Entspannen";
+//            case 6:
+//                return "Fortbewegen (mit Gehilfe)";
+//            case 7:
+//                return "Medikamente einnehmen";
+//            case 8:
+//                return "Einkaufen";
+//            case 9:
+//                return "Hausarbeit";
+//            case 10:
+//                return "Essen zubereiten";
+//            case 11:
+//                return "Geselligkeit";
+//            case 12:
+//                return "Fortbewegen";
+//            case 13:
+//                return "Schreibtischarbeit";
+//            case 14:
+//                return "Sport";
+//            case 15:
+//                return "Previous Activity";
+//            case 16:
+//                return "Next Activity";
+//            default:
+//                return "unknown activity";
+//        }
+    }
+
+    /**
+     * returns subactivity TODO should be read from the database
+     *
+     * @param id subactivity id
+     * @return name of activity
+     */
+    public static String getSubactivity(int id) {
         switch (id) {
             case 1:
-                return "Schlafen";
+                return "Joggen";
             case 2:
-                return "Essen/Trinken";
+                return "Biken";
             case 3:
-                return "Körperpflege";
+                return "Climbing";
             case 4:
-                return "Transportmittel benutzen";
+                return "Frühstück";
             case 5:
-                return "Entspannen";
-            case 6:
-                return "Fortbewegen (mit Gehilfe)";
-            case 7:
-                return "Medikamente einnehmen";
-            case 8:
-                return "Einkaufen";
-            case 9:
-                return "Hausarbeit";
-            case 10:
-                return "Essen zubereiten";
-            case 11:
-                return "Geselligkeit";
-            case 12:
-                return "Fortbewegen";
-            case 13:
-                return "Schreibtischarbeit";
-            case 14:
-                return "Sport";
-            case 15:
-                return "Previous Activity";
-            case 16:
-                return "Next Activity";
+                return "Mittagessen";
             default:
-                return "unknown activity";
+                return "";
         }
     }
 
