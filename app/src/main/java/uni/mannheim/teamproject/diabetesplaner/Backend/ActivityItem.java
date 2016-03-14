@@ -1,8 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.Backend;
 
 import android.graphics.Bitmap;
-import android.net.Uri;
-import android.util.Log;
 
 import java.util.Date;
 
@@ -20,9 +18,8 @@ public class ActivityItem {
     private int subactivityId;
     private Date starttime;
     private Date endtime;
-    private Bitmap mealImage;
     private String meal;
-    private Uri imageUri;
+    private String imagePath;
     private Date date;
 
     /**
@@ -47,14 +44,13 @@ public class ActivityItem {
         this.date = date;
     }
 
-    public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime, Uri imageUri, Bitmap mealImage, String meal) {
+    public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime, String imagePath, String meal) {
         this.activityId = activityId;
         this.subactivityId = subactivityId;
         this.starttime = starttime;
         this.endtime = endtime;
-        this.mealImage = mealImage;
         this.meal = meal;
-        this.imageUri = imageUri;
+        this.imagePath = imagePath;
     }
 
     public ActivityItem(ActivityItem activityItem){
@@ -79,14 +75,13 @@ public class ActivityItem {
         this.endtime = Util.getTime(endtime);
     }
 
-    public ActivityItem(int activityId, int subactivityId, String starttime, String endtime, Uri imageUri, Bitmap mealImage, String meal){
+    public ActivityItem(int activityId, int subactivityId, String starttime, String endtime, String imagePath, String meal){
         this.activityId = activityId;
         this.subactivityId = subactivityId;
         this.starttime = Util.getTime(starttime);
         this.endtime = Util.getTime(endtime);
-        this.mealImage = mealImage;
         this.meal = meal;
-        this.imageUri = imageUri;
+        this.imagePath = imagePath;
     }
 
     public int getActivityId() {
@@ -137,7 +132,6 @@ public class ActivityItem {
      * @return
      */
     public static String getActivityString(int id){
-        Log.d(TAG, "called");
         DataBaseHandler dbHandler = AppGlobal.getHandler();
         return dbHandler.getActionById(dbHandler, id);
 
@@ -244,15 +238,23 @@ public class ActivityItem {
         }
     }
 
+    /**
+     * returns a compressed bitmap image. Returns null if imagePath is null
+     * @return
+     */
     public Bitmap getMealImage() {
-        return mealImage;
+        if(imagePath != null) {
+            return Util.getCompressedPic(imagePath);
+        }else{
+            return null;
+        }
     }
 
     public String getMeal(){
         return meal;
     }
 
-    public Uri getImageUri(){
-        return imageUri;
+    public String getImagePath(){
+        return imagePath;
     }
 }

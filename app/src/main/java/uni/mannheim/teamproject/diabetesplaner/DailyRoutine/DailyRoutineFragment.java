@@ -1,5 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.DailyRoutine;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -366,4 +367,9 @@ public class DailyRoutineFragment extends Fragment {
         return drHandler;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Log.d(TAG, "onActivityResult in Fragement");
+    }
 }

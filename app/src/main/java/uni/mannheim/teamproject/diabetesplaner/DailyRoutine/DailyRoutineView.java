@@ -9,7 +9,6 @@ import android.graphics.Path;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
-import android.net.Uri;
 import android.os.Vibrator;
 import android.support.v4.content.ContextCompat;
 import android.text.Layout;
@@ -29,6 +28,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
@@ -114,7 +114,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private Rect actRectMeal;
     private StaticLayout slMeal;
     private Bitmap mealImage;
-    private Uri imageUri;
+    private String imagePath;
     private Rect actRectImage;
     private Rect src;
     private Rect dest;
@@ -127,17 +127,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         initPaints();
     }
 
-//    public DailyRoutineView(Context context, int activity, int subactivity, String starttime, String endtime, Date date) {
-//        super(context);
-//        this.context = context;
-//        this.activity = activity;
-//        this.subactivity = subactivity;
-//        this.starttime = starttime;
-//        this.endtime = endtime;
-//        this.date = date;
-//        init();
-//    }
-
     public DailyRoutineView(Context context, ActivityItem activityItem){
         super(context);
         this.context = context;
@@ -147,8 +136,10 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         this.starttime = activityItem.getStarttimeAsString();
         this.endtime = activityItem.getEndtimeAsString();
         this.meal = activityItem.getMeal();
-        this.mealImage = activityItem.getMealImage();
-        this.imageUri = activityItem.getImageUri();
+        this.imagePath = activityItem.getImagePath();
+        if(imagePath != null) {
+            this.mealImage = Util.getCompressedPic(imagePath);
+        }
         this.date = activityItem.getDate();
 
         init();
@@ -972,7 +963,11 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         return mealImage;
     }
 
-    public Uri getImageUri(){
-        return imageUri;
+    public String getImagePath(){
+        return imagePath;
+    }
+
+    public ActivityItem getActivityItem(){
+        return activityItem;
     }
 }

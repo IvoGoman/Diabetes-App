@@ -6,9 +6,6 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
@@ -34,7 +31,7 @@ public class EditDialog extends InputDialog {
         builder.setPositiveButton(R.string.edit, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
-                ActivityItem activityItem = new ActivityItem(getSelectedItem(), 0, getStarttime(), getEndtime(), getImageUri(), getImage(), getMeal());
+                ActivityItem activityItem = new ActivityItem(getSelectedItem(), 0, getStarttime(), getEndtime(), getImagePath(), getMeal());
                 if(!isTimeValid()){
                     InvalidTimeDialog itd = new InvalidTimeDialog();
                     itd.show(getFragmentManager(),"invalidTime");

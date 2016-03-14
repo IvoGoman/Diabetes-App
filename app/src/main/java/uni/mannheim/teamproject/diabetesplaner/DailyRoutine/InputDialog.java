@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -16,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import java.io.File;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -45,7 +48,7 @@ public class InputDialog extends DialogFragment {
     private Button startTimeButton;
     private Button endTimeButton;
     private String selectedItem;
-    private static Uri imageUri;
+    private static String imagePath;
 
     private ActivityItem activityItem;
     private DayHandler drHandler;
@@ -86,8 +89,8 @@ public class InputDialog extends DialogFragment {
         final ImageButton mealInputCam = (ImageButton) v.findViewById(R.id.meal_input_cam);
         mealInputImage = (ImageView) v.findViewById(R.id.meal_image);
 
-        if(imageUri != null){
-            displayImageFromUri(imageUri);
+        if(imagePath != null){
+            displayImageFromPath(imagePath);
         }else{
             mealInputImage.setVisibility(View.GONE);
         }
@@ -101,8 +104,8 @@ public class InputDialog extends DialogFragment {
         mealInputCam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent("android.media.action.IMAGE_CAPTURE");
-                getActivity().startActivityForResult(intent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+                //take the picture
+                dispatchTakePictureIntent();
 
             }
         });
@@ -133,7 +136,7 @@ public class InputDialog extends DialogFragment {
                     mealInputText.setText("");
                     mealInputCam.setVisibility(View.GONE);
                     mealInputImage.setVisibility(View.GONE);
-                    imageUri = null;
+                    imagePath = null;
                     image = null;
                     meal = null;
                 }
@@ -296,12 +299,18 @@ public class InputDialog extends DialogFragment {
         return endTimeButton;
     }
 
-    public Button getStarttimeButton(){
+    public Button getStarttimeButton() {
         return startTimeButton;
     }
 
     public void setActivityItem(ActivityItem activityItem) {
         this.activityItem = activityItem;
+        setActivity(activityItem.getActivityId() - 1);
+        setStarttime(activityItem.getStarttimeAsString());
+        setEndtime(activityItem.getEndtimeAsString());
+        setImage(activityItem.getMealImage());
+        setImagePath(activityItem.getImagePath());
+        setMeal(activityItem.getMeal());
     }
 
     /**
@@ -321,21 +330,23 @@ public class InputDialog extends DialogFragment {
     }
 
     /**
-     * displays the image form an uri, sets the ImageView of the meal visible and the imagesource
-     * @param uri
+     * displays the image form a path, sets the ImageView of the meal visible and the imagesource
+     * @param imagePath path of image
      */
-    public static void displayImageFromUri(Uri uri){
-        imageUri = uri;
+    public static void displayImageFromPath(String imagePath){
+        InputDialog.imagePath = imagePath;
         mealInputImage.setVisibility(View.VISIBLE);
-        mealInputImage.setImageURI(uri);
+        Bitmap bitmap = Util.getCompressedPic(imagePath, mealInputImage.getWidth());
+        mealInputImage.setImageBitmap(bitmap);
+        image = bitmap;
     }
 
-    public void setImageUri(Uri uri){
-        imageUri = uri;
+    public void setImagePath(String filepath){
+        imagePath = filepath;
     }
 
-    public Uri getImageUri(){
-        return imageUri;
+    public static String getImagePath(){
+        return imagePath;
     }
 
     public Bitmap getImage(){
@@ -374,5 +385,40 @@ public class InputDialog extends DialogFragment {
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
     }
+
+    /**
+     * creates a file and takes a photo
+     */
+    private void dispatchTakePictureIntent() {
+        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+        // Ensure that there's a camera activity to handle the intent
+        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+            // Create the File where the photo should go
+            File photoFile = Util.createImageFile();
+            // Continue only if the File was successfully created
+            if (photoFile != null) {
+                //make picture visible in gallery
+                galleryAddPic(photoFile.getPath());
+                imagePath = photoFile.getPath();
+
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
+                getActivity().startActivityForResult(takePictureIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
+            }
+        }
+    }
+
+    /**
+     * makes a picture visible in the gallery
+     * @param mCurrentPhotoPath path of the picture taken
+     */
+    private void galleryAddPic(String mCurrentPhotoPath) {
+        Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+        File f = new File(mCurrentPhotoPath);
+        Uri contentUri = Uri.fromFile(f);
+        mediaScanIntent.setData(contentUri);
+        getActivity().sendBroadcast(mediaScanIntent);
+    }
+
+
 }
 
