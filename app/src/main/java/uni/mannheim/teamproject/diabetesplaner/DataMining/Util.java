@@ -6,6 +6,7 @@ import com.opencsv.CSVWriter;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -298,6 +299,7 @@ public class Util {
 		try {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
 			timeAsDate = dateFormat.parse(time);
+
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -355,5 +357,30 @@ public class Util {
 		String dateString = dateFormat.format(date);
 
 		return dateString;
+	}
+
+	/**
+	 * Method which combines the current date of the day with the start and endtime from the dialog
+	 *
+	 * @param date
+	 * @param time
+	 * @return
+	 */
+	public static String combineDateAndTime(Date date, Date time) {
+		Date newdate = null;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String dateString = sdf.format(date);
+		sdf = new SimpleDateFormat("HH:mm");
+		String timeString = sdf.format(time);
+		dateString += " " + timeString;
+		sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		try {
+			newdate = sdf.parse(dateString);
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return sdf.format(newdate);
 	}
 }

@@ -43,9 +43,10 @@ public class EditDialog extends InputDialog {
                     ActivityItem item = getDrHandler().getDailyRoutine().get(indexSelected);
                     String dateStart = Util.dateToDateTimeString(item.getStarttime());
                     String dateEnd = Util.dateToDateTimeString(item.getEndtime());
-
+                    String newDateStart = Util.combineDateAndTime(getDrHandler().getDate(), activityItem.getStarttime());
+                    String newDateEnd = Util.combineDateAndTime(getDrHandler().getDate(), activityItem.getEndtime());
                     AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(), dateStart, dateEnd);
-                    AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), getSelectedItem(), 1, dateStart, dateEnd);
+                    AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), getSelectedItem(), 1, newDateStart, newDateEnd);
                     getDrHandler().update();
                 }
                 // FIRE ZE MISSILES!
