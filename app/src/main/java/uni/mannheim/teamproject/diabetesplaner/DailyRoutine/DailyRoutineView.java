@@ -127,16 +127,16 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         initPaints();
     }
 
-    public DailyRoutineView(Context context, int activity, int subactivity, String starttime, String endtime, Date date) {
-        super(context);
-        this.context = context;
-        this.activity = activity;
-        this.subactivity = subactivity;
-        this.starttime = starttime;
-        this.endtime = endtime;
-        this.date = date;
-        init();
-    }
+//    public DailyRoutineView(Context context, int activity, int subactivity, String starttime, String endtime, Date date) {
+//        super(context);
+//        this.context = context;
+//        this.activity = activity;
+//        this.subactivity = subactivity;
+//        this.starttime = starttime;
+//        this.endtime = endtime;
+//        this.date = date;
+//        init();
+//    }
 
     public DailyRoutineView(Context context, ActivityItem activityItem){
         super(context);
@@ -315,17 +315,17 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
         //initialize activity text
         actRect = new Rect(offsetL + textPadding, textPadding, xRight, 0);
-        sl = new StaticLayout(getActivity(activity), textPaint, (int)actRect.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
+        sl = new StaticLayout(ActivityItem.getActivityString(activity), textPaint, (int)actRect.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
         heightUpper = sl.getHeight() + textPadding;
         int heightPrev = sl.getHeight();
 
         xRight = width-2*textPadding-offsetL;
 
         //measure subactivity if it exists
-        if(!getSubactivity(subactivity).equals("")) {
+        if(!ActivityItem.getSubactivity(subactivity).equals("")) {
             //initialize subactivity text
             actRectSub = new Rect(0, heightPrev + textPadding, xRight, 0);
-            slsub = new StaticLayout(getSubactivity(subactivity), textPaintSub, (int) actRectSub.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
+            slsub = new StaticLayout(ActivityItem.getSubactivity(subactivity), textPaintSub, (int) actRectSub.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
             heightPrev = slsub.getHeight();
 
             //height of activity text field + height of subactivity text field + textpadding above and beyond
@@ -482,7 +482,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         canvas.translate(actRect.left, actRect.top);
         sl.draw(canvas);
 
-        if(!getSubactivity(subactivity).equals("")) {
+        if(!ActivityItem.getSubactivity(subactivity).equals("")) {
             //draw subactivity text
             canvas.translate(actRectSub.left, actRectSub.top);
             slsub.draw(canvas);
@@ -514,62 +514,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         DailyRoutineView.getCurrentRunning().getLocationOnScreen(loc);
         DailyRoutineFragment.getScrollView().scrollTo(0, loc[1]);
         super.onLayout(changed, left, top, right, bottom);
-    }
-
-    /**
-     * get the String to the activity id
-     * TODO should be read from the database!
-     *
-     * @param id activity id
-     * @return name of activity
-     */
-    public String getActivity(int id) {
-        switch (id) {
-            case 1:
-                return "Schlafen";
-            case 2:
-                return "Essen/Trinken";
-            case 3:
-                return "Körperpflege";
-            case 4:
-                return "Transportmittel benutzen";
-            case 5:
-                return "Entspannen";
-            case 6:
-                return "Fortbewegen (mit Gehilfe)";
-            case 7:
-                return "Medikamente einnehmen";
-            case 8:
-                return "Einkaufen";
-            case 9:
-                return "Hausarbeit";
-            case 10:
-                return "Essen zubereiten";
-            case 11:
-                return "Geselligkeit";
-            case 12:
-                return "Fortbewegen";
-            case 13:
-                return "Schreibtischarbeit";
-            case 14:
-                return "Sport";
-            //for debugging:------------------
-            case 15:
-                return "Previous Activity";
-            case 16:
-                return "Next Activity";
-            //--------------------------------
-            default:
-                return "unknown activity";
-        }
-    }
-
-    /**
-     * returns activity as String
-     * @return string
-     */
-    public String getActivity(){
-        return getActivity(activity);
     }
 
     /**
@@ -607,29 +551,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             return h + "h " + min + "min";
         } else {
             return min + "min";
-        }
-    }
-
-    /**
-     * returns subactivity TODO should be read from the database
-     *
-     * @param id subactivity id
-     * @return name of activity
-     */
-    public String getSubactivity(int id) {
-        switch (id) {
-            case 1:
-                return "Joggen";
-            case 2:
-                return "Biken";
-            case 3:
-                return "Climbing";
-            case 4:
-                return "Frühstück";
-            case 5:
-                return "Mittagessen";
-            default:
-                return "";
         }
     }
 
@@ -934,7 +855,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * @param isSelected
      */
     public void setSelected(boolean isSelected) {
-        Log.d(TAG,"deselected: " + this.getActivity(activity));
+        Log.d(TAG,"deselected: " + ActivityItem.getActivityString(activity));
 
         this.isSelected = isSelected;
         if(!isSelected){
@@ -965,7 +886,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         //run through the list from last to first item,
         //because last item will be removed and would shift the index if done in the other direction
         for(int i=selectedActivities.size()-1; i>=0; i--){
-            Log.d(TAG, selectedActivities.get(i).getActivity());
+            //Log.d(TAG, selectedActivities.get(i).getActivity());
             selectedActivities.get(i).setSelected(false);
         }
     }
