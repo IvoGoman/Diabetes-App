@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.DialogFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.ListPreference;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +32,9 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
     NumberPicker bloodsugar_level;
     Dialog_communicator communicator;
     private String measure;
+    DataBaseHandler database;
+    double value;
+    String[] nums;
 
 
     @Override
@@ -44,7 +49,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
 
         setCancelable(false);
         measure = "mg/dl";
-
+        database = new DataBaseHandler(getActivity().getApplicationContext());
         submit = (Button) view.findViewById(R.id.bs_submit);
         cancel = (Button) view.findViewById(R.id.bs_cancel);
         mg = (RadioButton) view.findViewById(R.id.bs_mg);
@@ -67,6 +72,10 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         mg.setOnClickListener(this);
         mmol.setOnClickListener(this);
         percentage.setOnClickListener(this);
+        value = (double) bloodsugar_level.getValue();
+        nums = bloodsugar_level.getDisplayedValues();
+
+
         return view;
     }
 
@@ -77,15 +86,28 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
     @Override
     public void onClick(View view)
     {
-        String[] nums = bloodsugar_level.getDisplayedValues();
-        //DataBaseHandler database = AppGlobal.getHandler();
+        nums = bloodsugar_level.getDisplayedValues();
         if(view.getId() == R.id.bs_submit)
         {
-            //database.InsertBloodsugar(database, 1, (double) bloodsugar_level.getValue());
-            communicator.respond(String.valueOf(nums[bloodsugar_level.getValue()]),measure);
-            Toast.makeText(getActivity(), "Blood sugar level: " + String.valueOf(bloodsugar_level.getValue()) + " stored"
-                    , Toast.LENGTH_LONG);
-                    dismiss();
+            if(value != bloodsugar_level.getValue()) {
+                //database.InsertBloodsugar(AppGlobal.getHandler(), 1, (double) bloodsugar_level.getValue());
+                communicator.respond(String.valueOf(nums[bloodsugar_level.getValue()]), measure);
+                Toast.makeText(getActivity(), "Blood sugar level: " + String.valueOf(bloodsugar_level.getValue()) + " stored"
+                        , Toast.LENGTH_LONG);
+                dismiss();
+            }else{
+                Log.d("bloodsugar_entry","Nothing changed");
+                new AlertDialog.Builder(getContext())
+                        .setTitle("No Changes")
+                        .setMessage("You did not change the blood_sugar level.")
+                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert)
+                        .show();
+            }
         }
         else if(view.getId() == R.id.bs_cancel)
         {
@@ -149,7 +171,6 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
             bloodsugar_level.setDisplayedValues(nums);
             measure = "mmol/l";
         }
-
     }
 
     /***

@@ -6,7 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 
 /**
@@ -19,7 +24,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public DataBaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
-        Log.d("Database","MySQLiteHelper Constructor Started");
+        Log.d("Database", "MySQLiteHelper Constructor Started");
     }
 
     // Database Constants
@@ -96,25 +101,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             "DROP TABLE IF EXISTS " + PROFILE_TABLE_NAME + ";";
 
 
-
-
     //METHODS
 
-    public Cursor getAllLocations (DataBaseHandler helper){
+    public Cursor getAllLocations(DataBaseHandler helper) {
         SQLiteDatabase db = helper.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select * from " + LOCATION_TABLE_NAME, null);
         return cursor;
     }
 
-    public Cursor getAllActions (DataBaseHandler helper){
+    public Cursor getAllActions(DataBaseHandler helper) {
         SQLiteDatabase db = helper.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
         return cursor;
     }
 
-    public Cursor getAllRoutine (DataBaseHandler helper){
+    public Cursor getAllRoutine(DataBaseHandler helper) {
         SQLiteDatabase db = helper.getReadableDatabase();
         Cursor cursor = db.rawQuery("select ActivityList.id, Activities.title, Location.Title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id inner join Location on ActivityList.id_Location = Location.id", null);
         return cursor;
@@ -160,32 +163,34 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 15:00' , '2016-01-01 19:00'); ");
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 19:03' , '2016-01-01 19:40'); ");
         db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 19:45' , '2016-01-01 20:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-02 09:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 09:05' , '2016-01-01 09:30'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 09:30' , '2016-01-01 10:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 10:03' , '2016-01-01 13:55'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 13:55' , '2016-01-01 14:45'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 15:00' , '2016-01-01 19:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 19:03' , '2016-01-01 19:40'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 19:45' , '2016-01-01 20:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-02 09:00'); ");        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 09:05' , '2016-01-01 09:30'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 09:30' , '2016-01-01 10:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 10:03' , '2016-01-01 13:55'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 13:55' , '2016-01-01 14:45'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 15:00' , '2016-01-01 19:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 19:03' , '2016-01-01 19:40'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 19:45' , '2016-01-01 20:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-02 09:00'); ");        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 09:05' , '2016-01-01 09:30'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 09:30' , '2016-01-01 10:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 10:03' , '2016-01-01 13:55'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 13:55' , '2016-01-01 14:45'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 15:00' , '2016-01-01 19:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 19:03' , '2016-01-01 19:40'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 19:45' , '2016-01-01 20:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-02 09:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-01 23:59'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-02 00:00' , '2016-01-02 09:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-02 09:05' , '2016-01-02 09:30'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-02 09:30' , '2016-01-02 10:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-02 10:03' , '2016-01-02 13:55'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-02 13:55' , '2016-01-02 14:45'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-02 15:00' , '2016-01-02 19:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-02 19:03' , '2016-01-02 19:40'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-02 19:45' , '2016-01-0 20:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-02 20:00' , '2016-01-02 23:59'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-03 00:00' , '2016-01-03 09:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-03 09:05' , '2016-01-03 09:30'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-03 09:30' , '2016-01-03 10:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-03 10:03' , '2016-01-03 13:55'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-03 13:55' , '2016-01-03 14:45'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-03 15:00' , '2016-01-03 19:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-03 19:03' , '2016-01-03 19:40'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-03 19:45' , '2016-01-03 20:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-03 20:00' , '2016-01-03 23:59'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-04 00:00' , '2016-01-04 09:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-04 09:05' , '2016-01-04 09:30'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-04 09:30' , '2016-01-04 10:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-04 10:03' , '2016-01-04 13:55'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-04 13:55' , '2016-01-04 14:45'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-04 15:00' , '2016-01-04 19:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-04 19:03' , '2016-01-04 19:40'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-04 19:45' , '2016-01-04 20:00'); ");
+        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-04 20:00' , '2016-01-04 23:59'); ");
 
         //db.close();
 
@@ -212,25 +217,31 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Log.d("Database", "Database Upgraded, All Tables Dropped");
     }
 
-    public void InsertLocation (DataBaseHandler handler ,double lat, double longt, String title){
+    public void InsertLocation(DataBaseHandler handler, double lat, double longt, String title) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         db1.execSQL("insert into Location(Latitude, Longtitude, Title) values(" + lat + "," + longt + "," + "'" + title + "'" + "); ");
         db1.close();
     }
 
-    public void InsertActivity (DataBaseHandler handler ,int idActivity, int idLocation, String Start, String End){
+    public void InsertActivity(DataBaseHandler handler, int idActivity, int idLocation, String Start, String End) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '"+ Start + "','" + End  +"' ); ");
+        db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '" + Start + "','" + End + "' ); ");
+        db1.close();
+    }
+
+    public void DeleteActivity(DataBaseHandler handler, String Start, String End) {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
         db1.close();
     }
 
     /*
     JW: Inserts a new bloodsugar entry
      */
-    public void InsertBloodsugar(DataBaseHandler handler, int idBloodsugar, double bloodsugar_level){
+    public void InsertBloodsugar(DataBaseHandler handler, int idBloodsugar, double bloodsugar_level) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        long tslong = System.currentTimeMillis()/1000;
-        db1.execSQL("insert into History_Bloodsugar(id_bloodsugar, bloodsugar_level, timestamp) values(" + idBloodsugar + "," + bloodsugar_level + " , '"+ tslong +"' ); ");
+        long tslong = System.currentTimeMillis() / 1000;
+        db1.execSQL("insert into History_Bloodsugar(id_bloodsugar, bloodsugar_level, timestamp) values(" + idBloodsugar + "," + bloodsugar_level + " , '" + tslong + "' ); ");
         db1.close();
     }
 
@@ -250,41 +261,55 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     public void ReplaceActivity(DataBaseHandler handler, int idActivity, int idLocation, String Start, String End){
+        //String start, end;
+        //Calendar calendar = Calendar.getInstance();
+        //calendar.setTime(Start);
+        //start = calendar.toString();
+        //calendar.setTime(End);
+        //start = calendar.toString();
+        //int Year = calendar.get(Calendar.YEAR);
+        //String Month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+        //String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+        //start = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
+        //end = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
+
+        findActionbyStartEndTime(handler, Start, End);
+        findActionbyStartEndTime2(handler, Start, End);
         findActionbyStartTime(handler, Start);
         findActionbyEndTime(handler, End);
 
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        InsertActivity (handler ,idActivity, idLocation,Start,End);
+        InsertActivity(handler, idActivity, idLocation, Start, End);
         //UPDATE tbl_info SET age=12 WHERE _id=1;
-        db1.execSQL("update ActivityList set(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '"+ Start + "','" + End  +"' ); ");
+        //db1.execSQL("update ActivityList set(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '" + Start + "','" + End + "' ); ");
         db1.close();
     }
 
     private void findActionbyStartTime(DataBaseHandler handler, String Start) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select id from ActivityList where Start <= " + Start + " and End >= " + Start + "; ", null);
+        Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + Start + "' and End >= '" + Start + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                db1.execSQL("update ActivityList set End = " + Start + " where id = '" + cursor.getString(0) + "';");
+                db1.execSQL("update ActivityList set End = '" + Start + "' where id = '" + cursor.getString(0) + "';");
             } while (cursor.moveToNext());
             db1.close();
         }
     }
 
-    private void findActionbyEndTime(DataBaseHandler handler,String End){
+    private void findActionbyEndTime(DataBaseHandler handler, String End) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select id from ActivityList where Start <= " + End + " and End >= " + End + "; ", null);
+        Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + End + "' and End >= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                db1.execSQL("update ActivityList set Start = " + End + " where id = '" + cursor.getString(0) + "';");
+                db1.execSQL("update ActivityList set Start = '" + End + "' where id = '" + cursor.getString(0) + "';");
             } while (cursor.moveToNext());
             db1.close();
         }
     }
 
-    private void findActionbyStartEndTime(DataBaseHandler handler,String Start, String End){
+    private void findActionbyStartEndTime(DataBaseHandler handler, String Start, String End) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        Cursor cursor = db.rawQuery("select id from ActivityList where Start >= " + Start + " and End <= " + End + "; ", null);
+        Cursor cursor = db1.rawQuery("select id from ActivityList where Start >= '" + Start + "' and End <= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
                 db1.execSQL("delete from ActivityList where id = '" + cursor.getString(0) + "';");
@@ -293,10 +318,199 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    public void InsertProfile (DataBaseHandler handler ,int age, int dt, double abl){
+
+    private void findActionbyStartEndTime2(DataBaseHandler handler, String Start, String End) {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        Cursor cursor = db1.rawQuery("select * from ActivityList where Start <= '" + Start + "' and End >= '" + End + "'; ", null);
+        if (cursor.moveToFirst()) {
+            do {
+                String id = cursor.getString(0);
+                int idActivity = cursor.getInt(1);
+                int idLocation = cursor.getInt(2);
+                String Start1 = cursor.getString(3);
+                String End1 = cursor.getString(4);
+                db1.execSQL("update ActivityList set End = '" + Start + "' where id = '" + cursor.getString(0) + "';");
+                InsertActivity(handler, idActivity, idLocation, End, End1);
+            } while (cursor.moveToNext());
+            db1.close();
+        }
+    }
+
+    public boolean CheckRoutineAdded(DataBaseHandler handler){
+        String StartOfDay, EndOfDay;
+        Calendar calendar = Calendar.getInstance();
+        int Year = calendar.get(Calendar.YEAR);
+        String Month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+        String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+        StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
+        EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
+        SQLiteDatabase db = handler.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select * from ActivityList where Start>= '" + StartOfDay + "' and End<= '" + EndOfDay + "'", null);
+        if (cursor.getCount() < 1)
+        {
+            return false;
+        }
+        else{
+            return true;
+        }
+    }
+
+
+    public void InsertNewRoutine(DataBaseHandler handler, ArrayList<Prediction.PeriodAction> prediction) {
+        int idActivity;
+        int idLocation;
+        String Start;
+        String End;
+
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        for(int i=0;i<prediction.size();i++){
+            idActivity =prediction.get(i).Action+1;
+            idLocation = 1;
+            String StartOfDay, EndOfDay;
+            Calendar calendar = Calendar.getInstance();
+            int Year = calendar.get(Calendar.YEAR);
+            String Month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+            String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+            StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day);
+            EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day);
+            Start =prediction.get(i).Start;
+            End =prediction.get(i).End;
+            if (Start.charAt(1) == ':' && Start.length()==3){
+                String Start2 ="";
+                Start2+="0"+Start.charAt(0)+":0"+Start.charAt(2);
+                Start=Start2;
+            }
+            if (Start.charAt(1) == ':' && Start.length()==4){
+                String Start2 ="";
+                Start2+="0"+Start.charAt(0)+":"+Start.charAt(2)+Start.charAt(3);
+                Start=Start2;
+            }
+            if (Start.charAt(2) == ':' && Start.length()==4){
+                String Start2 ="";
+                Start2+=Start+"0";
+                Start=Start2;
+            }
+            if (Start.charAt(2) == ':' && Start.length()==4){
+                String Start2 ="";
+                Start2+=Start.charAt(0)+Start.charAt(1)+":0"+Start.charAt(3);
+                Start=Start2;
+            }
+
+            if (End.charAt(1) == ':' && End.length()==3){
+                String End2 ="";
+                End2+="0"+End.charAt(0)+":0"+End.charAt(2);
+                End=End2;
+            }
+            if (End.charAt(1) == ':' && End.length()==4){
+                String End2 ="";
+                End2+="0"+End.charAt(0)+":"+End.charAt(2)+End.charAt(3);
+                End=End2;
+            }
+            if (End.charAt(2) == ':' && End.length()==4){
+                String End2 ="";
+                End2+=End+"0";
+                End=End2;
+            }
+            if (End.charAt(2) == ':' && End.length()==4){
+                String End2 ="";
+                End2+=End.charAt(0)+End.charAt(1)+":0"+End.charAt(3);
+                End=End2;
+            }
+
+
+            Start = StartOfDay.toString() + " " + Start;
+            End = EndOfDay.toString()  + " " + End;
+            db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(" + idActivity + "," + idLocation + " , '" + Start + "','" + End + "' ); ");
+        }
+        db1.close();
+    }
+
+
+    public void InsertProfile(DataBaseHandler handler, int age, int dt, double abl) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         db1.execSQL("insert into Profile(age, diabetes_type, average_bloodsugar_level) values(" + age + "," + dt + "," + "'" + abl + "'" + "); ");
         db1.close();
     }
 
+    public ArrayList<ActivityItem> GetDay(DataBaseHandler handler, Date Date) {
+        String StartOfDay, EndOfDay;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(Date);
+        int Year = calendar.get(Calendar.YEAR);
+        String Month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+        String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+        StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
+        EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
+
+        //String S = "select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.Start > '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "'";
+
+        SQLiteDatabase db = handler.getReadableDatabase();
+        String S = "select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where (ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "') or (ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "');";
+        Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "' or ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "' order by ActivityList.Start;", null);
+                                                                                                                                                                                    //(ActivityList.End > '2016-01-01 00:00' and ActivityList.Start < '2016-01-01 23:59') or (ActivityList.Start < '2016-01-01 23:59' and ActivityList.Start > '2016-01-01 00:00')
+        return GetArrayFromCursor(cursor, Date);
+    }
+
+    public ArrayList<ActivityItem> GetArrayFromCursor(Cursor cursor, Date Date) {
+        int ActionID;
+        Date Start;
+        Date End;
+        Date EndOfDay,StartOfDay;
+        ArrayList<ActivityItem> Activities = new ArrayList<>();
+        if (cursor.moveToFirst()) {
+            do {
+                try {
+                    ActionID = cursor.getInt(0);
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                    Start = format.parse(cursor.getString(1));
+                    End = format.parse(cursor.getString(2));
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTime(Date);
+                    calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 23, 59);
+                    EndOfDay = calendar.getTime();
+                    calendar.set(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH), 00,00);
+                    StartOfDay = calendar.getTime();
+
+                    if (End.after(EndOfDay)){
+                        End = EndOfDay;
+                    }
+                    if (Start.before(StartOfDay)){
+                        Start = StartOfDay;
+                    }
+                    ActivityItem PA = new ActivityItem(ActionID,0,Start,End);
+                    Activities.add(PA);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                }
+            }
+            while (cursor.moveToNext());
+        }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return Activities;
+    }
+
+    public String formatMonthOrDay(int i) {
+        if (i > 9) {
+            return String.valueOf(i);
+        } else {
+            return "0" + String.valueOf(i);
+        }
+    }
 }
+    /*
+    if (cursor.moveToFirst()) {
+        do {
+            String ActionId = cursor.getString(0);
+            String Start = cursor.getString(1);
+            String End = cursor.getString(2);
+        }
+        while (cursor1.moveToNext());
+    }
+    // close cursor
+    if (!cursor.isClosed()) {
+        cursor.close();
+    }
+    */

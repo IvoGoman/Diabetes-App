@@ -28,13 +28,15 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag.ActivityMeasurementFragment;
-import uni.mannheim.teamproject.diabetesplaner.Backend.DailyRoutineHandler;
+import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Backend.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.ActivityLimitDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.AddDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.EditDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.InputDialog;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.StatisticsFragment.StatisticsFragment;
 
@@ -160,12 +162,20 @@ public class EntryScreenActivity extends AppCompatActivity
             case R.id.delete_icon_action_bar:
                 //Get the currently selected items and removes them
                 if(fragment instanceof DailyRoutineFragment) {
-                    DailyRoutineHandler drHandler = ((DailyRoutineFragment) fragment).getDrHandler();
-                    if(drHandler.getDailyRoutine().size() == 1 || getIndexesOfSelected().size() == drHandler.getDailyRoutine().size()){
+                    DayHandler drHandler = ((DailyRoutineFragment) fragment).getDrHandler();
+                    if(drHandler.getDailyRoutine().size() == 1 || getIndexesOfSelected(((DailyRoutineFragment) fragment)).size() == drHandler.getDailyRoutine().size()){
                         ActivityLimitDialog ald = new ActivityLimitDialog();
                         ald.show(getFragmentManager(), "editDialog");
                     }else {
-                        drHandler.delete(getIndexesOfSelected());
+                        //  drHandler.delete(getIndexesOfSelected(((DailyRoutineFragment) fragment)));
+                        ArrayList<Integer> selected = getIndexesOfSelected((DailyRoutineFragment) fragment);
+                        for (int i = 0; i < selected.size(); i++) {
+                            String start = Util.dateToDateTimeString(drHandler.getDailyRoutine().get(selected.get(i)).getStarttime());
+                            String end = Util.dateToDateTimeString(drHandler.getDailyRoutine().get(selected.get(i)).getEndtime());
+                            AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(), start, end);
+                        }
+                        drHandler.update();
+
                     }
                 }
 
@@ -175,14 +185,15 @@ public class EntryScreenActivity extends AppCompatActivity
 
                 EditDialog editDialog = new EditDialog();
                 if(fragment instanceof DailyRoutineFragment){
-                    editDialog.setDailyRoutineHandler(((DailyRoutineFragment) fragment).getDrHandler());
-                    editDialog.setSelected(getIndexesOfSelected().get(0));
+                    editDialog.setDayHandler(((DailyRoutineFragment) fragment).getDrHandler());
+                    editDialog.setSelected(getIndexesOfSelected(((DailyRoutineFragment) fragment)).get(0));
                     editDialog.setActivity(DailyRoutineView.getSelectedActivities().get(0).getActivityID() - 1);
                     editDialog.setStarttime(DailyRoutineView.getSelectedActivities().get(0).getStartTime());
                     editDialog.setEndtime(DailyRoutineView.getSelectedActivities().get(0).getEndTime());
                     editDialog.setImage(DailyRoutineView.getSelectedActivities().get(0).getImage());
                     editDialog.setImageUri(DailyRoutineView.getSelectedActivities().get(0).getImageUri());
                     editDialog.setMeal(DailyRoutineView.getSelectedActivities().get(0).getMeal());
+
                     editDialog.show(getFragmentManager(), "editDialog");
                 }
 
@@ -192,7 +203,7 @@ public class EntryScreenActivity extends AppCompatActivity
                 //create an AddDialog
                 AddDialog addDialog = new AddDialog();
                 if(fragment instanceof DailyRoutineFragment) {
-                    addDialog.setDailyRoutineHandler(((DailyRoutineFragment) fragment).getDrHandler());
+                    addDialog.setDayHandler(((DailyRoutineFragment) fragment).getDrHandler());
                 }
                 addDialog.show(getFragmentManager(),"addDialog");
                 return true;
@@ -207,8 +218,8 @@ public class EntryScreenActivity extends AppCompatActivity
      * Returns the indexes of the items that were selected by the user
      * @return
      */
-    public ArrayList<Integer> getIndexesOfSelected(){
-        ArrayList<DailyRoutineView> items = DailyRoutineFragment.getActivityList();
+    public ArrayList<Integer> getIndexesOfSelected(DailyRoutineFragment fragment){
+        ArrayList<DailyRoutineView> items = fragment.getActivityList();
         ArrayList<Integer> indexes = new ArrayList<>();
         for (int i = 0; i < items.size(); i++) {
             if (items.get(i).isSelected()) {

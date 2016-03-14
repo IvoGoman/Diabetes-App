@@ -45,6 +45,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private int subactivity;
     private String starttime;
     private String endtime;
+    private Date date;
     private Double bloodsugar;
     private String meal;
     private int state;
@@ -126,13 +127,14 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         initPaints();
     }
 
-    public DailyRoutineView(Context context, int activity, int subactivity, String starttime, String endtime) {
+    public DailyRoutineView(Context context, int activity, int subactivity, String starttime, String endtime, Date date) {
         super(context);
         this.context = context;
         this.activity = activity;
         this.subactivity = subactivity;
         this.starttime = starttime;
         this.endtime = endtime;
+        this.date = date;
         init();
     }
 
@@ -147,6 +149,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         this.meal = activityItem.getMeal();
         this.mealImage = activityItem.getMealImage();
         this.imageUri = activityItem.getImageUri();
+        this.date = activityItem.getDate();
 
         init();
     }
