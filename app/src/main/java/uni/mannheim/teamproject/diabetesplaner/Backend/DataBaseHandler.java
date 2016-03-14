@@ -13,6 +13,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
+
 
 /**
  * Created by leonidgunko on 31.10.15.
@@ -290,7 +292,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + Start + "' and End >= '" + Start + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                db1.execSQL("update ActivityList set End = '" + Start + "' where id = '" + cursor.getString(0) + "';");
+                db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + cursor.getString(0) + "';");
             } while (cursor.moveToNext());
             db1.close();
         }
@@ -301,7 +303,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + End + "' and End >= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                db1.execSQL("update ActivityList set Start = '" + End + "' where id = '" + cursor.getString(0) + "';");
+                db1.execSQL("update ActivityList set Start = '" + PlusMinute(End) + "' where id = '" + cursor.getString(0) + "';");
             } while (cursor.moveToNext());
             db1.close();
         }
@@ -329,7 +331,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 int idLocation = cursor.getInt(2);
                 String Start1 = cursor.getString(3);
                 String End1 = cursor.getString(4);
-                db1.execSQL("update ActivityList set End = '" + Start + "' where id = '" + cursor.getString(0) + "';");
+                db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + cursor.getString(0) + "';");
                 InsertActivity(handler, idActivity, idLocation, End, End1);
             } while (cursor.moveToNext());
             db1.close();
@@ -499,6 +501,35 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             return "0" + String.valueOf(i);
         }
     }
+
+    public String PlusMinute(String SDate1) {
+        Date Date1;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        try {
+            Date1 = format.parse(SDate1);
+            Date1 = Util.addMinuteFromDate(Date1, 1);
+            SDate1 = Util.dateToDateTimeString(Date1);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return SDate1;
+    }
+
+    public String MinusMinute(String SDate1) {
+        Date Date1;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        try {
+            Date1 = format.parse(SDate1);
+            Date1 = Util.addMinuteFromDate(Date1, -1);
+            SDate1 = Util.dateToDateTimeString(Date1);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return SDate1;
+    }
+
 }
     /*
     if (cursor.moveToFirst()) {
