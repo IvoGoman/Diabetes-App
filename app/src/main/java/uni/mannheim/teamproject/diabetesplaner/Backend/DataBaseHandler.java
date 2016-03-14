@@ -110,6 +110,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return cursor;
     }
 
+    /**
+     * returns an activity name by id
+     * @param helper
+     * @param id
+     * @return
+     */
+    public String getActionById(DataBaseHandler helper, int id) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        //Create a Cursor that contains all records from the locations table
+        Cursor cursor = db.rawQuery("select title from " + ACTIVITIES_TABLE_NAME + " where id=" + id, null);
+        String name = "";
+        if(cursor.moveToFirst()){
+            name = cursor.getString(0);
+        }
+        return name;
+    }
+
     public Cursor getAllActions(DataBaseHandler helper) {
         SQLiteDatabase db = helper.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
