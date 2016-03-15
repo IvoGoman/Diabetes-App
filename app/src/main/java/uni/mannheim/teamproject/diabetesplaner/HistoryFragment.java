@@ -55,7 +55,7 @@ public class HistoryFragment extends DailyRoutineFragment {
     private String mParam2;
     private OnFragmentInteractionListener mListener;
     private AppCompatActivity aca;
-    private static ArrayList<DailyRoutineView> items_history = new ArrayList<DailyRoutineView>();
+    private static ArrayList<DailyRoutineView> items_history = new ArrayList<>();
     private static LinearLayout linearLayout;
     private static ScrollView scrollView;
     private DayHandler dayHandler;
@@ -122,7 +122,7 @@ public class HistoryFragment extends DailyRoutineFragment {
         dateString = df.format(date);
         //    String dateString = DateFormat.getDateInstance().format(date);
         dateView.setText(dateString);
-        onDateSelected(linearLayout, params, dateToday);
+        onDateSelected(linearLayout, params, date);
         dateView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -210,12 +210,12 @@ public class HistoryFragment extends DailyRoutineFragment {
     }
 
     /**
-     * @return a random generated list of activites with random start and end time and random activity type
+     * @return a random generated list of activities with random start and end time and random activity type
      */
     public ArrayList<String[]> generateRandomRoutine() {
         Random generator = new Random();
         int randomActivity, randomStartMinute, randomStartHour;
-        ArrayList<String[]> day = new ArrayList<String[]>();
+        ArrayList<String[]> day = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             randomActivity = generator.nextInt(13) + 1;
             randomStartMinute = generator.nextInt(59) + 1;
@@ -256,7 +256,7 @@ public class HistoryFragment extends DailyRoutineFragment {
 
 
         /**
-         * creates a Dialog with a Date Picker with the currently displayed day presselected
+         * creates a Dialog with a Date Picker with the currently displayed day pre-selected
          */
 
         @Override
