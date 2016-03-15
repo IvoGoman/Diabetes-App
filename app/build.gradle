@@ -6,7 +6,7 @@ android {
 
     defaultConfig {
         applicationId "uni.mannheim.teamproject.diabetesplaner"
-        minSdkVersion 16
+        minSdkVersion 19
         targetSdkVersion 23
         // Enabling multidex support.
         multiDexEnabled true

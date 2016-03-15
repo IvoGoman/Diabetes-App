@@ -1,5 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag;
 
+import android.app.Dialog;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
@@ -9,16 +10,26 @@ import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.InputType;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
+import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityInputHandler;
+import uni.mannheim.teamproject.diabetesplaner.Backend.DataBaseHandler;
+import uni.mannheim.teamproject.diabetesplaner.CustomListView;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
@@ -42,13 +53,20 @@ public class ActivityMeasurementFragment extends Fragment {
     private OnFragmentInteractionListener mListener;
 
     private TabLayout tabLayout;
-    private ViewPager viewPager;
+     private ViewPager viewPager;
     private AppCompatActivity aca;
     private static AbsListView mListView;
     private static View view;
 
     private static ArrayList<String> activityList = new ArrayList<String>();
 
+    public static AbsListView lv;
+    public static ArrayList<String> FileList = new ArrayList<String>();
+    ActivityInputHandler ActivityInputHndlr = new ActivityInputHandler ();
+    final DataBaseHandler DBHandler = new DataBaseHandler(getContext());
+    private static ListAdapter adapter;
+
+    public static ArrayList<String> measurementList = new ArrayList<String>();
     /**
      * Use this factory method to create a new instance of
      * this fragment using the provided parameters.
@@ -87,13 +105,15 @@ public class ActivityMeasurementFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View inflaterView = inflater.inflate(R.layout.fragment_activity_measurement, container, false);
+       final View inflaterView = inflater.inflate(R.layout.fragment_activity_measurement, container, false);
 
         viewPager = (ViewPager) inflaterView.findViewById(R.id.viewpager);
         setupViewPager(viewPager);
 
         tabLayout = (TabLayout) inflaterView.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
+
+
 
         // Inflate the layout for this fragment
         return inflaterView;
@@ -109,6 +129,7 @@ public class ActivityMeasurementFragment extends Fragment {
     class ViewPagerAdapter extends FragmentStatePagerAdapter {
         private final List<android.support.v4.app.Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();
+
 
         public ViewPagerAdapter(FragmentManager manager) {
             super(manager);
