@@ -10,7 +10,7 @@
         android:layout_width="315dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Please enter your current blood sugar level:"
+        android:text="@string/bloodsugar_prompt"
         android:id="@+id/tv_bloodsugar"
         android:layout_row="0"
         android:layout_column="0"
