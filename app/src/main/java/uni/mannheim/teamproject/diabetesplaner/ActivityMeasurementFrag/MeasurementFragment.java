@@ -22,6 +22,7 @@ import android.widget.Toast;
 import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityInputHandler;
+import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Backend.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Backend.MeasurementInputHandler;
 import uni.mannheim.teamproject.diabetesplaner.CustomListView;
@@ -102,6 +103,7 @@ public class MeasurementFragment extends Fragment {
                 dialog.setContentView(R.layout.pop_measurement_window);
                 final EditText GlucoseInput = (EditText) dialog.findViewById(R.id.editText);
                 GlucoseInput.setInputType(InputType.TYPE_CLASS_NUMBER);
+                GlucoseInput.setText("My Edit");
                 final EditText InsulinInput = (EditText) dialog.findViewById(R.id.editText2);
                 InsulinInput.setInputType(InputType.TYPE_CLASS_NUMBER);
                 final TextView Add = (TextView) dialog.findViewById(R.id.textView4);
@@ -116,12 +118,16 @@ public class MeasurementFragment extends Fragment {
                 Add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-                        String MeasurementString = GlucoseInput.getText().toString() + " mg/dl" + "," + " " + InsulinInput.getText().toString() + " units";
-                        measurementList.add(MeasurementString);
-                        Toast.makeText(getActivity(), "Measurements have been added", Toast.LENGTH_LONG).show();
-                        // MeasurementInputHandlr.loadIntoDatabase(MeasurementString, DBHandler);
-                        ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
+                     //   if (GlucoseInput.getText().toString().equals("") && InsulinInput.getText().toString().equals("")){
+                      //      Toast.makeText(getActivity(), "Invalid Input", Toast.LENGTH_LONG).show();
+                      //  }
+                      //  else {
+                            String MeasurementString = GlucoseInput.getText().toString() + " mg/dl" + "," + " " + InsulinInput.getText().toString() + " units";
+                            measurementList.add(MeasurementString);
+                            Toast.makeText(getActivity(), "Measurements have been added", Toast.LENGTH_LONG).show();
+                            //AppGlobal.getHandler().InsertMeasurements(DBHandler, Integer.parseInt( GlucoseInput.getText().toString()), Integer.parseInt( InsulinInput.getText().toString()));
+                            ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
+                       // }
                         dialog.dismiss();
                     }
                 });

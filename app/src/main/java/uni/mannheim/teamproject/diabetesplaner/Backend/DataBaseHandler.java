@@ -264,6 +264,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
+    /*
+    Naira: Inserts a new measurements input
+     */
+    public void InsertMeasurements(DataBaseHandler handler, int bloodsugar_level, int insulin_dosage) {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        long tslong = System.currentTimeMillis() / 1000;
+        db1.execSQL("insert into Measurements( bloodsugar_level,insulin_dosage, timestamp) values("  + bloodsugar_level + " , " + insulin_dosage + " , '"+ tslong + "' ); ");
+        db1.close();
+    }
+
     /***
      * returns the ID of the current user
      * @param handler

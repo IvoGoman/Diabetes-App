@@ -47,7 +47,7 @@ public class CustomListView extends ArrayAdapter<String>{
         txtTitle.setText(files.get(position));
 
         //set the subtitle
-        DateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date date = new Date();
         txtSubTitle.setText("  Added: " + dateFormat.format(date));
 

@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Insulin Dosage"
+        android:text="@string/insulin"
         android:paddingLeft="16dp"
         android:textColor="#050000"
         android:id="@+id/textView2"
@@ -17,7 +17,6 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
-    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
@@ -55,7 +54,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="Add"
+        android:text="@string/add"
         android:id="@+id/textView4"
         android:paddingRight="16dp"
         android:textColor="#c723681a"
