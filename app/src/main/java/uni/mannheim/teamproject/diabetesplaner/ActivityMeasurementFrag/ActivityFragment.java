@@ -94,7 +94,7 @@ public class ActivityFragment extends Fragment  {
                         if ((ActivityInputHndlr.isFileFormatValid(fileString))== true){
                             FileList.add(requiredSplitPart);
                             Toast.makeText(getActivity(), "Chosen File:" + requiredSplitPart , Toast.LENGTH_LONG).show();
-                            ActivityInputHndlr.loadIntoDatabase(fileString,DBHandler);
+                            ActivityInputHndlr.loadIntoDatabase(fileString);
                             ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
                         }else{
                             Toast.makeText(getActivity(), "File is not in the correct format", Toast.LENGTH_LONG).show();
