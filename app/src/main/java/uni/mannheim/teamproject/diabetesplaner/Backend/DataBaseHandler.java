@@ -83,7 +83,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     //Bloodsugar History
     public static final String BLOODSUGAR_TABLE_NAME = "History_Bloodsugar";
     public static final String BLOODSUGAR_CREATE_TABLE = " CREATE TABLE IF NOT EXISTS " + BLOODSUGAR_TABLE_NAME +
-            "( id_bloodsugar INTEGER PRIMARY KEY, bloodsugar_level double, timestamp DateTime);";
+            "( id INTEGER PRIMARY KEY, bloodsugar_level Integer, insulin_dosage Integer, timestamp DateTime);";
 
     public static final String BLOODSUGAR_SELECT =
             "SELECT * FROM " + BLOODSUGAR_TABLE_NAME + ";";
@@ -267,12 +267,19 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     /*
     Naira: Inserts a new measurements input
      */
-    public void InsertMeasurements(DataBaseHandler handler, int bloodsugar_level, int insulin_dosage) {
+    public void InsertMeasurements(DataBaseHandler handler, int bloodsugar_level, int insulin_dosage, String timestamp) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        long tslong = System.currentTimeMillis() / 1000;
-        db1.execSQL("insert into Measurements( bloodsugar_level,insulin_dosage, timestamp) values("  + bloodsugar_level + " , " + insulin_dosage + " , '"+ tslong + "' ); ");
+        //long tslong = System.currentTimeMillis() / 1000;
+        db1.execSQL("insert into History_Bloodsugar(bloodsugar_level,insulin_dosage, timestamp) values("  + bloodsugar_level + " , " + insulin_dosage + " , '"+ timestamp + "' ); ");
         db1.close();
     }
+
+    public Cursor GetMeasurements(DataBaseHandler handler){
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        Cursor cursor = db1.rawQuery("select * from History_Bloodsugar", null);
+        return cursor;
+    }
+
 
     /***
      * returns the ID of the current user

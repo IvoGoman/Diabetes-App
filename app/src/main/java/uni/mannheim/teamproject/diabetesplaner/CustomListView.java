@@ -6,6 +6,7 @@ package uni.mannheim.teamproject.diabetesplaner;
 
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import android.content.DialogInterface;
 
 public class CustomListView extends ArrayAdapter<String>{
 
@@ -34,6 +34,7 @@ public class CustomListView extends ArrayAdapter<String>{
         super(context, R.layout.fragment_activity_input_list_item, files);
         this.context = context;
         this.files = files;
+
     }
     @Override
     public View getView(final int position, View view, ViewGroup parent) {
@@ -48,7 +49,7 @@ public class CustomListView extends ArrayAdapter<String>{
 
         //set the subtitle
         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date date = new Date();
+        Date date =  new Date();
         txtSubTitle.setText("  Added: " + dateFormat.format(date));
 
         //create delete icon and adds onClickListener to it
@@ -67,6 +68,7 @@ public class CustomListView extends ArrayAdapter<String>{
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                                 remove(files.get(position));
+                                //delete from database
                             }
                         });
 

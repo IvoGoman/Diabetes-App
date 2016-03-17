@@ -8,7 +8,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="@string/insulin"
+        android:text="Insulin Dosage"
         android:paddingLeft="16dp"
         android:textColor="#050000"
         android:id="@+id/textView2"
@@ -17,6 +17,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true" />
 
+    <EditText
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:inputType="numberDecimal"
@@ -44,7 +45,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/bloodSugar"
         android:id="@+id/textView"
-         android:paddingLeft="12dp"
+        android:paddingLeft="12dp"
         android:textColor="#050000"
         android:layout_alignBottom="@+id/editText"
         android:layout_alignParentLeft="true"
@@ -54,7 +55,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
-        android:text="@string/add"
+        android:text="Add"
         android:id="@+id/textView4"
         android:paddingRight="16dp"
         android:textColor="#c723681a"
