@@ -17,11 +17,14 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Stefan
@@ -488,5 +491,46 @@ public class Util {
 
 		Bitmap image = Bitmap.createScaledBitmap(bitmap, (int)(targetW), (int)(photoH*factor), false);
 		return image;
+	}
+
+	/**
+	 * Ivo Gosemann 18.03.2016
+	 * Converting a "yyyy-MM-dd HH:mm" String into a "HH:mm" String
+	 * @param dateValue
+     * @return a String representing the time as "HH:mm"
+     */
+	public static String dateToTimeString(String dateValue) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		Date date = null;
+		String timeString ="";
+		try {
+			date = sdf.parse(dateValue);
+			sdf = new SimpleDateFormat("HH:mm");
+			timeString = sdf.format(date);
+			return timeString;
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return timeString;
+	}
+
+	/**
+	 * Ivo Gosemann 18.03.2016
+	 * Methods returns the current date as a Date
+	 * @return date in the format "yyyy-MM-dd HH:mm"
+     */
+	public static Date getCurrentDate() {
+		Calendar calendar = Calendar.getInstance();
+		return calendar.getTime();
+	}
+
+	public static int getDuration(Date starttime, Date endtime) {
+
+		long duration = endtime.getTime()-starttime.getTime();
+		long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(duration);
+		long diffInHours = TimeUnit.MILLISECONDS.toHours(duration);
+		/**int [] time = {(int)diffInHours, (int) diffInMinutes};
+		return time;**/
+		return (int)diffInMinutes;
 	}
 }
