@@ -2,6 +2,7 @@ package uni.mannheim.teamproject.diabetesplaner.Backend;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.zip.DataFormatException;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 
@@ -280,6 +282,90 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return cursor;
     }
 
+    /**
+     * Ivo Gosemann 18.03.2016
+     * Method to retrieve all Insulin Values
+     * //TODO: Extend Mehtod to take the needed timeframe
+     * @param handler
+     * @return ArrayList containing the Integer Values of all the Insulin Values of one day
+     */
+    public ArrayList<Integer> getAllInsulin(DataBaseHandler handler, Date date) {
+        SQLiteDatabase db = handler.getWritableDatabase();
+        String [] dayStartEnd = getDayStartEnd(date);
+        Cursor cursor = db.rawQuery("select insulin_dosage from History_Bloodsugar where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"';",null);
+        ArrayList<Integer> insulinValues = new ArrayList<>();
+        if(cursor.moveToFirst()){
+            do {
+                insulinValues.add(cursor.getInt(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return insulinValues;
+    }
+
+    /**
+     * Ivo Gosemann 18.03.2016
+     * Method to retrieve all Bloodsugar Values
+     * //TODO: Extend Mehtod to take the needed timeframe
+     * @param handler
+     * @return ArrayList containing all the Integer Values fo the Bloodsugar of one day
+     */
+    public ArrayList<Integer> getAllBloodSugar(DataBaseHandler handler, Date date){
+        SQLiteDatabase db = handler.getWritableDatabase();
+        String [] dayStartEnd = getDayStartEnd(date);
+        Cursor cursor = db.rawQuery("select bloodsugar_level from History_Bloodsugar where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"';",null);
+        ArrayList<Integer> bloodsugarValues = new ArrayList<>();
+        if(cursor.moveToFirst()){
+            do{
+                bloodsugarValues.add(cursor.getInt(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return bloodsugarValues;
+    }
+
+    /**
+     * Ivo Gosemann 18.03.2016
+     * Method to retrieve all Timestamps for Measurements
+     * //TODO: Extend Mehtod to take the needed timeframe
+     * @param handler
+     * @return ArrayList containing all the timestamp values for one day
+     */
+    public ArrayList<String> getAllTimestamps(DataBaseHandler handler,Date date){
+        SQLiteDatabase db = handler.getWritableDatabase();
+        String[] dayStartEnd= getDayStartEnd(date);
+        Cursor cursor = db.rawQuery("select timestamp from History_Bloodsugar where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"';",null);
+        ArrayList<String> timestampList = new ArrayList<>();
+        if(cursor.moveToFirst()){
+            do{
+                timestampList.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return timestampList;
+    }
+
+    /**
+     * Ivo Gosemann 18.03.2016
+     * Making Leonids code reusable to calculate the start and end of a day
+     * @param date
+     * @return array with 2 fields [0] = startofday ; [1] = endofday
+     */
+    private String[] getDayStartEnd(Date date) {
+        String startOfDay, endOfDay;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int Year = calendar.get(Calendar.YEAR);
+        String Month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+        String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+        startOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
+        endOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
+        String [] startEnd = {startOfDay,endOfDay};
+        return startEnd;
+    }
 
     /***
      * returns the ID of the current user
@@ -563,6 +649,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
         return SDate1;
     }
+
 
 }
     /*
