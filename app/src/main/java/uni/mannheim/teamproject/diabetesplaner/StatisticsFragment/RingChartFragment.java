@@ -13,7 +13,13 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
 
+import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Backend.DataBaseHandler;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
@@ -63,31 +69,55 @@ public class RingChartFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View inflaterView = inflater.inflate(R.layout.fragment_ring_chart, container, false);
-
+        DataBaseHandler handler = AppGlobal.getHandler();
+        Date date = Util.getCurrentDate();
+        ArrayList<ActivityItem> activityItems = handler.GetDay(handler,date);
         ArrayList<String> labels = new ArrayList<>();
-        labels.add("Running");
-        labels.add("Sleeping");
-        labels.add("Working");
-        labels.add("Eating");
-        labels.add("Relaxing");
-
         ArrayList<Entry> pieValues = new ArrayList<>();
-        pieValues.add(new Entry(1f, 0));
-        pieValues.add(new Entry(8f, 1));
-        pieValues.add(new Entry(8f, 2));
-        pieValues.add(new Entry(3f, 3));
-        pieValues.add(new Entry(4f, 4));
+        HashMap<String,Integer> valueMap = new HashMap<>();
+        if(!activityItems.isEmpty()){
+            String label = "";
+            int value = 0;
+            ActivityItem item = null;
+            for (int i=0;i<activityItems.size();i++){
+                item = activityItems.get(i);
+                label = handler.getActionById(handler,item.getActivityId());
+                if(!valueMap.containsKey(label)){
+                    value =  Util.getDuration(item.getStarttime(),item.getEndtime());
+                    valueMap.put(label,value);
+                }else{
+                    value = valueMap.get(label);
+                    value += Util.getDuration(item.getStarttime(),item.getEndtime());
+                    valueMap.put(label,value);
+                }
+            }
+            int j = 0;
+            for(String entryKey :valueMap.keySet()){
 
+                labels.add(entryKey);
+                float duration = (float) valueMap.get(entryKey);
+                pieValues.add(new Entry(duration,j));
+                j++;
+            }
+        } else {
+            labels.add("Running");
+            labels.add("Sleeping");
+            labels.add("Working");
+            labels.add("Eating");
+            labels.add("Relaxing");
+
+
+            pieValues.add(new Entry(1f, 0));
+            pieValues.add(new Entry(8f, 1));
+            pieValues.add(new Entry(8f, 2));
+            pieValues.add(new Entry(3f, 3));
+            pieValues.add(new Entry(4f, 4));
+        }
         PieDataSet pieDataSet = new PieDataSet(pieValues, "Activities");
 
         ArrayList<Integer> colors = new ArrayList<>();
 
-        /**   colors.add(R.color.good);
-         colors.add(R.color.bad);
-         colors.add(R.color.potential_bad);
-         colors.add(R.color.no_influence);
-         colors.add(R.color.good);
-         pieDataSet.setColors(colors);*/
+
         pieDataSet.addColor(R.color.good);
         pieDataSet.addColor(R.color.bad);
         pieDataSet.addColor(R.color.potential_bad);

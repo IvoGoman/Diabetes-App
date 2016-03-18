@@ -3,10 +3,16 @@ package uni.mannheim.teamproject.diabetesplaner.SettingsActivity;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.FragmentManager;
+import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
+import android.content.ComponentName;
 import android.content.Context;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
 import android.preference.ListPreference;
@@ -33,7 +39,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private ListPreference pref_weight_measurement;
     private EditTextPreference pref_weight;
     private SharedPreferences sharedPrefs;
-    private DataBaseHandler database;
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -43,7 +49,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         addPreferencesFromResource(R.xml.preferences);
         pref_weight_measurement = (ListPreference) findPreference("pref_weightOptions");
         pref_weight = (EditTextPreference) findPreference("pref_key_weight");
-        database = new DataBaseHandler(getActivity().getApplicationContext());
 
         pref_bloodsugar = (Preference) findPreference("pref_key_bloodsugar");
 
@@ -52,23 +57,36 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             public boolean onPreferenceClick(Preference preference) {
                 FragmentManager manager = getFragmentManager();
                 bloodsugar_dialog bs = new bloodsugar_dialog();
-                bs.show(manager,"Test");
+                bs.show(manager, "Test");
                 return true;
             }
         });
+
+
+        final Preference pref_add_Activity = findPreference("pref_add_activity");
+        //pref_EditText.setDialogLayoutResource(1);
+        pref_add_Activity.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                FragmentManager manager = getFragmentManager();
+                edit_activitylist_dialog ea = new edit_activitylist_dialog();
+                ea.show(manager, "Test");
+                return true;
+            }
+        });
+
 
         //define preference for the onclick-method
         final CheckBoxPreference pref_datacollection = (CheckBoxPreference) findPreference("pref_datacollection");
         pref_datacollection.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
             @Override
             public boolean onPreferenceClick(Preference preference) {
-                System.out.println("Test Jens"); //TODO:delete if not needed
                 CheckBoxPreference pref = (CheckBoxPreference) findPreference("checkbox_preference");
 
                 //show the notifications only if the data collection is started
-                if (pref_datacollection.isChecked()){
+                if (pref_datacollection.isChecked()) {
                     showNotification(1);
-                }else{
+                } else {
                     showNotification(2);
                 }
 
@@ -86,7 +104,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
 
         String Test2 = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
-        if (pref_weight_measurement.getValue().equals("Kilogram")) {
+        if (pref_weight_measurement.getValue() == null) {
+            pref_weight.setSummary(Test2 + "kg");
+        } else if (pref_weight_measurement.getValue().equals("Kilogramm")) {
             pref_weight.setSummary(Test2 + " kg");
         } else if (pref_weight_measurement.getValue().equals("Pound")) {
             pref_weight.setSummary(Test2 + " lbs");
@@ -97,7 +117,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         pref_bloodsugar.setSummary(Test3 + " mmol/L");
 
 
-        pref_weight_measurement.setSummary(sharedPrefs.getString("pref_weightOptions","Test"));
+        pref_weight_measurement.setSummary(sharedPrefs.getString("pref_weightOptions", "Test"));
 
     }
 
@@ -106,12 +126,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         String old_weight = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
         SharedPreferences.Editor edit_value = sharedPrefs.edit();
         String new_weight = "";
-        if (pref_weight_measurement.getValue() == "kg") {
+        if (pref_weight_measurement.getValue() == "Kilogramm") {
             new_weight = String.valueOf(lbs_to_kg(Double.parseDouble(old_weight)));
-            sharedPrefs.edit().putString("pref_weightOptions",new_weight);
+            sharedPrefs.edit().putString("pref_weightOptions", new_weight);
         } else if (pref_weight_measurement.getValue() == "Pound") {
             new_weight = String.valueOf(kg_to_lbs(Double.parseDouble(old_weight)));
-            sharedPrefs.edit().putString("pref_weightOptions",new_weight);
+            sharedPrefs.edit().putString("pref_weightOptions", new_weight);
         }
         return true;
     }
@@ -122,17 +142,18 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context
                 .NOTIFICATION_SERVICE);
         NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(getActivity())
-        //TODO:set other preferences for the notification
+                //TODO:set other preferences for the notification
                 .setSmallIcon(R.drawable.side_nav_bar) //TODO:generate standard icon for the app
                 .setContentTitle("Daily Routine Planer")
                 .setContentText("Data Collection started")
                 .setOngoing(true);
 
-        if (fall==1){
+        if (fall == 1) {
             notificationManager.notify(9999, notificationBuilder.build());
-        }else{
+        } else {
             notificationManager.cancel(9999);
         }
+
     }
 
     @Override
@@ -149,13 +170,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     }
 
     @Override
-    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key)
-    {
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         String[] weight = new String[2];
         //checks if Preference with key is EditTextPreference
         //if so puts the edited text to the summary field. Checks valid input
         //TODO save and handle the settings. Check valid input for all possible scenarios
-        if(findPreference(key) instanceof EditTextPreference) {
+        if (findPreference(key) instanceof EditTextPreference) {
             EditTextPreference editTextPref = (EditTextPreference) findPreference(key);
             EditText nameDialog = editTextPref.getEditText();
 
@@ -168,37 +188,35 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 name.setText(nameDialog.getText());
                 // Log.d(TAG, String.valueOf(getActivity().findViewById(R.id.username)));
 
-            } else if (editTextPref.getKey().equals("pref_key_weight"))
-            {
-                if(pref_weight_measurement.getValue() == "Kilogram")
-                {
+            } else if (editTextPref.getKey().equals("pref_key_weight")) {
+
+                if (pref_weight_measurement.getEntry().equals("Kilogramm")) {
                     editTextPref.setSummary(nameDialog.getText() + " kg");
-                }else
-                {
+                }
+
+                if (pref_weight_measurement.getEntry().equals("Pound")) {
                     editTextPref.setSummary(nameDialog.getText() + " lbs");
                 }
             }
         }
 
         //converts the current weight
-        if(findPreference(key) == pref_weight_measurement)
-        {
+        if (findPreference(key) == pref_weight_measurement) {
             SharedPreferences pref_weight = getActivity().getSharedPreferences("pref_key_weight", 0);
             SharedPreferences.Editor pref_weight_editor = pref_weight.edit();
             EditTextPreference prefweight = (EditTextPreference) findPreference("pref_key_weight");
             String old_weight = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
             String new_weight = "";
-            if(pref_weight_measurement.getValue().equals("Kilogram")) {
+            if (pref_weight_measurement.getValue().equals("Kilogramm")) {
                 new_weight = String.valueOf(lbs_to_kg(Double.parseDouble(old_weight)));
                 prefweight.setText(new_weight);
                 prefweight.setSummary(new_weight + " kg");
-                pref_weight_measurement.setSummary("Kilogram");
+                pref_weight_measurement.setSummary("Kilogramm");
                 //Test if necessary
                 pref_weight_editor.putFloat("pref_key_weight", Float.parseFloat(new_weight));
                 pref_weight_editor.commit();
                 pref_weight_editor.apply();
-            }
-            else if(pref_weight_measurement.getValue().equals("Pound")) {
+            } else if (pref_weight_measurement.getValue().equals("Pound")) {
                 new_weight = String.valueOf(kg_to_lbs(Double.parseDouble(old_weight)));
                 pref_weight_measurement.setSummary("Pound");
                 prefweight.setText(new_weight);
@@ -213,7 +231,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     /***
      * JW: Communication of blood sugar dialog and settingsFragement
-     * @param data entered blood sugar level
+     *
+     * @param data    entered blood sugar level
      * @param measure the entered measurement
      */
     public void bloodsugar_change(String data, String measure) {
@@ -223,21 +242,21 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     /***
      * Converts kg to lns
+     *
      * @param kg
      * @return
      */
-    private double kg_to_lbs(double kg)
-    {
+    private double kg_to_lbs(double kg) {
         return Math.round(kg * 2.20462 * 100d) / 100d;
     }
 
     /***
      * Converts lbs to kg
+     *
      * @param lbs
      * @return
      */
-    private double lbs_to_kg(double lbs)
-    {
-        return Math.round((lbs / 2.20462)*100d) / 100d;
+    private double lbs_to_kg(double lbs) {
+        return Math.round((lbs / 2.20462) * 100d) / 100d;
     }
 }

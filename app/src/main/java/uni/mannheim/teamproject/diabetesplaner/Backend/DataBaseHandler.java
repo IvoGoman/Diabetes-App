@@ -2,6 +2,7 @@ package uni.mannheim.teamproject.diabetesplaner.Backend;
 
 import android.content.Context;
 import android.database.Cursor;
+import android.database.DatabaseErrorHandler;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
@@ -12,6 +13,9 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+import java.util.zip.DataFormatException;
+
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 
 
 /**
@@ -81,7 +85,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     //Bloodsugar History
     public static final String BLOODSUGAR_TABLE_NAME = "History_Bloodsugar";
     public static final String BLOODSUGAR_CREATE_TABLE = " CREATE TABLE IF NOT EXISTS " + BLOODSUGAR_TABLE_NAME +
-            "( id_bloodsugar INTEGER PRIMARY KEY, bloodsugar_level double, timestamp DateTime);";
+            "( id INTEGER PRIMARY KEY, bloodsugar_level Integer, insulin_dosage Integer, timestamp DateTime);";
 
     public static final String BLOODSUGAR_SELECT =
             "SELECT * FROM " + BLOODSUGAR_TABLE_NAME + ";";
@@ -108,6 +112,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select * from " + LOCATION_TABLE_NAME, null);
         return cursor;
+    }
+
+    /**
+     * returns an activity name by id
+     * @param helper
+     * @param id
+     * @return
+     */
+    public String getActionById(DataBaseHandler helper, int id) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        //Create a Cursor that contains all records from the locations table
+        Cursor cursor = db.rawQuery("select title from " + ACTIVITIES_TABLE_NAME + " where id=" + id, null);
+        String name = "";
+        if(cursor.moveToFirst()){
+            name = cursor.getString(0);
+        }
+        return name;
     }
 
     public Cursor getAllActions(DataBaseHandler helper) {
@@ -229,6 +250,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
+    public void DeleteActivity(DataBaseHandler handler, String Start, String End) {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
+        db1.close();
+    }
+
     /*
     JW: Inserts a new bloodsugar entry
      */
@@ -237,6 +264,107 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         long tslong = System.currentTimeMillis() / 1000;
         db1.execSQL("insert into History_Bloodsugar(id_bloodsugar, bloodsugar_level, timestamp) values(" + idBloodsugar + "," + bloodsugar_level + " , '" + tslong + "' ); ");
         db1.close();
+    }
+
+    /*
+    Naira: Inserts a new measurements input
+     */
+    public void InsertMeasurements(DataBaseHandler handler, int bloodsugar_level, int insulin_dosage, String timestamp) {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        //long tslong = System.currentTimeMillis() / 1000;
+        db1.execSQL("insert into History_Bloodsugar(bloodsugar_level,insulin_dosage, timestamp) values("  + bloodsugar_level + " , " + insulin_dosage + " , '"+ timestamp + "' ); ");
+        db1.close();
+    }
+
+    public Cursor GetMeasurements(DataBaseHandler handler){
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        Cursor cursor = db1.rawQuery("select * from History_Bloodsugar", null);
+        return cursor;
+    }
+
+    /**
+     * Ivo Gosemann 18.03.2016
+     * Method to retrieve all Insulin Values
+     * //TODO: Extend Mehtod to take the needed timeframe
+     * @param handler
+     * @return ArrayList containing the Integer Values of all the Insulin Values of one day
+     */
+    public ArrayList<Integer> getAllInsulin(DataBaseHandler handler, Date date) {
+        SQLiteDatabase db = handler.getWritableDatabase();
+        String [] dayStartEnd = getDayStartEnd(date);
+        Cursor cursor = db.rawQuery("select insulin_dosage from History_Bloodsugar where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"';",null);
+        ArrayList<Integer> insulinValues = new ArrayList<>();
+        if(cursor.moveToFirst()){
+            do {
+                insulinValues.add(cursor.getInt(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return insulinValues;
+    }
+
+    /**
+     * Ivo Gosemann 18.03.2016
+     * Method to retrieve all Bloodsugar Values
+     * //TODO: Extend Mehtod to take the needed timeframe
+     * @param handler
+     * @return ArrayList containing all the Integer Values fo the Bloodsugar of one day
+     */
+    public ArrayList<Integer> getAllBloodSugar(DataBaseHandler handler, Date date){
+        SQLiteDatabase db = handler.getWritableDatabase();
+        String [] dayStartEnd = getDayStartEnd(date);
+        Cursor cursor = db.rawQuery("select bloodsugar_level from History_Bloodsugar where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"';",null);
+        ArrayList<Integer> bloodsugarValues = new ArrayList<>();
+        if(cursor.moveToFirst()){
+            do{
+                bloodsugarValues.add(cursor.getInt(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return bloodsugarValues;
+    }
+
+    /**
+     * Ivo Gosemann 18.03.2016
+     * Method to retrieve all Timestamps for Measurements
+     * //TODO: Extend Mehtod to take the needed timeframe
+     * @param handler
+     * @return ArrayList containing all the timestamp values for one day
+     */
+    public ArrayList<String> getAllTimestamps(DataBaseHandler handler,Date date){
+        SQLiteDatabase db = handler.getWritableDatabase();
+        String[] dayStartEnd= getDayStartEnd(date);
+        Cursor cursor = db.rawQuery("select timestamp from History_Bloodsugar where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"';",null);
+        ArrayList<String> timestampList = new ArrayList<>();
+        if(cursor.moveToFirst()){
+            do{
+                timestampList.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return timestampList;
+    }
+
+    /**
+     * Ivo Gosemann 18.03.2016
+     * Making Leonids code reusable to calculate the start and end of a day
+     * @param date
+     * @return array with 2 fields [0] = startofday ; [1] = endofday
+     */
+    private String[] getDayStartEnd(Date date) {
+        String startOfDay, endOfDay;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+        int Year = calendar.get(Calendar.YEAR);
+        String Month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+        String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+        startOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
+        endOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
+        String [] startEnd = {startOfDay,endOfDay};
+        return startEnd;
     }
 
     /***
@@ -284,7 +412,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + Start + "' and End >= '" + Start + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                db1.execSQL("update ActivityList set End = '" + Start + "' where id = '" + cursor.getString(0) + "';");
+                db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + cursor.getString(0) + "';");
             } while (cursor.moveToNext());
             db1.close();
         }
@@ -295,7 +423,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + End + "' and End >= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                db1.execSQL("update ActivityList set Start = '" + End + "' where id = '" + cursor.getString(0) + "';");
+                db1.execSQL("update ActivityList set Start = '" + PlusMinute(End) + "' where id = '" + cursor.getString(0) + "';");
             } while (cursor.moveToNext());
             db1.close();
         }
@@ -323,7 +451,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 int idLocation = cursor.getInt(2);
                 String Start1 = cursor.getString(3);
                 String End1 = cursor.getString(4);
-                db1.execSQL("update ActivityList set End = '" + Start + "' where id = '" + cursor.getString(0) + "';");
+                db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + cursor.getString(0) + "';");
                 InsertActivity(handler, idActivity, idLocation, End, End1);
             } while (cursor.moveToNext());
             db1.close();
@@ -493,6 +621,36 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             return "0" + String.valueOf(i);
         }
     }
+
+    public String PlusMinute(String SDate1) {
+        Date Date1;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        try {
+            Date1 = format.parse(SDate1);
+            Date1 = Util.addMinuteFromDate(Date1, 1);
+            SDate1 = Util.dateToDateTimeString(Date1);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return SDate1;
+    }
+
+    public String MinusMinute(String SDate1) {
+        Date Date1;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        try {
+            Date1 = format.parse(SDate1);
+            Date1 = Util.addMinuteFromDate(Date1, -1);
+            SDate1 = Util.dateToDateTimeString(Date1);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return SDate1;
+    }
+
+
 }
     /*
     if (cursor.moveToFirst()) {

@@ -26,7 +26,6 @@ import java.util.Comparator;
 import java.util.List;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityInputHandler;
-import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 public class DirectoryChooserDialog
@@ -131,7 +130,7 @@ public class DirectoryChooserDialog
                     m_dir += "/" + ((AlertDialog) dialog).getListView().getAdapter().getItem(item);
                     chosenFile = (String)((AlertDialog) dialog).getListView().getAdapter().getItem(item);
                     updateDirectory();
-                    ActivityInputHandler.loadIntoDatabase(chosenFile, AppGlobal.getHandler());
+                    ActivityInputHandler.loadIntoDatabase(chosenFile);
                 }
             }
         }
@@ -150,7 +149,7 @@ public class DirectoryChooserDialog
                     // Call registered listener supplied with the chosen directory
                    // m_chosenDirectoryListener.onChosenDir(m_dir);
                     m_chosenDirectoryListener.onChosenDir(chosenFile);
-                    ActivityInputHandler.loadIntoDatabase("/storage/emulated/0/Download/SDC_ActivityData.csv", AppGlobal.getHandler());
+                    ActivityInputHandler.loadIntoDatabase("/storage/emulated/0/Download/SDC_ActivityData.csv");
                 }
             }
         }).setNegativeButton("Cancel", null);

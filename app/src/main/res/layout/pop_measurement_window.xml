@@ -45,7 +45,7 @@
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:text="@string/bloodSugar"
         android:id="@+id/textView"
-         android:paddingLeft="12dp"
+        android:paddingLeft="12dp"
         android:textColor="#050000"
         android:layout_alignBottom="@+id/editText"
         android:layout_alignParentLeft="true"

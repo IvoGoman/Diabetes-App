@@ -4,7 +4,7 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="action_settings">Settings</string>
+
 
     <string name="username">Max Mustermann</string>
 
@@ -146,6 +146,9 @@
     <string name="activity_limit">One activity has to be left.</string>
     <string name="submit">Submit</string>
     <string name="image_failed">Failed to take an image.</string>
+    <string name="Description">Description</string>
+    <string name="insulin">Insulin Dosage</string>
+    <string name="bloodsugar_prompt">Please enter your current blood sugar level:</string>
 
 
 </resources>

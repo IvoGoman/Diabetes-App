@@ -34,7 +34,7 @@ public class MeasurementInputHandler {
             EndD.setTime(Long.valueOf(list.get(i)[4]));
             String Start = format.format(StartD);
             String End = format.format(EndD);
-            helper.InsertActivity(helper, IdMeasurement, 1, Start, End);
+            AppGlobal.getHandler().InsertActivity(AppGlobal.getHandler(), IdMeasurement, 1, Start, End);
         }
     }
 

@@ -1,11 +1,11 @@
 package uni.mannheim.teamproject.diabetesplaner;
 
 
+import android.app.NotificationManager;
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -24,10 +24,10 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag.ActivityMeasurementFragment;
+import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Backend.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.ActivityLimitDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.AddDialog;
@@ -35,6 +35,7 @@ import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.EditDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.InputDialog;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.StatisticsFragment.StatisticsFragment;
 
@@ -45,7 +46,7 @@ public class EntryScreenActivity extends AppCompatActivity
     private static MenuItem actualMenuItem;
     public static NavigationView navigationView;
     public static TextView username;
-    private static Uri imageURI;
+    private static String imagePath;
 
     public static final String TAG = EntryScreenActivity.class.getSimpleName();
 
@@ -165,7 +166,15 @@ public class EntryScreenActivity extends AppCompatActivity
                         ActivityLimitDialog ald = new ActivityLimitDialog();
                         ald.show(getFragmentManager(), "editDialog");
                     }else {
-                        drHandler.delete(getIndexesOfSelected(((DailyRoutineFragment) fragment)));
+                        //  drHandler.delete(getIndexesOfSelected(((DailyRoutineFragment) fragment)));
+                        ArrayList<Integer> selected = getIndexesOfSelected((DailyRoutineFragment) fragment);
+                        for (int i = 0; i < selected.size(); i++) {
+                            String start = Util.dateToDateTimeString(drHandler.getDailyRoutine().get(selected.get(i)).getStarttime());
+                            String end = Util.dateToDateTimeString(drHandler.getDailyRoutine().get(selected.get(i)).getEndtime());
+                            AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(), start, end);
+                        }
+                        drHandler.update();
+
                     }
                 }
 
@@ -176,13 +185,14 @@ public class EntryScreenActivity extends AppCompatActivity
                 EditDialog editDialog = new EditDialog();
                 if(fragment instanceof DailyRoutineFragment){
                     editDialog.setDayHandler(((DailyRoutineFragment) fragment).getDrHandler());
+                    editDialog.setActivityItem(DailyRoutineView.getSelectedActivities().get(0).getActivityItem());
                     editDialog.setSelected(getIndexesOfSelected(((DailyRoutineFragment) fragment)).get(0));
-                    editDialog.setActivity(DailyRoutineView.getSelectedActivities().get(0).getActivityID() - 1);
-                    editDialog.setStarttime(DailyRoutineView.getSelectedActivities().get(0).getStartTime());
-                    editDialog.setEndtime(DailyRoutineView.getSelectedActivities().get(0).getEndTime());
-                    editDialog.setImage(DailyRoutineView.getSelectedActivities().get(0).getImage());
-                    editDialog.setImageUri(DailyRoutineView.getSelectedActivities().get(0).getImageUri());
-                    editDialog.setMeal(DailyRoutineView.getSelectedActivities().get(0).getMeal());
+//                    editDialog.setActivity(DailyRoutineView.getSelectedActivities().get(0).getActivityID() - 1);
+//                    editDialog.setStarttime(DailyRoutineView.getSelectedActivities().get(0).getStartTime());
+//                    editDialog.setEndtime(DailyRoutineView.getSelectedActivities().get(0).getEndTime());
+//                    editDialog.setImage(DailyRoutineView.getSelectedActivities().get(0).getImage());
+//                    editDialog.setImageUri(DailyRoutineView.getSelectedActivities().get(0).getImageUri());
+//                    editDialog.setMeal(DailyRoutineView.getSelectedActivities().get(0).getMeal());
 
                     editDialog.show(getFragmentManager(), "editDialog");
                 }
@@ -356,8 +366,8 @@ public class EntryScreenActivity extends AppCompatActivity
      * returns URI of image captured
      * @return
      */
-    public static Uri getImageURI(){
-        return imageURI;
+    public static String getImagePath(){
+        return imagePath;
     }
 
 
@@ -366,26 +376,44 @@ public class EntryScreenActivity extends AppCompatActivity
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
+                imagePath = InputDialog.getImagePath();
                 // Image captured and saved to fileUri specified in the Intent
-                imageURI = data.getData();
-                try {
-                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageURI);
-                    InputDialog.setImage(bitmap);
-                    InputDialog.displayImageFromUri(imageURI);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+//                if(data.getData()==null){
+//                    Bitmap bitmap = (Bitmap)data.getExtras().get("data");
+//                    Log.d(TAG, "Width: " +bitmap.getWidth());
+//                    imageURI = Util.getImageUri(getApplicationContext(), bitmap);
+//                }else {
+//                    imageURI = data.getData();
+//                }
+
+                    //convert imageURI to filePath
+//                    File myFile = new File(imagePath.getPath());
+//                    String filePath = myFile.getAbsolutePath();
+//                    Bitmap bitmap = Util.getCompressedPic(filePath);
+
+                    //Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageURI);
+                    InputDialog.displayImageFromPath(imagePath);
+
 
                 Toast.makeText(this, "Image saved to:\n" +
-                        imageURI, Toast.LENGTH_SHORT).show();
+                        imagePath, Toast.LENGTH_SHORT).show();
+
             } else if (resultCode == RESULT_CANCELED) {
                 // User cancelled the image capture
-                imageURI = null;
+                imagePath = null;
             } else {
                 // Image capture failed, advise user
-                imageURI = null;
+                imagePath = null;
                 Toast.makeText(this, R.string.image_failed, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        notificationManager.cancel(9999);
+
     }
 }

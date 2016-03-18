@@ -12,13 +12,11 @@ import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
-import android.widget.ImageButton;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
 
 import java.io.File;
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityInputHandler;
@@ -96,7 +94,7 @@ public class ActivityFragment extends Fragment  {
                         if ((ActivityInputHndlr.isFileFormatValid(fileString))== true){
                             FileList.add(requiredSplitPart);
                             Toast.makeText(getActivity(), "Chosen File:" + requiredSplitPart , Toast.LENGTH_LONG).show();
-                           // ActivityInputHndlr.loadIntoDatabase(requiredSplitPart,DBHandler);
+                            ActivityInputHndlr.loadIntoDatabase(fileString);
                             ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
                         }else{
                             Toast.makeText(getActivity(), "File is not in the correct format", Toast.LENGTH_LONG).show();

@@ -55,7 +55,7 @@ public class HistoryFragment extends DailyRoutineFragment {
     private String mParam2;
     private OnFragmentInteractionListener mListener;
     private AppCompatActivity aca;
-    private static ArrayList<DailyRoutineView> items_history = new ArrayList<DailyRoutineView>();
+    private static ArrayList<DailyRoutineView> items_history = new ArrayList<>();
     private static LinearLayout linearLayout;
     private static ScrollView scrollView;
     private DayHandler dayHandler;
@@ -116,11 +116,13 @@ public class HistoryFragment extends DailyRoutineFragment {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
         Date dateToday = sdf.getCalendar().getTime();
         DateFormat df = DateFormat.getDateInstance();
-        Date date = Calendar.getInstance(Locale.getDefault()).getTime();
+        Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        calendar.add(Calendar.DAY_OF_MONTH, -1);
+        Date date = calendar.getTime();
         dateString = df.format(date);
         //    String dateString = DateFormat.getDateInstance().format(date);
         dateView.setText(dateString);
-        onDateSelected(linearLayout, params, dateToday);
+        onDateSelected(linearLayout, params, date);
         dateView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -177,15 +179,19 @@ public class HistoryFragment extends DailyRoutineFragment {
      */
     public void onDateSelected(LinearLayout linearLayout, LinearLayout.LayoutParams params, Date date) {
         linearLayout.removeAllViews();
+        DailyRoutineView.clearSelectedActivities();
         //TODO: Move Data creation to a Utility Class for unified creation over all classes
         Log.i(TAG, date.toString());
         ArrayList<ActivityItem> day = dayHandler.getDayRoutine(date);
+        DailyRoutineView.clearSelectedActivities();
+        DailyRoutineView.setSelectable(false);
+        DailyRoutineView.setActionBarItems();
         setDate(date);
 
 //  ArrayList<String[]> day = generateRandomRoutine();
         if (day.size() > 0) {
             for (int i = 0; i < day.size(); i++) {
-                DailyRoutineView drv = new DailyRoutineView(getActivity(), Integer.valueOf(day.get(i).getActivityId()), 0, day.get(i).getStarttimeAsString(), day.get(i).getEndtimeAsString(), date);
+                DailyRoutineView drv = new DailyRoutineView(getActivity(), day.get(i));
                 drv.setState(true);
                 linearLayout.addView(drv);
                 drv.setLayoutParams(params);
@@ -204,12 +210,12 @@ public class HistoryFragment extends DailyRoutineFragment {
     }
 
     /**
-     * @return a random generated list of activites with random start and end time and random activity type
+     * @return a random generated list of activities with random start and end time and random activity type
      */
     public ArrayList<String[]> generateRandomRoutine() {
         Random generator = new Random();
         int randomActivity, randomStartMinute, randomStartHour;
-        ArrayList<String[]> day = new ArrayList<String[]>();
+        ArrayList<String[]> day = new ArrayList<>();
         for (int i = 0; i < 10; i++) {
             randomActivity = generator.nextInt(13) + 1;
             randomStartMinute = generator.nextInt(59) + 1;
@@ -250,7 +256,7 @@ public class HistoryFragment extends DailyRoutineFragment {
 
 
         /**
-         * creates a Dialog with a Date Picker with the currently displayed day presselected
+         * creates a Dialog with a Date Picker with the currently displayed day pre-selected
          */
 
         @Override
@@ -303,8 +309,9 @@ public class HistoryFragment extends DailyRoutineFragment {
             //simpleDate.applyPattern("dd.MM.yyyy");
             DateFormat timeDAte = DateFormat.getTimeInstance();
             Log.i(TAG, timeDAte.format(calendar.getTime()));
-
-            Date dateToday = Calendar.getInstance(Locale.getDefault()).getTime();
+            Calendar calendar2 = Calendar.getInstance(Locale.getDefault());
+            calendar2.add(Calendar.DAY_OF_MONTH, -1);
+            Date dateToday = calendar2.getTime();
             Log.i(TAG, "today:" + dateToday.toString());
             Date dateSelected = calendar.getTime();
             Log.i(TAG, "selected:" + dateSelected.toString());

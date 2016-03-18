@@ -1,16 +1,30 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining;
 
+import android.content.Context;
+import android.content.res.Resources;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
+import android.util.DisplayMetrics;
+
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by Stefan
@@ -83,6 +97,11 @@ public class Util {
 		return time2;
 	}
 
+	public static String dateToDateTimeString(Date date) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		String dateString = sdf.format(date);
+		return dateString;
+	}
 	/**
 	 * converts a String[] to an ArrayList<String>
 	 * @param array String[]
@@ -293,6 +312,7 @@ public class Util {
 		try {
 			SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
 			timeAsDate = dateFormat.parse(time);
+
 		} catch (ParseException e) {
 			e.printStackTrace();
 		}
@@ -350,5 +370,167 @@ public class Util {
 		String dateString = dateFormat.format(date);
 
 		return dateString;
+	}
+
+	/**
+	 * Method which combines the current date of the day with the start and endtime from the dialog
+	 *
+	 * @param date
+	 * @param time
+	 * @return
+	 */
+	public static String combineDateAndTime(Date date, Date time) {
+		Date newdate = null;
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String dateString = sdf.format(date);
+		sdf = new SimpleDateFormat("HH:mm");
+		String timeString = sdf.format(time);
+		dateString += " " + timeString;
+		sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		try {
+			newdate = sdf.parse(dateString);
+
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+
+		return sdf.format(newdate);
+	}
+
+
+	/**
+	 * creates a filepath
+	 * @return
+	 */
+	public static File createImageFile(){
+		// Create an image file name
+		String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
+		String imageFileName = "JPEG_" + timeStamp + "_";
+		File storageDir = Environment.getExternalStoragePublicDirectory(
+				Environment.DIRECTORY_PICTURES);
+		File image = null;
+		try {
+			image = File.createTempFile(
+					imageFileName,  /* prefix */
+					".jpg",         /* suffix */
+					storageDir      /* directory */
+			);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		// Save a file: path for use with ACTION_VIEW intents
+		String mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+		return image;
+	}
+
+	/**
+	 * returns the uri of a bitmap
+	 * @param inContext
+	 * @param inImage
+	 * @return
+	 */
+	public static Uri getImageUri(Context inContext, Bitmap inImage) {
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes);
+		String path = MediaStore.Images.Media.insertImage(inContext.getContentResolver(), inImage, "Title", null);
+		return Uri.parse(path);
+	}
+
+	/**
+	 * compresses a bitmap width to the screen width and adapts the height percentually
+	 * @param mCurrentPhotoPath
+	 * @return
+	 */
+	public static Bitmap getCompressedPic(String mCurrentPhotoPath) {
+		return compressPic(mCurrentPhotoPath, 0);
+	}
+
+	/**
+	 * compresses a bitmap width to the width parameter and adapts the height percentually
+	 * @param mCurrentPhotoPath
+	 * @return
+	 */
+	public static Bitmap getCompressedPic(String mCurrentPhotoPath, int width) {
+		return compressPic(mCurrentPhotoPath, width);
+	}
+
+
+	/**
+	 * compresses a pic from a path with a certain width.
+	 * @param mCurrentPhotoPath
+	 * @param width width to compress. If 0 width of screen is taken
+	 * @return
+	 */
+	private static Bitmap compressPic(String mCurrentPhotoPath, int width){
+		// Get the dimensions of the Screen
+		DisplayMetrics dm = Resources.getSystem().getDisplayMetrics();
+		float targetW = dm.widthPixels;
+		float targetH = dm.heightPixels;
+		if(width != 0) {
+			targetW = width;
+		}
+
+		// Get the dimensions of the bitmap
+		BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+		bmOptions.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+		float photoW = bmOptions.outWidth;
+		float photoH = bmOptions.outHeight;
+
+		// Determine how much to scale down the image
+		float scaleFactor = Math.min(photoW/targetW, photoH/targetH);
+
+		// Decode the image file into a Bitmap sized to fill the View
+		bmOptions.inJustDecodeBounds = false;
+		bmOptions.inSampleSize = (int)scaleFactor;
+
+		Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
+
+		float factor = targetW/bitmap.getWidth();
+
+		Bitmap image = Bitmap.createScaledBitmap(bitmap, (int)(targetW), (int)(photoH*factor), false);
+		return image;
+	}
+
+	/**
+	 * Ivo Gosemann 18.03.2016
+	 * Converting a "yyyy-MM-dd HH:mm" String into a "HH:mm" String
+	 * @param dateValue
+     * @return a String representing the time as "HH:mm"
+     */
+	public static String dateToTimeString(String dateValue) {
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+		Date date = null;
+		String timeString ="";
+		try {
+			date = sdf.parse(dateValue);
+			sdf = new SimpleDateFormat("HH:mm");
+			timeString = sdf.format(date);
+			return timeString;
+		} catch (ParseException e) {
+			e.printStackTrace();
+		}
+		return timeString;
+	}
+
+	/**
+	 * Ivo Gosemann 18.03.2016
+	 * Methods returns the current date as a Date
+	 * @return date in the format "yyyy-MM-dd HH:mm"
+     */
+	public static Date getCurrentDate() {
+		Calendar calendar = Calendar.getInstance();
+		return calendar.getTime();
+	}
+
+	public static int getDuration(Date starttime, Date endtime) {
+
+		long duration = endtime.getTime()-starttime.getTime();
+		long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(duration);
+		long diffInHours = TimeUnit.MILLISECONDS.toHours(duration);
+		/**int [] time = {(int)diffInHours, (int) diffInMinutes};
+		return time;**/
+		return (int)diffInMinutes;
 	}
 }
