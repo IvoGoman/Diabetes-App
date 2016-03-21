@@ -29,7 +29,7 @@ import uni.mannheim.teamproject.diabetesplaner.R;
 
 public class edit_activitylist_dialog extends DialogFragment implements View.OnClickListener{
     Button add,cancel,delete;
-    Dialog_communicator communicator;
+    BloodsugarDialog_and_Settings communicator;
     ListAdapter adapter;
     ListView lv_edit_activity;
     EditText et_new_activity;
@@ -41,7 +41,7 @@ public class edit_activitylist_dialog extends DialogFragment implements View.OnC
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        communicator = (Dialog_communicator) activity;
+        communicator = (BloodsugarDialog_and_Settings) activity;
     }
 
     @Override

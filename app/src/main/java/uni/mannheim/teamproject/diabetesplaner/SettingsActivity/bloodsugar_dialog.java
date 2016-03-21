@@ -6,8 +6,11 @@ import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.ListPreference;
+import android.preference.Preference;
+import android.preference.PreferenceFragment;
 import android.support.annotation.Nullable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -30,17 +33,23 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
     Button submit,cancel;
     RadioButton mg,percentage,mmol;
     NumberPicker bloodsugar_level;
-    Dialog_communicator communicator;
+    BloodsugarDialog_and_Settings communicator;
+
+    //the current selected measure
     private String measure;
+    //the current selected measure value
+    private String measure_value;
     DataBaseHandler database;
     double value;
     String[] nums;
 
+    public bloodsugar_dialog()
+    {}
 
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
-        communicator = (Dialog_communicator) activity;
+        communicator = (BloodsugarDialog_and_Settings) activity;
     }
 
     @Override
@@ -48,19 +57,44 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         View view= inflater.inflate(R.layout.dialog_layout, null);
 
         setCancelable(false);
-        measure = "mg/dl";
-        database = new DataBaseHandler(getActivity().getApplicationContext());
+
+        database = AppGlobal.getHandler();
         submit = (Button) view.findViewById(R.id.bs_submit);
         cancel = (Button) view.findViewById(R.id.bs_cancel);
         mg = (RadioButton) view.findViewById(R.id.bs_mg);
         mmol = (RadioButton) view.findViewById(R.id.bs_mm);
         percentage = (RadioButton) view.findViewById(R.id.bs_percentage);
         bloodsugar_level = (NumberPicker) view.findViewById(R.id.numberPicker);
-
+        bloodsugar_level.setOnValueChangedListener(new NumberPicker.OnValueChangeListener(){
+            @Override
+            public void onValueChange(NumberPicker nb,int oldValue, int newValue)
+            {
+                Log.d("NumberPicker", "Value changed from " +oldValue+" to " +newValue);
+            }
+        });
+//        measure_value = Double.toString(database.getLatestBloodsugar(AppGlobal.getHandler(), 1));
         String[] nums = new String[50];
-        for(int i = 0;i<nums.length;i++)
-        {
-            nums[i] = Double.toString(Math.round(percentage_to_mg(4.7 + 0.1 * i) * 10d) / 10d);
+        for(int i = 0;i<nums.length;i++) {
+            if (measure == "%") {
+
+                //Convert from percetage to mg
+                nums[i] = Double.toString(Math.round(percentage_to_mg(4.7 + 0.1 * i)));
+
+            } else if (measure == "mmol/l") {
+
+                //Convert from mmol to mg
+                nums[i] = Double.toString(Math.round(mmol_to_milligram(miligram_to_mol(percentage_to_mg(4.7 + 0.1 * i)))));
+
+            } else if (measure == "mg/dl") {
+                //convert mg to mmol
+
+                nums[i] = Double.toString(Math.round(percentage_to_mg(4.7 + 0.1 * i) * 10d) / 10d);
+
+            }
+            if(nums[i].equals(measure_value))
+            {
+                bloodsugar_level.setValue(i);
+            }
         }
         bloodsugar_level.setWrapSelectorWheel(false);
         bloodsugar_level.setDisplayedValues(nums);
@@ -72,10 +106,6 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         mg.setOnClickListener(this);
         mmol.setOnClickListener(this);
         percentage.setOnClickListener(this);
-        value = (double) bloodsugar_level.getValue();
-        nums = bloodsugar_level.getDisplayedValues();
-
-
         return view;
     }
 
@@ -87,26 +117,31 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
     public void onClick(View view)
     {
         nums = bloodsugar_level.getDisplayedValues();
+        //submit button clicked
         if(view.getId() == R.id.bs_submit)
         {
+            //if value is changed, then store value and change display
             if(value != bloodsugar_level.getValue()) {
-                //database.InsertBloodsugar(AppGlobal.getHandler(), 1, (double) bloodsugar_level.getValue());
-                communicator.respond(String.valueOf(nums[bloodsugar_level.getValue()]), measure);
+                measure_value =nums[bloodsugar_level.getValue()];
+                database.InsertBloodsugar(database, 1, Double.parseDouble(measure_value), measure);
+                communicator.respond(null,String.valueOf(nums[bloodsugar_level.getValue()]), measure, 1);
                 Toast.makeText(getActivity(), "Blood sugar level: " + String.valueOf(bloodsugar_level.getValue()) + " stored"
                         , Toast.LENGTH_LONG);
                 dismiss();
             }else{
                 Log.d("bloodsugar_entry","Nothing changed");
-                new AlertDialog.Builder(getContext())
-                        .setTitle("No Changes")
-                        .setMessage("You did not change the blood_sugar level.")
-                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert)
-                        .show();
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    new AlertDialog.Builder(getContext())
+                            .setTitle("No Changes")
+                            .setMessage("You did not change the blood_sugar level.")
+                            .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int which) {
+    
+                                }
+                            })
+                            .setIcon(android.R.drawable.ic_dialog_alert)
+                            .show();
+                }
             }
         }
         else if(view.getId() == R.id.bs_cancel)
@@ -212,6 +247,14 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
     private double mg_to_percentage(double mg)
     {
         return (mg+86.0)/33.3;
+    }
+
+    public void setbloodsugarOnCreate(bloodsugar_dialog bs,String measures, String measurement, int ID)
+    {
+       if(ID == 2) {
+           bs.measure_value = measures;
+           bs.measure = measurement;
+       }
     }
 
 

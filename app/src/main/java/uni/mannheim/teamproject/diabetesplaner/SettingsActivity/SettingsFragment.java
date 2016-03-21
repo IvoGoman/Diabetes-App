@@ -36,10 +36,18 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     public static final String TAG = SettingsFragment.class.getSimpleName();
     private Preference pref_bloodsugar;
+    private String bloodsugar_measure_value;
     private ListPreference pref_weight_measurement;
     private EditTextPreference pref_weight;
     private SharedPreferences sharedPrefs;
+    private DataBaseHandler database;
+    BloodsugarDialog_and_Settings communicator;
 
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        communicator = (BloodsugarDialog_and_Settings) activity;
+    }
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -49,6 +57,11 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         addPreferencesFromResource(R.xml.preferences);
         pref_weight_measurement = (ListPreference) findPreference("pref_weightOptions");
         pref_weight = (EditTextPreference) findPreference("pref_key_weight");
+        database = new DataBaseHandler(getActivity().getApplicationContext());
+        final String measurement_bloodsugar = "mg/dl";
+        bloodsugar_measure_value = "";
+        //String bloodsugar_measure_value = Double.toString(
+           //     database.getLatestBloodsugar(AppGlobal.getHandler(), 1));
 
         pref_bloodsugar = (Preference) findPreference("pref_key_bloodsugar");
 
@@ -57,7 +70,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             public boolean onPreferenceClick(Preference preference) {
                 FragmentManager manager = getFragmentManager();
                 bloodsugar_dialog bs = new bloodsugar_dialog();
-                bs.show(manager, "Test");
+                bs.show(manager,"Test");
+                //Set the numberpicker to the current value
+                communicator.respond(bs,sharedPrefs.getString("pref_key_bloodsugar", "Blutzuckerwert eingeben"),measurement_bloodsugar,2);
                 return true;
             }
         });
@@ -107,6 +122,11 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         if (pref_weight_measurement.getValue() == null) {
             pref_weight.setSummary(Test2 + "kg");
         } else if (pref_weight_measurement.getValue().equals("Kilogramm")) {
+        if(pref_weight_measurement.getValue() ==null)
+        {
+
+        }
+        else if (pref_weight_measurement.getValue().equals("Kilogram")) {
             pref_weight.setSummary(Test2 + " kg");
         } else if (pref_weight_measurement.getValue().equals("Pound")) {
             pref_weight.setSummary(Test2 + " lbs");
@@ -114,11 +134,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
         String Test3 = sharedPrefs.getString("pref_key_bloodsugar", "Blutzuckerwert eingeben");
 
-        pref_bloodsugar.setSummary(Test3 + " mmol/L");
+        pref_bloodsugar.setSummary(bloodsugar_measure_value + " mmol/L");
 
-
-        pref_weight_measurement.setSummary(sharedPrefs.getString("pref_weightOptions", "Test"));
-
+        pref_weight_measurement.setSummary(sharedPrefs.getString("pref_weightOptions","Test"));
+    }
     }
 
 
@@ -235,9 +254,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
      * @param data    entered blood sugar level
      * @param measure the entered measurement
      */
-    public void bloodsugar_change(String data, String measure) {
-        pref_bloodsugar.setSummary(data + " " + measure);
-
+    public void bloodsugar_change(bloodsugar_dialog bs, String data, String measure, int ID) {
+        if (ID == 1) {
+            pref_bloodsugar.setSummary(data + " " + measure);
+        }
     }
 
     /***

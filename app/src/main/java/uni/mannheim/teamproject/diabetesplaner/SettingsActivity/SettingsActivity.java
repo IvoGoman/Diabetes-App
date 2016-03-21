@@ -16,7 +16,7 @@ import uni.mannheim.teamproject.diabetesplaner.Backend.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 
-public class SettingsActivity extends AppCompatActivity implements Dialog_communicator {
+public class SettingsActivity extends AppCompatActivity implements BloodsugarDialog_and_Settings {
 
     public static final String TAG = SettingsActivity.class.getSimpleName();
 
@@ -25,6 +25,7 @@ public class SettingsActivity extends AppCompatActivity implements Dialog_commun
     private EditTextPreference catName;
     private SharedPreferences.OnSharedPreferenceChangeListener listener;
     private SettingsFragment setFrag;
+    private bloodsugar_dialog setBloodsugar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,6 +33,7 @@ public class SettingsActivity extends AppCompatActivity implements Dialog_commun
         // Display the settingsFragment as the content.
         
         setFrag = new SettingsFragment();
+        setBloodsugar = new bloodsugar_dialog();
         getFragmentManager().beginTransaction()
                 .replace(android.R.id.content, setFrag)
                 .commit();
@@ -57,14 +59,19 @@ public class SettingsActivity extends AppCompatActivity implements Dialog_commun
     }
 
     @Override
-    public void respond(String data, String measure) {
+    public void respond(bloodsugar_dialog bs, String data, String measure, int ID) {
         int profile_id = 1;
 
-        Log.d("Database", "Write blood sugar level of " + data + " " + measure +" " +
+        Log.d("Database", "Write blood sugar level of " + data + " " + measure + " " +
                 "to profile " + String.valueOf(profile_id));
 
+        if (ID == 1) {
+            //ToDo: Database Handling here
+            setFrag.bloodsugar_change(bs,data, measure, ID);
+        } else if (ID == 2)
+        {
+            setBloodsugar.setbloodsugarOnCreate(bs,data,measure,ID);
+        }
 
-        setFrag.bloodsugar_change(data,measure);
-        //ToDo: Database Handling here
     }
 }
