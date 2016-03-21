@@ -65,14 +65,6 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         mmol = (RadioButton) view.findViewById(R.id.bs_mm);
         percentage = (RadioButton) view.findViewById(R.id.bs_percentage);
         bloodsugar_level = (NumberPicker) view.findViewById(R.id.numberPicker);
-        bloodsugar_level.setOnValueChangedListener(new NumberPicker.OnValueChangeListener(){
-            @Override
-            public void onValueChange(NumberPicker nb,int oldValue, int newValue)
-            {
-                Log.d("NumberPicker", "Value changed from " +oldValue+" to " +newValue);
-            }
-        });
-//        measure_value = Double.toString(database.getLatestBloodsugar(AppGlobal.getHandler(), 1));
         String[] nums = new String[50];
         int measureID = 0;
         for(int i = 0;i<nums.length;i++) {
