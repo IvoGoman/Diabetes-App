@@ -35,7 +35,7 @@
             android:layout_height="52dp"
             android:text="@string/milligram_dl"
             android:id="@+id/bs_mg"
-            android:checked="true" />
+            android:checked="false" />
 
         <RadioButton
             android:layout_width="152dp"

@@ -283,6 +283,29 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return cursor;
     }
 
+    /***
+     * returns the last measurement of the selected user
+     * @param handler
+     * @return
+     */
+    public String[] getLastMeasurement(DataBaseHandler handler){
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        String[] result = new String[2];
+        Cursor cursor = db1.rawQuery("SELECT bloodsugar_level,bloodsugar_measure " +
+                "FROM History_Bloodsugar " +
+                "where id_bloodsugar = 1 " +
+                "ORDER BY timestamp DESC;", null);
+        cursor.moveToFirst();
+        if(cursor.getCount() >= 1) {
+            result[0] = cursor.getString(0);
+            result[1] = cursor.getString(1);
+        }
+        else
+        {
+            result = null;
+        }
+        return result;
+    }
     /**
      * Ivo Gosemann 18.03.2016
      * Method to retrieve all Insulin Values

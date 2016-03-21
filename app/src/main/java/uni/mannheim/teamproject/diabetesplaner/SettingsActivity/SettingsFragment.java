@@ -37,6 +37,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public static final String TAG = SettingsFragment.class.getSimpleName();
     private Preference pref_bloodsugar;
     private String bloodsugar_measure_value;
+    private String bloodsugar_measure;
     private ListPreference pref_weight_measurement;
     private EditTextPreference pref_weight;
     private SharedPreferences sharedPrefs;
@@ -57,25 +58,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         addPreferencesFromResource(R.xml.preferences);
         pref_weight_measurement = (ListPreference) findPreference("pref_weightOptions");
         pref_weight = (EditTextPreference) findPreference("pref_key_weight");
-        database = new DataBaseHandler(getActivity().getApplicationContext());
-        final String measurement_bloodsugar = "mg/dl";
-        bloodsugar_measure_value = "";
-        //String bloodsugar_measure_value = Double.toString(
-           //     database.getLatestBloodsugar(AppGlobal.getHandler(), 1));
+        database = AppGlobal.getHandler();
 
-        pref_bloodsugar = (Preference) findPreference("pref_key_bloodsugar");
-
-        pref_bloodsugar.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                FragmentManager manager = getFragmentManager();
-                bloodsugar_dialog bs = new bloodsugar_dialog();
-                bs.show(manager,"Test");
-                //Set the numberpicker to the current value
-                communicator.respond(bs,sharedPrefs.getString("pref_key_bloodsugar", "Blutzuckerwert eingeben"),measurement_bloodsugar,2);
-                return true;
-            }
-        });
+        //Bloodsugar handling
+        initialize_bloodsugar();
 
 
         final Preference pref_add_Activity = findPreference("pref_add_activity");
@@ -121,23 +107,18 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         String Test2 = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
         if (pref_weight_measurement.getValue() == null) {
             pref_weight.setSummary(Test2 + "kg");
-        } else if (pref_weight_measurement.getValue().equals("Kilogramm")) {
-        if(pref_weight_measurement.getValue() ==null)
+        }
+        else if (pref_weight_measurement.getValue().equals("Kilogramm"))
         {
+            if (pref_weight_measurement.getValue() == null) {
 
+            } else if (pref_weight_measurement.getValue().equals("Kilogram")) {
+                pref_weight.setSummary(Test2 + " kg");
+            } else if (pref_weight_measurement.getValue().equals("Pound")) {
+                pref_weight.setSummary(Test2 + " lbs");
+            }
+            pref_weight_measurement.setSummary(sharedPrefs.getString("pref_weightOptions", "Test"));
         }
-        else if (pref_weight_measurement.getValue().equals("Kilogram")) {
-            pref_weight.setSummary(Test2 + " kg");
-        } else if (pref_weight_measurement.getValue().equals("Pound")) {
-            pref_weight.setSummary(Test2 + " lbs");
-        }
-
-        String Test3 = sharedPrefs.getString("pref_key_bloodsugar", "Blutzuckerwert eingeben");
-
-        pref_bloodsugar.setSummary(bloodsugar_measure_value + " mmol/L");
-
-        pref_weight_measurement.setSummary(sharedPrefs.getString("pref_weightOptions","Test"));
-    }
     }
 
 
@@ -257,7 +238,38 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public void bloodsugar_change(bloodsugar_dialog bs, String data, String measure, int ID) {
         if (ID == 1) {
             pref_bloodsugar.setSummary(data + " " + measure);
+            bloodsugar_measure_value = data;
+            bloodsugar_measure = measure;
         }
+    }
+
+    private void initialize_bloodsugar()
+    {
+        if(database.getLastMeasurement(database) != null) {
+            bloodsugar_measure = database.getLastMeasurement(database)[1];
+            bloodsugar_measure_value = database.getLastMeasurement(database)[0];
+        }
+        else
+        {
+            bloodsugar_measure_value = sharedPrefs.getString("pref_key_bloodsugar", "Blutzuckerwert eingeben");
+            bloodsugar_measure = "";
+        }
+        pref_bloodsugar = (Preference) findPreference("pref_key_bloodsugar");
+        //Set initial values for bloodsugar measurement. Values retrieved from database
+        pref_bloodsugar.setSummary(bloodsugar_measure_value +" "+ bloodsugar_measure);
+
+        //clickListener for bloodsugar_dialog
+        pref_bloodsugar.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+            @Override
+            public boolean onPreferenceClick(Preference preference) {
+                FragmentManager manager = getFragmentManager();
+                bloodsugar_dialog bs = new bloodsugar_dialog();
+                bs.show(manager,"Test");
+                //Set the numberpicker to the current value
+                communicator.respond(bs,bloodsugar_measure_value,bloodsugar_measure,2);
+                return true;
+            }
+        });
     }
 
     /***
