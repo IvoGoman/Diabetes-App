@@ -57,6 +57,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         percentage = (RadioButton) view.findViewById(R.id.bs_percentage);
         bloodsugar_level = (NumberPicker) view.findViewById(R.id.numberPicker);
 
+
         String[] nums = new String[50];
         for(int i = 0;i<nums.length;i++)
         {
