@@ -110,6 +110,7 @@ public class HistoryFragment extends DailyRoutineFragment {
         linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_historic_routine);
         final LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         TextView dateView = (TextView) inflaterView.findViewById(R.id.history_date_view);
+
         String dateString = DateFormat.getDateInstance().format(new Date());
 
         //TODO: move formatter util class
@@ -280,7 +281,15 @@ public class HistoryFragment extends DailyRoutineFragment {
             int day = calendar.get(Calendar.DAY_OF_MONTH);
 
             // Create a new instance of DatePickerDialog and return it
-            return new DatePickerDialog(getActivity(), this, year, month, day);
+            //Edit by Naira, Changing date picker color
+            //return new DatePickerDialog(getActivity(), this, year, month, day);
+            return new DatePickerDialog(getActivity(), R.style.datepicker, new DatePickerDialog.OnDateSetListener() {
+                @Override
+                public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+
+                }
+            },year,month,day);
+
         }
 
         /**
