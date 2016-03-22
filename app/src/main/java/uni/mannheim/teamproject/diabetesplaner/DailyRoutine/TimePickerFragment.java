@@ -14,6 +14,8 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
+import uni.mannheim.teamproject.diabetesplaner.R;
+
 /**
  * Created by Stefan on 04.02.2016.
  */
@@ -36,8 +38,14 @@ public class TimePickerFragment extends DialogFragment
         }
 
         // Create a new instance of TimePickerDialog and return it
-        return new TimePickerDialog(getActivity(), this, hour, minute,
-                DateFormat.is24HourFormat(getActivity()));
+        // Edit by Naira, Changing Time picker color
+      //  return new TimePickerDialog(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
+        return new TimePickerDialog(getActivity(), R.style.picker, new TimePickerDialog.OnTimeSetListener() {
+            @Override
+            public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+
+            }
+        },hour,minute,DateFormat.is24HourFormat(getActivity()));
     }
 
     public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
