@@ -59,6 +59,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         pref_weight_measurement = (ListPreference) findPreference("pref_weightOptions");
         pref_weight = (EditTextPreference) findPreference("pref_key_weight");
         database = AppGlobal.getHandler();
+        sharedPrefs = getPreferenceManager().getSharedPreferences();
 
         //Bloodsugar handling
         initialize_bloodsugar();
@@ -96,8 +97,6 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         });
 
         //Write User Data in the Summary Fields
-
-        sharedPrefs = getPreferenceManager().getSharedPreferences();
 
         final EditTextPreference pref_name = (EditTextPreference) findPreference("pref_key_name");
         String Test1 = sharedPrefs.getString("pref_key_name", "Vorname, Name");
@@ -245,9 +244,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     private void initialize_bloodsugar()
     {
-        if(database.getLastMeasurement(database) != null) {
-            bloodsugar_measure = database.getLastMeasurement(database)[1];
-            bloodsugar_measure_value = database.getLastMeasurement(database)[0];
+        if(database.getLastBloodsugarMeasurement(database,1) != null) {
+            bloodsugar_measure = database.getLastBloodsugarMeasurement(database,1)[1];
+            bloodsugar_measure_value = database.getLastBloodsugarMeasurement(database,1)[0];
         }
         else
         {

@@ -83,22 +83,22 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     */
 
     //Bloodsugar History
-    public static final String BLOODSUGAR_TABLE_NAME = "History_Bloodsugar";
-    public static final String BLOODSUGAR_CREATE_TABLE = " CREATE TABLE IF NOT EXISTS " + BLOODSUGAR_TABLE_NAME +
-            "(timestamp DateTime PRIMARY KEY, id_bloodsugar INTEGER, bloodsugar_level double, bloodsugar_measure VARCHAR(8));";
+    public static final String MEASUREMENT_TABLE_NAME = "Measurements";
+    public static final String MEASUREMENT_CREATE_TABLE = " CREATE TABLE IF NOT EXISTS " + MEASUREMENT_TABLE_NAME +
+            "(timestamp DateTime PRIMARY KEY, profile_ID INTEGER, measure_value double, measure_unit VARCHAR(8), measure_kind VARCHAR(8));";
 
-    public static final String BLOODSUGAR_SELECT =
-            "SELECT * FROM " + BLOODSUGAR_TABLE_NAME + ";";
-    public static final String BLOODSUGAR_DELETE_TABLE =
-            "DROP TABLE IF EXISTS " + BLOODSUGAR_TABLE_NAME + ";";
+    public static final String MEASUREMENT_SELECT =
+            "SELECT * FROM " + MEASUREMENT_TABLE_NAME + ";";
+    public static final String MEASUREMENT_DELETE_TABLE =
+            "DROP TABLE IF EXISTS " + MEASUREMENT_TABLE_NAME + ";";
 
     //Profile Table
     private static final String PROFILE_TABLE_NAME = "Profile";
     private static final String PROFILE_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " +
                     PROFILE_TABLE_NAME +
-                    " (id INTEGER PRIMARY KEY, FK_history_bloodsugar_level INTEGER, age INTEGER, diabetes_type INTEGER, current_bloodsugar_level double, " +
-                    "FOREIGN KEY (FK_history_bloodsugar_level) REFERENCES History_Bloodsugar(id_bloodsugar));";
+                    " (id INTEGER PRIMARY KEY, FK_MEASUREMENTS INTEGER, age INTEGER, diabetes_type INTEGER, current_bloodsugar_level double, " +
+                    "FOREIGN KEY (FK_MEASUREMENTS) REFERENCES "+MEASUREMENT_TABLE_NAME+"(profile_ID));";
     public static final String PROFILE_SELECT =
             "SELECT * FROM " + PROFILE_TABLE_NAME + ";";
     public static final String PROFILE_DELETE_TABLE =
@@ -146,82 +146,88 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {   //when the App is first installed
+        try {
+            // Create Activity Table
+            db.execSQL(ACTIVITIES_CREATE_TABLE);
+            Log.d("Database", "Temp Activity Table Created");
+            db.execSQL("insert into Activities(Title) values('Schlafen'); ");
+            db.execSQL("insert into Activities(Title) values('Essen/Trinken'); ");
+            db.execSQL("insert into Activities(Title) values('Körperpflege'); ");
+            db.execSQL("insert into Activities(Title) values('Transportmittel benutzen'); ");
+            db.execSQL("insert into Activities(Title) values('Entspannen'); ");
+            db.execSQL("insert into Activities(Title) values('Fortbewegen(mit Gehilfe)'); ");
+            db.execSQL("insert into Activities(Title) values('Medicamente einnehmen'); ");
+            db.execSQL("insert into Activities(Title) values('Einkaufen'); ");
+            db.execSQL("insert into Activities(Title) values('Hausarbeit'); ");
+            db.execSQL("insert into Activities(Title) values('Essen zubereiten'); ");
+            db.execSQL("insert into Activities(Title) values('Geselligkeit'); ");
+            db.execSQL("insert into Activities(Title) values('Fortbewegen'); ");
+            db.execSQL("insert into Activities(Title) values('Schreibtischarbeit'); ");
+            db.execSQL("insert into Activities(Title) values('Sport'); ");
+            // Create SubActivities Table
+            db.execSQL(SUB_ACTIVITIES_CREATE_TABLE);
+            Log.d("Database", "Sub Activities Table Created");
 
-        // Create Activity Table
-        db.execSQL(ACTIVITIES_CREATE_TABLE);
-        Log.d("Database", "Temp Activity Table Created");
-        db.execSQL("insert into Activities(Title) values('Schlafen'); ");
-        db.execSQL("insert into Activities(Title) values('Essen/Trinken'); ");
-        db.execSQL("insert into Activities(Title) values('Körperpflege'); ");
-        db.execSQL("insert into Activities(Title) values('Transportmittel benutzen'); ");
-        db.execSQL("insert into Activities(Title) values('Entspannen'); ");
-        db.execSQL("insert into Activities(Title) values('Fortbewegen(mit Gehilfe)'); ");
-        db.execSQL("insert into Activities(Title) values('Medicamente einnehmen'); ");
-        db.execSQL("insert into Activities(Title) values('Einkaufen'); ");
-        db.execSQL("insert into Activities(Title) values('Hausarbeit'); ");
-        db.execSQL("insert into Activities(Title) values('Essen zubereiten'); ");
-        db.execSQL("insert into Activities(Title) values('Geselligkeit'); ");
-        db.execSQL("insert into Activities(Title) values('Fortbewegen'); ");
-        db.execSQL("insert into Activities(Title) values('Schreibtischarbeit'); ");
-        db.execSQL("insert into Activities(Title) values('Sport'); ");
-        // Create SubActivities Table
-        db.execSQL(SUB_ACTIVITIES_CREATE_TABLE);
-        Log.d("Database", "Sub Activities Table Created");
+            // Create Location Table
+            db.execSQL(LOCATION_CREATE_TABLE);
+            Log.d("Database", "Location Table Created");
+            db.execSQL("insert into Location(Latitude, Longtitude, Title) values (-1,-1,'Other'); ");   //if the location is unknown
 
-        // Create Location Table
-        db.execSQL(LOCATION_CREATE_TABLE);
-        Log.d("Database", "Location Table Created");
-        db.execSQL("insert into Location(Latitude, Longtitude, Title) values (-1,-1,'Other'); ");   //if the location is unknown
+            //Create ActivityList Table
+            db.execSQL(ACTIVITYLIST_CREATE_TABLE);
+            Log.d("Database", "Routine Table Created");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 09:05' , '2016-01-01 09:30'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 09:30' , '2016-01-01 10:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 10:03' , '2016-01-01 13:55'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 13:55' , '2016-01-01 14:45'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 15:00' , '2016-01-01 19:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 19:03' , '2016-01-01 19:40'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 19:45' , '2016-01-01 20:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-01 23:59'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-02 00:00' , '2016-01-02 09:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-02 09:05' , '2016-01-02 09:30'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-02 09:30' , '2016-01-02 10:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-02 10:03' , '2016-01-02 13:55'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-02 13:55' , '2016-01-02 14:45'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-02 15:00' , '2016-01-02 19:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-02 19:03' , '2016-01-02 19:40'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-02 19:45' , '2016-01-0 20:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-02 20:00' , '2016-01-02 23:59'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-03 00:00' , '2016-01-03 09:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-03 09:05' , '2016-01-03 09:30'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-03 09:30' , '2016-01-03 10:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-03 10:03' , '2016-01-03 13:55'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-03 13:55' , '2016-01-03 14:45'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-03 15:00' , '2016-01-03 19:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-03 19:03' , '2016-01-03 19:40'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-03 19:45' , '2016-01-03 20:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-03 20:00' , '2016-01-03 23:59'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-04 00:00' , '2016-01-04 09:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-04 09:05' , '2016-01-04 09:30'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-04 09:30' , '2016-01-04 10:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-04 10:03' , '2016-01-04 13:55'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-04 13:55' , '2016-01-04 14:45'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-04 15:00' , '2016-01-04 19:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-04 19:03' , '2016-01-04 19:40'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-04 19:45' , '2016-01-04 20:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-04 20:00' , '2016-01-04 23:59'); ");
 
-        //Create ActivityList Table
-        db.execSQL(ACTIVITYLIST_CREATE_TABLE);
-        Log.d("Database", "Routine Table Created");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 09:05' , '2016-01-01 09:30'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 09:30' , '2016-01-01 10:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 10:03' , '2016-01-01 13:55'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 13:55' , '2016-01-01 14:45'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 15:00' , '2016-01-01 19:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 19:03' , '2016-01-01 19:40'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 19:45' , '2016-01-01 20:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 20:00' , '2016-01-01 23:59'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-02 00:00' , '2016-01-02 09:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-02 09:05' , '2016-01-02 09:30'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-02 09:30' , '2016-01-02 10:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-02 10:03' , '2016-01-02 13:55'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-02 13:55' , '2016-01-02 14:45'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-02 15:00' , '2016-01-02 19:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-02 19:03' , '2016-01-02 19:40'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-02 19:45' , '2016-01-0 20:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-02 20:00' , '2016-01-02 23:59'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-03 00:00' , '2016-01-03 09:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-03 09:05' , '2016-01-03 09:30'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-03 09:30' , '2016-01-03 10:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-03 10:03' , '2016-01-03 13:55'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-03 13:55' , '2016-01-03 14:45'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-03 15:00' , '2016-01-03 19:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-03 19:03' , '2016-01-03 19:40'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-03 19:45' , '2016-01-03 20:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-03 20:00' , '2016-01-03 23:59'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-04 00:00' , '2016-01-04 09:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-04 09:05' , '2016-01-04 09:30'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-04 09:30' , '2016-01-04 10:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-04 10:03' , '2016-01-04 13:55'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-04 13:55' , '2016-01-04 14:45'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-04 15:00' , '2016-01-04 19:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-04 19:03' , '2016-01-04 19:40'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-04 19:45' , '2016-01-04 20:00'); ");
-        db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-04 20:00' , '2016-01-04 23:59'); ");
+            //db.close();
 
-        //db.close();
+            //Create BloodSugar Table
+            db.execSQL(MEASUREMENT_CREATE_TABLE);
+            Log.d("Database", "Measurement Table Created");
 
-        //Create Profile Table
-        db.execSQL(PROFILE_CREATE_TABLE);
-        Log.d("Database", "Profile Table Created");
+            //Create Profile Table
+            db.execSQL(PROFILE_CREATE_TABLE);
+            Log.d("Database", "Profile Table Created");
 
-        //Create BloodSugar Table
-        db.execSQL(BLOODSUGAR_CREATE_TABLE);
-        Log.d("Location db", "Bloodsugar Table Created");
+            //db.close();
+        }catch(Exception e)
+        {
+            e.getMessage();
+        }
        // db.close();
     }
 
@@ -256,14 +262,48 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
-    /*
-    JW: Inserts a new bloodsugar entry
+    /***
+     * Insert a new bloodsugar level
+     * @param handler
+     * @param profile_id
+     * @param bloodsugar_level
+     * @param measure_unit
      */
-    public void InsertBloodsugar(DataBaseHandler handler, int idBloodsugar, double bloodsugar_level, String measurement) {
+    public void InsertBloodsugar(DataBaseHandler handler, int profile_id, double bloodsugar_level, String measure_unit) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         long tslong = System.currentTimeMillis() / 1000;
-        db1.execSQL("insert into History_Bloodsugar(id_bloodsugar, bloodsugar_level, timestamp, bloodsugar_measure) values(" + idBloodsugar + ","
-                + bloodsugar_level + " , '" + tslong + "' , '" +measurement+"' ); ");
+        db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
+                + bloodsugar_level + " , '" + tslong + "' , '" +measure_unit+"' , 'bloodsugar');");
+        db1.close();
+    }
+
+    /***
+     * Insert a new insulin level
+     * @param handler
+     * @param profile_id
+     * @param insulin
+     * @param measure_unit
+     */
+    public void InsertInsulin(DataBaseHandler handler, int profile_id, double insulin, String measure_unit) {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        long tslong = System.currentTimeMillis() / 1000;
+        db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
+                + insulin + " , '" + tslong + "' , '" +measure_unit+"' , 'insulin');");
+        db1.close();
+    }
+
+    /***
+     * Insert a new weight measurement
+     * @param handler
+     * @param profile_id
+     * @param weight
+     * @param measure_unit
+     */
+    public void InsertWeight(DataBaseHandler handler, int profile_id, double weight, String measure_unit) {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        long tslong = System.currentTimeMillis() / 1000;
+        db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
+                + weight + " , '" + tslong + "' , '" +measure_unit+"' , 'weight');");
         db1.close();
     }
 
@@ -288,23 +328,30 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param handler
      * @return
      */
-    public String[] getLastMeasurement(DataBaseHandler handler){
-        SQLiteDatabase db1 = handler.getWritableDatabase();
-        String[] result = new String[2];
-        Cursor cursor = db1.rawQuery("SELECT bloodsugar_level,bloodsugar_measure " +
-                "FROM History_Bloodsugar " +
-                "where id_bloodsugar = 1 " +
-                "ORDER BY timestamp DESC;", null);
-        cursor.moveToFirst();
-        if(cursor.getCount() >= 1) {
-            result[0] = cursor.getString(0);
-            result[1] = cursor.getString(1);
+    public String[] getLastBloodsugarMeasurement(DataBaseHandler handler, int profile_id){
+        try {
+            SQLiteDatabase db1 = handler.getWritableDatabase();
+            String[] result = new String[2];
+            Cursor cursor = db1.rawQuery("SELECT measure_value,measure_unit " +
+                    "FROM " + MEASUREMENT_TABLE_NAME + " " +
+                    "where profile_ID = " + profile_id + " " +
+                    "and measure_kind = 'bloodsugar'" +
+                    "ORDER BY timestamp DESC;", null);
+            cursor.moveToFirst();
+            if (cursor.getCount() >= 1) {
+                result[0] = cursor.getString(0);
+                result[1] = cursor.getString(1);
+            } else {
+                result = null;
+            }
+            return result;
         }
-        else
+        catch (Exception e)
         {
-            result = null;
+            return null;
         }
-        return result;
+
+
     }
     /**
      * Ivo Gosemann 18.03.2016

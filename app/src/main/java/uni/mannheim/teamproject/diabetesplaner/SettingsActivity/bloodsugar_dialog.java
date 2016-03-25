@@ -67,6 +67,12 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         bloodsugar_level = (NumberPicker) view.findViewById(R.id.numberPicker);
         String[] nums = new String[50];
         int measureID = 0;
+
+        if(measure.equals(""))
+        {
+            measure = "mg/dl";
+        }
+
         for(int i = 0;i<nums.length;i++) {
             if (measure.equals("%")) {
                 percentage.setActivated(true);
