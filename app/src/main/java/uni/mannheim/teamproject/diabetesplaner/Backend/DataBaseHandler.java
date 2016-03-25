@@ -97,8 +97,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String PROFILE_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " +
                     PROFILE_TABLE_NAME +
-                    " (id INTEGER PRIMARY KEY, FK_MEASUREMENTS INTEGER, age INTEGER, diabetes_type INTEGER, current_bloodsugar_level double, " +
-                    "FOREIGN KEY (FK_MEASUREMENTS) REFERENCES "+MEASUREMENT_TABLE_NAME+"(profile_ID));";
+                    " (id INTEGER PRIMARY KEY, name VARCHAR(20), lastname VARCHAR(20), " +
+                    "age INTEGER, diabetes_type INTEGER, " + "timestamp Timestamp, " +
+                    "FOREIGN KEY (id) REFERENCES "+MEASUREMENT_TABLE_NAME+"(profile_ID));";
     public static final String PROFILE_SELECT =
             "SELECT * FROM " + PROFILE_TABLE_NAME + ";";
     public static final String PROFILE_DELETE_TABLE =
@@ -262,6 +263,20 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
+
+    public void InsertProfile(DataBaseHandler handler, String name, String surename, int age)
+    {
+        try {
+            SQLiteDatabase db1 = handler.getWritableDatabase();
+            long tslong = System.currentTimeMillis() / 1000;
+            db1.execSQL("insert into " + PROFILE_TABLE_NAME + "(name, lastname, age, timestamp)" +
+                    " values('" + name + "' , '" + surename + "' , '" + age + "' , '" + tslong + "' );");
+            db1.close();
+        }catch(Exception e)
+        {
+            e.getMessage();
+        }
+    }
     /***
      * Insert a new bloodsugar level
      * @param handler
@@ -324,6 +339,32 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     /***
+     * returns the last measurement of blood sugar and insulin of the selected user
+     * @param handler
+     * @return
+     */
+    public Cursor getAllMeasurements(DataBaseHandler handler, int profile_id) {
+        try {
+            SQLiteDatabase db1 = handler.getWritableDatabase();
+            String[] result = new String[2];
+            Cursor cursor = db1.rawQuery("SELECT timestamp,measure_value,measure_unit " +
+                    "FROM " + MEASUREMENT_TABLE_NAME + " " +
+                    "where profile_ID = " + profile_id + " " +
+                    "and (measure_kind = 'bloodsugar' OR measure_kind = 'insulin')" +
+                    "ORDER BY timestamp DESC;", null);
+            if (cursor.getCount() >= 1) {
+                return cursor;
+            } else {
+                result = null;
+            }
+            return cursor;
+        }catch(Exception e)
+        {
+            return null;
+        }
+    }
+
+    /***
      * returns the last measurement of the selected user
      * @param handler
      * @return
@@ -363,7 +404,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public ArrayList<Integer> getAllInsulin(DataBaseHandler handler, Date date) {
         SQLiteDatabase db = handler.getWritableDatabase();
         String [] dayStartEnd = getDayStartEnd(date);
-        Cursor cursor = db.rawQuery("select insulin_dosage from History_Bloodsugar where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"';",null);
+        Cursor cursor = db.rawQuery("select measure_value from  " + MEASUREMENT_TABLE_NAME + " " +
+                "where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"'" +
+                "AND measure_kind = 'insulin';",null);
         ArrayList<Integer> insulinValues = new ArrayList<>();
         if(cursor.moveToFirst()){
             do {
@@ -385,7 +428,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public ArrayList<Integer> getAllBloodSugar(DataBaseHandler handler, Date date){
         SQLiteDatabase db = handler.getWritableDatabase();
         String [] dayStartEnd = getDayStartEnd(date);
-        Cursor cursor = db.rawQuery("select bloodsugar_level from History_Bloodsugar where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"';",null);
+        Cursor cursor = db.rawQuery("select measure_value from  " + MEASUREMENT_TABLE_NAME + " "  +
+                "where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"'" +
+                "AND measure_kind = 'bloodsugar';",null);
         ArrayList<Integer> bloodsugarValues = new ArrayList<>();
         if(cursor.moveToFirst()){
             do{
@@ -407,7 +452,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public ArrayList<String> getAllTimestamps(DataBaseHandler handler,Date date){
         SQLiteDatabase db = handler.getWritableDatabase();
         String[] dayStartEnd= getDayStartEnd(date);
-        Cursor cursor = db.rawQuery("select timestamp from History_Bloodsugar where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"';",null);
+        Cursor cursor = db.rawQuery("select timestamp from  " + MEASUREMENT_TABLE_NAME + " " +
+                "where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"';",null);
         ArrayList<String> timestampList = new ArrayList<>();
         if(cursor.moveToFirst()){
             do{

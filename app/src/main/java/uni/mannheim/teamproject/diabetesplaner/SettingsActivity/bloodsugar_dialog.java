@@ -139,8 +139,9 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                 measure_value =nums[bloodsugar_level.getValue()];
                 database.InsertBloodsugar(database, 1, Double.parseDouble(measure_value), measure);
                 communicator.respond(null,String.valueOf(nums[bloodsugar_level.getValue()]), measure, 1);
-                Toast.makeText(getActivity(), "Blood sugar level: " + String.valueOf(bloodsugar_level.getValue()) + " stored"
-                        , Toast.LENGTH_LONG);
+                Toast.makeText(getActivity(), "Blood sugar level: " + measure_value + " "
+                        + measure + " stored"
+                        , Toast.LENGTH_LONG).show();
                 dismiss();
             }else{
                 Log.d("bloodsugar_entry","Nothing changed");

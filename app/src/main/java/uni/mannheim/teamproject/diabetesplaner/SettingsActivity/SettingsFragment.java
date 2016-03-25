@@ -186,15 +186,18 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 TextView name = (TextView) header.findViewById(R.id.username);
                 name.setText(nameDialog.getText());
                 // Log.d(TAG, String.valueOf(getActivity().findViewById(R.id.username)));
-
+                database.InsertProfile(database,nameDialog.getText().toString().split(" ")[0],
+                        nameDialog.getText().toString().split(" ")[1],20);
             } else if (editTextPref.getKey().equals("pref_key_weight")) {
 
                 if (pref_weight_measurement.getEntry().equals("Kilogramm")) {
                     editTextPref.setSummary(nameDialog.getText() + " kg");
+                    database.InsertWeight(database,1,Double.parseDouble(nameDialog.getText().toString()),"kg");
                 }
 
                 if (pref_weight_measurement.getEntry().equals("Pound")) {
                     editTextPref.setSummary(nameDialog.getText() + " lbs");
+                    database.InsertWeight(database,1,Double.parseDouble(nameDialog.getText().toString()),"lbs");
                 }
             }
         }
