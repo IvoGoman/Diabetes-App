@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -287,6 +288,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void InsertBloodsugar(DataBaseHandler handler, int profile_id, double bloodsugar_level, String measure_unit) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         long tslong = System.currentTimeMillis() / 1000;
+        Log.d("Database","tslong InsertBloodSugar"+tslong);
         db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
                 + bloodsugar_level + " , '" + tslong + "' , '" +measure_unit+"' , 'bloodsugar');");
         db1.close();
@@ -403,7 +405,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public ArrayList<Integer> getAllInsulin(DataBaseHandler handler, Date date) {
         SQLiteDatabase db = handler.getWritableDatabase();
-        String [] dayStartEnd = getDayStartEnd(date);
+        Long [] dayStartEnd = getDayStartEnd(date);
+        Log.d("Database","timestamps of retrieval"+dayStartEnd[0]+" "+dayStartEnd[1]);
         Cursor cursor = db.rawQuery("select measure_value from  " + MEASUREMENT_TABLE_NAME + " " +
                 "where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"'" +
                 "AND measure_kind = 'insulin';",null);
@@ -427,7 +430,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public ArrayList<Integer> getAllBloodSugar(DataBaseHandler handler, Date date){
         SQLiteDatabase db = handler.getWritableDatabase();
-        String [] dayStartEnd = getDayStartEnd(date);
+        Long [] dayStartEnd = getDayStartEnd(date);
         Cursor cursor = db.rawQuery("select measure_value from  " + MEASUREMENT_TABLE_NAME + " "  +
                 "where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"'" +
                 "AND measure_kind = 'bloodsugar';",null);
@@ -451,7 +454,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public ArrayList<String> getAllTimestamps(DataBaseHandler handler,Date date){
         SQLiteDatabase db = handler.getWritableDatabase();
-        String[] dayStartEnd= getDayStartEnd(date);
+        Long[] dayStartEnd= getDayStartEnd(date);
         Cursor cursor = db.rawQuery("select timestamp from  " + MEASUREMENT_TABLE_NAME + " " +
                 "where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"';",null);
         ArrayList<String> timestampList = new ArrayList<>();
@@ -467,12 +470,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * Ivo Gosemann 18.03.2016
-     * Making Leonids code reusable to calculate the start and end of a day
+     * Reusing Leonids Code to calculate the start and end of a day
+     * The start and end are then returned as unix timestamps
      * @param date
      * @return array with 2 fields [0] = startofday ; [1] = endofday
      */
-    private String[] getDayStartEnd(Date date) {
+    private Long[] getDayStartEnd(Date date) {
         String startOfDay, endOfDay;
+        Timestamp timestampStart=null,timestampEnd =null;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
         int Year = calendar.get(Calendar.YEAR);
@@ -480,7 +485,17 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
         startOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
         endOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
-        String [] startEnd = {startOfDay,endOfDay};
+        try{
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+            Date parsedStart = dateFormat.parse(startOfDay);
+            Date parsedEnd = dateFormat.parse(endOfDay);
+            timestampStart = new java.sql.Timestamp(parsedStart.getTime());
+            timestampEnd = new java.sql.Timestamp(parsedEnd.getTime());
+                    }catch(Exception e){//this generic but you can control another types of exception
+            e.printStackTrace();
+        }
+
+        Long [] startEnd = {timestampStart.getTime()/1000, timestampEnd.getTime()/1000};
         return startEnd;
     }
 
