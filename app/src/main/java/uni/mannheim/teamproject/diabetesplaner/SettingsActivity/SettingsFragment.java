@@ -1,6 +1,7 @@
 package uni.mannheim.teamproject.diabetesplaner.SettingsActivity;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.Notification;
@@ -8,9 +9,11 @@ import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.ComponentName;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.preference.CheckBoxPreference;
@@ -53,73 +56,66 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+            // Load the preferences from an XML resource
+            addPreferencesFromResource(R.xml.preferences);
+            //List for the selection of the weight unit
+            pref_weight_measurement = (ListPreference) findPreference("pref_weightOptions");
+            //Edit field for the entry of the weight
+            pref_weight = (EditTextPreference) findPreference("pref_key_weight");
+            database = AppGlobal.getHandler();
+            sharedPrefs = getPreferenceManager().getSharedPreferences();
 
-        // Load the preferences from an XML resource
-        addPreferencesFromResource(R.xml.preferences);
-        pref_weight_measurement = (ListPreference) findPreference("pref_weightOptions");
-        pref_weight = (EditTextPreference) findPreference("pref_key_weight");
-        database = AppGlobal.getHandler();
-        sharedPrefs = getPreferenceManager().getSharedPreferences();
-
-        //Bloodsugar handling
-        initialize_bloodsugar();
-
-
-        final Preference pref_add_Activity = findPreference("pref_add_activity");
-        //pref_EditText.setDialogLayoutResource(1);
-        pref_add_Activity.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                FragmentManager manager = getFragmentManager();
-                edit_activitylist_dialog ea = new edit_activitylist_dialog();
-                ea.show(manager, "Test");
-                return true;
-            }
-        });
+            //Bloodsugar handling
+            initialize_bloodsugar();
+            initialize_weight();
 
 
-        //define preference for the onclick-method
-        final CheckBoxPreference pref_datacollection = (CheckBoxPreference) findPreference("pref_datacollection");
-        pref_datacollection.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-            @Override
-            public boolean onPreferenceClick(Preference preference) {
-                CheckBoxPreference pref = (CheckBoxPreference) findPreference("checkbox_preference");
-
-                //show the notifications only if the data collection is started
-                if (pref_datacollection.isChecked()) {
-                    showNotification(1);
-                } else {
-                    showNotification(2);
+            final Preference pref_add_Activity = findPreference("pref_add_activity");
+            //pref_EditText.setDialogLayoutResource(1);
+            pref_add_Activity.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    FragmentManager manager = getFragmentManager();
+                    edit_activitylist_dialog ea = new edit_activitylist_dialog();
+                    ea.show(manager, "Test");
+                    return true;
                 }
-
-                return true;
-            }
-        });
-
-        //Write User Data in the Summary Fields
-
-        final EditTextPreference pref_name = (EditTextPreference) findPreference("pref_key_name");
-        String Test1 = sharedPrefs.getString("pref_key_name", "Vorname, Name");
-        pref_name.setSummary(Test1);
+            });
 
 
-        String Test2 = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
-        if (pref_weight_measurement.getValue() == null) {
-            pref_weight.setSummary(Test2 + "kg");
-        }
-        else if (pref_weight_measurement.getValue().equals("Kilogramm"))
+            //define preference for the onclick-method
+            final CheckBoxPreference pref_datacollection = (CheckBoxPreference) findPreference("pref_datacollection");
+            pref_datacollection.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    CheckBoxPreference pref = (CheckBoxPreference) findPreference("checkbox_preference");
+                    //show the notifications only if the data collection is started
+                    if (pref_datacollection.isChecked()) {
+                        showNotification(1);
+                    } else {
+                        showNotification(2);
+                    }
+                    return true;
+                }
+            });
+
+            //Write User Data in the Summary Fields
+
+            final EditTextPreference pref_name = (EditTextPreference) findPreference("pref_key_name");
+            String Test1 = sharedPrefs.getString("pref_key_name", "Vorname, Name");
+            pref_name.setSummary(Test1);
+
+
+            String Test2 = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
+
+
+
+        }catch(Exception e)
         {
-            if (pref_weight_measurement.getValue() == null) {
-
-            } else if (pref_weight_measurement.getValue().equals("Kilogram")) {
-                pref_weight.setSummary(Test2 + " kg");
-            } else if (pref_weight_measurement.getValue().equals("Pound")) {
-                pref_weight.setSummary(Test2 + " lbs");
-            }
-            pref_weight_measurement.setSummary(sharedPrefs.getString("pref_weightOptions", "Test"));
+            e.getMessage();
         }
     }
-
 
     public boolean onPreferenceChanged(Preference.OnPreferenceChangeListener preference) {
         String old_weight = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
@@ -170,6 +166,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        try{
         String[] weight = new String[2];
         //checks if Preference with key is EditTextPreference
         //if so puts the edited text to the summary field. Checks valid input
@@ -186,18 +183,18 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 TextView name = (TextView) header.findViewById(R.id.username);
                 name.setText(nameDialog.getText());
                 // Log.d(TAG, String.valueOf(getActivity().findViewById(R.id.username)));
-                database.InsertProfile(database,nameDialog.getText().toString().split(" ")[0],
-                        nameDialog.getText().toString().split(" ")[1],20);
+                database.InsertProfile(database, nameDialog.getText().toString().split(" ")[0],
+                        nameDialog.getText().toString().split(" ")[1], 20);
             } else if (editTextPref.getKey().equals("pref_key_weight")) {
 
                 if (pref_weight_measurement.getEntry().equals("Kilogramm")) {
                     editTextPref.setSummary(nameDialog.getText() + " kg");
-                    database.InsertWeight(database,1,Double.parseDouble(nameDialog.getText().toString()),"kg");
+                    database.InsertWeight(database, 1, Double.parseDouble(nameDialog.getText().toString()), "kg");
                 }
 
                 if (pref_weight_measurement.getEntry().equals("Pound")) {
                     editTextPref.setSummary(nameDialog.getText() + " lbs");
-                    database.InsertWeight(database,1,Double.parseDouble(nameDialog.getText().toString()),"lbs");
+                    database.InsertWeight(database, 1, Double.parseDouble(nameDialog.getText().toString()), "lbs");
                 }
             }
         }
@@ -209,26 +206,45 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             EditTextPreference prefweight = (EditTextPreference) findPreference("pref_key_weight");
             String old_weight = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
             String new_weight = "";
+
             if (pref_weight_measurement.getValue().equals("Kilogramm")) {
-                new_weight = String.valueOf(lbs_to_kg(Double.parseDouble(old_weight)));
-                prefweight.setText(new_weight);
-                prefweight.setSummary(new_weight + " kg");
-                pref_weight_measurement.setSummary("Kilogramm");
-                //Test if necessary
-                pref_weight_editor.putFloat("pref_key_weight", Float.parseFloat(new_weight));
-                pref_weight_editor.commit();
-                pref_weight_editor.apply();
+                try {
+                    new_weight = String.valueOf(lbs_to_kg(Double.parseDouble(old_weight)));
+                    prefweight.setText(new_weight);
+                    prefweight.setSummary(new_weight + " kg");
+                    pref_weight_measurement.setSummary("Kilogramm");
+                    //Test if necessary
+                    pref_weight_editor.putFloat("pref_key_weight", Float.parseFloat(new_weight));
+                    pref_weight_editor.commit();
+                    pref_weight_editor.apply();
+                } catch (Exception e) {
+                    Log.d("Weight", "No weight specified");
+                    pref_weight_measurement.setSummary("Kilogramm");
+                    pref_weight_measurement.setValueIndex(0);
+                }
+
             } else if (pref_weight_measurement.getValue().equals("Pound")) {
-                new_weight = String.valueOf(kg_to_lbs(Double.parseDouble(old_weight)));
-                pref_weight_measurement.setSummary("Pound");
-                prefweight.setText(new_weight);
-                prefweight.setSummary(new_weight + " lbs");
-                pref_weight_editor.putFloat("pref_key_weight", Float.parseFloat(new_weight));
-                pref_weight_editor.commit();
-                pref_weight_editor.apply();
+                try {
+                    new_weight = String.valueOf(kg_to_lbs(Double.parseDouble(old_weight)));
+                    pref_weight_measurement.setSummary("Pound");
+                    prefweight.setText(new_weight);
+                    prefweight.setSummary(new_weight + " lbs");
+                    pref_weight_editor.putFloat("pref_key_weight", Float.parseFloat(new_weight));
+                    pref_weight_editor.commit();
+                    pref_weight_editor.apply();
+                } catch (Exception e) {
+                    Log.d("Weight", "No weight specified");
+                    pref_weight_measurement.setSummary("Pound");
+                    pref_weight_measurement.setValueIndex(1);
+                }
             }
         }
+        }catch(Exception e)
+        {
+            e.getMessage();
+        }
     }
+
 
 
     /***
@@ -245,6 +261,36 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         }
     }
 
+    /***
+     * initializes the weight settings
+     */
+    private void initialize_weight()
+    {
+        try {
+            if(pref_weight_measurement.getValue() != null) {
+                if (pref_weight_measurement.getValue().equals("")) {
+                    pref_weight_measurement.setValueIndex(0);
+                    pref_weight_measurement.setSummary("Kilogram");
+                } else if (pref_weight_measurement.getValue().equals("Kilogram")) {
+                    pref_weight_measurement.setValueIndex(0);
+                    pref_weight_measurement.setSummary("Kilogram");
+
+                } else if (pref_weight_measurement.getValue().equals("Pound")) {
+                    pref_weight_measurement.setValueIndex(1);
+                    pref_weight_measurement.setSummary("Pound");
+                } else {
+                    pref_weight_measurement.setValueIndex(0);
+                    pref_weight_measurement.setSummary("Kilogram");
+                }
+            }
+        }catch (Exception e)
+        {
+            e.getMessage();
+        }
+    }
+    /***
+     * initializes the blood sugar settings
+     */
     private void initialize_bloodsugar()
     {
         if(database.getLastBloodsugarMeasurement(database,1) != null) {

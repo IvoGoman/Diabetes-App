@@ -71,6 +71,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         if(measure.equals(""))
         {
             measure = "mg/dl";
+
         }
 
         for(int i = 0;i<nums.length;i++) {

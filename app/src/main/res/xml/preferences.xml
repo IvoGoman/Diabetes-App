@@ -11,15 +11,23 @@
             android:summary="@string/pref_name_summary"
             android:title="@string/pref_name"
             android:inputType="textPersonName"/>
+
+        <Preference
+            android:key="pref_key_bloodsugar"
+            android:summary="@string/pref_blood_sugar_summary"
+            android:title="@string/pref_blood_sugar"/>
         <EditTextPreference
             android:key="pref_key_weight"
             android:summary="@string/pref_weight_summary"
             android:title="@string/pref_weight"
             android:inputType="numberDecimal"/>
-        <Preference
-            android:key="pref_key_bloodsugar"
-            android:summary="@string/pref_blood_sugar_summary"
-            android:title="@string/pref_blood_sugar"/>
+        <ListPreference
+            android:entries="@array/weightOptions"
+            android:entryValues="@array/weightOptions"
+            android:key="pref_weightOptions"
+            android:summary="@string/pref_weight_measurement_summary"
+            android:title="@string/pref_weight_measurement" />
+        //TODO: Saving for this point is missing
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_notification"
@@ -82,13 +90,7 @@
 
             //TODO: String.xml anpassen
 
-        <ListPreference
-            android:entries="@array/weightOptions"
-            android:entryValues="@array/weightOptions"
-            android:key="pref_weightOptions"
-            android:summary="@string/pref_weight_measurement_summary"
-            android:title="@string/pref_weight_measurement" />
-            //TODO: Saving for this point is missing
+
 
         <uni.mannheim.teamproject.diabetesplaner.SettingsActivity.MyDialogPreference
             android:key="pref_key_help"
