@@ -692,24 +692,39 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             case 6:
                 return R.color.good;
             case 7:
-                return R.color.good;
+                return R.color.no_influence;
             case 8:
                 return R.color.no_influence;
             case 9:
                 return R.color.no_influence;
             case 10:
-                return R.color.no_influence;
+                return R.color.good;
             case 11:
                 return R.color.good;
             case 12:
-                return R.color.good;
+                setIntensityColor(activityItem.getIntensity());
             case 13:
-                return R.color.potential_bad;
-            case 14:
-                return R.color.good;
+                setIntensityColor(activityItem.getIntensity());
             default:
                 return R.color.no_influence;
         }
+    }
+
+    /**
+     * returns the color with respect to the intensity of an acitiviy
+     * returns default color if intensity == null
+     * @param intensity
+     * @return
+     */
+    public int setIntensityColor(Integer intensity){
+        if(intensity != null){
+            switch (intensity){
+                case 0: return R.color.good;
+                case 1: return R.color.potential_bad;
+                case 2: return R.color.bad;
+            }
+        }
+        return R.color.no_influence;
     }
 
     @Override

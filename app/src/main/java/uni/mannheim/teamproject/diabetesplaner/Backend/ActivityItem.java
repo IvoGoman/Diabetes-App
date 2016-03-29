@@ -21,6 +21,7 @@ public class ActivityItem {
     private String meal;
     private String imagePath;
     private Date date;
+    private Integer intensity;
 
     /**
      * constructor for an Activity Item with times as Date
@@ -51,6 +52,14 @@ public class ActivityItem {
         this.endtime = endtime;
         this.meal = meal;
         this.imagePath = imagePath;
+    }
+
+    public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime, Integer intensity) {
+        this.activityId = activityId;
+        this.subactivityId = subactivityId;
+        this.starttime = starttime;
+        this.endtime = endtime;
+        this.intensity = intensity;
     }
 
     public ActivityItem(ActivityItem activityItem){
@@ -215,24 +224,22 @@ public class ActivityItem {
                 return 4;
             case "Entspannen":
                 return 5;
-            case "Fortbewegen (mit Gehilfe)":
-                return 6;
             case "Medikamente einnehmen":
-                return 7;
+                return 6;
             case "Einkaufen":
-                return 8;
+                return 7;
             case "Hausarbeit":
-                return 9;
+                return 8;
             case "Essen zubereiten":
-                return 10;
+                return 9;
             case "Geselligkeit":
-                return 11;
+                return 10;
             case "Fortbewegen":
-                return 12;
+                return 11;
             case "Schreibtischarbeit":
-                return 13;
+                return 12;
             case "Sport":
-                return 14;
+                return 13;
             default:
                 return 0;
         }
@@ -256,5 +263,13 @@ public class ActivityItem {
 
     public String getImagePath(){
         return imagePath;
+    }
+
+    public void setIntensity(Integer intensity){
+        this.intensity = intensity;
+    }
+
+    public Integer getIntensity(){
+        return this.intensity;
     }
 }

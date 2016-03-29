@@ -102,4 +102,8 @@
     <string name="pref_predModel">Vorhersagen</string>
     <string name="insulinTextField">Einheit/mL</string>
     <string name="submit">Absenden</string>
+    <string name="intensity">Intensität</string>
+    <string name="high">hoch</string>
+    <string name="low">niedrig</string>
+    <string name="medium">mittel</string>
 </resources>

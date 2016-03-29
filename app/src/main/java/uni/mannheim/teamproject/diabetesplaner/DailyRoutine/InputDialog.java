@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -15,7 +14,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.Spinner;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.io.File;
@@ -42,6 +43,8 @@ public class InputDialog extends DialogFragment {
     private String date;
     private Date startDate;
     private Date endDate;
+    private Integer intensity;
+
 
     private TimePickerFragment timePickerFragmentStart;
     private TimePickerFragment timePickerFragmentEnd;
@@ -50,6 +53,9 @@ public class InputDialog extends DialogFragment {
     private String selectedItem;
     private static String imagePath;
 
+    private SeekBar intensityBar;
+    private TableRow intensityText;
+    private TextView intensityValue;
     private ActivityItem activityItem;
     private DayHandler drHandler;
 
@@ -83,6 +89,40 @@ public class InputDialog extends DialogFragment {
     public View getLayout(){
         LayoutInflater inflater = (LayoutInflater) getActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.input_dialog, null);
+
+        //get the layout of the intensity bar, the value TextView and the intensity TableRow
+        intensityText = (TableRow)v.findViewById(R.id.intensity_text);
+        intensityBar = (SeekBar)v.findViewById(R.id.intensity_bar);
+        intensityValue = (TextView)v.findViewById(R.id.intensity_value);
+
+        intensityBar.setProgress(0);
+        intensityBar.setMax(2);
+        if(intensity != null){
+            setIntensityText(intensity);
+            intensityBar.setProgress(intensity);
+        }
+
+        intensityBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener(){
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (fromUser) {
+                    if (progress >= 0 && progress <= intensityBar.getMax()) {
+                        setIntensityText(progress);
+                        seekBar.setSecondaryProgress(progress);
+                    }
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
 
         final TextView mealInput = (TextView) v.findViewById(R.id.meal_input_text);
         mealInputText = (EditText) v.findViewById(R.id.meal_input);
@@ -139,6 +179,13 @@ public class InputDialog extends DialogFragment {
                     imagePath = null;
                     image = null;
                     meal = null;
+                }
+
+                //if activity desk work or sport set the intensity bar to visible, else hide
+                if(activity == 12 || activity == 13){
+                    setIntensityVisible(true);
+                }else{
+                    setIntensityVisible(false);
                 }
             }
 
@@ -311,6 +358,11 @@ public class InputDialog extends DialogFragment {
         setImage(activityItem.getMealImage());
         setImagePath(activityItem.getImagePath());
         setMeal(activityItem.getMeal());
+        setIntensity(activityItem.getIntensity());
+    }
+
+    public void setIntensity(Integer intensity){
+        this.intensity = intensity;
     }
 
     /**
@@ -419,6 +471,37 @@ public class InputDialog extends DialogFragment {
         getActivity().sendBroadcast(mediaScanIntent);
     }
 
+    /**
+     * sets the intensity SeekBar and the intensity TextView to isVisible
+     * @param isVisible true: visible, false: invisible
+     */
+    public void setIntensityVisible(boolean isVisible){
+        if(isVisible){
+            intensityBar.setVisibility(View.VISIBLE);
+            intensityText.setVisibility(View.VISIBLE);
+        }else{
+            intensityBar.setVisibility(View.GONE);
+            intensityText.setVisibility(View.GONE);
+        }
+    }
+
+    /**
+     * sets the intensity text with respect to the seek bar value
+     * @param value
+     */
+    public void setIntensityText(int value){
+        switch (value){
+            case 0:
+                intensityValue.setText(getResources().getString(R.string.low));
+                break;
+            case 1:
+                intensityValue.setText(getResources().getString(R.string.medium));
+                break;
+            case 2:
+                intensityValue.setText(getResources().getString(R.string.high));
+                break;
+        }
+    }
 
 }
 

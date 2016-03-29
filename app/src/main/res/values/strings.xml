@@ -19,6 +19,10 @@
 
     <string name="activity">Activity</string>
     <string name="subactivity">Subactivity</string>
+    <string name="intensity">Intensity</string>
+    <string name="low">low</string>
+    <string name="medium">medium</string>
+    <string name="high">high</string>
 
 
     <!-- Strings related to Settings -->

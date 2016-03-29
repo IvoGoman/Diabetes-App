@@ -62,6 +62,46 @@
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginLeft="16dp"
+        android:layout_marginRight="16dp"
+        >
+
+        <TableRow
+            android:id="@+id/intensity_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="22dp"
+                android:text="@string/intensity"
+                android:gravity="left"
+                android:layout_weight="1"
+                android:layout_column="0"/>
+            <TextView
+                android:id="@+id/intensity_value"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textSize="20dp"
+                android:text="@string/low"
+                android:layout_weight="1"
+                android:gravity="right"
+                android:layout_column="1"/>
+        </TableRow>
+    </TableLayout>
+
+    <SeekBar
+        android:id="@+id/intensity_bar"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:progress="0"
+        android:secondaryProgress="0" />
+
+    <TableLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_weight="0.16"
         android:layout_marginLeft="16dp">
 
