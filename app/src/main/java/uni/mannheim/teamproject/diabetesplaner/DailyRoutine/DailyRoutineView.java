@@ -25,7 +25,6 @@ import android.view.WindowManager;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
@@ -43,8 +42,8 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private String durationAsString;
     private int activity = 0;
     private int subactivity;
-    private String starttime;
-    private String endtime;
+    private Date startDate;
+    private Date endDate;
     private Date date;
     private Double bloodsugar;
     private String meal;
@@ -133,14 +132,14 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         this.activityItem = activityItem;
         this.activity = activityItem.getActivityId();
         this.subactivity = activityItem.getSubactivityId();
-        this.starttime = activityItem.getStarttimeAsString();
-        this.endtime = activityItem.getEndtimeAsString();
         this.meal = activityItem.getMeal();
         this.imagePath = activityItem.getImagePath();
         if(imagePath != null) {
             this.mealImage = Util.getCompressedPic(imagePath);
         }
         this.date = activityItem.getDate();
+        this.startDate = activityItem.getStarttime();
+        this.endDate = activityItem.getEndtime();
 
         init();
     }
@@ -149,8 +148,8 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * inits additional combonents
      */
     public void init(){
-        this.startInMinOfDay = getMinutesOfDay(starttime);
-        this.endInMinOfDay = getMinutesOfDay(endtime);
+        this.startInMinOfDay = getMinutesOfDay(startDate);
+        this.endInMinOfDay = getMinutesOfDay(endDate);
         durationAsString = getDuration();
         setState(false);
         this.setOnTouchListener(this);
@@ -465,9 +464,9 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      //draw duration text
         canvas.drawText(getResources().getString(R.string.duration) + ": " + durationAsString, getWidth() - (int) fontDur.measureText(getResources().getString(R.string.duration) + ": " + durationAsString) - textPadding, sl.getHeight(), fontDur);
         //draw start text
-        canvas.drawText(getResources().getString(R.string.start) + ": " + starttime, textPadding + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
+        canvas.drawText(getResources().getString(R.string.start) + ": " + Util.getTimeInUserFormat(startDate, context), textPadding + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
         //draw end text
-        canvas.drawText(getResources().getString(R.string.end) + ": " + endtime, getWidth() - textPadding - fontDur.measureText(getResources().getString(R.string.end) + ": " + endtime), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
+        canvas.drawText(getResources().getString(R.string.end) + ": " + Util.getTimeInUserFormat(endDate, context), getWidth() - textPadding - fontDur.measureText(getResources().getString(R.string.end) + ": " + Util.getTimeInUserFormat(endDate, context)), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
 
         //draw activity text
         canvas.translate(actRect.left, actRect.top);
@@ -589,11 +588,10 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      */
     private boolean isRunning() {
         Date date = new Date();
-        Calendar calendar = GregorianCalendar.getInstance();
+        Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        int hour = calendar.get(Calendar.HOUR_OF_DAY);
-        int minutes = calendar.get(Calendar.MINUTE);
-        int time = getMinutesOfDay(hour + ":" + minutes);
+
+        int time = getMinutesOfDay(date);
         if (startInMinOfDay <= time && time <= endInMinOfDay) {
             return true;
         } else {
@@ -604,12 +602,11 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     /**
      * checks if activity is finished
      *
-     * @param minutes minutes of actual time
-     * @param hour    hours of actual time
+     * @param date
      * @return isFinished
      */
-    public boolean isFinished(int minutes, int hour) {
-        int time = getMinutesOfDay(hour + ":" + minutes);
+    public boolean isFinished(Date date) {
+        int time = getMinutesOfDay(date);
         if (endInMinOfDay <= time) {
             return true;
         } else {
@@ -620,12 +617,11 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     /**
      * checks if activity is remaining
      *
-     * @param minutes minutes of actual time
-     * @param hour    hours of actual time
+     * @param date
      * @return isRemaining
      */
-    public boolean isRemaining(int minutes, int hour) {
-        int time = getMinutesOfDay(hour + ":" + minutes);
+    public boolean isRemaining(Date date) {
+        int time = getMinutesOfDay(date);
         if (time < startInMinOfDay) {
             return true;
         } else {
@@ -642,19 +638,19 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * @param isArchieved true if daily routine is archieved
      */
     public void setState(boolean isArchieved) {
+        Date date = new Date();
         Calendar c = Calendar.getInstance();
-        int minutes = c.get(Calendar.MINUTE);
-        int hour = c.get(Calendar.HOUR_OF_DAY);
+        c.setTime(date);
 
         if (isArchieved) {
             state = 3;
         } else {
-            if (isRemaining(minutes, hour)) {
+            if (isRemaining(date)) {
                 state = 1;
             } else if (isRunning()) {
                 state = 2;
                 current = this;
-            } else if (isFinished(minutes, hour)) {
+            } else if (isFinished(date)) {
                 state = 3;
             }
         }
@@ -666,9 +662,13 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * @param time a time
      * @return minutes of the day
      */
-    public int getMinutesOfDay(String time) {
-        String[] tmp = time.split(":");
-        return Integer.parseInt(tmp[0]) * 60 + Integer.parseInt(tmp[1]);
+    public int getMinutesOfDay(Date time) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(time);   // assigns calendar to given date
+        int hour = calendar.get(Calendar.HOUR_OF_DAY); // gets hour in 24h format
+        int min = calendar.get(Calendar.MINUTE);
+
+        return hour*60+min;
     }
 
     /**
@@ -902,22 +902,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      */
     public static ArrayList<DailyRoutineView> getSelectedActivities(){
         return selectedActivities;
-    }
-
-    public String getStartTime(){
-        return starttime;
-    }
-
-    public void setStarttime(String starttime){
-        this.starttime = starttime;
-    }
-
-    public String getEndTime(){
-        return endtime;
-    }
-
-    public void setEndtime(String endtime){
-        this.endtime = endtime;
     }
 
     public void setActivity(int activity){
