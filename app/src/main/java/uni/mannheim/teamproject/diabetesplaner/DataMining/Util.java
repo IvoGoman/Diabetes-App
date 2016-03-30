@@ -553,6 +553,7 @@ public class Util {
 	}
 
 	/**
+	 * @author Stefan 30.03.2016
 	 * returns time in format HH:mm if timeformat is 24h and in format KK:mm AM/PM if timeformat is 12h
 	 * @param date
 	 * @return String
@@ -568,5 +569,4 @@ public class Util {
 		}
 		return time;
 	}
-
 }

@@ -167,7 +167,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * inits special Colors
      */
     public void initColors() {
-        innerColor = ContextCompat.getColor(this.getContext(), getColor(activity));
+        innerColor = ContextCompat.getColor(this.getContext(), ColorUtils.getColor(activity, activityItem));
 
         ColorDrawable cd = new ColorDrawable(innerColor);
         int col = cd.getColor();
@@ -669,62 +669,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         int min = calendar.get(Calendar.MINUTE);
 
         return hour*60+min;
-    }
-
-    /**
-     * returns the color for an activity
-     *
-     * @param activityid id of activity
-     * @return id of color in resources
-     */
-    public int getColor(int activityid) {
-        switch (activityid) {
-            case 1:
-                return R.color.good;
-            case 2:
-                return R.color.bad;
-            case 3:
-                return R.color.no_influence;
-            case 4:
-                return R.color.potential_bad;
-            case 5:
-                return R.color.good;
-            case 6:
-                return R.color.good;
-            case 7:
-                return R.color.no_influence;
-            case 8:
-                return R.color.no_influence;
-            case 9:
-                return R.color.no_influence;
-            case 10:
-                return R.color.good;
-            case 11:
-                return R.color.good;
-            case 12:
-                setIntensityColor(activityItem.getIntensity());
-            case 13:
-                setIntensityColor(activityItem.getIntensity());
-            default:
-                return R.color.no_influence;
-        }
-    }
-
-    /**
-     * returns the color with respect to the intensity of an acitiviy
-     * returns default color if intensity == null
-     * @param intensity
-     * @return
-     */
-    public int setIntensityColor(Integer intensity){
-        if(intensity != null){
-            switch (intensity){
-                case 0: return R.color.good;
-                case 1: return R.color.potential_bad;
-                case 2: return R.color.bad;
-            }
-        }
-        return R.color.no_influence;
     }
 
     @Override
