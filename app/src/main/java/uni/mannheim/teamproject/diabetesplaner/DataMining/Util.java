@@ -17,13 +17,11 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -533,4 +531,23 @@ public class Util {
 		return time;**/
 		return (int)diffInMinutes;
 	}
+
+
+	/**
+	 * @auther Stefan 30.03.2016
+	 * edits the minute and hour of an existing date object
+	 * @param date
+	 * @param hour
+	 * @param minute
+	 * @return
+	 */
+	public static Date getDate(Date date, int hour, int minute) {
+		Calendar cal = Calendar.getInstance();
+		cal.setTime(date);
+		cal.set(Calendar.HOUR_OF_DAY, hour);
+		cal.set(Calendar.MINUTE, minute);
+		cal.set(Calendar.SECOND, 0);
+		return cal.getTime();
+	}
+
 }

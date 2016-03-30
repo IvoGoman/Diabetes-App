@@ -204,6 +204,7 @@ public class EntryScreenActivity extends AppCompatActivity
                 AddDialog addDialog = new AddDialog();
                 if(fragment instanceof DailyRoutineFragment) {
                     addDialog.setDayHandler(((DailyRoutineFragment) fragment).getDrHandler());
+                    addDialog.setDate(((DailyRoutineFragment)fragment).getDrHandler().getDate());
                 }
                 addDialog.show(getFragmentManager(),"addDialog");
                 return true;

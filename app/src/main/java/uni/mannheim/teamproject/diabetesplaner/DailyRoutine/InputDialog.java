@@ -20,8 +20,6 @@ import android.widget.TableRow;
 import android.widget.TextView;
 
 import java.io.File;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -34,17 +32,14 @@ import uni.mannheim.teamproject.diabetesplaner.R;
 /**
  * Created by Stefan on 04.02.2016.
  */
-public class InputDialog extends DialogFragment {
+public class InputDialog extends DialogFragment{
     private static final String TAG = InputDialog.class.getSimpleName();
-    private String starttime;
-    private String endtime;
     private int activity = 0;
     private String meal;
-    private String date;
+    private Date date;
     private Date startDate;
     private Date endDate;
     private Integer intensity;
-
 
     private TimePickerFragment timePickerFragmentStart;
     private TimePickerFragment timePickerFragmentEnd;
@@ -72,12 +67,12 @@ public class InputDialog extends DialogFragment {
     public void onCreate(Bundle savedInstanceState) {
         //init times
         Date date = Calendar.getInstance(Locale.getDefault()).getTime();
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
-        if(starttime == null) {
-            starttime = dateFormat.format(date);
+
+        if(startDate == null){
+            startDate = date;
         }
-        if(endtime == null) {
-            endtime = dateFormat.format(date);
+        if(endDate == null){
+            endDate = date;
         }
         super.onCreate(savedInstanceState);
     }
@@ -197,29 +192,29 @@ public class InputDialog extends DialogFragment {
 
         //button for starttime TimePicker
         startTimeButton = (Button) v.findViewById(R.id.start_button);
-        startTimeButton.setText(starttime);
+        startTimeButton.setText(Util.timeToString(startDate));
         startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 timePickerFragmentStart = new TimePickerFragment();
                 timePickerFragmentStart.setInputDialog(InputDialog.this);
                 timePickerFragmentStart.setStart(true);
-                timePickerFragmentStart.setTime(starttime);
-                timePickerFragmentStart.show(getFragmentManager(), "timePicker");
+                timePickerFragmentStart.setTime(startDate);
+                timePickerFragmentStart.show(getFragmentManager(), "timePickerFragment");
             }
         });
 
         //button for endtime TimePicker
         endTimeButton = (Button) v.findViewById(R.id.end_button);
-        endTimeButton.setText(endtime);
+        endTimeButton.setText(Util.timeToString(endDate));
         endTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 timePickerFragmentEnd = new TimePickerFragment();
                 timePickerFragmentEnd.setInputDialog(InputDialog.this);
                 timePickerFragmentEnd.setStart(false);
-                timePickerFragmentEnd.setTime(endtime);
-                timePickerFragmentEnd.show(getFragmentManager(), "timePicker");
+                timePickerFragmentEnd.setTime(endDate);
+                timePickerFragmentEnd.show(getFragmentManager(), "timePickerFragment");
 
             }
         });
@@ -232,86 +227,40 @@ public class InputDialog extends DialogFragment {
      * @return
      */
     public boolean isTimeValid() {
-        Date starttime = null;
-        Date endtime = null;
-        try {
-            SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm");
-            starttime = dateFormat.parse(getStarttime());
-            endtime = dateFormat.parse(getEndtime());
-            return starttime.before(endtime);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return false;
+        return startDate.before(endDate);
     }
 
-    /**
-     * returns the starttime
-     * @return
-     */
-    public String getStarttime(){
-        return starttime;
-    }
+
+//    /**
+//     * Ivo Gosemann
+//     * sets the date of the activity
+//     *
+//     * @param date
+//     */
+//    public void setDate(String date) {
+//        this.date = date;
+//    }
 
     /**
-     * returns the endtime
-     * @return
-     */
-    public String getEndtime(){
-        return endtime;
-    }
-
-    /**
-     * sets the endtime that should be displayed in the endtime button
-     * @param endtime
-     */
-    public void setEndtime(String endtime){
-        if(endTimeButton != null){
-            endTimeButton.setText(endtime);
-        }
-        if(starttime != null) {
-            if (Util.getTime(starttime).after(Util.getTime(endtime))){
-                setStarttime(endtime);
-            }
-        }
-        this.endtime = endtime;
-    }
-
-    /**
-     * sets the starttime that should be displayed in the starttime button
-     * @param starttime
-     */
-    public void setStarttime(String starttime){
-        if(startTimeButton != null) {
-            startTimeButton.setText(starttime);
-        }
-        if(endtime != null) {
-            if (Util.getTime(starttime).after(Util.getTime(endtime))){
-                setEndtime(starttime);
-            }
-        }
-        this.starttime = starttime;
-    }
-
-    /**
-     * Ivo Gosemann
-     * sets the date of the activity
-     *
+     * @author Stefan 30.03.2016
+     * sets the initial date
      * @param date
      */
-    public void setDate(String date) {
+    public void setDate(Date date){
+        this.startDate = date;
+        this.endDate = date;
         this.date = date;
     }
 
-    /**
-     * Ivo Gosemann
-     * gets the date of the activity
-     *
-     * @return date
-     */
-    public String getDate() {
-        return date;
-    }
+//    /**
+//     * Ivo Gosemann
+//     * gets the date of the activity
+//     *
+//     * @return date
+//     */
+//    public String getDate() {
+//        return date;
+//    }
 
 
     /**
@@ -353,8 +302,9 @@ public class InputDialog extends DialogFragment {
     public void setActivityItem(ActivityItem activityItem) {
         this.activityItem = activityItem;
         setActivity(activityItem.getActivityId() - 1);
-        setStarttime(activityItem.getStarttimeAsString());
-        setEndtime(activityItem.getEndtimeAsString());
+        setStartDate(activityItem.getStarttime());
+        setEndDate(activityItem.getEndtime());
+
         setImage(activityItem.getMealImage());
         setImagePath(activityItem.getImagePath());
         setMeal(activityItem.getMeal());
@@ -420,13 +370,22 @@ public class InputDialog extends DialogFragment {
     }
 
     public Date getStartDate() {
-        startDate = Util.setTime(date, starttime);
         return startDate;
     }
 
+    /**
+     * sets startDate and the corresponding start time button
+     * @param startDate
+     */
     public void setStartDate(Date startDate) {
-
-
+        if(startTimeButton != null) {
+            startTimeButton.setText(Util.timeToString(startDate));
+        }
+        if(endDate != null) {
+            if (startDate.after(endDate)){
+                setEndDate(startDate);
+            }
+        }
         this.startDate = startDate;
     }
 
@@ -434,7 +393,19 @@ public class InputDialog extends DialogFragment {
         return endDate;
     }
 
+    /**
+     * sets endDate and the corresponding end time button
+     * @param endDate
+     */
     public void setEndDate(Date endDate) {
+        if(endTimeButton != null){
+            endTimeButton.setText(Util.timeToString(endDate));
+        }
+        if(startDate != null) {
+            if (startDate.after(endDate)){
+                setStartDate(endDate);
+            }
+        }
         this.endDate = endDate;
     }
 
@@ -502,6 +473,5 @@ public class InputDialog extends DialogFragment {
                 break;
         }
     }
-
 }
 
