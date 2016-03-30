@@ -14,6 +14,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ListAdapter;
@@ -24,7 +25,10 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
+import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.ActivityMeasurementFrag.ActivityMeasurementFragment;
 import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
@@ -416,5 +420,22 @@ public class EntryScreenActivity extends AppCompatActivity
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(9999);
 
+    }
+
+    /**
+     * returns time in format HH:mm if timeformat is 24h and in format KK:mm AM/PM if timeformat is 12h
+     * @param date
+     * @return String
+     */
+    public static String getTimeInUserFormat(Date date, Context context){
+        String time = "";
+        if(DateFormat.is24HourFormat(context)){
+            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+            time = sdf.format(date);
+        }else{
+            SimpleDateFormat sdf = new SimpleDateFormat("KK:mm a");
+            time = sdf.format(date);
+        }
+        return time;
     }
 }

@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.text.format.DateFormat;
 import android.util.DisplayMetrics;
 
 import com.opencsv.CSVReader;
@@ -22,6 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -548,6 +550,23 @@ public class Util {
 		cal.set(Calendar.MINUTE, minute);
 		cal.set(Calendar.SECOND, 0);
 		return cal.getTime();
+	}
+
+	/**
+	 * returns time in format HH:mm if timeformat is 24h and in format KK:mm AM/PM if timeformat is 12h
+	 * @param date
+	 * @return String
+	 */
+	public static String getTimeInUserFormat(Date date, Context context){
+		String time = "";
+		if(DateFormat.is24HourFormat(context)){
+			SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
+			time = sdf.format(date);
+		}else{
+			SimpleDateFormat sdf = new SimpleDateFormat("KK:mm a");
+			time = sdf.format(date);
+		}
+		return time;
 	}
 
 }

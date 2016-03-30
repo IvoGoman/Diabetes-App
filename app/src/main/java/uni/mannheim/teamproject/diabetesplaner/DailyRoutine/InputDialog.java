@@ -192,7 +192,7 @@ public class InputDialog extends DialogFragment{
 
         //button for starttime TimePicker
         startTimeButton = (Button) v.findViewById(R.id.start_button);
-        startTimeButton.setText(Util.timeToString(startDate));
+        startTimeButton.setText(Util.getTimeInUserFormat(startDate, getActivity()));
         startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,7 +206,7 @@ public class InputDialog extends DialogFragment{
 
         //button for endtime TimePicker
         endTimeButton = (Button) v.findViewById(R.id.end_button);
-        endTimeButton.setText(Util.timeToString(endDate));
+        endTimeButton.setText(Util.getTimeInUserFormat(endDate, getActivity()));
         endTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -379,7 +379,7 @@ public class InputDialog extends DialogFragment{
      */
     public void setStartDate(Date startDate) {
         if(startTimeButton != null) {
-            startTimeButton.setText(Util.timeToString(startDate));
+            startTimeButton.setText(Util.getTimeInUserFormat(startDate, getActivity()));
         }
         if(endDate != null) {
             if (startDate.after(endDate)){
@@ -399,7 +399,7 @@ public class InputDialog extends DialogFragment{
      */
     public void setEndDate(Date endDate) {
         if(endTimeButton != null){
-            endTimeButton.setText(Util.timeToString(endDate));
+            endTimeButton.setText(Util.getTimeInUserFormat(endDate, getActivity()));
         }
         if(startDate != null) {
             if (startDate.after(endDate)){

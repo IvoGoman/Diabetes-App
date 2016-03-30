@@ -104,10 +104,18 @@ public class ActivityItem {
         return starttime;
     }
 
+    /**
+     * returns starttime in HH:mm format
+     * @return
+     */
     public String getStarttimeAsString() {
         return Util.timeToString(starttime);
     }
 
+    /**
+     * returns endtime in HH:mm format
+     * @return
+     */
     public String getEndtimeAsString() {
         return Util.timeToString(endtime);
     }
