@@ -115,7 +115,7 @@ public class MeasurementFragment extends Fragment {
                 // Button Done = (Button) dialog.findViewById(R.id.button);
                 dialog.setTitle("Input Measurements");
                 measurementList.clear();
-                Cursor cursor = AppGlobal.getHandler().getAllMeasurements(AppGlobal.getHandler(),1);
+                Cursor cursor = AppGlobal.getHandler().getAllMeasurements(AppGlobal.getHandler(), 1);
                 if (cursor.moveToFirst()) {
                     do {
                         String MeasurementString = cursor.getString(1) + " " + cursor.getString(2) + "," + " " + cursor.getString(2) + " units";
@@ -140,7 +140,7 @@ public class MeasurementFragment extends Fragment {
                         java.util.Date CurDatTime = new Date();
                         String SCurDatTime = format.format(CurDatTime);
                         AppGlobal.getHandler().InsertBloodsugar(AppGlobal.getHandler(), 1, Double.parseDouble( GlucoseInput.getText().toString()),"mg/dl");
-                        AppGlobal.getHandler().InsertInsulin(AppGlobal.getHandler(),1, Integer.parseInt( InsulinInput.getText().toString()),"ml");
+                        AppGlobal.getHandler().InsertInsulin(AppGlobal.getHandler(), 1, Double.parseDouble(InsulinInput.getText().toString()), "ml");
                         ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
                         // }
                         dialog.dismiss();
