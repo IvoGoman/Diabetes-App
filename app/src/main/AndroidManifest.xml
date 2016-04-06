@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
 
     <application
         android:allowBackup="true"
@@ -44,6 +45,8 @@
         <activity
             android:name=".ActivityPop"
             android:theme="@style/AppTheme.CustomTheme"></activity>
+
+        <service android:name=".SettingsActivity.Accelerometer"/>
 
         <!--
         <activity android:name=".MeasurementPop" android:theme="@style/AppTheme.CustomTheme" >

@@ -47,6 +47,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private DataBaseHandler database;
     BloodsugarDialog_and_Settings communicator;
 
+    private Intent accelerometerCollection;
+
     @Override
     public void onAttach(Activity activity) {
         super.onAttach(activity);
@@ -93,8 +95,18 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                     //show the notifications only if the data collection is started
                     if (pref_datacollection.isChecked()) {
                         showNotification(1);
+                        accelerometerCollection = new Intent();
+                        accelerometerCollection.setClass(getActivity().getApplicationContext(), Accelerometer.class);
+                        getActivity().startService(accelerometerCollection);
+
                     } else {
                         showNotification(2);
+                        getActivity().stopService(accelerometerCollection);
+
+
+
+
+                      //  getActivity().finish();
                     }
                     return true;
                 }
