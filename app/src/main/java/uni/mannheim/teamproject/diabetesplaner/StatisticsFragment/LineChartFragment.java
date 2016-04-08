@@ -7,6 +7,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.mikephil.charting.charts.CombinedChart;
+import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.XAxis;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.BarData;
@@ -48,10 +50,46 @@ public class LineChartFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View inflaterView = inflater.inflate(R.layout.fragment_line_chart, container, false);
+
+//        chart.setDrawOrder(new CombinedChart.DrawOrder[]{CombinedChart.DrawOrder.BAR, CombinedChart.DrawOrder.LINE});
+        // getting the reference to the chart and setting the data
+        CombinedChart chart = (CombinedChart) inflaterView.findViewById(R.id.combinedInsulinGlucoseChart);
+        CombinedData combinedData = this.getData("DAY");
+        chart.setData(combinedData);
+        chart.setDescription("Combination of Blood Sugar and Insulin Levels");
+        chart.setDrawGridBackground(false);
+        chart.setDrawHighlightArrow(false);
+//        YAxis rightAxis = chart.getAxisRight();
+//        rightAxis.setAxisMinValue(0f);
+//        rightAxis.setAxisMaxValue(160f);
+        YAxis yAxisL = chart.getAxisLeft();
+        yAxisL.setDrawGridLines(false);
+        YAxis yAxisR = chart.getAxisRight();
+        yAxisR.setDrawGridLines(false);
+        XAxis xAxis = chart.getXAxis();
+        Legend legend = chart.getLegend();
+        legend.setPosition(Legend.LegendPosition.BELOW_CHART_CENTER);
+        legend.setXEntrySpace(7f);
+        legend.setYEntrySpace(0f);
+        legend.setYOffset(0f);
+        legend.setEnabled(true);
+        xAxis.setDrawGridLines(false);
+
+        chart.invalidate();
+        return inflaterView;
+    }
+
+    /**
+     * @author Ivo Gosemann 08.04.2016
+     * retrieves the data for the tiemframe from the DB and puts it in a CombinedData object
+     * @param timeFrame String value indicating the timeframe for the chart
+     * @return data to be set to the chart
+     */
+    public CombinedData getData (String timeFrame){
         DataBaseHandler handler = AppGlobal.getHandler();
         Date date = Util.getCurrentDate();
 
-        ArrayList<String> dateList = handler.getAllTimestamps(handler, date);
+        ArrayList<String> dateList = handler.getAllTimestamps(handler, date,"DAY");
         // creating the x-Axes Values
         ArrayList<String> labels = new ArrayList<>();
         String dateValue="";
@@ -70,7 +108,7 @@ public class LineChartFragment extends Fragment {
         }
         //creating the values for the bar chart
         ArrayList<BarEntry> barValues = new ArrayList<>();
-        ArrayList<Integer> insulinList = AppGlobal.getHandler().getAllInsulin(AppGlobal.getHandler(), date);
+        ArrayList<Integer> insulinList = AppGlobal.getHandler().getAllInsulin(AppGlobal.getHandler(),date,"DAY");
         if (!insulinList.isEmpty()) {
             for (int i = 0; i < insulinList.size(); i++) {
                 float value = (float) insulinList.get(i);
@@ -78,55 +116,72 @@ public class LineChartFragment extends Fragment {
             }
         } else {
             barValues.add(new BarEntry(50f, 0));
-            barValues.add(new BarEntry(50f, 2));
-            barValues.add(new BarEntry(60f, 3));
-            barValues.add(new BarEntry(10f, 4));
+            barValues.add(new BarEntry(60f, 1));
+            barValues.add(new BarEntry(75f, 2));
+            barValues.add(new BarEntry(80f, 3));
+            barValues.add(new BarEntry(20f, 4));
 
         }
+        BarDataSet barDataSet= new BarDataSet(barValues,"Insulin Dosage");
+        BarData barData = new BarData(labels,barDataSet);
+//        ArrayList<Entry> lineValues1 = new ArrayList<>();
+//        ArrayList<Integer> insulinList = AppGlobal.getHandler().getAllInsulin(AppGlobal.getHandler(), date);
+//        if (!insulinList.isEmpty()) {
+//            for (int i = 0; i < insulinList.size(); i++) {
+//                float value = (float) insulinList.get(i);
+//                lineValues1.add(new Entry(value, i));
+//            }
+//        } else {
+//            lineValues1.add(new Entry(50f, 0));
+//            lineValues1.add(new Entry(60f, 1));
+//            lineValues1.add(new Entry(75f, 2));
+//            lineValues1.add(new Entry(80f, 3));
+//            lineValues1.add(new Entry(20f, 4));
+//
+//        }
 
 
-        BarDataSet barDataSet = new BarDataSet(barValues, "Insulin Dosage");
-        BarData barData = new BarData(labels, barDataSet);
+//        LineDataSet lineDataSet1 = new LineDataSet(lineValues1, "Insulin Dosage");
+//        lineDataSet1.setDrawHighlightIndicators(false);
+//       LineData lineData1 = new LineData(labels,lineDataSet1);
 
         //creating the values for the line chart
-        ArrayList<Entry> lineValues = new ArrayList<>();
-        ArrayList<Integer> sugarList = AppGlobal.getHandler().getAllBloodSugar(AppGlobal.getHandler(), date);
+        ArrayList<Entry> lineValues2 = new ArrayList<>();
+        ArrayList<Integer> sugarList = AppGlobal.getHandler().getAllBloodSugar(AppGlobal.getHandler(), date,"DAY");
         if (!sugarList.isEmpty()) {
             for (int i = 0; i < sugarList.size(); i++) {
                 float value = (float) sugarList.get(i);
-                lineValues.add(new Entry(value, i));
+                lineValues2.add(new Entry(value, i));
             }
         } else {
-        lineValues.add(new Entry(140f, 0));
-        lineValues.add(new Entry(90f, 1));
-        lineValues.add(new Entry(110f, 2));
-        lineValues.add(new Entry(130f, 3));
-        lineValues.add(new Entry(100f, 4));}
+            lineValues2.add(new Entry(140f, 0));
+            lineValues2.add(new Entry(90f, 1));
+            lineValues2.add(new Entry(110f, 2));
+            lineValues2.add(new Entry(130f, 3));
+            lineValues2.add(new Entry(100f, 4));}
 
-        LineDataSet lineDataSet = new LineDataSet(lineValues, "Blood Sugar Level");
-        LineData lineData = new LineData(labels, lineDataSet);
+        LineDataSet lineDataSet2 = new LineDataSet(lineValues2, "Blood Sugar Level");
+        lineDataSet2.setDrawHighlightIndicators(false);
+        LineData lineData2 = new LineData(labels, lineDataSet2);
 
         //creating CombinedData for the Chart with Bar and Line Data
         CombinedData combinedData = new CombinedData(labels);
+//        barData.setHighlightEnabled(false);
+        combinedData.setData(lineData2);
+//        lineData.setHighlightEnabled(false);
         combinedData.setData(barData);
-        combinedData.setData(lineData);
-
-        // getting the reference to the chart and setting the data
-        CombinedChart chart = (CombinedChart) inflaterView.findViewById(R.id.combinedInsulinGlucoseChart);
-        chart.setDrawOrder(new CombinedChart.DrawOrder[]{CombinedChart.DrawOrder.BAR, CombinedChart.DrawOrder.LINE});
-        chart.setData(combinedData);
-        chart.setDescription("Combination of Blood Sugar and Insulin Levels");
-        chart.setDrawGridBackground(false);
-        chart.setDrawHighlightArrow(false);
-        YAxis yAxisL = chart.getAxisLeft();
-        yAxisL.setDrawGridLines(false);
-        YAxis yAxisR = chart.getAxisRight();
-        yAxisR.setDrawGridLines(false);
-        XAxis xAxis = chart.getXAxis();
-        xAxis.setDrawGridLines(false);
-
-        chart.invalidate();
-        return inflaterView;
+        return combinedData;
     }
 
+    /**
+     * @author Ivo Gosemann 08.04.2016
+     * updates the chart with the new time window
+     * @param timeFrame String value indicating the timeframe for the chart
+     */
+    public void updateChart(String timeFrame){
+        CombinedChart chart = (CombinedChart) this.getView().findViewById(R.id.combinedInsulinGlucoseChart);
+        CombinedData combinedData = this.getData(timeFrame);
+        chart.setData(combinedData);
+        chart.invalidate();
+    }
 }

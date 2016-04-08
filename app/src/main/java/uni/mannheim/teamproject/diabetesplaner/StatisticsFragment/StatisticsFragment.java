@@ -10,6 +10,9 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
@@ -35,14 +38,18 @@ public class StatisticsFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private String mParam1;
-    private String mParam2;
 
+    private String mParam2;
     private Toolbar toolbar;
     private TabLayout tabLayout;
     private ViewPager viewPager;
     private AppCompatActivity aca;
 
     private OnFragmentInteractionListener mListener;
+
+    public StatisticsFragment() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -62,13 +69,10 @@ public class StatisticsFragment extends Fragment {
         return fragment;
     }
 
-    public StatisticsFragment() {
-        // Required empty public constructor
-    }
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         if (getArguments() != null) {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
@@ -76,6 +80,7 @@ public class StatisticsFragment extends Fragment {
         aca = (AppCompatActivity) getActivity();
 //        final ActionBar actionBar = aca.getSupportActionBar();
         aca.getSupportActionBar().setTitle(R.string.menu_item_statistics);
+
 
     }
 
@@ -95,16 +100,147 @@ public class StatisticsFragment extends Fragment {
         return inflaterView;
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        inflater.inflate(R.menu.statistics, menu);
+
+    }
+
+    /**
+     * Set the Add Icon in the Action Bar to invisible.
+     *
+     * @param menu
+     */
+    @Override
+    public void onPrepareOptionsMenu(Menu menu) {
+        if (menu != null) {
+            MenuItem addItemRoutine = menu.findItem(R.id.add_icon_action_bar_routine);
+            addItemRoutine.setVisible(false);
+//           menu.removeItem(R.id.add_icon_action_bar);
+        }
+        super.onPrepareOptionsMenu(menu);
+    }
+
+    /**
+     * Update the TimeWindow of the Chart that is currently displayed to the user
+     *
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        int id = item.getItemId();
+//        get the currently active fragment that is shown to the user
+        Fragment active = null;
+        FragmentManager fragmentManager = aca.getSupportFragmentManager();
+        List<Fragment> fragments = fragmentManager.getFragments();
+        for (Fragment fragment : fragments) {
+            if (fragment != null && fragment.getUserVisibleHint())
+                active = fragment;
+        }
+//        update the chart of the fragment based on the TimeWindow selected
+        if (!(active == null)) {
+            switch (id) {
+                case R.id.statistic_day:
+//                    TODO:Update the charts by calling them by their ID
+                    try{
+                        RingChartFragment ringFragment = (RingChartFragment) active;
+                        ringFragment.updateChart("DAY");
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    try{
+                        LineChartFragment lineFragment = (LineChartFragment) active;
+                        lineFragment.updateChart("DAY");
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    break;
+                case R.id.statistic_week:
+//                    TODO: Update the charts by calling them by their ID
+                    try{
+                        RingChartFragment ringFragment = (RingChartFragment) active;
+                        ringFragment.updateChart("WEEK");
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    try{
+                        LineChartFragment lineFragment = (LineChartFragment) active;
+                        lineFragment.updateChart("WEEK");
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    break;
+                case R.id.statistic_month:
+//                    TODO:Update the charts by calling them by their ID
+                    try{
+                        RingChartFragment ringFragment = (RingChartFragment) active;
+                        ringFragment.updateChart("MONTH");
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    try{
+                        LineChartFragment lineFragment = (LineChartFragment) active;
+                        lineFragment.updateChart("MONTH");
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                    break;
+            }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
     /**
      * setUp ViewPager with a RingChartFragment and a LineChartFragment
+     *
      * @param viewPager a viewPager object
      */
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(aca.getSupportFragmentManager());
         adapter.addFragment(new RingChartFragment(), "Activities");
         adapter.addFragment(new LineChartFragment(), "Glucose & Insulin");
-        //adapter.addFragment(new ThreeFragment(), "THREE");
         viewPager.setAdapter(adapter);
+    }
+
+    // TODO: Rename method, update argument and hook method into UI event
+    public void onButtonPressed(Uri uri) {
+        if (mListener != null) {
+            mListener.onFragmentInteraction(uri);
+        }
+    }
+
+    /**
+     * @Override public void onAttach(Activity activity) {
+     * super.onAttach(activity);
+     * try {
+     * mListener = (OnFragmentInteractionListener) activity;
+     * } catch (ClassCastException e) {
+     * throw new ClassCastException(activity.toString()
+     * + " must implement OnFragmentInteractionListener");
+     * }
+     * }
+     **/
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
+    }
+
+    /**
+     * This interface must be implemented by activities that contain this
+     * fragment to allow an interaction in this fragment to be communicated
+     * to the activity and potentially other fragments contained in that
+     * activity.
+     * <p/>
+     * See the Android Training lesson <a href=
+     * "http://developer.android.com/training/basics/fragments/communicating.html"
+     * >Communicating with Other Fragments</a> for more information.
+     */
+    public interface OnFragmentInteractionListener {
+        // TODO: Update argument type and name
+        void onFragmentInteraction(Uri uri);
     }
 
     /**
@@ -137,46 +273,6 @@ public class StatisticsFragment extends Fragment {
         public CharSequence getPageTitle(int position) {
             return mFragmentTitleList.get(position);
         }
-    }
-
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
-        }
-    }
-
-    /**
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }**/
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener = null;
-    }
-
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p/>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
-    public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
     }
 
 }
