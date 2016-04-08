@@ -3,17 +3,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     >
-
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/chartLayout">
-
-    </RelativeLayout>
-
     <com.github.mikephil.charting.charts.CombinedChart
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:id="@+id/combinedInsulinGlucoseChart"></com.github.mikephil.charting.charts.CombinedChart>
+        android:layout_marginRight="15dp"
+        android:layout_marginEnd="15dp"
+        android:layout_marginBottom="15dp"
+        android:id="@+id/combinedInsulinGlucoseChart"
+        ></com.github.mikephil.charting.charts.CombinedChart>
 
 </RelativeLayout>
