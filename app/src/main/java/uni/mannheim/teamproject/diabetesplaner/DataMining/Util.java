@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -494,7 +495,7 @@ public class Util {
 	}
 
 	/**
-	 * Ivo Gosemann 18.03.2016
+	 * @author Ivo Gosemann 18.03.2016
 	 * Converting a "yyyy-MM-dd HH:mm" String into a "HH:mm" String
 	 * @param dateValue
      * @return a String representing the time as "HH:mm"
@@ -515,7 +516,7 @@ public class Util {
 	}
 
 	/**
-	 * Ivo Gosemann 18.03.2016
+	 * @author Ivo Gosemann 18.03.2016
 	 * Methods returns the current date as a Date
 	 * @return date in the format "yyyy-MM-dd HH:mm"
      */
@@ -568,5 +569,27 @@ public class Util {
 			time = sdf.format(date);
 		}
 		return time;
+	}
+
+	/**
+	 * @author Ivo 08.04.2016
+	 * Convert a time window from a string array to a corresponding timestamp Long array
+	 * @param timeWindow array containing dates as string values
+	 * @return date array converted to long timestamp array
+     */
+	public static Long[] convertDateStringToTimestamp(String[] timeWindow){
+		Timestamp timestampStart=null,timestampEnd = null;
+		try{
+			SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+			Date parsedStart = dateFormat.parse(timeWindow[0]);
+			Date parsedEnd = dateFormat.parse(timeWindow[1]);
+			timestampStart = new java.sql.Timestamp(parsedStart.getTime());
+			timestampEnd = new java.sql.Timestamp(parsedEnd.getTime());
+		}catch(Exception e){//this generic but you can control another types of exception
+			e.printStackTrace();
+		}
+
+		Long [] timeWindowLong = {timestampStart.getTime()/1000, timestampEnd.getTime()/1000};
+		return timeWindowLong;
 	}
 }
