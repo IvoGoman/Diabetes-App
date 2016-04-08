@@ -397,18 +397,18 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     }
     /**
-     * Ivo Gosemann 18.03.2016
+     * @author Ivo Gosemann 18.03.2016
      * Method to retrieve all Insulin Values
-     * //TODO: Extend Mehtod to take the needed timeframe
+     * //TODO: Combine with Bloodsugar and Timestamp Methods
      * @param handler
      * @return ArrayList containing the Integer Values of all the Insulin Values of one day
      */
-    public ArrayList<Integer> getAllInsulin(DataBaseHandler handler, Date date) {
-        SQLiteDatabase db = handler.getWritableDatabase();
-        Long [] dayStartEnd = getDayStartEnd(date);
-        Log.d("Database","timestamps of retrieval"+dayStartEnd[0]+" "+dayStartEnd[1]);
+    public ArrayList<Integer> getAllInsulin(DataBaseHandler handler, Date date, String window) {
+        SQLiteDatabase db = handler.getReadableDatabase();
+        Long[] windowStartEnd = Util.convertDateStringToTimestamp(getWindowStartEnd(date,window));
+        Log.d("Database","timestamps of retrieval"+windowStartEnd[0]+" "+windowStartEnd[1]);
         Cursor cursor = db.rawQuery("select measure_value from  " + MEASUREMENT_TABLE_NAME + " " +
-                "where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"'" +
+                "where timestamp>='"+windowStartEnd[0]+"' and timestamp <'"+windowStartEnd[1]+"'" +
                 "AND measure_kind = 'insulin';",null);
         ArrayList<Integer> insulinValues = new ArrayList<>();
         if(cursor.moveToFirst()){
@@ -422,17 +422,17 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     /**
-     * Ivo Gosemann 18.03.2016
+     * @author Ivo Gosemann 18.03.2016
      * Method to retrieve all Bloodsugar Values
-     * //TODO: Extend Mehtod to take the needed timeframe
+     * //TODO: Combine with Insulin and Timestamp Methods
      * @param handler
      * @return ArrayList containing all the Integer Values fo the Bloodsugar of one day
      */
-    public ArrayList<Integer> getAllBloodSugar(DataBaseHandler handler, Date date){
-        SQLiteDatabase db = handler.getWritableDatabase();
-        Long [] dayStartEnd = getDayStartEnd(date);
+    public ArrayList<Integer> getAllBloodSugar(DataBaseHandler handler, Date date, String window){
+        SQLiteDatabase db = handler.getReadableDatabase();
+        Long[] windowStartEnd = Util.convertDateStringToTimestamp(getWindowStartEnd(date,window));
         Cursor cursor = db.rawQuery("select measure_value from  " + MEASUREMENT_TABLE_NAME + " "  +
-                "where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"'" +
+                "where timestamp>='"+windowStartEnd[0]+"' and timestamp <'"+windowStartEnd[1]+"'" +
                 "AND measure_kind = 'bloodsugar';",null);
         ArrayList<Integer> bloodsugarValues = new ArrayList<>();
         if(cursor.moveToFirst()){
@@ -444,19 +444,18 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.close();
         return bloodsugarValues;
     }
-
     /**
-     * Ivo Gosemann 18.03.2016
+     * @author Ivo Gosemann 18.03.2016
      * Method to retrieve all Timestamps for Measurements
-     * //TODO: Extend Mehtod to take the needed timeframe
+     * //TODO: Combine with Insulin and Bloodsugar Method
      * @param handler
      * @return ArrayList containing all the timestamp values for one day
      */
-    public ArrayList<String> getAllTimestamps(DataBaseHandler handler,Date date){
-        SQLiteDatabase db = handler.getWritableDatabase();
-        Long[] dayStartEnd= getDayStartEnd(date);
+    public ArrayList<String> getAllTimestamps(DataBaseHandler handler,Date date,String window){
+        SQLiteDatabase db = handler.getReadableDatabase();
+        Long[] timeWindow = Util.convertDateStringToTimestamp(getWindowStartEnd(date,window));
         Cursor cursor = db.rawQuery("select timestamp from  " + MEASUREMENT_TABLE_NAME + " " +
-                "where timestamp>='"+dayStartEnd[0]+"' and timestamp <'"+dayStartEnd[1]+"';",null);
+                "where timestamp>='"+timeWindow[0]+"' and timestamp <'"+timeWindow[1]+"';",null);
         ArrayList<String> timestampList = new ArrayList<>();
         if(cursor.moveToFirst()){
             do{
@@ -469,34 +468,57 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     /**
+     * @author Ivo Gosemann 08.04.2016
+     * @param handler instance of the DB Handler
+     * @param date current date of the day
+     * @param window String value to indicate the time window ["DAY","WEEK","MONTH"]
+     * @return ArrayList of all ActivityItems in the timeframe
+     */
+    public ArrayList<ActivityItem> getActivities(DataBaseHandler handler, Date date, String window){
+//        calculate the timeframe for the given date and window values
+        String[] timeWindow = getWindowStartEnd(date,window);
+        String StartOfDay = timeWindow[0],EndOfDay = timeWindow[1];
+        SQLiteDatabase db = handler.getReadableDatabase();
+        String S = "select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where (ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "') or (ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "');";
+        Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "' or ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "' order by ActivityList.Start;", null);
+
+        ArrayList<ActivityItem> activityList = GetArrayFromCursor(cursor, date);
+        return activityList;
+    }
+    /**
      * Ivo Gosemann 18.03.2016
      * Reusing Leonids Code to calculate the start and end of a day
      * The start and end are then returned as unix timestamps
-     * @param date
-     * @return array with 2 fields [0] = startofday ; [1] = endofday
+     * In Addition a Parameter can be provided to specify the time window
+     * DAY, WEEK or MONTH are acceptable inputs
+     * @param date the day for which start and end shall be returned
+     * @param window string with the value for the timeframe
+     * @return array with 2 fields [0] = windowStart ; [1] = windowEnd
      */
-    private Long[] getDayStartEnd(Date date) {
-        String startOfDay, endOfDay;
+    private String[] getWindowStartEnd(Date date,String window) {
+        String startDay, endDay;
         Timestamp timestampStart=null,timestampEnd =null;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
-        int Year = calendar.get(Calendar.YEAR);
-        String Month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
-        String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
-        startOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
-        endOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
-        try{
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-            Date parsedStart = dateFormat.parse(startOfDay);
-            Date parsedEnd = dateFormat.parse(endOfDay);
-            timestampStart = new java.sql.Timestamp(parsedStart.getTime());
-            timestampEnd = new java.sql.Timestamp(parsedEnd.getTime());
-                    }catch(Exception e){//this generic but you can control another types of exception
-            e.printStackTrace();
+//      Set the end of the time window
+        int year = calendar.get(Calendar.YEAR);
+        String month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+        String day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+        endDay = String.valueOf(year) + "-" + String.valueOf(month) + "-" + String.valueOf(day) + " " + "23:59";
+        switch (window){
+            case "MONTH":
+                calendar.add(Calendar.DAY_OF_MONTH,-30);
+                break;
+            case "WEEK":
+                calendar.add(Calendar.DAY_OF_MONTH,-7);
         }
+        year =calendar.get(Calendar.YEAR);
+        month = formatMonthOrDay(calendar.get(Calendar.MONTH)+1);
+        day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
 
-        Long [] startEnd = {timestampStart.getTime()/1000, timestampEnd.getTime()/1000};
-        return startEnd;
+        startDay = String.valueOf(year) + "-" + String.valueOf(month) + "-" + String.valueOf(day) + " " + "00:00";
+        String[] timeWindow = {startDay,endDay};
+        return timeWindow;
     }
 
     /***
@@ -725,12 +747,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                     calendar.set(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH), 00,00);
                     StartOfDay = calendar.getTime();
 
-                    if (End.after(EndOfDay)){
-                        End = EndOfDay;
-                    }
-                    if (Start.before(StartOfDay)){
-                        Start = StartOfDay;
-                    }
+//                    if (End.after(EndOfDay)){
+//                        End = EndOfDay;
+//                    }
+//                    if (Start.before(StartOfDay)){
+//                        Start = StartOfDay;
+//                    }
                     ActivityItem PA = new ActivityItem(ActionID,0,Start,End);
                     Activities.add(PA);
                     } catch (ParseException e) {
