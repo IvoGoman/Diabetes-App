@@ -7,10 +7,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.github.mikephil.charting.charts.Chart;
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.formatter.PercentFormatter;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -26,7 +29,7 @@ import uni.mannheim.teamproject.diabetesplaner.R;
  * Created by Stefan on 11.01.2016.
  *
  */
-public class RingChartFragment extends Fragment{
+public class RingChartFragment extends ChartFragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -69,9 +72,38 @@ public class RingChartFragment extends Fragment{
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View inflaterView = inflater.inflate(R.layout.fragment_ring_chart, container, false);
+
+        PieData pieData = this.getData("DAY");
+        pieData.setValueFormatter(new PercentFormatter());
+        PieChart chart = (PieChart) inflaterView.findViewById(R.id.activitypiechart);
+        chart.setData(pieData);
+        chart.setUsePercentValues(true);
+        chart.setDescription("Overview of activities");
+        chart.highlightValues(null);
+        chart.setTransparentCircleColor(Color.WHITE);
+        chart.setRotationEnabled(false);
+        Legend legend = chart.getLegend();
+        legend.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
+        legend.setXEntrySpace(7f);
+        legend.setYEntrySpace(0f);
+        legend.setYOffset(0f);
+        legend.setEnabled(true);
+        chart.invalidate();
+
+        return inflaterView;
+    }
+
+    /**
+     * @author Ivo Gosemann 08.04.2016
+     * Method to retrieve the Chart Data from the DB and process it into a PieData object
+     * @param timeFrame the time window of interest
+     * @return PieData to be displayed in the Chart
+     */
+    public PieData getData (String timeFrame){
         DataBaseHandler handler = AppGlobal.getHandler();
         Date date = Util.getCurrentDate();
-        ArrayList<ActivityItem> activityItems = handler.GetDay(handler,date);
+//        ArrayList<ActivityItem> activityItems = handler.GetDay(handler,date);
+        ArrayList<ActivityItem> activityItems = handler.getActivities(handler,date,timeFrame);
         ArrayList<String> labels = new ArrayList<>();
         ArrayList<Entry> pieValues = new ArrayList<>();
         HashMap<String,Integer> valueMap = new HashMap<>();
@@ -113,29 +145,35 @@ public class RingChartFragment extends Fragment{
             pieValues.add(new Entry(3f, 3));
             pieValues.add(new Entry(4f, 4));
         }
-        PieDataSet pieDataSet = new PieDataSet(pieValues, "Activities");
+        PieDataSet pieDataSet = new PieDataSet(pieValues, getResources().getString(R.string.activity));
 
         ArrayList<Integer> colors = new ArrayList<>();
 
+//      Color bad
+        pieDataSet.addColor(Color.rgb(239,83,80));
+//      Color potential bad
+        pieDataSet.addColor(Color.rgb(255,202,40));
+//      Color good
+        pieDataSet.addColor(Color.rgb(178,255,89));
+//      Color no influence
+        pieDataSet.addColor(Color.rgb(77,208,255));
 
-        pieDataSet.addColor(R.color.good);
-        pieDataSet.addColor(R.color.bad);
-        pieDataSet.addColor(R.color.potential_bad);
-        pieDataSet.addColor(R.color.no_influence);
-        pieDataSet.addColor(R.color.good);
 
-        PieData pieData = new PieData(labels, pieDataSet);
+        return new PieData(labels, pieDataSet);
+    }
 
-        PieChart chart = (PieChart) inflaterView.findViewById(R.id.activitypiechart);
+    /**
+     * @author Ivo Gosemann 08.04.2016
+     * Method which updates the Chart based on the timeframe provided
+     * @param timeFrame
+     */
+    @Override
+    public void updateChart(String timeFrame){
+        PieChart chart = (PieChart)this.getView().findViewById(R.id.activitypiechart);
+        PieData pieData = this.getData(timeFrame);
         chart.setData(pieData);
-        chart.setUsePercentValues(true);
-        chart.setDescription("Overview of activities");
-        chart.highlightValues(null);
-        chart.setTransparentCircleColor(Color.WHITE);
-        chart.setRotationEnabled(false);
         chart.invalidate();
 
-        return inflaterView;
     }
 
 }

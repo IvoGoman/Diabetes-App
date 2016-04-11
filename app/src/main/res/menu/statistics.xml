@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools" tools:context=".EntryScreenActivity">
+    <item
+        android:id="@+id/chooseDate_action_bar"
+        android:icon="@drawable/ic_date_range_black_24dp"
+        android:title=""
+        app:showAsAction="ifRoom">
+        <menu>
+            <item android:id="@+id/statistic_day"
+                android:title="Current Day"/>
+            <item android:id="@+id/statistic_week"
+                android:title="Last Week"/>
+            <item android:id="@+id/statistic_month"
+                android:title="Last Month"/>
+        </menu>
+    </item>
+</menu>
