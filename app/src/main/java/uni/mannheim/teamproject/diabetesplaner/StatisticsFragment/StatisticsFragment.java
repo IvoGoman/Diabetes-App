@@ -144,14 +144,8 @@ public class StatisticsFragment extends Fragment {
                 case R.id.statistic_day:
 //                    TODO:Update the charts by calling them by their ID
                     try{
-                        RingChartFragment ringFragment = (RingChartFragment) active;
-                        ringFragment.updateChart("DAY");
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    try{
-                        LineChartFragment lineFragment = (LineChartFragment) active;
-                        lineFragment.updateChart("DAY");
+                        ChartFragment chartFragment = (ChartFragment) active;
+                        chartFragment.updateChart("DAY");
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -159,29 +153,18 @@ public class StatisticsFragment extends Fragment {
                 case R.id.statistic_week:
 //                    TODO: Update the charts by calling them by their ID
                     try{
-                        RingChartFragment ringFragment = (RingChartFragment) active;
-                        ringFragment.updateChart("WEEK");
+                        ChartFragment chartFragment = (ChartFragment) active;
+                        chartFragment.updateChart("WEEK");
                     }catch (Exception e){
                         e.printStackTrace();
                     }
-                    try{
-                        LineChartFragment lineFragment = (LineChartFragment) active;
-                        lineFragment.updateChart("WEEK");
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
+                    
                     break;
                 case R.id.statistic_month:
 //                    TODO:Update the charts by calling them by their ID
                     try{
-                        RingChartFragment ringFragment = (RingChartFragment) active;
-                        ringFragment.updateChart("MONTH");
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                    try{
-                        LineChartFragment lineFragment = (LineChartFragment) active;
-                        lineFragment.updateChart("MONTH");
+                        ChartFragment chartFragment = (ChartFragment) active;
+                        chartFragment.updateChart("MONTH");
                     }catch (Exception e){
                         e.printStackTrace();
                     }

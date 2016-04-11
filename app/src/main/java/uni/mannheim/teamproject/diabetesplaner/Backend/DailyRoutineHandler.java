@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineFragment;
-import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 
 
@@ -24,7 +23,6 @@ public class DailyRoutineHandler extends DayHandler{
     public DailyRoutineHandler(DailyRoutineFragment drFragment) {
         super(drFragment);
         dailyRoutine = getDailyRoutine();
-
     }
 
 

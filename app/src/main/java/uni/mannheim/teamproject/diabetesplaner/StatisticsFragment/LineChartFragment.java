@@ -30,7 +30,7 @@ import uni.mannheim.teamproject.diabetesplaner.R;
 /**
  * Created by Stefan on 11.01.2016.
  */
-public class LineChartFragment extends Fragment {
+public class LineChartFragment extends ChartFragment {
 
     public LineChartFragment() {
         // Required empty public constructor
@@ -178,6 +178,7 @@ public class LineChartFragment extends Fragment {
      * updates the chart with the new time window
      * @param timeFrame String value indicating the timeframe for the chart
      */
+    @Override
     public void updateChart(String timeFrame){
         CombinedChart chart = (CombinedChart) this.getView().findViewById(R.id.combinedInsulinGlucoseChart);
         CombinedData combinedData = this.getData(timeFrame);

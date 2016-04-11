@@ -29,7 +29,7 @@ import uni.mannheim.teamproject.diabetesplaner.R;
  * Created by Stefan on 11.01.2016.
  *
  */
-public class RingChartFragment extends Fragment{
+public class RingChartFragment extends ChartFragment{
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -167,6 +167,7 @@ public class RingChartFragment extends Fragment{
      * Method which updates the Chart based on the timeframe provided
      * @param timeFrame
      */
+    @Override
     public void updateChart(String timeFrame){
         PieChart chart = (PieChart)this.getView().findViewById(R.id.activitypiechart);
         PieData pieData = this.getData(timeFrame);
