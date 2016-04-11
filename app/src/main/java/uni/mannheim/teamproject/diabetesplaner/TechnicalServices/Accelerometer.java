@@ -21,7 +21,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.PauseSystem;
 
 
 /**
- * Created by Dell on 4/6/2016.
+ * Created by Naira on 4/6/2016.
  */
 public class Accelerometer extends Service implements SensorEventListener {
     private SensorManager senSensorManager;
@@ -40,6 +40,7 @@ public class Accelerometer extends Service implements SensorEventListener {
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        Toast.makeText(this, "Data Collection started", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -163,5 +164,12 @@ public class Accelerometer extends Service implements SensorEventListener {
         return null;
     }
 
+    @Override
+    public void onDestroy() {
+        senSensorManager.unregisterListener(this);
+        Toast.makeText(this, "Data Collection stopped", Toast.LENGTH_SHORT).show();
+        Log.d("ACCELEROMETER", "access killed!");
+
+    }
 }
 

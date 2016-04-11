@@ -84,17 +84,15 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                     //show the notifications only if the data collection is started
                     if (pref_datacollection.isChecked()) {
                         showNotification(1);
+                        //created by Naira, starting the accelerometer collection
                         accelerometerCollection = new Intent();
                         accelerometerCollection.setClass(getActivity().getApplicationContext(), Accelerometer.class);
                         getActivity().startService(accelerometerCollection);
 
                     } else {
                         showNotification(2);
+                        //created by Naira, stoping the accelerometer collection
                         getActivity().stopService(accelerometerCollection);
-
-
-
-
                       //  getActivity().finish();
                     }
                     return true;
