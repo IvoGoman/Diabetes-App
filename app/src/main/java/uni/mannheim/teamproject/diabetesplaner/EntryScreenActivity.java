@@ -40,6 +40,7 @@ import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.EditDialog;
 import uni.mannheim.teamproject.diabetesplaner.DailyRoutine.InputDialog;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
+import uni.mannheim.teamproject.diabetesplaner.GPS_Service.GPS_Service;
 import uni.mannheim.teamproject.diabetesplaner.SettingsActivity.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.StatisticsFragment.StatisticsFragment;
 
@@ -337,6 +338,15 @@ public class EntryScreenActivity extends AppCompatActivity
                 Uri.parse("android-app://uni.mannheim.teamproject.diabetesplaner/http/host/path")
         );
         AppIndex.AppIndexApi.start(client, viewAction);
+
+        startGPS_Service();
+
+    }
+
+
+    public void startGPS_Service(){
+        Intent myIntent = new Intent(this, GPS_Service.class);
+        this.startService(myIntent);
     }
 
     @Override

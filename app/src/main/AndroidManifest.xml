@@ -48,11 +48,14 @@
 
         <service android:name=".SettingsActivity.Accelerometer"/>
 
+        <service android:name=".GPS_Service.GPS_Service"></service>
+
         <!--
         <activity android:name=".MeasurementPop" android:theme="@style/AppTheme.CustomTheme" >
         </activity>
         -->
         <activity android:name=".DailyRoutine.EditActivity"></activity>
+
     </application>
 
 </manifest>
