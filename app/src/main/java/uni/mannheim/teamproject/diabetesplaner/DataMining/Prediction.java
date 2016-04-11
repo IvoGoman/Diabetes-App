@@ -37,9 +37,9 @@ public class Prediction {
         double Action;
     }
     public static class PeriodAction {
-        String Start;
-        String End;
-        int  Action;
+        public String Start;
+        public String End;
+        public int  Action;
 
         String GetStart(){
             return Start;
