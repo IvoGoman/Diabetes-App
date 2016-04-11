@@ -55,7 +55,7 @@
     <PreferenceCategory
         android:title="@string/pref_predModel"
         android:key="pref_predModel">
-        <uni.mannheim.teamproject.diabetesplaner.SettingsActivity.MyDialogPreference
+        <uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.MyDialogPreference
             android:key="pref_key_reset"
             android:title="@string/pref_reset"
             android:summary="@string/pref_reset_summary"
@@ -92,7 +92,7 @@
 
 
 
-        <uni.mannheim.teamproject.diabetesplaner.SettingsActivity.MyDialogPreference
+        <uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.MyDialogPreference
             android:key="pref_key_help"
             android:title="@string/pref_help"
             android:summary="@string/pref_help_summary"

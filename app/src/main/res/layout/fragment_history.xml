@@ -2,7 +2,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="uni.mannheim.teamproject.diabetesplaner.HistoryFragment">
+    tools:context=".UI.HistoryFragment">
 
     <LinearLayout
         android:id="@+id/history_date_layout"
