@@ -22,11 +22,14 @@ import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Stefan
@@ -150,14 +153,36 @@ public class DailyRoutineFragment extends Fragment {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
 
+        DataBaseHandler dbHandler = AppGlobal.getHandler();
+        ArrayList<Integer> bsList = dbHandler.getAllBloodSugar(dbHandler, Util.getCurrentDate(),"WEEK");
+
         for(int i=0; i<listItems.size(); i++){
             DailyRoutineView drv = new DailyRoutineView(getActivity(), listItems.get(i));
+
+            //TODO getting the bloodsugar of current activity and set it
+//            String bloodsugar = "";
+//            int numberOfMeasuresWithinOne = 0;
+//            for(int j=0; j<bsList.size(); j++){
+//                if(Util.isTimeInbetween(listItems.get(i).getStarttime(), listItems.get(i).getStarttime(), dateOfBloodsugarMeasure){
+//                    String name = getResources().getString(R.string.pref_blood_sugar);
+//                    String at = getResources().getString(R.string.at);
+//                    if(numberOfMeasuresWithinOne == 0) {
+//                        bloodsugar = name + " " + at + " " timeOfBloodsugarMeasure + ": " + bloodsugarlevel + " " + measurementUnit;
+//                        numberOfMeasuresWithinOne = 1;
+//                    }else{
+//                        bloodsugar += "\n"+ name + " " + at + " " timeOfBloodsugarMeasure + ": " + bloodsugarlevel + " " + measurementUnit;
+//                    }
+//                }
+//            }
+//
+//            drv.setBloodsugar(bloodsugar);
+
 
             //-----for testing--------------
             if(i==1) {
                 drv.setSubactivity(4);
-            }else if(i==3){
-                drv.setBloodsugar(4.0);
+            }else if(i==1){
+                drv.setBloodsugar("4.0");
                // drv.setSubactivity(5);
                // drv.setMeal("Kartoffeln mit Speck, Schweinshaxen und Salatbeilage");
             }
@@ -172,6 +197,8 @@ public class DailyRoutineFragment extends Fragment {
         //DailyRoutineView.setSelectable(false);
         //DailyRoutineView.setActionBarItems();
     }
+
+
 
 
     /**

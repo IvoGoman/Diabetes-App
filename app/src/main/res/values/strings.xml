@@ -49,6 +49,7 @@
     <string name="mmol_l">mmol/l</string>
 
     <string name="percentage">in %</string>
+    <string name="at">at</string>
 
     <!-- Prediction Model -->
     <string name="pref_reset">Prediction Model Reset</string>

@@ -45,7 +45,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private Date startDate;
     private Date endDate;
     private Date date;
-    private Double bloodsugar;
+    private String bloodsugar;
     private String meal;
     private int state;
     private boolean touched = false;
@@ -866,15 +866,15 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      */
     public String getBloodsugar() {
         //TODO getTimeMeasured + bloodsugarlevel + getMeasurementUnit()
-        return "Blutzuckerspiegel um 13:10: \n" + bloodsugar + " mmol/L";
+        return bloodsugar;
     }
 
     /**
-     * set bloodsugar level
-     * @param bloodsugarlevel
+     * set bloodsugar string
+     * @param bloodsugar
      */
-    public void setBloodsugar(double bloodsugarlevel){
-        this.bloodsugar = bloodsugarlevel;
+    public void setBloodsugar(String bloodsugar){
+        this.bloodsugar = bloodsugar;
     }
 
     public void setSubactivity(int id){

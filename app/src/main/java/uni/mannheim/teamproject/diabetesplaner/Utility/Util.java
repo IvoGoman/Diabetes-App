@@ -458,6 +458,7 @@ public class Util {
 
 
 	/**
+	 * @author Stefan
 	 * compresses a pic from a path with a certain width.
 	 * @param mCurrentPhotoPath
 	 * @param width width to compress. If 0 width of screen is taken
@@ -591,5 +592,21 @@ public class Util {
 
 		Long [] timeWindowLong = {timestampStart.getTime()/1000, timestampEnd.getTime()/1000};
 		return timeWindowLong;
+	}
+
+	/**
+	 * @author Stefan 12.04.2016
+	 * checks if a timestamp is between a start and an end date
+	 * @param start
+	 * @param end
+	 * @param date
+     * @return true if time is in between
+     */
+	public static boolean isTimeInbetween(Date start, Date end, Date date){
+		if(start.compareTo(date) <= 0 && end.compareTo(date) >= 0){
+			return true;
+		}else{
+			return false;
+		}
 	}
 }
