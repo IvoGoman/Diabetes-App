@@ -37,6 +37,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     BloodsugarDialog_and_Settings communicator;
 
     private Intent accelerometerCollection;
+    private Intent wifi;
 
     @Override
     public void onAttach(Activity activity) {
@@ -89,10 +90,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                         accelerometerCollection.setClass(getActivity().getApplicationContext(), Accelerometer.class);
                         getActivity().startService(accelerometerCollection);
 
+
                     } else {
                         showNotification(2);
                         //created by Naira, stoping the accelerometer collection
                         getActivity().stopService(accelerometerCollection);
+
                       //  getActivity().finish();
                     }
                     return true;

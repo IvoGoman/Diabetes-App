@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.CAMERA"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
     <uses-feature android:name="android.hardware.sensor.accelerometer" android:required="true" />
 
     <application
@@ -49,6 +50,13 @@
         <service android:name=".TechnicalServices.Accelerometer"/>
 
         <service android:name=".TechnicalServices.GPS_Service.GPS_Service"></service>
+
+        <receiver android:name=".TechnicalServices.Wifi" android:exported="false" >
+              <intent-filter>
+                <action android:name="android.net.wifi.WIFI_STATE_CHANGED" />
+              </intent-filter>
+             </receiver>
+         <service android:name=".TechnicalServices.Wifi$WifiActiveService" android:exported="false" />
 
         <!--
         <activity android:name=".MeasurementPop" android:theme="@style/AppTheme.CustomTheme" >
