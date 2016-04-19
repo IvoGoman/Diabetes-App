@@ -1,4 +1,4 @@
-package uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine;
+package uni.mannheim.teamproject.diabetesplaner.DailyRoutine;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -6,8 +6,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 
-import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
+import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
@@ -33,6 +34,7 @@ public class AddDialog extends InputDialog {
 //                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 //                String dateString = sdf.format(date);
 
+
                 String dateStringStart = Util.dateToDateTimeString(getStartDate());
                 String dateStringEnd = Util.dateToDateTimeString(getEndDate());
 
@@ -41,11 +43,9 @@ public class AddDialog extends InputDialog {
                     itd.show(getFragmentManager(),"invalidTime");
                 }else {
 
-                    AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), getSelectedItem(), 1, dateStringStart, dateStringEnd);
-                    //ActivityItem activityItem = new ActivityItem(getSelectedItem(), 0, dateStringStart, dateStringEnd, getImagePath(), getMeal());
-
-
-                    //AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), activityItem);
+                    //AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), getSelectedItem(), 1, dateStringStart, dateStringEnd);
+                    ActivityItem activityItem = new ActivityItem(getSelectedItem(), 0, dateStringStart, dateStringEnd, getImagePath(), getMeal());
+                    AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), activityItem);
 
 
 //                    AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), getSelectedItem(), 1, dateString + " " + getStarttime(), dateString + " " + getEndtime());
