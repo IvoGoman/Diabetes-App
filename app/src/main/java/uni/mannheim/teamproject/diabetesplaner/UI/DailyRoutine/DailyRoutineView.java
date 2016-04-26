@@ -27,8 +27,10 @@ import java.util.Calendar;
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.ColorUtils;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Stefan
@@ -464,9 +466,9 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      //draw duration text
         canvas.drawText(getResources().getString(R.string.duration) + ": " + durationAsString, getWidth() - (int) fontDur.measureText(getResources().getString(R.string.duration) + ": " + durationAsString) - textPadding, sl.getHeight(), fontDur);
         //draw start text
-        canvas.drawText(getResources().getString(R.string.start) + ": " + Util.getTimeInUserFormat(startDate, context), textPadding + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
+        canvas.drawText(getResources().getString(R.string.start) + ": " + TimeUtils.getTimeInUserFormat(startDate, context), textPadding + offsetL, (front2.height() / 2) + front.height() + fontDur.getTextSize() / 2, fontDur);
         //draw end text
-        canvas.drawText(getResources().getString(R.string.end) + ": " + Util.getTimeInUserFormat(endDate, context), getWidth() - textPadding - fontDur.measureText(getResources().getString(R.string.end) + ": " + Util.getTimeInUserFormat(endDate, context)), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
+        canvas.drawText(getResources().getString(R.string.end) + ": " + TimeUtils.getTimeInUserFormat(endDate, context), getWidth() - textPadding - fontDur.measureText(getResources().getString(R.string.end) + ": " + TimeUtils.getTimeInUserFormat(endDate, context)), (front2.height() / 2) + fontDur.getTextSize() / 2 + front.height(), fontDur);
 
         //draw activity text
         canvas.translate(actRect.left, actRect.top);

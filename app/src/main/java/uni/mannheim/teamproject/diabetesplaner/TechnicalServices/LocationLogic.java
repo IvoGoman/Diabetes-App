@@ -126,7 +126,7 @@ public class LocationLogic {
 
         if (!nameExists) {
             // add location to database
-            helper.InsertLocation(helper, lat, lon, tittle);
+            helper.insertLocation(helper, lat, lon, tittle);
             return true;
         }
         return false;

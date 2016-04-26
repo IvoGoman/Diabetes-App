@@ -6,6 +6,7 @@ import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
@@ -92,8 +93,8 @@ public class ActivityItem {
     public ActivityItem(int activityId, int subactivityId, String starttime, String endtime){
         this.activityId = activityId;
         this.subactivityId = subactivityId;
-        this.starttime = Util.getTime(starttime);
-        this.endtime = Util.getTime(endtime);
+        this.starttime = TimeUtils.getTime(starttime);
+        this.endtime = TimeUtils.getTime(endtime);
     }
 /*
     public ActivityItem(int activityId, int subactivityId, String starttime, String endtime, String imagePath, String meal){
@@ -121,7 +122,7 @@ public class ActivityItem {
      * @return
      */
     public String getStarttimeAsString() {
-        return Util.dateToDateTimeString(starttime);
+        return TimeUtils.dateToDateTimeString(starttime);
     }
 
     /**
@@ -129,7 +130,7 @@ public class ActivityItem {
      * @return
      */
     public String getEndtimeAsString() {
-        return Util.dateToDateTimeString(endtime);
+        return TimeUtils.dateToDateTimeString(endtime);
     }
 
     public Date getEndtime() {

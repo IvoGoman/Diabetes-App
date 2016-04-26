@@ -1,4 +1,4 @@
-package uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine;
+package uni.mannheim.teamproject.diabetesplaner.Utility;
 
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.R;

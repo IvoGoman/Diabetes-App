@@ -10,8 +10,8 @@ import java.util.Date;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 
 /**
@@ -49,8 +49,8 @@ public class DailyRoutineHandler extends DayHandler{
                     dailyRoutine.clear();
                     String dateString = null;
                     for (int i = 0; i < prediction.size(); i++) {
-                        dateString = Util.convertDateToDateString(date);
-                        dailyRoutine.add(new ActivityItem(prediction.get(i).Action + 1, 0, Util.setTime(dateString, prediction.get(i).Start), Util.setTime(dateString, prediction.get(i).End)));
+                        dateString = TimeUtils.convertDateToDateString(date);
+                        dailyRoutine.add(new ActivityItem(prediction.get(i).Action + 1, 0, TimeUtils.setTime(dateString, prediction.get(i).Start), TimeUtils.setTime(dateString, prediction.get(i).End)));
                     }
                     Log.i(TAG, dailyRoutine.toString());
                 }
@@ -61,7 +61,7 @@ public class DailyRoutineHandler extends DayHandler{
                     dailyRoutine.clear();
                     String dateString = null;
                     for (int i = 0; i < Day1.size(); i++) {
-                        dateString = Util.convertDateToDateString(date);
+                        dateString = TimeUtils.convertDateToDateString(date);
                         dailyRoutine.add(new ActivityItem(Day1.get(i).getActivityId(), 0, Day1.get(i).getStarttime(), Day1.get(i).getEndtime()));
                     }
 
@@ -76,8 +76,8 @@ public class DailyRoutineHandler extends DayHandler{
                     dailyRoutine.clear();
                     String dateString = null;
                     for (int i = 0; i < prediction.size(); i++) {
-                        dateString = Util.convertDateToDateString(date);
-                        dailyRoutine.add(new ActivityItem(prediction.get(i).Action + 1, 0, Util.setTime(dateString, prediction.get(i).Start), Util.setTime(dateString, prediction.get(i).End)));
+                        dateString = TimeUtils.convertDateToDateString(date);
+                        dailyRoutine.add(new ActivityItem(prediction.get(i).Action + 1, 0, TimeUtils.setTime(dateString, prediction.get(i).Start), TimeUtils.setTime(dateString, prediction.get(i).End)));
                     }
                     Log.i(TAG, dailyRoutine.toString());
                 }
@@ -88,7 +88,7 @@ public class DailyRoutineHandler extends DayHandler{
                     dailyRoutine.clear();
                     String dateString = null;
                     for (int i = 0; i < Day1.size(); i++) {
-                        dateString = Util.convertDateToDateString(date);
+                        dateString = TimeUtils.convertDateToDateString(date);
                         dailyRoutine.add(new ActivityItem(Day1.get(i).getActivityId(),0,Day1.get(i).getStarttimeAsString(),Day1.get(i).getEndtimeAsString()));
                     }
                     Log.i(TAG, dailyRoutine.toString());

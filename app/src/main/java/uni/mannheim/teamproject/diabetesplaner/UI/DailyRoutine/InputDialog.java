@@ -27,6 +27,7 @@ import java.util.Locale;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
@@ -192,7 +193,7 @@ public class InputDialog extends DialogFragment{
 
         //button for starttime TimePicker
         startTimeButton = (Button) v.findViewById(R.id.start_button);
-        startTimeButton.setText(Util.getTimeInUserFormat(startDate, getActivity()));
+        startTimeButton.setText(TimeUtils.getTimeInUserFormat(startDate, getActivity()));
         startTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -206,7 +207,7 @@ public class InputDialog extends DialogFragment{
 
         //button for endtime TimePicker
         endTimeButton = (Button) v.findViewById(R.id.end_button);
-        endTimeButton.setText(Util.getTimeInUserFormat(endDate, getActivity()));
+        endTimeButton.setText(TimeUtils.getTimeInUserFormat(endDate, getActivity()));
         endTimeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -390,7 +391,7 @@ public class InputDialog extends DialogFragment{
      */
     public void setStartDate(Date startDate) {
         if(startTimeButton != null) {
-            startTimeButton.setText(Util.getTimeInUserFormat(startDate, getActivity()));
+            startTimeButton.setText(TimeUtils.getTimeInUserFormat(startDate, getActivity()));
         }
         if(endDate != null) {
             if (startDate.after(endDate)){
@@ -410,7 +411,7 @@ public class InputDialog extends DialogFragment{
      */
     public void setEndDate(Date endDate) {
         if(endTimeButton != null){
-            endTimeButton.setText(Util.getTimeInUserFormat(endDate, getActivity()));
+            endTimeButton.setText(TimeUtils.getTimeInUserFormat(endDate, getActivity()));
         }
         if(startDate != null) {
             if (startDate.after(endDate)){

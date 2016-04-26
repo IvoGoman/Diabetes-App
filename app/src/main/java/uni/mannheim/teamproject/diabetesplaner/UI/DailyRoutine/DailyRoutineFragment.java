@@ -182,13 +182,13 @@ public class DailyRoutineFragment extends Fragment {
 
 
             //-----for testing--------------
-            if(i==1) {
-                drv.setSubactivity(4);
-            }else if(i==1){
-                drv.setBloodsugar("4.0");
-               // drv.setSubactivity(5);
-               // drv.setMeal("Kartoffeln mit Speck, Schweinshaxen und Salatbeilage");
-            }
+//            if(i==1) {
+//                drv.setSubactivity(4);
+//            }else if(i==1){
+//                drv.setBloodsugar("4.0");
+//               // drv.setSubactivity(5);
+//               // drv.setMeal("Kartoffeln mit Speck, Schweinshaxen und Salatbeilage");
+//            }
 
             linearLayout.addView(drv);
             drv.setState(false);

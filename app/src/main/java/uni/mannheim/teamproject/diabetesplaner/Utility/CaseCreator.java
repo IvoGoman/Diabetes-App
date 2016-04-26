@@ -128,7 +128,7 @@ public class CaseCreator {
 			if(i==0){
 				item.add("dayOfWeek");
 			}else{
-				Calendar cal = Util.getCalendar(item.get(starttimeIndex));
+				Calendar cal = TimeUtils.getCalendar(item.get(starttimeIndex));
 				int day = cal.get(Calendar.DAY_OF_WEEK);
 				item.add(String.valueOf(day));
 			}

@@ -11,8 +11,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
  * Created by Stefan on 04.02.2016.
@@ -42,7 +42,7 @@ public class TimePickerFragment extends DialogFragment{
         return new android.app.TimePickerDialog(getActivity(), R.style.picker, new android.app.TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-                date = Util.getDate(date, hourOfDay, minute);
+                date = TimeUtils.getDate(date, hourOfDay, minute);
                 //if this is the dialog for the starttime
                 if(isStart){
                     dialog.setStartDate(date);

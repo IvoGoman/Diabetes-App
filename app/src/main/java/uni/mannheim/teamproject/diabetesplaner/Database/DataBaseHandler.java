@@ -14,10 +14,10 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
-import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 
 
@@ -485,7 +485,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public ArrayList<MeasureItem> getMeasurementValues(DataBaseHandler handler, Date date, String window, String measure_kind){
         SQLiteDatabase db = handler.getReadableDatabase();
-        Long[] windowStartEnd = Util.convertDateStringToTimestamp(getWindowStartEnd(date,window));
+        Long[] windowStartEnd = TimeUtils.convertDateStringToTimestamp(getWindowStartEnd(date,window));
         Cursor cursor = db.rawQuery("select measure_value, measure_unit, timestamp from  " + MEASUREMENT_TABLE_NAME + " "  +
                 "where timestamp>='"+windowStartEnd[0]+"' and timestamp <'"+windowStartEnd[1]+"'" +
                 "AND measure_kind = '"+measure_kind+"';",null);
@@ -723,8 +723,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         try {
             Date1 = format.parse(SDate1);
-            Date1 = Util.addMinuteFromDate(Date1, 1);
-            SDate1 = Util.dateToDateTimeString(Date1);
+            Date1 = TimeUtils.addMinuteFromDate(Date1, 1);
+            SDate1 = TimeUtils.dateToDateTimeString(Date1);
 
         } catch (ParseException e) {
             e.printStackTrace();
@@ -737,8 +737,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         try {
             Date1 = format.parse(SDate1);
-            Date1 = Util.addMinuteFromDate(Date1, -1);
-            SDate1 = Util.dateToDateTimeString(Date1);
+            Date1 = TimeUtils.addMinuteFromDate(Date1, -1);
+            SDate1 = TimeUtils.dateToDateTimeString(Date1);
 
         } catch (ParseException e) {
             e.printStackTrace();

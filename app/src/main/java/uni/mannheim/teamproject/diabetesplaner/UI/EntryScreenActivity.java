@@ -30,20 +30,20 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
-import uni.mannheim.teamproject.diabetesplaner.R;
-import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.ActivityMeasurementFragment;
-import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
+import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.GPS_Service.GPS_Service;
+import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.ActivityMeasurementFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.ActivityLimitDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.AddDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.EditDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.InputDialog;
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
-import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.GPS_Service.GPS_Service;
 import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.StatisticsFragment;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 public class EntryScreenActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -175,8 +175,8 @@ public class EntryScreenActivity extends AppCompatActivity
                         //  drHandler.delete(getIndexesOfSelected(((DailyRoutineFragment) fragment)));
                         ArrayList<Integer> selected = getIndexesOfSelected((DailyRoutineFragment) fragment);
                         for (int i = 0; i < selected.size(); i++) {
-                            String start = Util.dateToDateTimeString(drHandler.getDailyRoutine().get(selected.get(i)).getStarttime());
-                            String end = Util.dateToDateTimeString(drHandler.getDailyRoutine().get(selected.get(i)).getEndtime());
+                            String start = TimeUtils.dateToDateTimeString(drHandler.getDailyRoutine().get(selected.get(i)).getStarttime());
+                            String end = TimeUtils.dateToDateTimeString(drHandler.getDailyRoutine().get(selected.get(i)).getEndtime());
                             AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(), start, end);
                         }
                         drHandler.update();

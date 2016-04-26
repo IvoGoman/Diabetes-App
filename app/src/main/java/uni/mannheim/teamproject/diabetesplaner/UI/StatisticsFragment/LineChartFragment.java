@@ -20,11 +20,11 @@ import com.github.mikephil.charting.data.LineDataSet;
 import java.util.ArrayList;
 import java.util.Date;
 
-import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
-import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
+import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
  * Created by Stefan on 11.01.2016.
@@ -86,7 +86,7 @@ public class LineChartFragment extends ChartFragment {
      */
     public CombinedData getData (String timeFrame){
         DataBaseHandler handler = AppGlobal.getHandler();
-        Date date = Util.getCurrentDate();
+        Date date = TimeUtils.getCurrentDate();
 
         ArrayList<MeasureItem> insulinList = AppGlobal.getHandler().getMeasurementValues(AppGlobal.getHandler(),date,"DAY","insulin");
         // creating the x-Axes Values
@@ -94,8 +94,8 @@ public class LineChartFragment extends ChartFragment {
         String dateValue="";
         if(!insulinList.isEmpty()) {
             for (int i = 0; i < insulinList.size(); i++) {
-                dateValue = Util.getTimeStampAsDateString(insulinList.get(i).getTimestamp());
-                dateValue = Util.dateToTimeString(dateValue);
+                dateValue = TimeUtils.getTimeStampAsDateString(insulinList.get(i).getTimestamp());
+                dateValue = TimeUtils.dateToTimeString(dateValue);
                 labels.add(dateValue);
             }
         }else {
@@ -151,8 +151,8 @@ public class LineChartFragment extends ChartFragment {
         dateValue="";
         if(!insulinList.isEmpty()) {
             for (int i = 0; i < insulinList.size(); i++) {
-                dateValue = Util.getTimeStampAsDateString(insulinList.get(i).getTimestamp());
-                dateValue = Util.dateToTimeString(dateValue);
+                dateValue = TimeUtils.getTimeStampAsDateString(insulinList.get(i).getTimestamp());
+                dateValue = TimeUtils.dateToTimeString(dateValue);
                 labelsBloodsugar.add(dateValue);
             }
         }else {

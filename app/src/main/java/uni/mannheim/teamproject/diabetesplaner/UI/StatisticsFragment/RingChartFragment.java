@@ -17,11 +17,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 
-import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
  * Created by Stefan on 11.01.2016.
@@ -99,7 +99,7 @@ public class RingChartFragment extends ChartFragment{
      */
     public PieData getData (String timeFrame){
         DataBaseHandler handler = AppGlobal.getHandler();
-        Date date = Util.getCurrentDate();
+        Date date = TimeUtils.getCurrentDate();
 //        ArrayList<ActivityItem> activityItems = handler.GetDay(handler,date);
         ArrayList<ActivityItem> activityItems = handler.getActivities(handler,date,timeFrame);
         ArrayList<String> labels = new ArrayList<>();
@@ -113,11 +113,11 @@ public class RingChartFragment extends ChartFragment{
                 item = activityItems.get(i);
                 label = handler.getActionById(handler,item.getActivityId());
                 if(!valueMap.containsKey(label)){
-                    value =  Util.getDuration(item.getStarttime(),item.getEndtime());
+                    value =  TimeUtils.getDuration(item.getStarttime(),item.getEndtime());
                     valueMap.put(label,value);
                 }else{
                     value = valueMap.get(label);
-                    value += Util.getDuration(item.getStarttime(),item.getEndtime());
+                    value += TimeUtils.getDuration(item.getStarttime(),item.getEndtime());
                     valueMap.put(label,value);
                 }
             }

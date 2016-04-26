@@ -9,7 +9,7 @@ import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
  * Created by Stefan on 24.02.2016.
@@ -42,15 +42,15 @@ public class DayHandler {
 
         //adapt times TODO
         for (int i = 0; i < dailyRoutine.size(); i++) {
-            if (i == 0 && dailyRoutine.get(i).getStarttime().compareTo(Util.getTime("00:00")) != 0) {
+            if (i == 0 && dailyRoutine.get(i).getStarttime().compareTo(TimeUtils.getTime("00:00")) != 0) {
                 //first activity of the day
-                dailyRoutine.get(i).setStarttime(Util.getTime("00:00"));
-            } else if (i < dailyRoutine.size() - 1 && dailyRoutine.get(i + 1).getStarttime().compareTo(Util.addMinuteFromDate(dailyRoutine.get(i).getEndtime(), 1)) != 0) {
+                dailyRoutine.get(i).setStarttime(TimeUtils.getTime("00:00"));
+            } else if (i < dailyRoutine.size() - 1 && dailyRoutine.get(i + 1).getStarttime().compareTo(TimeUtils.addMinuteFromDate(dailyRoutine.get(i).getEndtime(), 1)) != 0) {
                 //all activities within first and last activity of the day
-                dailyRoutine.get(i + 1).setStarttime(Util.addMinuteFromDate(dailyRoutine.get(i).getEndtime(), +1));
+                dailyRoutine.get(i + 1).setStarttime(TimeUtils.addMinuteFromDate(dailyRoutine.get(i).getEndtime(), +1));
             } else if (i == dailyRoutine.size() - 1) {
                 //last activity of the day
-                dailyRoutine.get(i).setEndtime(Util.getTime("23:59"));
+                dailyRoutine.get(i).setEndtime(TimeUtils.getTime("23:59"));
             }
         }
 
@@ -137,8 +137,8 @@ public class DayHandler {
 
                 dailyRoutine.remove(startindex);
 
-                prev.setEndtime(Util.addMinuteFromDate(start, -1));
-                next.setStarttime(Util.addMinuteFromDate(end, 1));
+                prev.setEndtime(TimeUtils.addMinuteFromDate(start, -1));
+                next.setStarttime(TimeUtils.addMinuteFromDate(end, 1));
 
                 //order vice verse!
                 dailyRoutine.add(startindex, next);
@@ -152,13 +152,13 @@ public class DayHandler {
             //set endtime of previous activity
             if (startindex >= 0) {
                 ActivityItem itemStart = dailyRoutine.get(startindex);
-                itemStart.setEndtime(Util.addMinuteFromDate(start, -1));
+                itemStart.setEndtime(TimeUtils.addMinuteFromDate(start, -1));
             }
 
             //set starttime of next activity
             if (endindex < dailyRoutine.size()) {
                 ActivityItem itemEnd = dailyRoutine.get(endindex);
-                itemEnd.setStarttime(Util.addMinuteFromDate(end, 1));
+                itemEnd.setStarttime(TimeUtils.addMinuteFromDate(end, 1));
             }
 
             //remove items in between
