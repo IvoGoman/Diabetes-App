@@ -14,9 +14,9 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
-import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 
 /**
@@ -61,10 +61,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     //Location Table
     private static final String LOCATION_TABLE_NAME = "Location";
+    private static final String LOCATION1_TABLE_NAME = "Location1";
     private static final String LOCATION_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " +
                     LOCATION_TABLE_NAME +
                     " (id INTEGER PRIMARY KEY, Latitude double, Longtitude double, Title VARCHAR(20));";
+    private static final String LOCATION1_CREATE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " +
+                    LOCATION1_TABLE_NAME +
+                    " (id INTEGER PRIMARY KEY, Latitude double, Longtitude double, Timestamp DateTime);";
     public static final String LOCATION_SELECT =
             "SELECT * FROM " + LOCATION_TABLE_NAME + ";";
     public static final String LOCATION_DELETE_TABLE =
@@ -87,7 +92,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String ACTIVITYLIST_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " +
                     ACTIVITYLIST_TABLE_NAME +
-                    " (id INTEGER PRIMARY KEY, id_Activity Integer, id_Location Integer, id_SubActivity Integer, Start DateTime, End DateTime, Meal String, ImagePath String, Intensity Integer, FOREIGN KEY(id_Activity) REFERENCES Activities(id), FOREIGN KEY(id_Location) REFERENCES Locations(id) );";
+                    " (id INTEGER PRIMARY KEY, id_Activity Integer, id_Location Integer, Start DateTime, End DateTime, Meal String, ImagePath String, Intensity Integer, FOREIGN KEY(id_Activity) REFERENCES Activities(id), FOREIGN KEY(id_Location) REFERENCES Locations(id) );";
     public static final String ACTIVITYLIST_SELECT =
             "SELECT * FROM " + ACTIVITYLIST_TABLE_NAME + ";";
     public static final String ACTIVITYLIST_DELETE_TABLE =
@@ -189,10 +194,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             Log.d("Database", "Location Table Created");
             db.execSQL("insert into Location(Latitude, Longtitude, Title) values (-1,-1,'Other'); ");   //if the location is unknown
 
+            // Create Location1 Table
+            db.execSQL(LOCATION1_CREATE_TABLE);
+            Log.d("Database", "Location1 Table Created");
+            db.execSQL("insert into Location1(Latitude, Longtitude, TimeStamp) values (-1,-1,'2016-01-01 00:00'); ");   //if the location is unknown
+
             //Create ActivityList Table
             db.execSQL(ACTIVITYLIST_CREATE_TABLE);
             Log.d("Database", "Routine Table Created");
-            /*db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-01 00:00' , '2016-01-01 09:00'); ");
             db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-01 09:05' , '2016-01-01 09:30'); ");
             db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-01 09:30' , '2016-01-01 10:00'); ");
             db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-01 10:03' , '2016-01-01 13:55'); ");
@@ -227,7 +237,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(3, 1, '2016-01-04 15:00' , '2016-01-04 19:00'); ");
             db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(2, 1, '2016-01-04 19:03' , '2016-01-04 19:40'); ");
             db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(4, 1, '2016-01-04 19:45' , '2016-01-04 20:00'); ");
-            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-04 20:00' , '2016-01-04 23:59'); ");*/
+            db.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(1, 1, '2016-01-04 20:00' , '2016-01-04 23:59'); ");
 
             //db.close();
 
@@ -266,6 +276,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
+    public void InsertCurrentLocation(DataBaseHandler handler, double lat, double longt, Date time) {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        db1.execSQL("insert into Location(Latitude, Longtitude, Title) values(" + lat + "," + longt + "," + "'" + Util.dateToDateTimeString(time) + "'" + "); ");
+        db1.close();
+    }
+
 /*
     public static final String TAG = ActivityItem.class.getSimpleName();
 
@@ -282,18 +298,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     //(id INTEGER PRIMARY KEY, id_Activity Integer, id_Location Integer, id_SubActivity Integer, Start DateTime, End DateTime, Meal String, ImagePath String, Intensity Integer
 
     public void InsertActivity(DataBaseHandler handler, ActivityItem Activ) {
+        String ImagePath = Activ.getImagePath();
         int idActivity = Activ.getActivityId();
         int idLocation =1;
         String idSubActivity = String.valueOf(Activ.getSubactivityId());
         String Start = Activ.getStarttimeAsString();
         String End = Activ.getEndtimeAsString();
         String Meal = Activ.getMeal();
-        String ImagePath = Activ.getImagePath();
-        String Intensity = Activ.getIntensity().toString();
-
+        if (ImagePath== null){
+            ImagePath = "";
+        }
+        else {
+            ImagePath = Activ.getImagePath();
+        }
+        int Intensity = Activ.getIntensity();
 
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End, Meal, ImagePath, Intensity) values(" + idActivity + "," + idLocation + "," + idSubActivity + " , '" + Start + "','" + End + "'" + Meal + "," + ImagePath + "," + Intensity + "); ");
+        db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End, Meal, ImagePath, Intensity) values(" + idActivity + "," + idLocation + " , '" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
         db1.close();
     }
 
@@ -302,6 +323,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         String End = Activ.getEndtimeAsString();
         SQLiteDatabase db1 = handler.getWritableDatabase();
         db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
+        db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(15,1,'"+Start+"','"+End+"')");
         db1.close();
     }
 
@@ -331,6 +353,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void DeleteActivity(DataBaseHandler handler, String Start, String End) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
+        db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(15,1,'"+Start+"','"+End+"')");
         db1.close();
     }
 

@@ -26,8 +26,8 @@ import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Stefan on 04.02.2016.
@@ -314,6 +314,17 @@ public class InputDialog extends DialogFragment{
     public void setIntensity(Integer intensity){
         this.intensity = intensity;
     }
+
+    public int getIntensity(){
+        if (this.intensity == null )
+        {
+            return -1;
+        }
+        else {
+            return this.intensity;
+        }
+    }
+
 
     /**
      * returns id of selected activity

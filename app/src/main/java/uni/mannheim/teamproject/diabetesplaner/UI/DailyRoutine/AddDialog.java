@@ -1,4 +1,4 @@
-package uni.mannheim.teamproject.diabetesplaner.DailyRoutine;
+package uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -6,10 +6,9 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.view.View;
 
-import uni.mannheim.teamproject.diabetesplaner.Backend.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.Backend.AppGlobal;
-import uni.mannheim.teamproject.diabetesplaner.DataMining.Util;
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
 /**
  * Created by Stefan on 31.01.2016.
@@ -35,8 +34,8 @@ public class AddDialog extends InputDialog {
 //                String dateString = sdf.format(date);
 
 
-                String dateStringStart = Util.dateToDateTimeString(getStartDate());
-                String dateStringEnd = Util.dateToDateTimeString(getEndDate());
+                //String dateStringStart = Util.dateToDateTimeString(getStartDate());
+                //String dateStringEnd = Util.dateToDateTimeString(getEndDate());
 
                 if(!isTimeValid()){
                     InvalidTimeDialog itd = new InvalidTimeDialog();
@@ -44,7 +43,7 @@ public class AddDialog extends InputDialog {
                 }else {
 
                     //AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), getSelectedItem(), 1, dateStringStart, dateStringEnd);
-                    ActivityItem activityItem = new ActivityItem(getSelectedItem(), 0, dateStringStart, dateStringEnd, getImagePath(), getMeal());
+                    ActivityItem activityItem = new ActivityItem(getSelectedItem(), 1, getStartDate(), getEndDate(), getImagePath(), getMeal(), getIntensity());
                     AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), activityItem);
 
 

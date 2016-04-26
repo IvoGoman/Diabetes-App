@@ -8,8 +8,8 @@ import java.util.Date;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineView;
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Stefan on 24.02.2016.
@@ -199,8 +199,6 @@ public class DayHandler {
      * @return
      */
     public ArrayList<ActivityItem> getDailyRoutine() {
-
-
         return dailyRoutine;
     }
 

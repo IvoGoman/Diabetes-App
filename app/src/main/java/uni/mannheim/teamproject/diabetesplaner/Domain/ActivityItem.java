@@ -5,8 +5,8 @@ import android.graphics.Bitmap;
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Stefan on 22.02.2016.
@@ -33,7 +33,7 @@ public class ActivityItem {
      * @param endtime as Date
      */
     public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime){
-        this.activityId = activityId;
+         this.activityId = activityId;
         this.subactivityId = subactivityId;
         this.starttime = starttime;
         this.endtime = endtime;
@@ -54,6 +54,16 @@ public class ActivityItem {
         this.endtime = endtime;
         this.meal = meal;
         this.imagePath = imagePath;
+    }
+
+    public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime, String imagePath, String meal, Integer intensity) {
+        this.activityId = activityId;
+        this.subactivityId = subactivityId;
+        this.starttime = starttime;
+        this.endtime = endtime;
+        this.meal = meal;
+        this.imagePath = imagePath;
+        this.intensity = intensity;
     }
 
     public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime, Integer intensity) {
@@ -85,16 +95,16 @@ public class ActivityItem {
         this.starttime = Util.getTime(starttime);
         this.endtime = Util.getTime(endtime);
     }
-
+/*
     public ActivityItem(int activityId, int subactivityId, String starttime, String endtime, String imagePath, String meal){
         this.activityId = activityId;
         this.subactivityId = subactivityId;
-        this.starttime = Util.getTime(starttime);
-        this.endtime = Util.getTime(endtime);
+        this.starttime = starttime;
+        this.endtime = endtime;
         this.meal = meal;
         this.imagePath = imagePath;
     }
-
+*/
     public int getActivityId() {
         return activityId;
     }
@@ -111,7 +121,7 @@ public class ActivityItem {
      * @return
      */
     public String getStarttimeAsString() {
-        return Util.timeToString(starttime);
+        return Util.dateToDateTimeString(starttime);
     }
 
     /**
@@ -119,7 +129,7 @@ public class ActivityItem {
      * @return
      */
     public String getEndtimeAsString() {
-        return Util.timeToString(endtime);
+        return Util.dateToDateTimeString(endtime);
     }
 
     public Date getEndtime() {
