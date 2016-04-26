@@ -27,10 +27,10 @@ import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
-import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
  * Created by Stefan
@@ -156,27 +156,29 @@ public class DailyRoutineFragment extends Fragment {
 
         DataBaseHandler dbHandler = AppGlobal.getHandler();
 //        ArrayList<Integer> bsList = dbHandler.getAllBloodSugar(dbHandler, Util.getCurrentDate(),"WEEK");
-        ArrayList<MeasureItem> bsList = dbHandler.getMeasurementValues(dbHandler,Util.getCurrentDate(),"WEEK","bloodsugar");
+        ArrayList<MeasureItem> bsList = dbHandler.getMeasurementValues(dbHandler, TimeUtils.getCurrentDate(),"WEEK","bloodsugar");
         for(int i=0; i<listItems.size(); i++){
             DailyRoutineView drv = new DailyRoutineView(getActivity(), listItems.get(i));
 
             //TODO getting the bloodsugar of current activity and set it
-//            String bloodsugar = "";
-//            int numberOfMeasuresWithinOne = 0;
-//            for(int j=0; j<bsList.size(); j++){
-//                if(Util.isTimeInbetween(listItems.get(i).getStarttime(), listItems.get(i).getStarttime(), dateOfBloodsugarMeasure){
-//                    String name = getResources().getString(R.string.pref_blood_sugar);
-//                    String at = getResources().getString(R.string.at);
-//                    if(numberOfMeasuresWithinOne == 0) {
-//                        bloodsugar = name + " " + at + " " timeOfBloodsugarMeasure + ": " + bloodsugarlevel + " " + measurementUnit;
-//                        numberOfMeasuresWithinOne = 1;
-//                    }else{
-//                        bloodsugar += "\n"+ name + " " + at + " " timeOfBloodsugarMeasure + ": " + bloodsugarlevel + " " + measurementUnit;
-//                    }
-//                }
-//            }
-//
-//            drv.setBloodsugar(bloodsugar);
+            String bloodsugar = "";
+            int numberOfMeasuresWithinOne = 0;
+            for(int j=0; j<bsList.size(); j++){
+                MeasureItem bs = bsList.get(i);
+                //checks if time of the bloodsugar measurement is inbetween start and endtime of an activity
+                if(TimeUtils.isTimeInbetween(listItems.get(i).getStarttime(), listItems.get(i).getStarttime(), TimeUtils.getDate(bs.getTimestamp()))){
+                    String name = getResources().getString(R.string.pref_blood_sugar);
+                    String at = getResources().getString(R.string.at);
+                    if(numberOfMeasuresWithinOne == 0) {
+                        bloodsugar = name + " " + at + " " + TimeUtils.getTimeInUserFormat(bs.getTimestamp(), getContext()) + ": " + bs.getMeasure_value() + " " + bs.getMeasure_unit();
+                        numberOfMeasuresWithinOne = 1;
+                    }else{
+                        bloodsugar += "\n"+ name + " " + at + " " + TimeUtils.getTimeInUserFormat(bs.getTimestamp(), getContext()) + ": " + bs.getMeasure_value() + " " + bs.getMeasure_unit();
+                    }
+                }
+            }
+
+            drv.setBloodsugar(bloodsugar);
 
 
             //-----for testing--------------
