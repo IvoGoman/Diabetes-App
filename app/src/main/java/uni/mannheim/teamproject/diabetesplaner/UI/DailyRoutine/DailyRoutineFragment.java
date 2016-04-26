@@ -26,6 +26,7 @@ import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
+import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -154,8 +155,8 @@ public class DailyRoutineFragment extends Fragment {
                 ViewGroup.LayoutParams.MATCH_PARENT);
 
         DataBaseHandler dbHandler = AppGlobal.getHandler();
-        ArrayList<Integer> bsList = dbHandler.getAllBloodSugar(dbHandler, Util.getCurrentDate(),"WEEK");
-
+//        ArrayList<Integer> bsList = dbHandler.getAllBloodSugar(dbHandler, Util.getCurrentDate(),"WEEK");
+        ArrayList<MeasureItem> bsList = dbHandler.getMeasurementValues(dbHandler,Util.getCurrentDate(),"WEEK","bloodsugar");
         for(int i=0; i<listItems.size(); i++){
             DailyRoutineView drv = new DailyRoutineView(getActivity(), listItems.get(i));
 

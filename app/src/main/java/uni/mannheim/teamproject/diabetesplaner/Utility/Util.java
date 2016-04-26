@@ -64,6 +64,16 @@ public class Util {
 		Date date = new Date(Long.parseLong(timestamp));
 		return date;
 	}
+	/**
+	 * converts a timestamp long to a Datestring instance
+	 * @param timestamp as String
+	 * @return String object
+	 */
+	public static String getTimeStampAsDateString(long timestamp){
+		Date date = new Date(timestamp);
+		String sDate = Util.dateToDateTimeString(date);
+		return sDate;
+	}
 
 	/**
 	 * writes a ArrayList into another ArrayList

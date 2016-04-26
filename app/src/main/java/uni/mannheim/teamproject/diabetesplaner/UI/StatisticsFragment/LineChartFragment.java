@@ -20,6 +20,7 @@ import com.github.mikephil.charting.data.LineDataSet;
 import java.util.ArrayList;
 import java.util.Date;
 
+import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
@@ -87,13 +88,13 @@ public class LineChartFragment extends ChartFragment {
         DataBaseHandler handler = AppGlobal.getHandler();
         Date date = Util.getCurrentDate();
 
-        ArrayList<String> dateList = handler.getAllTimestamps(handler, date,"DAY");
+        ArrayList<MeasureItem> insulinList = AppGlobal.getHandler().getMeasurementValues(AppGlobal.getHandler(),date,"DAY","insulin");
         // creating the x-Axes Values
         ArrayList<String> labels = new ArrayList<>();
         String dateValue="";
-        if(!dateList.isEmpty()) {
-            for (int i = 0; i < dateList.size(); i++) {
-                dateValue = dateList.get(i);
+        if(!insulinList.isEmpty()) {
+            for (int i = 0; i < insulinList.size(); i++) {
+                dateValue = Util.getTimeStampAsDateString(insulinList.get(i).getTimestamp());
                 dateValue = Util.dateToTimeString(dateValue);
                 labels.add(dateValue);
             }
@@ -106,10 +107,10 @@ public class LineChartFragment extends ChartFragment {
         }
         //creating the values for the bar chart
         ArrayList<BarEntry> barValues = new ArrayList<>();
-        ArrayList<Integer> insulinList = AppGlobal.getHandler().getAllInsulin(AppGlobal.getHandler(),date,"DAY");
+
         if (!insulinList.isEmpty()) {
             for (int i = 0; i < insulinList.size(); i++) {
-                float value = (float) insulinList.get(i);
+                float value = (float) insulinList.get(i).getMeasure_value();
                 barValues.add(new BarEntry(value, i));
             }
         } else {
@@ -145,10 +146,25 @@ public class LineChartFragment extends ChartFragment {
 
         //creating the values for the line chart
         ArrayList<Entry> lineValues2 = new ArrayList<>();
-        ArrayList<Integer> sugarList = AppGlobal.getHandler().getAllBloodSugar(AppGlobal.getHandler(), date,"DAY");
+        ArrayList<MeasureItem> sugarList = AppGlobal.getHandler().getMeasurementValues(AppGlobal.getHandler(), date,"DAY","bloodsugar");
+        ArrayList<String> labelsBloodsugar = new ArrayList<>();
+        dateValue="";
+        if(!insulinList.isEmpty()) {
+            for (int i = 0; i < insulinList.size(); i++) {
+                dateValue = Util.getTimeStampAsDateString(insulinList.get(i).getTimestamp());
+                dateValue = Util.dateToTimeString(dateValue);
+                labelsBloodsugar.add(dateValue);
+            }
+        }else {
+            labelsBloodsugar.add("8:00am");
+            labelsBloodsugar.add("12:00am");
+            labelsBloodsugar.add("16:00pm");
+            labelsBloodsugar.add("20:00pm");
+            labelsBloodsugar.add("22:00pm");
+        }
         if (!sugarList.isEmpty()) {
             for (int i = 0; i < sugarList.size(); i++) {
-                float value = (float) sugarList.get(i);
+                float value = (float) sugarList.get(i).getMeasure_value();
                 lineValues2.add(new Entry(value, i));
             }
         } else {
@@ -160,7 +176,7 @@ public class LineChartFragment extends ChartFragment {
 
         LineDataSet lineDataSet2 = new LineDataSet(lineValues2, "Blood Sugar Level");
         lineDataSet2.setDrawHighlightIndicators(false);
-        LineData lineData2 = new LineData(labels, lineDataSet2);
+        LineData lineData2 = new LineData(labelsBloodsugar, lineDataSet2);
 
         //creating CombinedData for the Chart with Bar and Line Data
         CombinedData combinedData = new CombinedData(labels);
