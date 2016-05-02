@@ -67,37 +67,40 @@ public class EntryScreenActivity extends AppCompatActivity
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        //set the content view
-        setContentView(R.layout.activity_main);
+        try {
+            super.onCreate(savedInstanceState);
+            //set the content view
+            setContentView(R.layout.activity_main);
 
-        //create the ActionBar
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
-        setSupportActionBar(toolbar);
+            //create the ActionBar
+            Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+            TextView mTitle = (TextView) toolbar.findViewById(R.id.toolbar_title);
+            setSupportActionBar(toolbar);
 
-        //create the Navigation Drawer Layout
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+            //create the Navigation Drawer Layout
+            DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+            ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+                    this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+            drawer.setDrawerListener(toggle);
+            toggle.syncState();
 
-        navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
-
-
-        //create a DailyRoutineFragment (start page)
-        fragment = new DailyRoutineFragment();
-        FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-        ft.replace(R.id.mainFrame, fragment);
-        ft.commit();
-
-        // ATTENTION: This was auto-generated to implement the App Indexing API.
-        // See https://g.co/AppIndexing/AndroidStudio for more information.
-        client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+            navigationView = (NavigationView) findViewById(R.id.nav_view);
+            navigationView.setNavigationItemSelectedListener(this);
 
 
+            //create a DailyRoutineFragment (start page)
+            fragment = new DailyRoutineFragment();
+            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+            ft.replace(R.id.mainFrame, fragment);
+            ft.commit();
+
+            // ATTENTION: This was auto-generated to implement the App Indexing API.
+            // See https://g.co/AppIndexing/AndroidStudio for more information.
+            client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
+        }catch(Exception e)
+        {
+            e.getMessage();
+        }
     }
 
     @Override
@@ -340,7 +343,7 @@ public class EntryScreenActivity extends AppCompatActivity
         );
         AppIndex.AppIndexApi.start(client, viewAction);
 
-        startGPS_Service();
+        //startGPS_Service();
 
     }
 
