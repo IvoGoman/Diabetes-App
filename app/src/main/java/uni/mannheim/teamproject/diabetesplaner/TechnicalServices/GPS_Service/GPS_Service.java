@@ -16,6 +16,8 @@ import android.os.Bundle;
 import android.os.IBinder;
 import android.widget.Toast;
 
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+
 
 public class GPS_Service extends Service implements LocationListener {
     double lat;
@@ -59,7 +61,12 @@ public class GPS_Service extends Service implements LocationListener {
 
         Location location = locationManager.getLastKnownLocation(provider);
 
-        locationManager.requestLocationUpdates(provider, 400, 1, this);
+
+        //first number = time in milliseconds (5 minutes)
+        //second number = distance in meters (100 meters)
+        locationManager.requestLocationUpdates(provider, 300000, 100, this);
+
+
 
     }
 
@@ -73,7 +80,11 @@ public class GPS_Service extends Service implements LocationListener {
     public void onLocationChanged(Location location) {
         lat = (double) (location.getLatitude());
         lng = (double) (location.getLongitude());
+        AppGlobal.getHandler().insertLocation(AppGlobal.getHandler(),lat, lng, "" );
+
+        //delete toast if it works
         Toast.makeText(getApplicationContext(), lat + " : " + lng, Toast.LENGTH_SHORT).show();
+        
     }
 
     @Override
