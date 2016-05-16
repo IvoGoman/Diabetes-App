@@ -164,16 +164,18 @@ public class DailyRoutineFragment extends Fragment {
             String bloodsugar = "";
             int numberOfMeasuresWithinOne = 0;
             for(int j=0; j<bsList.size(); j++){
-                MeasureItem bs = bsList.get(i);
-                //checks if time of the bloodsugar measurement is inbetween start and endtime of an activity
-                if(TimeUtils.isTimeInbetween(listItems.get(i).getStarttime(), listItems.get(i).getStarttime(), TimeUtils.getDate(bs.getTimestamp()))){
-                    String name = getResources().getString(R.string.pref_blood_sugar);
-                    String at = getResources().getString(R.string.at);
-                    if(numberOfMeasuresWithinOne == 0) {
-                        bloodsugar = name + " " + at + " " + TimeUtils.getTimeInUserFormat(bs.getTimestamp(), getContext()) + ": " + bs.getMeasure_value() + " " + bs.getMeasure_unit();
-                        numberOfMeasuresWithinOne = 1;
-                    }else{
-                        bloodsugar += "\n"+ name + " " + at + " " + TimeUtils.getTimeInUserFormat(bs.getTimestamp(), getContext()) + ": " + bs.getMeasure_value() + " " + bs.getMeasure_unit();
+                if(i < bsList.size()) {
+                    MeasureItem bs = bsList.get(i);
+                    //checks if time of the bloodsugar measurement is inbetween start and endtime of an activity
+                    if (TimeUtils.isTimeInbetween(listItems.get(i).getStarttime(), listItems.get(i).getStarttime(), TimeUtils.getDate(bs.getTimestamp()))) {
+                        String name = getResources().getString(R.string.pref_blood_sugar);
+                        String at = getResources().getString(R.string.at);
+                        if (numberOfMeasuresWithinOne == 0) {
+                            bloodsugar = name + " " + at + " " + TimeUtils.getTimeInUserFormat(bs.getTimestamp(), getContext()) + ": " + bs.getMeasure_value() + " " + bs.getMeasure_unit();
+                            numberOfMeasuresWithinOne = 1;
+                        } else {
+                            bloodsugar += "\n" + name + " " + at + " " + TimeUtils.getTimeInUserFormat(bs.getTimestamp(), getContext()) + ": " + bs.getMeasure_value() + " " + bs.getMeasure_unit();
+                        }
                     }
                 }
             }

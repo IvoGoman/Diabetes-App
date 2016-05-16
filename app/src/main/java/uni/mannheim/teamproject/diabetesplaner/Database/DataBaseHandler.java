@@ -279,6 +279,38 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 + weight + " , '" + tslong + "' , '" +measure_unit+"' , 'weight');");
         db1.close();
     }
+
+    /***
+     * Returns the last weight measurement
+     * @param handler
+     * @param profile_id
+     * @return
+     */
+    public String[] GetLastWeight(DataBaseHandler handler, int profile_id)
+    {
+        try {
+            SQLiteDatabase db1 = handler.getWritableDatabase();
+            String[] result = new String[2];
+            Cursor cursor = db1.rawQuery("SELECT measure_value,measure_unit " +
+                    "FROM " + MEASUREMENT_TABLE_NAME + " " +
+                    "where profile_ID = " + profile_id + " " +
+                    "and measure_kind = 'weight'" +
+                    "ORDER BY timestamp DESC;", null);
+            cursor.moveToFirst();
+            if (cursor.getCount() >= 1) {
+                result[0] = cursor.getString(0);
+                result[1] = cursor.getString(1);
+            } else {
+                result = null;
+            }
+            return result;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+
+    }
     public void ReplaceActivity(DataBaseHandler handler,  ActivityItem Activ){
         int idActivity = Activ.getActivityId();
         int idLocation =1;

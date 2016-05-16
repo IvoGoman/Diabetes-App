@@ -18,6 +18,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.GPS_Service.GPS_Service;
+import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.Wifi;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.Accelerometer;
@@ -31,13 +33,17 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private String bloodsugar_measure_value;
     private String bloodsugar_measure;
     private ListPreference pref_weight_measurement;
+    private EditTextPreference pref_name;
     private EditTextPreference pref_weight;
+    private CheckBoxPreference pref_vacation;
     private SharedPreferences sharedPrefs;
     private DataBaseHandler database;
+    private CheckBoxPreference pref_datacollection;
     BloodsugarDialog_and_Settings communicator;
 
     private Intent accelerometerCollection;
     private Intent wifi;
+    private Intent GPS;
 
     @Override
     public void onAttach(Activity activity) {
@@ -55,8 +61,11 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             pref_weight_measurement = (ListPreference) findPreference("pref_weightOptions");
             //Edit field for the entry of the weight
             pref_weight = (EditTextPreference) findPreference("pref_key_weight");
+            pref_vacation = (CheckBoxPreference) findPreference("pref_vacation");
+
             database = AppGlobal.getHandler();
             sharedPrefs = getPreferenceManager().getSharedPreferences();
+
 
             //Bloodsugar handling
             initialize_bloodsugar();
@@ -77,26 +86,22 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
 
             //define preference for the onclick-method
-            final CheckBoxPreference pref_datacollection = (CheckBoxPreference) findPreference("pref_datacollection");
+            pref_datacollection = (CheckBoxPreference) findPreference("pref_datacollection");
             pref_datacollection.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
                     CheckBoxPreference pref = (CheckBoxPreference) findPreference("checkbox_preference");
                     //show the notifications only if the data collection is started
                     if (pref_datacollection.isChecked()) {
+                        //start the Services and Notification
                         showNotification(1);
-                        //created by Naira, starting the accelerometer collection
-                        accelerometerCollection = new Intent();
-                        accelerometerCollection.setClass(getActivity().getApplicationContext(), Accelerometer.class);
-                        getActivity().startService(accelerometerCollection);
-
+                        startServices();
 
                     } else {
+                        //stop the Services and Notification
                         showNotification(2);
-                        //created by Naira, stoping the accelerometer collection
-                        getActivity().stopService(accelerometerCollection);
+                        stopServices();
 
-                      //  getActivity().finish();
                     }
                     return true;
                 }
@@ -104,14 +109,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
             //Write User Data in the Summary Fields
 
-            final EditTextPreference pref_name = (EditTextPreference) findPreference("pref_key_name");
+            pref_name = (EditTextPreference) findPreference("pref_key_name");
             String Test1 = sharedPrefs.getString("pref_key_name", "Vorname, Name");
             pref_name.setSummary(Test1);
-
-
-            String Test2 = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
-
-
 
         }catch(Exception e)
         {
@@ -269,7 +269,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private void initialize_weight()
     {
         try {
-            if(pref_weight_measurement.getValue() != null) {
+            if (pref_weight_measurement.getValue() != null) {
                 if (pref_weight_measurement.getValue().equals("")) {
                     pref_weight_measurement.setValueIndex(0);
                     pref_weight_measurement.setSummary("Kilogram");
@@ -287,9 +287,28 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             }
         }catch (Exception e)
         {
-            e.getMessage();
+
         }
+        pref_weight.setSummary(database.GetLastWeight(AppGlobal.getHandler(),1)[0] + " " + database.GetLastWeight(AppGlobal.getHandler(),1)[1]);
+        pref_weight.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                try {
+                    database.InsertWeight(AppGlobal.getHandler(), 1, Double.parseDouble(pref_weight.getText()), pref_weight_measurement.getValue());
+                    pref_weight.setSummary(pref_weight.getText() + " " + pref_weight_measurement.getValue());
+                    return true;
+                } catch (Exception e) {
+
+                }
+                return false;
+            }
+        });
     }
+
+
+
+
+
     /***
      * initializes the blood sugar settings
      */
@@ -323,6 +342,34 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     }
 
     /***
+     * Starts the DataCollection Services
+     */
+    private void startServices()
+    {
+        accelerometerCollection = new Intent();
+        accelerometerCollection.setClass(getActivity().getApplicationContext(), Accelerometer.class);
+        getActivity().startService(accelerometerCollection);
+
+        wifi = new Intent();
+        wifi.setClass(getActivity().getApplicationContext(), Wifi.class);
+        getActivity().startService(wifi);
+
+        GPS = new Intent();
+        GPS.setClass(getActivity().getApplicationContext(), GPS_Service.class);
+        getActivity().startService(GPS);
+    }
+
+    /***
+     * Stops the Services
+     */
+    private void stopServices()
+    {
+        getActivity().stopService(wifi);
+        getActivity().stopService(accelerometerCollection);
+        getActivity().stopService(GPS);
+    }
+
+    /***
      * Converts kg to lns
      *
      * @param kg
@@ -340,5 +387,33 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
      */
     private double lbs_to_kg(double lbs) {
         return Math.round((lbs / 2.20462) * 100d) / 100d;
+    }
+
+    public double getWeight()
+    {
+        return Double.parseDouble(pref_weight.getText());
+    }
+
+    public String getName()
+    {
+        return pref_name.getText();
+    }
+
+    public boolean getDataCollection()
+    {
+        return pref_datacollection.isChecked();
+    }
+
+    public boolean getVacationMode()
+    {
+        return pref_vacation.isChecked();
+    }
+
+    public String[] getBloodSugar()
+    {
+        String[] returnValue = new String[2];
+        returnValue[0] = bloodsugar_measure_value;
+        returnValue[1] = bloodsugar_measure;
+        return returnValue;
     }
 }
