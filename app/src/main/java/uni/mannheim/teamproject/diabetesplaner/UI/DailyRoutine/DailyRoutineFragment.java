@@ -155,7 +155,6 @@ public class DailyRoutineFragment extends Fragment {
                 ViewGroup.LayoutParams.MATCH_PARENT);
 
         DataBaseHandler dbHandler = AppGlobal.getHandler();
-//        ArrayList<Integer> bsList = dbHandler.getAllBloodSugar(dbHandler, Util.getCurrentDate(),"WEEK");
         ArrayList<MeasureItem> bsList = dbHandler.getMeasurementValues(dbHandler, TimeUtils.getCurrentDate(),"WEEK","bloodsugar");
         for(int i=0; i<listItems.size(); i++){
             DailyRoutineView drv = new DailyRoutineView(getActivity(), listItems.get(i));
