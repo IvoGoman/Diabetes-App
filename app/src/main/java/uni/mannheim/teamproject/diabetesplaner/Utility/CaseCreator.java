@@ -142,6 +142,7 @@ public class CaseCreator {
 	 */
 	private void printActivity(String[] activity){
 		for(int j=0; j<activity.length; j++){
+
 			if(j==0){
 				System.out.println("CaseID: " + activity[j] + " ");
 			}else if(j==1){
@@ -208,11 +209,12 @@ public class CaseCreator {
 	 * @param caseID
 	 */
 	private String[] insertCase(String[] activity, int caseID, boolean initial){
+//		TODO: Remove setting boolean to false and withCase to "CaseID" when solution is found
 		String[] withCase = new String[activity.length+1];
 		for(int i=0; i<withCase.length; i++){
 			if(i==0){
 				if(initial){
-					withCase[i] = "caseID";
+					withCase[i] = "1";
 				}else{
 					withCase[i] = String.valueOf(caseID);
 				}

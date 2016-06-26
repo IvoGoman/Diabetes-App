@@ -26,6 +26,10 @@ public class ActivityItem {
     private Date date;
     private Integer intensity;
 
+    public static final Integer INTENSITY_HIGH = 3;
+    public static final Integer INTENSITY_MEDIUM = 2;
+    public static final Integer INTENSITY_LOW = 1;
+
     /**
      * constructor for an Activity Item with times as Date
      * @param activityId
@@ -81,6 +85,10 @@ public class ActivityItem {
         this.starttime = activityItem.getStarttime();
         this.endtime = activityItem.getEndtime();
         this.date = activityItem.getDate();
+        this.meal = activityItem.getMeal();
+        this.imagePath =activityItem.getImagePath();
+        this.date = activityItem.getDate();
+        this.intensity = activityItem.getIntensity();
     }
 
     /**
@@ -282,6 +290,10 @@ public class ActivityItem {
         return meal;
     }
 
+    public void setMeal(String meal){
+        this.meal = meal;
+    }
+
     public String getImagePath(){
         return imagePath;
     }
@@ -293,4 +305,5 @@ public class ActivityItem {
     public Integer getIntensity(){
         return this.intensity;
     }
+
 }

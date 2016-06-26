@@ -28,6 +28,7 @@ import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.ColorUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
@@ -121,6 +122,8 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private Rect dest;
 
 
+    public static int testActivity = 0;
+
 
     public DailyRoutineView(Context context) {
         super(context);
@@ -132,6 +135,17 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         super(context);
         this.context = context;
         this.activityItem = activityItem;
+
+        if(testActivity == 1){
+            activityItem.setSubactivityId(4);
+            activityItem.setMeal("Pizza");
+        }
+        if(testActivity == 2){
+            activityItem.setIntensity(ActivityItem.INTENSITY_HIGH);
+        }
+
+        testActivity++;
+
         this.activity = activityItem.getActivityId();
         this.subactivity = activityItem.getSubactivityId();
         this.meal = activityItem.getMeal();
@@ -144,6 +158,14 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         this.endDate = activityItem.getEndtime();
 
         init();
+
+        Log.d(TAG, "Activity: " + AppGlobal.getHandler().getActionById(AppGlobal.getHandler(),activityItem.getActivityId()));
+        Log.d(TAG, "Subactivity: " + activityItem.getSubactivityId());
+        Log.d(TAG, "Starttime: " + activityItem.getStarttimeAsString());
+        Log.d(TAG, "Endtime: " + activityItem.getEndtimeAsString());
+        Log.d(TAG, "Meal: " + activityItem.getMeal());
+        Log.d(TAG, "Image: " + activityItem.getImagePath());
+        Log.d(TAG, "Intensity: " + activityItem.getIntensity());
     }
 
     /**
@@ -357,15 +379,19 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             heightUpper += dest.height() + textPadding;
         }
 
+        Log.d(TAG, "Bloodsugar: " + bloodsugar);
+
         //measure bloodsugar if it exists
         if(bloodsugar != null) {
-            //initialize bloodsugar text
-            actRectBlood = new Rect(0, heightPrev+textPadding, xRight, 0);
-            slBlood = new StaticLayout(getBloodsugar(), textPaintSub, (int) actRectBlood.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
-            heightPrev = slBlood.getHeight();
+            if(!bloodsugar.equals("")) {
+                //initialize bloodsugar text
+                actRectBlood = new Rect(0, heightPrev + textPadding, xRight, 0);
+                slBlood = new StaticLayout(getBloodsugar(), textPaintSub, (int) actRectBlood.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
+                heightPrev = slBlood.getHeight();
 
-            //height + bloodsugar text field height
-            heightUpper += slBlood.getHeight() + textPadding;
+                //height + bloodsugar text field height
+                heightUpper += slBlood.getHeight() + textPadding;
+            }
         }
 
         //padding bottom
@@ -493,9 +519,11 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         }
 
         if(bloodsugar != null) {
-            //draw bloodsugar text
-            canvas.translate(actRectBlood.left, actRectBlood.top);
-            slBlood.draw(canvas);
+            if(!bloodsugar.equals("")) {
+                //draw bloodsugar text
+                canvas.translate(actRectBlood.left, actRectBlood.top);
+                slBlood.draw(canvas);
+            }
         }
     }
 

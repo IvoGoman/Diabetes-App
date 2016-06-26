@@ -4,8 +4,8 @@
     <group android:checkableBehavior="single">
         <item android:id="@+id/nav_daily_routine" android:icon="@android:drawable/ic_menu_my_calendar"
             android:title="@string/menu_item_daily_routine" />
-        <item android:id="@+id/nav_activity_input" android:icon="@android:drawable/ic_menu_add"
-            android:title="@string/menu_item_activity_input" />
+        <!--<item android:id="@+id/nav_activity_input" android:icon="@android:drawable/ic_menu_add"-->
+            <!--android:title="@string/menu_item_activity_input" />-->
         <item android:id="@+id/nav_activity_measurement" android:icon="@android:drawable/ic_menu_add"
             android:title="@string/menu_item_activity_measurement" />
         <item android:id="@+id/nav_statistics" android:icon="@android:drawable/ic_menu_sort_by_size"

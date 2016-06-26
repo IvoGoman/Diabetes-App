@@ -5,6 +5,10 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -14,11 +18,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
 
-import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
-import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
-import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
-
 
 
 /**
@@ -26,43 +25,43 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
  */
 public class DataBaseHandler extends SQLiteOpenHelper {
 
-    public SQLiteDatabase db;
-
-    public DataBaseHandler(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
-
-        Log.d("Database", "MySQLiteHelper Constructor Started");
-    }
-
+    public static final String DATABASE_NAME = "Diabetes.db";
+    //Bloodsugar History
+    public static final String MEASUREMENT_TABLE_NAME = "Measurements";
+    public static final String MEASUREMENT_CREATE_TABLE = " CREATE TABLE IF NOT EXISTS " + MEASUREMENT_TABLE_NAME +
+            "(timestamp DateTime PRIMARY KEY, profile_ID INTEGER, measure_value double, measure_unit VARCHAR(8), measure_kind VARCHAR(8));";
+    public static final String MEASUREMENT_SELECT =
+            "SELECT * FROM " + MEASUREMENT_TABLE_NAME + ";";
+    public static final String MEASUREMENT_DELETE_TABLE =
+            "DROP TABLE IF EXISTS " + MEASUREMENT_TABLE_NAME + ";";
     // Database Constants
     private static final int DATABASE_VERSION = 1;
-    public static final String DATABASE_NAME = "Diabetes.db";
-
-
     // Activity Table
     private static final String ACTIVITIES_TABLE_NAME = "Activities";
-    private static final String ACTIVITIES_CREATE_TABLE =
-            "CREATE TABLE IF NOT EXISTS " +
-                    ACTIVITIES_TABLE_NAME +
-                    " (id INTEGER PRIMARY KEY, title VARCHAR(20));";
     public static final String ACTIVITES_SELECT =
             "SELECT * FROM " + ACTIVITIES_TABLE_NAME + ";";
     public static final String ACTIVITES_DELETE_TABLE =
             "DROP TABLE IF EXISTS " + ACTIVITIES_TABLE_NAME + ";";
-
+    private static final String ACTIVITIES_CREATE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " +
+                    ACTIVITIES_TABLE_NAME +
+                    " (id INTEGER PRIMARY KEY, title VARCHAR(20));";
     // SubActivity Table
     private static final String SUB_ACTIVITIES_TABLE_NAME = "SubActivities";
-    private static final String SUB_ACTIVITIES_CREATE_TABLE =
-            "CREATE TABLE IF NOT EXISTS " +
-                    SUB_ACTIVITIES_TABLE_NAME +
-                    " (id INTEGER PRIMARY KEY, id_Activity INTEGER, Title VARCHAR(20), FOREIGN KEY(id_Activity) REFERENCES Activities(id));";
     public static final String Sub_ACTIVITIES_SELECT =
             "SELECT * FROM " + SUB_ACTIVITIES_TABLE_NAME + ";";
     public static final String SUB_ACTIVITIES_DELETE_TABLE =
             "DROP TABLE IF EXISTS " + SUB_ACTIVITIES_TABLE_NAME + ";";
-
+    private static final String SUB_ACTIVITIES_CREATE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " +
+                    SUB_ACTIVITIES_TABLE_NAME +
+                    " (id INTEGER PRIMARY KEY, id_Activity INTEGER, Title VARCHAR(20), FOREIGN KEY(id_Activity) REFERENCES Activities(id));";
     //Location Table
     private static final String LOCATION_TABLE_NAME = "Location";
+    public static final String LOCATION_SELECT =
+            "SELECT * FROM " + LOCATION_TABLE_NAME + ";";
+    public static final String LOCATION_DELETE_TABLE =
+            "DROP TABLE IF EXISTS " + LOCATION_TABLE_NAME + ";";
     private static final String LOCATION1_TABLE_NAME = "Location1";
     private static final String LOCATION_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " +
@@ -72,48 +71,37 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             "CREATE TABLE IF NOT EXISTS " +
                     LOCATION1_TABLE_NAME +
                     " (id INTEGER PRIMARY KEY, Latitude double, Longtitude double, Timestamp DateTime);";
-    public static final String LOCATION_SELECT =
-            "SELECT * FROM " + LOCATION_TABLE_NAME + ";";
-    public static final String LOCATION_DELETE_TABLE =
-            "DROP TABLE IF EXISTS " + LOCATION_TABLE_NAME + ";";
-
     //ActivityList Table
     private static final String ACTIVITYLIST_TABLE_NAME = "ActivityList";
+    public static final String ACTIVITYLIST_SELECT =
+            "SELECT * FROM " + ACTIVITYLIST_TABLE_NAME + ";";
+
+    /* JW: Added Bloodsugar_History Table
+    */
+    public static final String ACTIVITYLIST_DELETE_TABLE =
+            "DROP TABLE IF EXISTS " + ACTIVITYLIST_TABLE_NAME + ";";
     private static final String ACTIVITYLIST_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " +
                     ACTIVITYLIST_TABLE_NAME +
                     " (id INTEGER PRIMARY KEY, id_Activity Integer, id_Location Integer, Start DateTime, End DateTime, Meal String, ImagePath String, Intensity Integer, FOREIGN KEY(id_Activity) REFERENCES Activities(id), FOREIGN KEY(id_Location) REFERENCES Locations(id) );";
-    public static final String ACTIVITYLIST_SELECT =
-            "SELECT * FROM " + ACTIVITYLIST_TABLE_NAME + ";";
-    public static final String ACTIVITYLIST_DELETE_TABLE =
-            "DROP TABLE IF EXISTS " + ACTIVITYLIST_TABLE_NAME + ";";
-
-    /* JW: Added Bloodsugar_History Table
-    */
-
-    //Bloodsugar History
-    public static final String MEASUREMENT_TABLE_NAME = "Measurements";
-    public static final String MEASUREMENT_CREATE_TABLE = " CREATE TABLE IF NOT EXISTS " + MEASUREMENT_TABLE_NAME +
-            "(timestamp DateTime PRIMARY KEY, profile_ID INTEGER, measure_value double, measure_unit VARCHAR(8), measure_kind VARCHAR(8));";
-
-    public static final String MEASUREMENT_SELECT =
-            "SELECT * FROM " + MEASUREMENT_TABLE_NAME + ";";
-    public static final String MEASUREMENT_DELETE_TABLE =
-            "DROP TABLE IF EXISTS " + MEASUREMENT_TABLE_NAME + ";";
-
     //Profile Table
     private static final String PROFILE_TABLE_NAME = "Profile";
+    public static final String PROFILE_SELECT =
+            "SELECT * FROM " + PROFILE_TABLE_NAME + ";";
+    public static final String PROFILE_DELETE_TABLE =
+            "DROP TABLE IF EXISTS " + PROFILE_TABLE_NAME + ";";
     private static final String PROFILE_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " +
                     PROFILE_TABLE_NAME +
                     " (id INTEGER PRIMARY KEY, name VARCHAR(20), lastname VARCHAR(20), " +
                     "age INTEGER, diabetes_type INTEGER, " + "timestamp Timestamp, " +
                     "FOREIGN KEY (id) REFERENCES "+MEASUREMENT_TABLE_NAME+"(profile_ID));";
-    public static final String PROFILE_SELECT =
-            "SELECT * FROM " + PROFILE_TABLE_NAME + ";";
-    public static final String PROFILE_DELETE_TABLE =
-            "DROP TABLE IF EXISTS " + PROFILE_TABLE_NAME + ";";
+    public SQLiteDatabase db;
+    public DataBaseHandler(Context context) {
+        super(context, DATABASE_NAME, null, DATABASE_VERSION);
 
+        Log.d("Database", "MySQLiteHelper Constructor Started");
+    }
 
     @Override
     public void onCreate(SQLiteDatabase db) {   //when the App is first installed
@@ -279,6 +267,38 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 + weight + " , '" + tslong + "' , '" +measure_unit+"' , 'weight');");
         db1.close();
     }
+
+    /***
+     * Returns the last weight measurement
+     * @param handler
+     * @param profile_id
+     * @return
+     */
+    public String[] GetLastWeight(DataBaseHandler handler, int profile_id)
+    {
+        try {
+            SQLiteDatabase db1 = handler.getWritableDatabase();
+            String[] result = new String[2];
+            Cursor cursor = db1.rawQuery("SELECT measure_value,measure_unit " +
+                    "FROM " + MEASUREMENT_TABLE_NAME + " " +
+                    "where profile_ID = " + profile_id + " " +
+                    "and measure_kind = 'weight'" +
+                    "ORDER BY timestamp DESC;", null);
+            cursor.moveToFirst();
+            if (cursor.getCount() >= 1) {
+                result[0] = cursor.getString(0);
+                result[1] = cursor.getString(1);
+            } else {
+                result = null;
+            }
+            return result;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
+
+    }
     public void ReplaceActivity(DataBaseHandler handler,  ActivityItem Activ){
         int idActivity = Activ.getActivityId();
         int idLocation =1;
@@ -413,6 +433,19 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("select ActivityList.id, Activities.title, Location.Title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id inner join Location on ActivityList.id_Location = Location.id", null);
         return cursor;
     }
+
+    public ArrayList<String[]> getAllEvents(DataBaseHandler handler){
+        SQLiteDatabase db = handler.getReadableDatabase();
+        ArrayList<String[]> eventList = new ArrayList<String[]>();
+        Cursor cursor = db.rawQuery("select ActivityList.id, Activities.title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id", null);
+        if(cursor.moveToFirst()){
+            do {
+                String[] event = {cursor.getString(0),cursor.getString(1),cursor.getString(2),cursor.getString(3)};
+                eventList.add(event);
+            } while (cursor.moveToNext());
+        }
+        return eventList;
+    }
     /***
      * returns the last measurement of blood sugar and insulin of the selected user
      * @param handler
@@ -475,7 +508,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @author Ivo Gosemann 18.03.2016
      * Method to retrieve all Values as MeasureItems for a given measurekind and timeframe
      *
-     * //TODO: Combine with Insulin and Timestamp Methods
      * @param handler database handler instance
      * @param date date for which the values should be retrieved
      * @param window "DAY","WEEK" or "MONTH" are acceptable values. Counting backwards from date the
