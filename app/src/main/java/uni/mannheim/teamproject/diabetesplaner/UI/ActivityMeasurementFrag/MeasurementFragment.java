@@ -110,7 +110,7 @@ public class MeasurementFragment extends Fragment {
                 //GlucoseInput.setText("My Edit");
                 final EditText InsulinInput = (EditText) dialog.findViewById(R.id.editText2);
                 InsulinInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-                final TextView Add = (TextView) dialog.findViewById(R.id.textView4);
+               // final TextView Add = (TextView) dialog.findViewById(R.id.textView4);
 
                 // Button Done = (Button) dialog.findViewById(R.id.button);
                 dialog.setTitle("Input Measurements");
@@ -126,7 +126,7 @@ public class MeasurementFragment extends Fragment {
                 lv = (AbsListView) inflaterView.findViewById(R.id.MListView);
                 adapter = new CustomListView(getActivity(), measurementList);
 
-                Add.setOnClickListener(new View.OnClickListener() {
+              /* Add.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //   if (GlucoseInput.getText().toString().equals("") && InsulinInput.getText().toString().equals("")){
@@ -145,7 +145,7 @@ public class MeasurementFragment extends Fragment {
                         // }
                         dialog.dismiss();
                     }
-                });
+                });*/
 
                 dialog.show();
             }

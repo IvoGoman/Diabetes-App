@@ -1,6 +1,7 @@
 package uni.mannheim.teamproject.diabetesplaner.UI;
 
 
+import android.app.Dialog;
 import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
@@ -14,9 +15,11 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.InputType;
 import android.text.format.DateFormat;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,12 +37,15 @@ import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.GPS_Service.GPS_Service;
 import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.ActivityMeasurementFragment;
+import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.MeasurementFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.ActivityLimitDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.AddDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.EditDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.InputDialog;
+import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.MeasurementDialog;
+import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.MeasurementInputDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.StatisticsFragment;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -125,6 +131,9 @@ public class EntryScreenActivity extends AppCompatActivity
         //items for daily routine
         MenuItem addItemRoutine = menu.findItem(R.id.add_icon_action_bar_routine);
         addItemRoutine.setVisible(true);
+        //created by Nairs, for adding measurements in the entry screen
+        MenuItem addMeasurements = menu.findItem(R.id.addMeasurements_icon_action_bar_routine);
+        addMeasurements.setVisible(true);
         MenuItem editItem = menu.findItem(R.id.edit_icon_action_bar_routine);
         editItem.setVisible(false);
         MenuItem deleteItem = menu.findItem(R.id.delete_icon_action_bar);
@@ -213,12 +222,18 @@ public class EntryScreenActivity extends AppCompatActivity
                 AddDialog addDialog = new AddDialog();
                 if(fragment instanceof DailyRoutineFragment) {
                     addDialog.setDayHandler(((DailyRoutineFragment) fragment).getDrHandler());
-                    addDialog.setDate(((DailyRoutineFragment)fragment).getDrHandler().getDate());
+                    addDialog.setDate(((DailyRoutineFragment) fragment).getDrHandler().getDate());
                 }
                 addDialog.show(getFragmentManager(),"addDialog");
                 return true;
-        }
 
+            case R.id.addMeasurements_icon_action_bar_routine:
+                MeasurementDialog measurementDialog = new MeasurementDialog();
+                measurementDialog.show(getFragmentManager(),"MeasurementDialog");
+                return true;
+
+
+        }
 
 
         return super.onOptionsItemSelected(item);
@@ -262,6 +277,8 @@ public class EntryScreenActivity extends AppCompatActivity
         editItem.setVisible(false);
         MenuItem addItemRoutine = EntryScreenActivity.getOptionsMenu().findItem(R.id.add_icon_action_bar_routine);
         addItemRoutine.setVisible(false);
+        MenuItem addMeasurements = EntryScreenActivity.getOptionsMenu().findItem(R.id.addMeasurements_icon_action_bar_routine);
+        addMeasurements.setVisible(false);
 
         if (id == R.id.nav_daily_routine) {
             Toast.makeText(this, R.string.menu_item_daily_routine, Toast.LENGTH_SHORT).show();
@@ -272,6 +289,7 @@ public class EntryScreenActivity extends AppCompatActivity
             ft.commit();
 
             addItemRoutine.setVisible(true);
+            addMeasurements.setVisible(true);
 
         } else if (id == R.id.nav_activity_input) {
             Toast.makeText(this, R.string.menu_item_activity_input, Toast.LENGTH_SHORT).show();

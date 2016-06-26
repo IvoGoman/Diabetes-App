@@ -12,10 +12,10 @@
         android:paddingLeft="16dp"
         android:textColor="#050000"
         android:id="@+id/textView2"
-        android:layout_marginTop="60dp"
-        android:layout_below="@+id/textView"
+        android:layout_below="@+id/insulinDosageRadioButton"
         android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignParentStart="true"
+        android:layout_marginTop="44dp" />
 
     <EditText
         android:layout_width="wrap_content"
@@ -24,7 +24,7 @@
         android:ems="8"
         android:paddingRight="15dp"
         android:id="@+id/editText"
-        android:layout_alignParentTop="true"
+        android:layout_below="@+id/bloodSugarRadioButton"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true" />
 
@@ -48,10 +48,38 @@
         android:paddingLeft="12dp"
         android:textColor="#050000"
         android:layout_alignBottom="@+id/editText"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true" />
+        android:layout_alignRight="@+id/textView2"
+        android:layout_alignEnd="@+id/textView2" />
 
-    <TextView
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Insert Blood Sugar lvl"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/bloodSugarRadioButton"
+        android:paddingLeft="12dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:checked="false"
+
+        />
+
+    <RadioButton
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Insert Insulin Dosage"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/insulinDosageRadioButton"
+        android:checked="false"
+        android:paddingLeft="12dp"
+
+        android:layout_below="@+id/textView"
+        android:layout_alignRight="@+id/bloodSugarRadioButton"
+        android:layout_alignEnd="@+id/bloodSugarRadioButton"
+        android:layout_marginTop="50dp" />
+
+    <!--<TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceSmall"
@@ -62,7 +90,7 @@
         android:layout_below="@+id/textView2"
         android:layout_alignParentRight="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginTop="42dp" />
+        android:layout_marginTop="42dp" />-->
 
 </RelativeLayout>
     <!-- created by Naira-->
