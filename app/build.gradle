@@ -34,7 +34,7 @@ dependencies {
     compile files('src/main/java/libr/opencsv-3.6.jar')
     compile files('src/main/java/libr/weka.jar')
     //provided files('src/main/java/libr/rapidminer-RapidProM-2.0.2.jar')
-    compile files('libs/mpandroidchartlibrary-2-1-6.jar')
+    compile files('src/main/java/libr//mpandroidchartlibrary-2-1-6.jar')
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:design:23.1.1'
     compile 'com.android.support:support-v4:23.1.1'
@@ -42,7 +42,31 @@ dependencies {
     //compile 'com.google.android.gms:play-services:8.4.0'
     compile 'com.google.android.gms:play-services-maps:8.4.0'
     //compile files('libs/ProM-nightly-20160229-1.7/dist/ProM-Models.jar')
-    compile files('libs/commons-math3-3.6.1.jar')
-    compile files('libs/OpenXES.jar')
+    compile files('src/main/java/libr/commons-math3-3.6.1.jar')
+    compile files('src/main/java/libr/OpenXES.jar')
+    compile files('src/main/java/libr/colt.jar')
+//    compile files('src/main/java/libr/commons-math3-3.6.1.jar')
+//    compile files('src/main/java/libr/deploy.jar')
+//    compile files('src/main/java/libr/dt.jar')
+//    compile files('src/main/java/libr/htmlconverter.jar')
+//    compile files('src/main/java/libr/javafx-doclet.jar')
+//    compile files('src/main/java/libr/javafx-mx.jar')
+//    compile files('src/main/java/libr/javaws.jar')
+//    compile files('src/main/java/libr/jce.jar')
+//    compile files('src/main/java/libr/jconsole.jar')
+//    compile files('src/main/java/libr/jfr.jar')
+//    compile files('src/main/java/libr/jfxrt.jar')
+//    compile files('src/main/java/libr/jsse.jar')
+//    compile files('src/main/java/libr/plugin.jar')
+//    compile files('src/main/java/libr/ProM-Contexts.jar')
+//    compile files('src/main/java/libr/ProM-Framework.jar')
+//    compile files('src/main/java/libr/ProM-Models.jar')
+//    compile files('src/main/java/libr/rt.jar')
+//    compile files('src/main/java/libr/sa-jdi.jar')
+//    //compile files('src/main/java/libr/tools.jar')
+//    compile files('src/main/java/libr/resources.jar')
+//    compile files('src/main/java/libr/slickerbox1.0rc1.jar')
+//    compile files('src/main/java/libr/Uitopia.jar')
+//    compile files('src/main/java/libr/ProM-Plugins.jar')
 }
 
