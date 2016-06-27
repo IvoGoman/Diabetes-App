@@ -23,7 +23,8 @@ public class HeuristicsMinerImplementation {
 
     public static void main(String[] args) throws IOException {
         try {
-            String logFile = "/Users/Jan/Documents/FuzzyMiner/input/activityDataCompleteWithCasesJoined2.xes.gz";
+            String logFile = new File("").getAbsolutePath();
+            logFile = logFile + "/app/src/test/java/data/activityDataCompleteWithCasesJoined2.xes.gz";
             XesXmlGZIPParser xesXmlGZIPParser = new XesXmlGZIPParser();
             File file = new File(logFile);
             System.out.println(xesXmlGZIPParser.canParse(file));
