@@ -15,7 +15,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
  * Created by Stefan on 24.02.2016.
  */
 public class DayHandler {
-    private ArrayList<ActivityItem> dailyRoutine = new ArrayList<>();
+    private static ArrayList<ActivityItem> dailyRoutine = new ArrayList<>();
     public static final String TAG = DayHandler.class.getSimpleName();
     private DailyRoutineFragment drFragment;
 
@@ -198,7 +198,7 @@ public class DayHandler {
      *
      * @return
      */
-    public ArrayList<ActivityItem> getDailyRoutine() {
+    public static ArrayList<ActivityItem> getDailyRoutine() {
         return dailyRoutine;
     }
 

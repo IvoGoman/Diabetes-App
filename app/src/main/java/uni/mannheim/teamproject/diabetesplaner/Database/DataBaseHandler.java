@@ -5,10 +5,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
-import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
-import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 import java.sql.Timestamp;
 import java.text.ParseException;
@@ -17,6 +13,11 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
+
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 
 
@@ -426,6 +427,31 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
         return cursor;
+    }
+
+    /**
+     * 27.06.2016 Stefan
+     * returns all activities as a list
+     * @param helper
+     * @return
+     */
+    public ArrayList<String> getAllActionsAsList(DataBaseHandler helper) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        //Create a Cursor that contains all records from the locations table
+        Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
+        ArrayList<String> actionsList = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                actionsList.add(cursor.getString(1).replace(" ",""));
+            }
+            while (cursor.moveToNext());
+        }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return actionsList;
     }
 
     public Cursor getAllRoutine(DataBaseHandler helper) {

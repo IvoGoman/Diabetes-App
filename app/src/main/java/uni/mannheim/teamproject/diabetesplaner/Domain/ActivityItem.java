@@ -2,6 +2,7 @@ package uni.mannheim.teamproject.diabetesplaner.Domain;
 
 import android.graphics.Bitmap;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
@@ -172,44 +173,6 @@ public class ActivityItem {
     public static String getActivityString(int id){
         DataBaseHandler dbHandler = AppGlobal.getHandler();
         return dbHandler.getActionById(dbHandler, id);
-
-//        //TODO access the activity name from the database table
-//        switch (id) {
-//            case 1:
-//                return "Schlafen";
-//            case 2:
-//                return "Essen/Trinken";
-//            case 3:
-//                return "Körperpflege";
-//            case 4:
-//                return "Transportmittel benutzen";
-//            case 5:
-//                return "Entspannen";
-//            case 6:
-//                return "Fortbewegen (mit Gehilfe)";
-//            case 7:
-//                return "Medikamente einnehmen";
-//            case 8:
-//                return "Einkaufen";
-//            case 9:
-//                return "Hausarbeit";
-//            case 10:
-//                return "Essen zubereiten";
-//            case 11:
-//                return "Geselligkeit";
-//            case 12:
-//                return "Fortbewegen";
-//            case 13:
-//                return "Schreibtischarbeit";
-//            case 14:
-//                return "Sport";
-//            case 15:
-//                return "Previous Activity";
-//            case 16:
-//                return "Next Activity";
-//            default:
-//                return "unknown activity";
-//        }
     }
 
     /**
@@ -236,42 +199,20 @@ public class ActivityItem {
     }
 
     /**
-     * returns the name of the activity with id
+     * 27.06.16 Stefan
+     * returns the id of an activity by the name
      * @param name
      * @return id
      */
     public static Integer getActivityId(String name){
-        //TODO access the activity name from the database table
-        switch (name) {
-            case "Schlafen":
-                return 1;
-            case "Essen/Trinken":
-                return 2;
-            case "Körperpflege":
-                return 3;
-            case "Transportmittel benutzen":
-                return 4;
-            case "Entspannen":
-                return 5;
-            case "Medikamente einnehmen":
-                return 6;
-            case "Einkaufen":
-                return 7;
-            case "Hausarbeit":
-                return 8;
-            case "Essen zubereiten":
-                return 9;
-            case "Geselligkeit":
-                return 10;
-            case "Fortbewegen":
-                return 11;
-            case "Schreibtischarbeit":
-                return 12;
-            case "Sport":
-                return 13;
-            default:
-                return 0;
+
+        ArrayList<String> actionsList = AppGlobal.getHandler().getAllActionsAsList(AppGlobal.getHandler());
+        for(int i=0; i<actionsList.size(); i++){
+            if(actionsList.get(i).equals(name)){
+                return i+1;
+            }
         }
+        return actionsList.size();
     }
 
     /**

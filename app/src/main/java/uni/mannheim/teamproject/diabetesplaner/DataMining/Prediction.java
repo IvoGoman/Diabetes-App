@@ -269,6 +269,8 @@ public class Prediction {
       if(PA1.isEmpty()==false){ PA1.clear();}
         FastVector Activities = new FastVector();
 
+
+
         Cursor cursor1 = AppGlobal.getHandler().getAllActions(AppGlobal.getHandler());
         if (cursor1.moveToFirst()) {
             do {
