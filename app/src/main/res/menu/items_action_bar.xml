@@ -13,7 +13,7 @@
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/addMeasurements_icon_action_bar_routine"
-        android:icon="@android:drawable/ic_menu_manage"
+        android:icon="@drawable/colorize_icon"
         android:title=""
         app:showAsAction="ifRoom"/>
     <item
