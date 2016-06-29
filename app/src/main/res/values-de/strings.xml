@@ -108,4 +108,5 @@
     <string name="medium">mittel</string>
     <string name="at">um</string>
     <string name="recommendation">Diabetes App empfiehlt dir...</string>
+    <string name="pref_assistant_notification">Assistenten Benachrichtigung</string>
 </resources>

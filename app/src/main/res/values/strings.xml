@@ -157,6 +157,7 @@
     <string name="recommendation">Diabetes App recommends you...</string>
     <string name="action_settings">Settings</string>
     <string name="add_activity">Add activity</string>
+    <string name="pref_assistant_notification">Assistant Notifications</string>
 
 
 </resources>

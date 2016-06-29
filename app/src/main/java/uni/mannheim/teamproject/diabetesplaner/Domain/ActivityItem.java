@@ -215,6 +215,7 @@ public class ActivityItem {
         return actionsList.size();
     }
 
+
     /**
      * returns a compressed bitmap image. Returns null if imagePath is null
      * @return

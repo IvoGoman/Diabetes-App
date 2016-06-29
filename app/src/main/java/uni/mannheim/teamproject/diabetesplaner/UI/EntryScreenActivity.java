@@ -1,12 +1,14 @@
 package uni.mannheim.teamproject.diabetesplaner.UI;
 
 
-import android.app.Dialog;
 import android.app.NotificationManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
+import android.content.ServiceConnection;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -15,11 +17,10 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.InputType;
 import android.text.format.DateFormat;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.EditText;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -33,11 +34,11 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.GPS_Service.GPS_Service;
 import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.ActivityMeasurementFragment;
-import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.MeasurementFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.ActivityLimitDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.AddDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
@@ -45,7 +46,6 @@ import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.EditDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.InputDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.MeasurementDialog;
-import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.MeasurementInputDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.StatisticsFragment;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -70,6 +70,7 @@ public class EntryScreenActivity extends AppCompatActivity
      */
     private GoogleApiClient client;
     private Fragment fragment;
+    private Intent recIntent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,6 +101,8 @@ public class EntryScreenActivity extends AppCompatActivity
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
 
+            //starts and binds to recommendation service
+            startRec();
             // ATTENTION: This was auto-generated to implement the App Indexing API.
             // See https://g.co/AppIndexing/AndroidStudio for more information.
             client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -372,8 +375,17 @@ public class EntryScreenActivity extends AppCompatActivity
     }
 
     @Override
+    protected void onRestart() {
+        startRec();
+        super.onRestart();
+    }
+
+    @Override
     public void onStop() {
         super.onStop();
+
+        //unbind the recommendation service
+        stopRec();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -469,5 +481,38 @@ public class EntryScreenActivity extends AppCompatActivity
             time = sdf.format(date);
         }
         return time;
+    }
+
+    /**
+     * create a service connection
+     */
+    protected ServiceConnection mServerConn = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            Log.d(TAG, "onServiceConnected");
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "onServiceDisconnected");
+        }
+    };
+
+    /**
+     * bind and start the recommendation service
+     */
+    public void startRec() {
+        // mContext is defined upper in code, I think it is not necessary to explain what is it
+        Intent rec = new Intent(this, Recommendation.class);
+        bindService(rec, mServerConn, Context.BIND_AUTO_CREATE);
+        startService(rec);
+    }
+
+    /**
+     * stop and unbind the recommendation service
+     */
+    public void stopRec() {
+        stopService(new Intent(this, Recommendation.class));
+        unbindService(mServerConn);
     }
 }

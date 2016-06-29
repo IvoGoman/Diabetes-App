@@ -116,7 +116,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             db.execSQL("insert into Activities(Title) values('Transportmittel benutzen'); ");
             db.execSQL("insert into Activities(Title) values('Entspannen'); ");
             db.execSQL("insert into Activities(Title) values('Fortbewegen(mit Gehilfe)'); ");
-            db.execSQL("insert into Activities(Title) values('Medicamente einnehmen'); ");
+            db.execSQL("insert into Activities(Title) values('Medikamente einnehmen'); ");
             db.execSQL("insert into Activities(Title) values('Einkaufen'); ");
             db.execSQL("insert into Activities(Title) values('Hausarbeit'); ");
             db.execSQL("insert into Activities(Title) values('Essen zubereiten'); ");
