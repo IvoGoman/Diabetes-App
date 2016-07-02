@@ -268,11 +268,12 @@ public class CaseCreator {
 	}
 
 	/**
-	 * Merges two activities following each other that have the same activity and subactivity into one activity
+	 * 	 * Merges two activities following each other that have the same activity and subactivity into one activity
 	 * should be.
 	 * Has to be applied after case creation !!
-	 */
-	public void mergeConsecutiveSameActivity(){
+	 * @param withSubactivity if true the subactivity is taken into account for comparison
+     */
+	public void mergeConsecutiveSameActivity(boolean withSubactivity){
 		String prevActivity = "";
 		String prevSubactivity = "";
 		String prevCaseID = "";
@@ -291,16 +292,24 @@ public class CaseCreator {
 			}
 			//same case as previous activity
 			else if(list.get(i)[0].equals(prevCaseID)){
-				if (prevActivity.equals(list.get(i)[2]) && prevSubactivity.equals(list.get(i)[3])) {
+				//subactivity is taken into acocunt
+				if (prevActivity.equals(list.get(i)[2]) && prevSubactivity.equals(list.get(i)[3]) && withSubactivity) {
 					sameAsBefore.add(true);
 
 					prevCaseID = list.get(i)[0];
 					prevActivity = list.get(i)[2];
 					prevSubactivity = list.get(i)[3];
+				//subactivity not taken into account
+				}else if(prevActivity.equals(list.get(i)[2])&& !withSubactivity){
+					sameAsBefore.add(true);
+
+					prevCaseID = list.get(i)[0];
+					prevActivity = list.get(i)[2];
 				}else{
 					prevCaseID = list.get(i)[0];
 					prevActivity = list.get(i)[2];
 					prevSubactivity = list.get(i)[3];
+
 				}
 			}
 			//not the same case as the previous activity

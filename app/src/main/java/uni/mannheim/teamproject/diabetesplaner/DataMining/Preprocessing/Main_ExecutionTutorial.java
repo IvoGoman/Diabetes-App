@@ -34,7 +34,7 @@ public class Main_ExecutionTutorial {
 		Util.printList(list);
 		System.out.println("-------------------------------------------------");
 		//merges two consecutive activities which are the same
-		creator.mergeConsecutiveSameActivity();
+		creator.mergeConsecutiveSameActivity(true);
 
 		Util.printList(creator.getList());
 
