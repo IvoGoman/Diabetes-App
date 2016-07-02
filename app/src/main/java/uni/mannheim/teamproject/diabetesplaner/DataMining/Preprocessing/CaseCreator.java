@@ -1,7 +1,10 @@
-package uni.mannheim.teamproject.diabetesplaner.Utility;
+package uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Stefan
@@ -262,5 +265,63 @@ public class CaseCreator {
 	 */
 	public ArrayList<String[]> getList(){
 		return this.list;
+	}
+
+	/**
+	 * Merges two activities following each other that have the same activity and subactivity into one activity
+	 * should be.
+	 * Has to be applied after case creation !!
+	 */
+	public void mergeConsecutiveSameActivity(){
+		String prevActivity = "";
+		String prevSubactivity = "";
+		String prevCaseID = "";
+
+		ArrayList<Boolean> sameAsBefore = new ArrayList<>();
+		//find duplicates
+		for(int i=0; i<list.size();i++){
+			//initialize filed in arraylist
+			sameAsBefore.add(false);
+			//first activity cannot be a duplicate
+			if(i==0){
+				prevCaseID = list.get(i)[0];
+				prevActivity = list.get(i)[2];
+				prevSubactivity = list.get(i)[3];
+
+			}
+			//same case as previous activity
+			else if(list.get(i)[0].equals(prevCaseID)){
+				if (prevActivity.equals(list.get(i)[2]) && prevSubactivity.equals(list.get(i)[3])) {
+					sameAsBefore.add(true);
+
+					prevCaseID = list.get(i)[0];
+					prevActivity = list.get(i)[2];
+					prevSubactivity = list.get(i)[3];
+				}else{
+					prevCaseID = list.get(i)[0];
+					prevActivity = list.get(i)[2];
+					prevSubactivity = list.get(i)[3];
+				}
+			}
+			//not the same case as the previous activity
+			else{
+				prevCaseID = list.get(i)[0];
+				prevActivity = list.get(i)[2];
+				prevSubactivity = list.get(i)[3];
+			}
+		}
+		ArrayList<String[]> resultList = new ArrayList<>();
+		//merge duplicates
+		for(int i=sameAsBefore.size()-1; i>=0; i--){
+			if(sameAsBefore.get(i)){
+				String[] actual = list.get(i);
+				String[] prev = list.get(i-1);
+
+				//set starttime of previous to actual
+				list.get(i-1)[endtimeIndex] = list.get(i)[endtimeIndex];
+				//remove previous from list
+				list.remove(i);
+			}
+		}
 	}
 }

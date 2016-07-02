@@ -1,6 +1,8 @@
-package uni.mannheim.teamproject.diabetesplaner.Utility;
+package uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing;
 
 import java.util.ArrayList;
+
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Stefan

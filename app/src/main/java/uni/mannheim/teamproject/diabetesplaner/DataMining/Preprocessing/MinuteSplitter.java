@@ -1,9 +1,11 @@
-package uni.mannheim.teamproject.diabetesplaner.Utility;
+package uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing;
 
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Stefan

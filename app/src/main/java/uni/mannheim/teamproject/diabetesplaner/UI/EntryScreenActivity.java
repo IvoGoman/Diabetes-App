@@ -51,6 +51,9 @@ import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.StatisticsF
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
+/**
+ * created by Stefan
+ */
 public class EntryScreenActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
