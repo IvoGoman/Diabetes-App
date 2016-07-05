@@ -1,15 +1,16 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining;
 
 import android.app.IntentService;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.Binder;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.support.v4.app.NotificationCompat;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
 import android.widget.Toast;
@@ -26,6 +27,7 @@ import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Stefan on 26.04.2016.
@@ -34,6 +36,9 @@ public class Recommendation extends IntentService {
 
 //    private final static int INTERVAL = 1000 * 60 * 5; //5 minutes
     private final static int INTERVAL = 1000 * 10; //10 sec
+
+    private final static int DEFAUL_REC = 0;
+    private final static int FIRST_REC = 1;
 
     Handler mHandler = new Handler();
     private int mId = 0;
@@ -69,13 +74,24 @@ public class Recommendation extends IntentService {
 //        recommend();
     }
 
+    /**
+     * Class used for the client Binder.  Because we know this service always
+     * runs in the same process as its clients, we don't need to deal with IPC.
+     */
+    public class RecBinder extends Binder {
+        public Recommendation getService() {
+            // Return this instance of LocalService so clients can call public methods
+            return Recommendation.this;
+        }
+    }
+
 
     Runnable mHandlerTask = new Runnable(){
         @Override
         public void run() {
             Log.d("Rec","recommend");
-            recommend();
-            getBloodsugarlevel(5);
+            recommend(FIRST_REC);
+
             mHandler.postDelayed(mHandlerTask, INTERVAL);
         }
     };
@@ -96,24 +112,59 @@ public class Recommendation extends IntentService {
 //    else Eat  (0 / 0 / 19)
 
     /**
-     * @author Stefan 29.06.2016
      * Launches recommendation process.
      * Recommendation not started if the last recommendation was within a specified interval
+     * @param rec switch between different recommendation methods
+     * @author Stefan 29.06.2016
      */
-    public void recommend(){
+    public void recommend(int rec){
         long time= System.currentTimeMillis();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean notify = preferences.getBoolean("pref_key_assistant", true);
         if(time-lastRecommendation>=INTERVAL && notify){
-            giveDefaultRecommendation();
+            switch(rec) {
+                case DEFAUL_REC:
+                    giveDefaultRecommendation();
+                    break;
+                case FIRST_REC:
+                    giveFirstRecommendation();
+                    break;
+            }
         }
         lastRecommendation = time;
     }
 
     /**
-     * @author Stefan 30.04.2016
+     * first recommendation process
+     * @author Stefan 05.07.2016
+     */
+    public void giveFirstRecommendation(){
+        int period = 5;
+        double bsLevel = getLastBloodsugarlevel(period);
+
+        //there is no measurment within specified time interval
+        if(bsLevel == 0){
+            //TODO
+            sendNotification("No blood sugar level measurement within the last " + period + " hours. " +
+                    "TODO: give recommendation based on activities" );
+        }else{
+            if(100<= bsLevel &&  bsLevel < 200){
+                //then Exercise
+                sendNotification("You should better do some exercise because your blood sugar level is high!");
+            } else if(bsLevel >=200){
+                //then insulin
+                sendNotification("You should take insulin because your blood sugar is way to high!");
+            } else{
+                //Eat
+                sendNotification("Your blood sugar is low, have a meal.");
+            }
+        }
+    }
+
+    /**
      * gives default recommendation
+     * @author Stefan 30.04.2016
      */
     public void giveDefaultRecommendation(){
         ActivityItem current = getCurrentActivity();
@@ -153,8 +204,11 @@ public class Recommendation extends IntentService {
      * @param text
      */
     public void sendNotification(String text){
-        NotificationCompat.Builder mBuilder =
-                new NotificationCompat.Builder(this)
+        NotificationManager mNotificationManager =
+                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        Notification.Builder mBuilder =
+                new Notification.Builder(this)
                         .setSmallIcon(R.drawable.account_box)
                         .setContentTitle(getResources().getString(R.string.recommendation))
                         .setContentText(text);
@@ -177,10 +231,14 @@ public class Recommendation extends IntentService {
                 );
         mBuilder.setContentIntent(resultPendingIntent);
         mBuilder.setAutoCancel(true);
-        NotificationManager mNotificationManager =
-                (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+
+        Notification notification = new Notification.BigTextStyle(mBuilder)
+                .bigText(text).build();
+        mNotificationManager.notify(0, notification);
+
         // mId allows you to update the notification later on.
-        mNotificationManager.notify(mId, mBuilder.build());
+        mNotificationManager.notify(mId, notification);
 
     }
 
@@ -281,12 +339,13 @@ public class Recommendation extends IntentService {
 
     /**
      * @author Stefan 03.07.2016
-     * returns the bloodsugar level
+     * returns the most recent bloodsugar level in mmol within the specified time interval
+     * return 0 if no measurement was found
      * @param hoursSinceMM time period in hours before the actual to time in
      *                      that the measurement should be to be taken into account
      * @return
      */
-    public double getBloodsugarlevel(int hoursSinceMM){
+    public double getLastBloodsugarlevel(int hoursSinceMM){
         Date curr = TimeUtils.getCurrentDate();
 
         DataBaseHandler dbHandler = AppGlobal.getHandler();
@@ -308,10 +367,18 @@ public class Recommendation extends IntentService {
         long timeSinceMM = TimeUnit.MILLISECONDS.toMinutes(timediff);
 
         if(timeSinceMM <hoursSinceMM && last!= null){
-            //TODO conversion in actual unit before
-            return last.getMeasure_value();
-        }
+            double value = last.getMeasure_value();
+            switch (last.getMeasure_unit()) {
+                case "%":
+                    return Util.miligram_to_mol(Util.percentage_to_mg(value));
 
+                case "mmol/l":
+                    return value;
+
+                case "mg/dl":
+                    return Util.miligram_to_mol(value);
+            }
+        }
         return 0;
     }
 }

@@ -58,10 +58,9 @@ public class EntryScreenActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static Menu optionsMenu;
-    private static MenuItem actualMenuItem;
     public static NavigationView navigationView;
-    public static TextView username;
     private static String imagePath;
+    Recommendation recService;
 
     public static final String TAG = EntryScreenActivity.class.getSimpleName();
 
@@ -74,6 +73,8 @@ public class EntryScreenActivity extends AppCompatActivity
     private GoogleApiClient client;
     private Fragment fragment;
     private Intent recIntent;
+    private MenuItem actualMenuItem;
+    boolean mBound = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -489,26 +490,32 @@ public class EntryScreenActivity extends AppCompatActivity
     /**
      * create a service connection
      */
-    protected ServiceConnection mServerConn = new ServiceConnection() {
+    protected ServiceConnection mServiceConn = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
             Log.d(TAG, "onServiceConnected");
+            Recommendation.RecBinder recBinder = (Recommendation.RecBinder) binder;
+            recService = recBinder.getService();
+            mBound = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
             Log.d(TAG, "onServiceDisconnected");
+            mBound = false;
         }
     };
+
 
     /**
      * bind and start the recommendation service
      */
-    public void startRec() {
-        // mContext is defined upper in code, I think it is not necessary to explain what is it
+    public Intent startRec() {
         Intent rec = new Intent(this, Recommendation.class);
-        bindService(rec, mServerConn, Context.BIND_AUTO_CREATE);
+        rec.putExtra("Variant",0);
+        bindService(rec, mServiceConn, Context.BIND_AUTO_CREATE);
         startService(rec);
+        return rec;
     }
 
     /**
@@ -516,6 +523,18 @@ public class EntryScreenActivity extends AppCompatActivity
      */
     public void stopRec() {
         stopService(new Intent(this, Recommendation.class));
-        unbindService(mServerConn);
+        // Unbind from the service
+        if (mBound) {
+            unbindService(mServiceConn);
+            mBound = false;
+        }
+    }
+
+    /**
+     * returns the recommendation service
+     * @return
+     */
+    public Recommendation getRecommendationService(){
+        return recService;
     }
 }
