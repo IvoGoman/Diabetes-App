@@ -386,4 +386,25 @@ public class Util {
 //		XLog log = builder.build();
 //		return log;
 //	}
+
+	/***
+	 * Converts mg/dl in mmol/l
+	 * @param mg
+	 * @param roundfactor
+	 * @return mmol/l
+	 */
+	public static String miligram_to_mol(String mg, double roundfactor){
+
+		return String.valueOf(Math.round(Double.parseDouble(mg) * 0.0555*roundfactor)/roundfactor);
+	}
+
+	/***
+	 * Converts mmol/l in mg/dl
+	 * @param mmol
+	 * @param roundfactor
+	 * @return mg/dl
+	 */
+	public static String mmol_to_milligram(String mmol, double roundfactor){
+		return String.valueOf(Math.round(Double.parseDouble(mmol) * 18.0182*roundfactor)/roundfactor);
+	}
 }

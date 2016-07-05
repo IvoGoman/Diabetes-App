@@ -7,20 +7,18 @@ import android.app.DialogFragment;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
-import android.renderscript.Double2;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.NumberPicker;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Jan on 22.02.16.
@@ -170,7 +168,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                     //Convert from mmol to mg
                     //nums[i] = Double.toString(Math.round(mmol_to_milligram(Double.parseDouble(nums[i]))));
                 if(bloodsugar_level.getText().toString().isEmpty() == false) {
-                    bloodsugar_level.setText(mmol_to_milligram(bloodsugar_level.getText().toString()));
+                    bloodsugar_level.setText(Util.mmol_to_milligram(bloodsugar_level.getText().toString(), roundfactor));
                 }
             }
             measure = "mg/dl";
@@ -189,7 +187,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
             {
                 if(bloodsugar_level.getText().toString().isEmpty() == false) {
                     //Convert from mmol to mg to percentage
-                    bloodsugar_level.setText(mg_to_percentage(mmol_to_milligram(bloodsugar_level.getText().toString())));
+                    bloodsugar_level.setText(mg_to_percentage(Util.mmol_to_milligram(bloodsugar_level.getText().toString(), roundfactor)));
                     //nums[i] = Double.toString(Math.round(mg_to_percentage(mmol_to_milligram(Double.parseDouble(nums[i])))*10d)/10d);
                 }
             }
@@ -201,39 +199,19 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
             if(measure.equals("mg/dl")) {
                 //convert mg to mmol
                 if(bloodsugar_level.getText().toString().isEmpty() == false) {
-                    bloodsugar_level.setText(miligram_to_mol(bloodsugar_level.getText().toString()));
+                    bloodsugar_level.setText(Util.miligram_to_mol(bloodsugar_level.getText().toString(), roundfactor));
                     //nums[i] = Double.toString(Math.round(miligram_to_mol(Double.parseDouble(nums[i]))*10d)/10d);
                 }
 
             }else if (measure.equals("%")) {
                 if(bloodsugar_level.getText().toString().isEmpty() == false) {
                     //Convert from percentage to mg to mmol
-                    bloodsugar_level.setText(miligram_to_mol(percentage_to_mg(bloodsugar_level.getText().toString())));
+                    bloodsugar_level.setText(Util.miligram_to_mol(percentage_to_mg(bloodsugar_level.getText().toString()), roundfactor));
                     //nums[i] = Double.toString(Math.round(miligram_to_mol(percentage_to_mg(Double.parseDouble(nums[i])))*10d)/10d);
                 }
             }
             measure = "mmol/l";
         }
-    }
-
-    /***
-     * Converts mg/dl in mmol/l
-     * @param mg
-     * @return mmol/l
-     */
-    private String miligram_to_mol(String mg)
-    {
-        return String.valueOf(Math.round(Double.parseDouble(mg) * 0.0555*roundfactor)/roundfactor);
-    }
-
-    /***
-     * Converts mmol/l in mg/dl
-     * @param mmol
-     * @return mg/dl
-     */
-    private String mmol_to_milligram(String mmol)
-    {
-        return String.valueOf(Math.round(Double.parseDouble(mmol) * 18.0182*roundfactor)/roundfactor);
     }
 
 

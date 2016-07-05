@@ -16,10 +16,12 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
+import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -30,8 +32,8 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
  */
 public class Recommendation extends IntentService {
 
-    private final static int INTERVAL = 1000 * 60 * 5; //5 minutes
-//    private final static int INTERVAL = 1000 * 10; //10 sec
+//    private final static int INTERVAL = 1000 * 60 * 5; //5 minutes
+    private final static int INTERVAL = 1000 * 10; //10 sec
 
     Handler mHandler = new Handler();
     private int mId = 0;
@@ -73,6 +75,7 @@ public class Recommendation extends IntentService {
         public void run() {
             Log.d("Rec","recommend");
             recommend();
+            getBloodsugarlevel(5);
             mHandler.postDelayed(mHandlerTask, INTERVAL);
         }
     };
@@ -85,6 +88,12 @@ public class Recommendation extends IntentService {
         Log.d("Rec", "stopped");
         mHandler.removeCallbacks(mHandlerTask);
     }
+
+//    if Blood Sugar Level = 100=<x<200 then Exercise  (81 / 0 / 0)
+//
+//    if Blood Sugar Level = >=200 then insulin  (0 / 59 / 0)
+//
+//    else Eat  (0 / 0 / 19)
 
     /**
      * @author Stefan 29.06.2016
@@ -196,7 +205,7 @@ public class Recommendation extends IntentService {
 
     /**
      * @author Stefan 30.04.2016
-     * returns current activity
+     * returns previous activity
      * @return
      */
     public ActivityItem getPreviousActivity(){
@@ -268,5 +277,41 @@ public class Recommendation extends IntentService {
             }
         }
         return false;
+    }
+
+    /**
+     * @author Stefan 03.07.2016
+     * returns the bloodsugar level
+     * @param hoursSinceMM time period in hours before the actual to time in
+     *                      that the measurement should be to be taken into account
+     * @return
+     */
+    public double getBloodsugarlevel(int hoursSinceMM){
+        Date curr = TimeUtils.getCurrentDate();
+
+        DataBaseHandler dbHandler = AppGlobal.getHandler();
+        ArrayList<MeasureItem> mms = dbHandler.getMeasurementValues(dbHandler, curr, "DAY", "bloodsugar");
+
+        MeasureItem last = null;
+        long timediff = Long.MAX_VALUE;
+
+        //find recent measurement
+        for(int i=0; i<mms.size(); i++){
+            //compares actual time with time from measurement
+            long tmpDiff = curr.getTime()-mms.get(i).getTimestamp();
+            if(tmpDiff <timediff){
+                last = mms.get(i);
+                timediff = tmpDiff;
+            }
+        }
+
+        long timeSinceMM = TimeUnit.MILLISECONDS.toMinutes(timediff);
+
+        if(timeSinceMM <hoursSinceMM && last!= null){
+            //TODO conversion in actual unit before
+            return last.getMeasure_value();
+        }
+
+        return 0;
     }
 }
