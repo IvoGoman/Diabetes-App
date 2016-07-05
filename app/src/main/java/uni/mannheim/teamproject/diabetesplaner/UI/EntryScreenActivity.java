@@ -76,6 +76,10 @@ public class EntryScreenActivity extends AppCompatActivity
     private MenuItem actualMenuItem;
     boolean mBound = false;
 
+    /**
+     * @param savedInstanceState
+     * @author Stefan
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         try {
@@ -116,6 +120,9 @@ public class EntryScreenActivity extends AppCompatActivity
         }
     }
 
+    /**
+     * @author Stefan
+     */
     @Override
     public void onBackPressed() {
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -128,6 +135,12 @@ public class EntryScreenActivity extends AppCompatActivity
         }
     }
 
+    /**
+     *
+     * @param menu
+     * @return
+     * @author Stefan
+     */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
         //sets visibility of icons in the ActionBar
@@ -150,6 +163,12 @@ public class EntryScreenActivity extends AppCompatActivity
         return true;
     }
 
+    /**
+     *
+     * @param menu
+     * @return
+     * @author Stefan
+     */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
 
@@ -163,6 +182,7 @@ public class EntryScreenActivity extends AppCompatActivity
      * handles ActionBar clicks
      * @param item
      * @return
+     * @author Stefan
      */
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -249,6 +269,7 @@ public class EntryScreenActivity extends AppCompatActivity
     /**
      * Returns the indexes of the items that were selected by the user
      * @return
+     * @author Stefan
      */
     public ArrayList<Integer> getIndexesOfSelected(DailyRoutineFragment fragment){
         ArrayList<DailyRoutineView> items = fragment.getActivityList();
@@ -265,6 +286,7 @@ public class EntryScreenActivity extends AppCompatActivity
      * handles if a menu item in the navigation drawer was selected
      * @param item
      * @return
+     * @author Stefan
      */
     @SuppressWarnings("StatementWithEmptyBody")
     @Override
@@ -378,6 +400,9 @@ public class EntryScreenActivity extends AppCompatActivity
         this.startService(myIntent);
     }
 
+    /**
+     * @author Stefan
+     */
     @Override
     protected void onRestart() {
         startRec();
@@ -410,6 +435,7 @@ public class EntryScreenActivity extends AppCompatActivity
     /**
      * getter for ActionBar
      * @return optionsMenu (ActionBar)
+     * @author Stefan
      */
     public static Menu getOptionsMenu(){
         return optionsMenu;
@@ -418,13 +444,20 @@ public class EntryScreenActivity extends AppCompatActivity
     /**
      * returns URI of image captured
      * @return
+     * @author Stefan
      */
     public static String getImagePath(){
         return imagePath;
     }
 
 
-
+    /**
+     *
+     * @param requestCode
+     * @param resultCode
+     * @param data
+     * @author Stefan
+     */
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
@@ -474,6 +507,7 @@ public class EntryScreenActivity extends AppCompatActivity
      * returns time in format HH:mm if timeformat is 24h and in format KK:mm AM/PM if timeformat is 12h
      * @param date
      * @return String
+     * @author Stefan
      */
     public static String getTimeInUserFormat(Date date, Context context){
         String time = "";
@@ -489,6 +523,7 @@ public class EntryScreenActivity extends AppCompatActivity
 
     /**
      * create a service connection
+     * @author Stefan 05.07.2016
      */
     protected ServiceConnection mServiceConn = new ServiceConnection() {
         @Override
@@ -509,6 +544,7 @@ public class EntryScreenActivity extends AppCompatActivity
 
     /**
      * bind and start the recommendation service
+     * @author Stefan 05.07.2016
      */
     public void startRec() {
         Intent rec = new Intent(this, Recommendation.class);
@@ -518,6 +554,7 @@ public class EntryScreenActivity extends AppCompatActivity
 
     /**
      * stop and unbind the recommendation service
+     * @author Stefan 05.07.2016
      */
     public void stopRec() {
         stopService(new Intent(this, Recommendation.class));
@@ -531,6 +568,7 @@ public class EntryScreenActivity extends AppCompatActivity
     /**
      * returns the recommendation service
      * @return
+     * @author Stefan 05.07.2016
      */
     public Recommendation getRecommendationService(){
         return recService;
