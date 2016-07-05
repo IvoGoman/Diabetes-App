@@ -29,6 +29,9 @@ import java.util.Date;
  */
 public class Util {
 
+	public static final double ROUND_FACTOR = 10d;
+
+
 	/**
 	 * converts an ArrayList<String> to String array
 	 * @param tmpList ArrayList<String>
@@ -390,21 +393,37 @@ public class Util {
 	/***
 	 * Converts mg/dl in mmol/l
 	 * @param mg
-	 * @param roundfactor
 	 * @return mmol/l
 	 */
-	public static String miligram_to_mol(String mg, double roundfactor){
+	public static String miligram_to_mol(String mg){
 
-		return String.valueOf(Math.round(Double.parseDouble(mg) * 0.0555*roundfactor)/roundfactor);
+		return String.valueOf(Math.round(Double.parseDouble(mg) * 0.0555*ROUND_FACTOR)/ROUND_FACTOR);
 	}
 
 	/***
 	 * Converts mmol/l in mg/dl
 	 * @param mmol
-	 * @param roundfactor
 	 * @return mg/dl
 	 */
-	public static String mmol_to_milligram(String mmol, double roundfactor){
-		return String.valueOf(Math.round(Double.parseDouble(mmol) * 18.0182*roundfactor)/roundfactor);
+	public static String mmol_to_milligram(String mmol){
+		return String.valueOf(Math.round(Double.parseDouble(mmol) * 18.0182*ROUND_FACTOR)/ROUND_FACTOR);
+	}
+
+	/***
+	 * Converts HbA1c percentage to mg/dl
+	 * @param percent
+	 * @return mg/dl
+	 */
+	public static String percentage_to_mg(String percent){
+		return String.valueOf(Math.round((Double.parseDouble(percent)*33.3-86.0)*ROUND_FACTOR)/ROUND_FACTOR);
+	}
+
+	/***
+	 * Converts mg/dl to HbA1c percentage
+	 * @param mg
+	 * @return percentage of HbA1c
+	 */
+	public static String mg_to_percentage(String mg){
+		return String.valueOf(Math.round(((Double.parseDouble(mg)+86.0)/33.3)*ROUND_FACTOR)/ROUND_FACTOR);
 	}
 }

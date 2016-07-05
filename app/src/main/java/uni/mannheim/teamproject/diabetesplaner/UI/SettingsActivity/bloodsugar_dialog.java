@@ -159,7 +159,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                     //Convert from percetage to mg
                     //nums[i] = Double.toString(Math.round(percentage_to_mg(Double.parseDouble(nums[i]))));
                 if(bloodsugar_level.getText().toString().isEmpty() == false) {
-                    bloodsugar_level.setText(percentage_to_mg(bloodsugar_level.getText().toString()));
+                    bloodsugar_level.setText(Util.percentage_to_mg(bloodsugar_level.getText().toString()));
                 }
 
             }else if(measure.equals("mmol/l"))
@@ -168,7 +168,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                     //Convert from mmol to mg
                     //nums[i] = Double.toString(Math.round(mmol_to_milligram(Double.parseDouble(nums[i]))));
                 if(bloodsugar_level.getText().toString().isEmpty() == false) {
-                    bloodsugar_level.setText(Util.mmol_to_milligram(bloodsugar_level.getText().toString(), roundfactor));
+                    bloodsugar_level.setText(Util.mmol_to_milligram(bloodsugar_level.getText().toString()));
                 }
             }
             measure = "mg/dl";
@@ -180,14 +180,14 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
             if(measure.equals("mg/dl")) {
                 if(bloodsugar_level.getText().toString().isEmpty() == false) {
                     //Convert from mg to percentage
-                    bloodsugar_level.setText(mg_to_percentage(bloodsugar_level.getText().toString()));
+                    bloodsugar_level.setText(Util.mg_to_percentage(bloodsugar_level.getText().toString()));
                     //nums[i] = Double.toString(Math.round(mg_to_percentage(Double.parseDouble(nums[i]))*10d)/10d);
                 }
             } else if(measure.equals("mmol/l"))
             {
                 if(bloodsugar_level.getText().toString().isEmpty() == false) {
                     //Convert from mmol to mg to percentage
-                    bloodsugar_level.setText(mg_to_percentage(Util.mmol_to_milligram(bloodsugar_level.getText().toString(), roundfactor)));
+                    bloodsugar_level.setText(Util.mg_to_percentage(Util.mmol_to_milligram(bloodsugar_level.getText().toString())));
                     //nums[i] = Double.toString(Math.round(mg_to_percentage(mmol_to_milligram(Double.parseDouble(nums[i])))*10d)/10d);
                 }
             }
@@ -199,40 +199,19 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
             if(measure.equals("mg/dl")) {
                 //convert mg to mmol
                 if(bloodsugar_level.getText().toString().isEmpty() == false) {
-                    bloodsugar_level.setText(Util.miligram_to_mol(bloodsugar_level.getText().toString(), roundfactor));
+                    bloodsugar_level.setText(Util.miligram_to_mol(bloodsugar_level.getText().toString()));
                     //nums[i] = Double.toString(Math.round(miligram_to_mol(Double.parseDouble(nums[i]))*10d)/10d);
                 }
 
             }else if (measure.equals("%")) {
                 if(bloodsugar_level.getText().toString().isEmpty() == false) {
                     //Convert from percentage to mg to mmol
-                    bloodsugar_level.setText(Util.miligram_to_mol(percentage_to_mg(bloodsugar_level.getText().toString()), roundfactor));
+                    bloodsugar_level.setText(Util.miligram_to_mol(Util.percentage_to_mg(bloodsugar_level.getText().toString())));
                     //nums[i] = Double.toString(Math.round(miligram_to_mol(percentage_to_mg(Double.parseDouble(nums[i])))*10d)/10d);
                 }
             }
             measure = "mmol/l";
         }
-    }
-
-
-    /***
-     * Converts HbA1c percentage to mg/dl
-     * @param percent
-     * @return mg/dl
-     */
-    private String percentage_to_mg(String percent)
-    {
-        return String.valueOf(Math.round((Double.parseDouble(percent)*33.3-86.0)*roundfactor)/roundfactor);
-    }
-
-    /***
-     * Converts mg/dl to HbA1c percentage
-     * @param mg
-     * @return percentage of HbA1c
-     */
-    private String mg_to_percentage(String mg)
-    {
-        return String.valueOf(Math.round(((Double.parseDouble(mg)+86.0)/33.3)*roundfactor)/roundfactor);
     }
 
     /***
