@@ -395,9 +395,9 @@ public class Util {
 	 * @param mg
 	 * @return mmol/l
 	 */
-	public static String miligram_to_mol(String mg){
+	public static double miligram_to_mol(double mg){
 
-		return String.valueOf(Math.round(Double.parseDouble(mg) * 0.0555*ROUND_FACTOR)/ROUND_FACTOR);
+		return Math.round(mg * 0.0555*ROUND_FACTOR)/ROUND_FACTOR;
 	}
 
 	/***
@@ -405,8 +405,8 @@ public class Util {
 	 * @param mmol
 	 * @return mg/dl
 	 */
-	public static String mmol_to_milligram(String mmol){
-		return String.valueOf(Math.round(Double.parseDouble(mmol) * 18.0182*ROUND_FACTOR)/ROUND_FACTOR);
+	public static double mmol_to_milligram(double mmol){
+		return Math.round(mmol * 18.0182*ROUND_FACTOR)/ROUND_FACTOR;
 	}
 
 	/***
@@ -414,8 +414,8 @@ public class Util {
 	 * @param percent
 	 * @return mg/dl
 	 */
-	public static String percentage_to_mg(String percent){
-		return String.valueOf(Math.round((Double.parseDouble(percent)*33.3-86.0)*ROUND_FACTOR)/ROUND_FACTOR);
+	public static double percentage_to_mg(double percent){
+		return Math.round((percent*33.3-86.0)*ROUND_FACTOR)/ROUND_FACTOR;
 	}
 
 	/***
@@ -423,7 +423,7 @@ public class Util {
 	 * @param mg
 	 * @return percentage of HbA1c
 	 */
-	public static String mg_to_percentage(String mg){
-		return String.valueOf(Math.round(((Double.parseDouble(mg)+86.0)/33.3)*ROUND_FACTOR)/ROUND_FACTOR);
+	public static double mg_to_percentage(double mg){
+		return Math.round(((mg+86.0)/33.3)*ROUND_FACTOR)/ROUND_FACTOR;
 	}
 }
