@@ -510,12 +510,10 @@ public class EntryScreenActivity extends AppCompatActivity
     /**
      * bind and start the recommendation service
      */
-    public Intent startRec() {
+    public void startRec() {
         Intent rec = new Intent(this, Recommendation.class);
-        rec.putExtra("Variant",0);
         bindService(rec, mServiceConn, Context.BIND_AUTO_CREATE);
         startService(rec);
-        return rec;
     }
 
     /**
