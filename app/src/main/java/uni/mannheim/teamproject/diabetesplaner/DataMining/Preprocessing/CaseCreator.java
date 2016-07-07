@@ -333,4 +333,52 @@ public class CaseCreator {
 			}
 		}
 	}
+
+	/**
+	 * removes the day with the least caseID (first day in log)
+	 * Assumes that it is not complete
+	 * @param update if ture updates all case ids so the log starts with caseID one
+	 * @author Stefan 07.07.2016
+	 */
+	public void removeFirstCase(boolean update){
+		//find the number of the first case
+		Integer first = null;
+		while(true){
+			int tmp = Integer.valueOf(list.get(0)[0]);
+			if(first == null || first == tmp){
+				first = tmp;
+				list.remove(0);
+			}else if(tmp > first){
+				break;
+			}
+		}
+
+		if(update) {
+			//update all caseIDs
+			for (int i = 0; i < list.size(); i++) {
+				list.get(i)[0] = String.valueOf((Integer.parseInt(list.get(i)[0])-first));
+			}
+		}
+	}
+
+	/**
+	 * removes the day with the highest caseID (last day in log)
+	 * Assumes that last day is not complete
+	 * @author Stefan 07.07.2016
+	 */
+	public void removeLastCase(){
+		//find the number of the first case
+		Integer last = null;
+		while(true){
+			int indexLast = list.size()-1;
+			int tmp = Integer.valueOf(list.get(indexLast)[0]);
+			if(last == null || last == tmp){
+				last = tmp;
+				list.remove(indexLast);
+			}else if(tmp < last){
+				break;
+			}
+		}
+	}
 }
+

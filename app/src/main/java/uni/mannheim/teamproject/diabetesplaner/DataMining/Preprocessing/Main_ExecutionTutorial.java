@@ -35,8 +35,17 @@ public class Main_ExecutionTutorial {
 		System.out.println("-------------------------------------------------");
 		//merges two consecutive activities which are the same
 		creator.mergeConsecutiveSameActivity(true);
+		creator.removeFirstCase(true);
+		creator.removeLastCase();
 
-		Util.printList(creator.getList());
+		for(int i=0; i<creator.getList().size(); i++){
+			for(int j=0; j<creator.getList().get(i).length; j++){
+				System.out.println(creator.getList().get(i)[j]);
+			}
+			System.out.println();
+		}
+
+//		Util.printList(creator.getList());
 
 //		//creates a MinuteSplitter object with the SCV file in an ArrayList
 //		MinuteSplitter splitter = new MinuteSplitter(list);
