@@ -1,11 +1,16 @@
 package uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine;
 
+import android.Manifest;
 import android.app.DialogFragment;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
@@ -44,6 +49,7 @@ public class InputDialog extends DialogFragment{
     private Date startDate;
     private Date endDate;
     private Integer intensity;
+    private static final int MY_PERMISSIONS_REQUEST_CAMERA = 0;
 
     private TimePickerFragment timePickerFragmentStart;
     private TimePickerFragment timePickerFragmentEnd;
@@ -143,9 +149,41 @@ public class InputDialog extends DialogFragment{
         mealInputCam.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //take the picture
-                dispatchTakePictureIntent();
 
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.CAMERA)
+                        != PackageManager.PERMISSION_GRANTED
+                        || ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+//                    // Should we show an explanation?
+//                    if (ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),
+//                            Manifest.permission.CAMERA)) {
+//
+//                        // Show an explanation to the user *asynchronously* -- don't block
+//                        // this thread waiting for the user's response! After the user
+//                        // sees the explanation, try again to request the permission.
+//
+//                    } else {
+
+                        // No explanation needed, we can request the permission.
+                    Log.d(TAG, "No permission");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        Log.d(TAG, "Request permission");
+                        requestPermissions(new String[]{Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                MY_PERMISSIONS_REQUEST_CAMERA);
+                    }
+
+//                        // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+//                        // app-defined int constant. The callback method gets the
+//                        // result of the request.
+//                    }
+                }else{
+                    Log.d(TAG, "has permission");
+                    //take the picture
+                    dispatchTakePictureIntent();
+                }
             }
         });
 
@@ -238,7 +276,7 @@ public class InputDialog extends DialogFragment{
     }
 
 
-//    /**
+    //    /**
 //     * Ivo Gosemann
 //     * sets the date of the activity
 //     *
@@ -489,6 +527,42 @@ public class InputDialog extends DialogFragment{
             case 2:
                 intensityValue.setText(getResources().getString(R.string.high));
                 break;
+        }
+    }
+
+    /**
+     * callback method for asking for camera permission
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     * @author Stefan 08.07.2016
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        Log.d(TAG, "onRequestPermissionResult");
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_CAMERA: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d(TAG, "permission granted");
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                    //take the picture
+                    dispatchTakePictureIntent();
+
+                } else {
+                    Log.d(TAG, "permission denied");
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
         }
     }
 }

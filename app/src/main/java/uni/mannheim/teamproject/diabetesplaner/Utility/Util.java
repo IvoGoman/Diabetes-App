@@ -271,12 +271,14 @@ public class Util {
 					".jpg",         /* suffix */
 					storageDir      /* directory */
 			);
+
+			// Save a file: path for use with ACTION_VIEW intents
+			String mCurrentPhotoPath = "file:" + image.getAbsolutePath();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 
-		// Save a file: path for use with ACTION_VIEW intents
-		String mCurrentPhotoPath = "file:" + image.getAbsolutePath();
+
 		return image;
 	}
 
