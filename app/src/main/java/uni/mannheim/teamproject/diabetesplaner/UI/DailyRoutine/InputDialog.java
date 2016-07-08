@@ -68,6 +68,8 @@ public class InputDialog extends DialogFragment{
     private static ImageView mealInputImage;
     private EditText mealInputText;
     private static Bitmap image;
+    private TextView subactivityText;
+    private Spinner subSpinner;
 
     public static void setImage(Bitmap image) {
         InputDialog.image = image;
@@ -94,6 +96,9 @@ public class InputDialog extends DialogFragment{
     public View getLayout(){
         LayoutInflater inflater = (LayoutInflater) getActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.input_dialog, null);
+
+        subactivityText = (TextView)v.findViewById(R.id.tv_subactivity);
+        subSpinner = (Spinner)v.findViewById(R.id.add_dialog_spinner_sub);
 
         //get the layout of the intensity bar, the value TextView and the intensity TableRow
         intensityText = (TableRow)v.findViewById(R.id.intensity_text);
@@ -190,7 +195,7 @@ public class InputDialog extends DialogFragment{
         //spinner menu with the activities
         Spinner spinner = (Spinner) v.findViewById(R.id.add_dialog_spinner);
 
-        DataBaseHandler dbHandler = AppGlobal.getHandler();
+        final DataBaseHandler dbHandler = AppGlobal.getHandler();
         ArrayList<String> actionsList = dbHandler.getAllActionsAsList(dbHandler);
 
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -204,6 +209,32 @@ public class InputDialog extends DialogFragment{
             @Override
             public void onItemSelected(AdapterView adapter, View view, int position, long id) {
                 activity = ActivityItem.getActivityId(adapter.getItemAtPosition(position).toString());
+//                ArrayList<String> subactivities = dbHandler.getSubactivities(activity);
+//                if(subactivities.size() != 0){
+//                    final ArrayAdapter<String> subAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, Util.toArray(subactivities));
+//                    // Specify the layout to use when the list of choices appears
+//                    subAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//                    // Apply the adapter to the spinner
+//                    subSpinner.setAdapter(subAdapter);
+//                    subSpinner.setSelection(activity);
+//                    subSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//                        @Override
+//                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+//                            subactivity = ActivityItem.getSubactivityId(subAdapter.getItemAtPosition(position).toString());
+//                        }
+//
+//                        @Override
+//                        public void onNothingSelected(AdapterView<?> parent) {
+//
+//                        }
+//                    });
+//                    subactivityText.setVisibility(View.VISIBLE);
+//                    subSpinner.setVisibility(View.VISIBLE);
+//                }else{
+//                    subactivityText.setVisibility(View.GONE);
+//                    subSpinner.setVisibility(View.GONE);
+//                }
+
                 if(activity == 2){
                     mealInput.setVisibility(View.VISIBLE);
                     mealInputText.setVisibility(View.VISIBLE);

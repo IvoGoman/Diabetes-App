@@ -21,6 +21,19 @@
         android:layout_height="wrap_content"
         android:layout_margin="16dp"/>
 
+    <TextView
+        android:id="@+id/tv_subactivity"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/subactivity"
+        android:layout_marginLeft="16dp"
+        android:textSize="22dp"/>
+    <Spinner
+        android:id="@+id/add_dialog_spinner_sub"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="16dp"/>
+
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
