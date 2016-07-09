@@ -1,8 +1,10 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 
 import org.apache.commons.math3.ml.clustering.Cluster;
 import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
@@ -58,29 +60,35 @@ public class BSInputRecommendation extends Recommendation {
      */
     @Override
     public void recommend(){
+        //check if notifications are switched on
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
+        boolean notify = preferences.getBoolean("pref_key_assistant", true);
 
-        Date date = new Date();
-        long timestamp = date.getTime();
-        int currMinOfDay = TimeUtils.getMinutesOfDay(timestamp);
-        dbHandler.getLastBloodsugarMeasurement(dbHandler, 1);
+        if(notify) {
 
-        if(lastRecCheck == null){
-            lastRecCheck = currMinOfDay;
-        }
+            Date date = new Date();
+            long timestamp = date.getTime();
+            int currMinOfDay = TimeUtils.getMinutesOfDay(timestamp);
+            dbHandler.getLastBloodsugarMeasurement(dbHandler, 1);
 
-        if(means != null){
-            for(int i=0; i<means.size(); i++){
-                int mean = (int)Math.round(means.get(i));
+            if (lastRecCheck == null) {
+                lastRecCheck = currMinOfDay;
+            }
 
-                //check if the mean value is between the current time and the last check
-                if(mean > lastRecCheck && mean <= currMinOfDay){
-                    MeasureItem mi = dbHandler.getMostRecentMeasurmentValue(dbHandler, MeasureItem.MEASURE_KIND_BLOODSUGAR);
-                    //check if there was already a timestamp within the specified radius eps
-                    if((timestamp-mi.getTimestamp())*1000*60 > eps) {
-                        long ts = TimeUtils.minutesOfDayToTimestamp(mean);
-                        String usualTime = TimeUtils.getTimeInUserFormat(ts, this);
-                        sendNotification("Your usual bloodsugar measurement is at " + usualTime + ". It's time to input your measurement.", mId);
-                        lastRecCheck = currMinOfDay;
+            if (means != null) {
+                for (int i = 0; i < means.size(); i++) {
+                    int mean = (int) Math.round(means.get(i));
+
+                    //check if the mean value is between the current time and the last check
+                    if (mean > lastRecCheck && mean <= currMinOfDay) {
+                        MeasureItem mi = dbHandler.getMostRecentMeasurmentValue(dbHandler, MeasureItem.MEASURE_KIND_BLOODSUGAR);
+                        //check if there was already a timestamp within the specified radius eps
+                        if ((timestamp - mi.getTimestamp()) * 1000 * 60 > eps) {
+                            long ts = TimeUtils.minutesOfDayToTimestamp(mean);
+                            String usualTime = TimeUtils.getTimeInUserFormat(ts, this);
+                            sendNotification("Your usual bloodsugar measurement is at " + usualTime + ". It's time to input your measurement.", mId);
+                            lastRecCheck = currMinOfDay;
+                        }
                     }
                 }
             }
