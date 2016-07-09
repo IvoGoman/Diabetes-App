@@ -17,7 +17,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -29,12 +28,11 @@ import com.google.android.gms.appindexing.Action;
 import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
-import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.BSInputRecommendation;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.Recommendation;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.RoutineRecommendation;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.GPS_Service.GPS_Service;
@@ -60,7 +58,8 @@ public class EntryScreenActivity extends AppCompatActivity
     private static Menu optionsMenu;
     public static NavigationView navigationView;
     private static String imagePath;
-    Recommendation recService;
+    private RoutineRecommendation recServiceRoutine;
+    private BSInputRecommendation recServiceBS;
 
     public static final String TAG = EntryScreenActivity.class.getSimpleName();
 
@@ -74,7 +73,8 @@ public class EntryScreenActivity extends AppCompatActivity
     private Fragment fragment;
     private Intent recIntent;
     private MenuItem actualMenuItem;
-    boolean mBound = false;
+    private boolean mBoundRoutineRec = false;
+    private boolean mBoundBSRec = false;
 
     /**
      * @param savedInstanceState
@@ -110,7 +110,10 @@ public class EntryScreenActivity extends AppCompatActivity
             ft.commit();
 
             //starts and binds to recommendation service
-            startRec();
+            startRec(Recommendation.ROUTINE_REC);
+//            startRec(Recommendation.BS_REC);
+
+
             // ATTENTION: This was auto-generated to implement the App Indexing API.
             // See https://g.co/AppIndexing/AndroidStudio for more information.
             client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
@@ -405,7 +408,8 @@ public class EntryScreenActivity extends AppCompatActivity
      */
     @Override
     protected void onRestart() {
-        startRec();
+        startRec(Recommendation.ROUTINE_REC);
+//        startRec(Recommendation.BS_REC);
         super.onRestart();
     }
 
@@ -414,7 +418,8 @@ public class EntryScreenActivity extends AppCompatActivity
         super.onStop();
 
         //unbind the recommendation service
-        stopRec();
+        stopRec(Recommendation.ROUTINE_REC);
+//        stopRec(Recommendation.BS_REC);
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -463,23 +468,7 @@ public class EntryScreenActivity extends AppCompatActivity
         if (requestCode == CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE) {
             if (resultCode == RESULT_OK) {
                 imagePath = InputDialog.getImagePath();
-                // Image captured and saved to fileUri specified in the Intent
-//                if(data.getData()==null){
-//                    Bitmap bitmap = (Bitmap)data.getExtras().get("data");
-//                    Log.d(TAG, "Width: " +bitmap.getWidth());
-//                    imageURI = Util.getImageUri(getApplicationContext(), bitmap);
-//                }else {
-//                    imageURI = data.getData();
-//                }
-
-                    //convert imageURI to filePath
-//                    File myFile = new File(imagePath.getPath());
-//                    String filePath = myFile.getAbsolutePath();
-//                    Bitmap bitmap = Util.getCompressedPic(filePath);
-
-                    //Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), imageURI);
-                    InputDialog.displayImageFromPath(imagePath);
-
+                InputDialog.displayImageFromPath(imagePath);
 
                 Toast.makeText(this, "Image saved to:\n" +
                         imagePath, Toast.LENGTH_SHORT).show();
@@ -504,73 +493,112 @@ public class EntryScreenActivity extends AppCompatActivity
     }
 
     /**
-     * returns time in format HH:mm if timeformat is 24h and in format KK:mm AM/PM if timeformat is 12h
-     * @param date
-     * @return String
-     * @author Stefan
-     */
-    public static String getTimeInUserFormat(Date date, Context context){
-        String time = "";
-        if(DateFormat.is24HourFormat(context)){
-            SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
-            time = sdf.format(date);
-        }else{
-            SimpleDateFormat sdf = new SimpleDateFormat("KK:mm a");
-            time = sdf.format(date);
-        }
-        return time;
-    }
-
-    /**
-     * create a service connection
+     * create a service connection for the RoutineRecommendation
      * @author Stefan 05.07.2016
      */
-    protected ServiceConnection mServiceConn = new ServiceConnection() {
+    protected ServiceConnection mServiceConnRoutineRec = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder binder) {
-            Log.d(TAG, "onServiceConnected");
-            Recommendation.RecBinder recBinder = (Recommendation.RecBinder) binder;
-            recService = recBinder.getService();
-            mBound = true;
+            Log.d(TAG, "onTaskServiceConnected");
+            RoutineRecommendation.RecBinder recBinder = (RoutineRecommendation.RecBinder) binder;
+            recServiceRoutine = (RoutineRecommendation)recBinder.getService();
+            mBoundRoutineRec = true;
         }
 
         @Override
         public void onServiceDisconnected(ComponentName name) {
-            Log.d(TAG, "onServiceDisconnected");
-            mBound = false;
+            Log.d(TAG, "onTaskServiceDisconnected");
+            mBoundRoutineRec = false;
+        }
+    };
+
+    /**
+     * create a service connection for the BSInputRecommendation
+     * @author Stefan 09.07.2016
+     */
+    protected ServiceConnection mServiceConnBSRec = new ServiceConnection() {
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder binder) {
+            Log.d(TAG, "onBSServiceConnected");
+            RoutineRecommendation.RecBinder recBinder = (BSInputRecommendation.RecBinder) binder;
+            recServiceBS = (BSInputRecommendation)recBinder.getService();
+            mBoundBSRec = true;
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            Log.d(TAG, "onBSServiceDisconnected");
+            mBoundBSRec = false;
         }
     };
 
 
     /**
      * bind and start the recommendation service
+     * @param recType specifies the type of recommendation to start
      * @author Stefan 05.07.2016
      */
-    public void startRec() {
-        Intent rec = new Intent(this, Recommendation.class);
-        bindService(rec, mServiceConn, Context.BIND_AUTO_CREATE);
-        startService(rec);
+    public void startRec(int recType) {
+        switch (recType){
+            case 0: {
+                Intent rec = new Intent(this, RoutineRecommendation.class);
+                bindService(rec, mServiceConnRoutineRec, Context.BIND_AUTO_CREATE);
+                startService(rec);
+                break;
+            }
+            case 1: {
+                Intent rec = new Intent(this, BSInputRecommendation.class);
+                bindService(rec, mServiceConnBSRec, Context.BIND_AUTO_CREATE);
+                startService(rec);
+                break;
+            }
+        }
+
     }
 
     /**
      * stop and unbind the recommendation service
+     * @param recType specifies the type of recommendation to stop
      * @author Stefan 05.07.2016
      */
-    public void stopRec() {
-        stopService(new Intent(this, Recommendation.class));
-        // Unbind from the service
-        if (mBound) {
-            unbindService(mServiceConn);
-            mBound = false;
+    public void stopRec(int recType) {
+        switch (recType) {
+            case 0: {
+                stopService(new Intent(this, RoutineRecommendation.class));
+                // Unbind from the service
+                if (mBoundRoutineRec) {
+                    unbindService(mServiceConnRoutineRec);
+                    mBoundRoutineRec = false;
+                }
+                break;
+            }
+            case 1: {
+                stopService(new Intent(this, BSInputRecommendation.class));
+                // Unbind from the service
+                if (mBoundBSRec) {
+                    unbindService(mServiceConnBSRec);
+                    mBoundBSRec = false;
+                }
+                break;
+            }
         }
     }
 
     /**
-     * returns the recommendation service
+     * returns the task recommendation service
      * @return
      * @author Stefan 05.07.2016
      */
-    public Recommendation getRecommendationService(){
-        return recService;
+    public RoutineRecommendation getRoutineRecommendationService(){
+        return recServiceRoutine;
+    }
+
+    /**
+     * returns the bloodsugar input recommendation service
+     * @return
+     * @author Stefan 09.07.2016
+     */
+    public BSInputRecommendation getBSInputRecommendationService(){
+        return recServiceBS;
     }
 }

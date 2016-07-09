@@ -1,12 +1,11 @@
 package uni.mannheim.teamproject.diabetesplaner.Domain;
 
-import java.sql.Timestamp;
-
 /**
  * Created by Ivo on 4/18/2016.
  */
 public class MeasureItem {
-
+    public static final String MEASURE_KIND_BLOODSUGAR = "bloodsugar";
+    public static final String MEASURE_KIND_INSULIN = "insulin";
 
     private Long timestamp;
     private double measure_value;

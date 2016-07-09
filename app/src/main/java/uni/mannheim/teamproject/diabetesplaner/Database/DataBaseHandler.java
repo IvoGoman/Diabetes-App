@@ -561,6 +561,54 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     /**
+     * Retrieve all measurements of a certain measure kind
+     * @param handler database handler instance
+     * @param measure_kind "insulin" or "bloodsugar"
+     * @return ArrayList containing all measurements as MeasureItems
+     * @author Stefan 09.07.2016
+     */
+    public ArrayList<MeasureItem> getAllMeasurementValues(DataBaseHandler handler, String measure_kind){
+        SQLiteDatabase db = handler.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select measure_value, measure_unit, timestamp from  " + MEASUREMENT_TABLE_NAME + " "  +
+                "where measure_kind = '"+measure_kind+"';",null);
+        ArrayList<MeasureItem> measureList = new ArrayList<>();
+        MeasureItem measureItem = null;
+        if(cursor.moveToFirst()){
+            do{
+                measureItem = new MeasureItem(Long.parseLong(cursor.getString(2)),cursor.getDouble(0),cursor.getString(1));
+                measureList.add(measureItem);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return measureList;
+    }
+
+    /**
+     * returns most recent bloodsugar measurment
+     * @param handler database handler instance
+     * @param measure_kind "insulin" or "bloodsugar"
+     * @return the most recentMeasureItem
+     * @author Stefan 09.07.2016
+     */
+    public MeasureItem getMostRecentMeasurmentValue(DataBaseHandler handler, String measure_kind){
+        SQLiteDatabase db = handler.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select measure_value, measure_unit, MAX(timestamp) from  " + MEASUREMENT_TABLE_NAME + " "  +
+                "where measure_kind = '"+measure_kind+"' group by measure_value, measure_unit;",null);
+        ArrayList<MeasureItem> measureList = new ArrayList<>();
+        MeasureItem measureItem = null;
+        if(cursor.moveToFirst()){
+            do{
+                measureItem = new MeasureItem(Long.parseLong(cursor.getString(2)),cursor.getDouble(0),cursor.getString(1));
+                measureList.add(measureItem);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+        db.close();
+        return measureList.get(0);
+    }
+
+    /**
      * @author Ivo Gosemann 08.04.2016
      * TODO: Merge with GetDay
      * @param handler instance of the DB Handler

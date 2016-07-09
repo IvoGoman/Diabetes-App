@@ -8,6 +8,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
@@ -22,6 +23,19 @@ public class TimeUtils {
      */
     public static Calendar getCalendar(String timestamp){
         Date date = new Date(Long.parseLong(timestamp));
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        return cal;
+    }
+
+    /**
+     * converts a timestamp to a Calendar instance
+     * @param timestamp as long
+     * @return Calendar object
+     * @author Stefan 09.07.2016
+     */
+    public static Calendar getCalendar(long timestamp){
+        Date date = new Date(timestamp);
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
         return cal;
@@ -256,10 +270,10 @@ public class TimeUtils {
     }
 
     /**
-     * @author Stefan 26.04.2016
      * returns time in format HH:mm if timeformat is 24h and in format KK:mm AM/PM if timeformat is 12h
      * @param timestamp
      * @return String
+     * @author Stefan 26.04.2016
      */
     public static String getTimeInUserFormat(long timestamp, Context context){
         return getTimeInUserFormat(getDate(timestamp), context);
@@ -301,5 +315,37 @@ public class TimeUtils {
         }else{
             return false;
         }
+    }
+
+    /**
+     * get the minute of a day by passing the timestamp
+     * @param timestamp
+     * @return minute of day
+     * @author Stefan 09.07.2016
+     */
+    public static int getMinutesOfDay(long timestamp){
+
+        Calendar calendar = getCalendar(timestamp);
+        int hour = calendar.get(Calendar.HOUR_OF_DAY); // gets hour in 24h format
+        int minute = calendar.get(Calendar.MINUTE);
+
+        return hour*60 + minute;
+    }
+
+    /**
+     * creates a timestamp out of the minOfDay. Takes the actual date for the timestamp since
+     * the minOfDay does not specify information like day, month or year.
+     * @param minOfDay
+     * @return timestamp
+     * @author Stefan 09.07.2015
+     */
+    public static long minutesOfDayToTimestamp(int minOfDay){
+        int min = minOfDay%60;
+        int hour = minOfDay/60;
+
+        Calendar cal = GregorianCalendar.getInstance();
+        cal.set(Calendar.MINUTE, min);
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        return cal.getTimeInMillis();
     }
 }
