@@ -13,7 +13,9 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.attenuation
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.metrics.MetricsRepository;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.metrics.unary.UnaryMetric;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.transform.ConcurrencyEdgeTransformer;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.transform.FastTransformer;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.transform.FuzzyEdgeTransformer;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.transform.StatisticalCleanupTransformer;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.util.FMLogEvents;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.util.FuzzyMinerLog;
 
@@ -38,16 +40,16 @@ public class FuzzyMinerImpl {
         FMLogEvents logEvents = FuzzyMinerLog.getLogEvents(log);
 
         MetricsRepository repository;
-        Attenuation attenuation = new LinearAttenuation(2,1);
+        Attenuation attenuation = new LinearAttenuation(2,5);
 //      Create XLogInfo from the XLog and use it to create the Metric Repository
 //      Metric Repository will initialize all metrics based on XLogInfo
         XLogInfo logInfo = XLogInfoFactory.createLogInfo(log);
 //        create a metrics repository and create the metrics with apply
         repository = MetricsRepository.createRepository(logInfo);
-        repository.apply(log,attenuation,1);
+        repository.apply(log,attenuation,3);
 //      Create a Fuzzy Graph based on the metrics Repository, Log, LogEvents, set Fuzzy Map to false
         UnaryMetric unaryMetric = repository.getAggregateUnaryMetric();
-        fuzzyGraph = new MutableFuzzyGraph(repository.getUnaryMetrics().get(0),repository.getAggregateSignificanceBinaryLogMetric(),repository.getAggregateCorrelationBinaryLogMetric(), log, logEvents, false);
+        fuzzyGraph = new MutableFuzzyGraph(repository.getAggregateUnaryLogMetric(),repository.getAggregateSignificanceBinaryLogMetric(),repository.getAggregateCorrelationBinaryLogMetric(), log, logEvents, false);
         fuzzyGraph.setBinaryRespectiveSignificance();
 //      Add Edges based on Nodes and metrics
         fuzzyGraph.setEdgeImpls();
@@ -57,10 +59,10 @@ public class FuzzyMinerImpl {
 
 //        Either Fuzzy Edge Transformer
         FuzzyEdgeTransformer edgeTransformer = new FuzzyEdgeTransformer();
-        edgeTransformer.setIgnoreSelfLoops(true);
+        edgeTransformer.setIgnoreSelfLoops(false);
         edgeTransformer.setInterpretPercentageAbsolute(true);
-        edgeTransformer.setSignificanceCorrelationRatio(0.8);
-        edgeTransformer.setPreservePercentage(0.9);
+        edgeTransformer.setSignificanceCorrelationRatio(0.75);
+        edgeTransformer.setPreservePercentage(0.4);
         edgeTransformer.transform(fuzzyGraph);
 
 //        Or Best Edge Transformer
@@ -70,15 +72,15 @@ public class FuzzyMinerImpl {
 //  Edge Filtering based on local utility [Regarding Utility of In- and Outgoing Edges]
 
 //        Either Concurrency Edge Transformer
-//        ConcurrencyEdgeTransformer concurrencyEdgeTransformer = new ConcurrencyEdgeTransformer();
-//        concurrencyEdgeTransformer.setPreserveThreshold(0.6);
-//        concurrencyEdgeTransformer.setRatioThreshold(0.25);
-//        concurrencyEdgeTransformer.transform(fuzzyGraph);
+        ConcurrencyEdgeTransformer concurrencyEdgeTransformer = new ConcurrencyEdgeTransformer();
+        concurrencyEdgeTransformer.setPreserveThreshold(0.7);
+        concurrencyEdgeTransformer.setRatioThreshold(0.5);
+        concurrencyEdgeTransformer.transform(fuzzyGraph);
 
 //        Or New Concurrency Edge Transformer
 //        NewConcurrencyEdgeTransformer concurrencyEdgeTransformer = new NewConcurrencyEdgeTransformer();
 //        concurrencyEdgeTransformer.setPreserveThreshold(0.7);
-//        concurrencyEdgeTransformer.setRatioThreshold(0.2);
+//        concurrencyEdgeTransformer.setRatioThreshold(0.8);
 //        concurrencyEdgeTransformer.transform(fuzzyGraph);
 
 //  Node Aggregation and Abstraction Step [Clustering Nodes]
@@ -90,17 +92,17 @@ public class FuzzyMinerImpl {
 //        transformer.transform(fuzzyGraph);
 
 //        Or Fast Transfomer
-//        FastTransformer aggregationTransformer = new FastTransformer();
-//        aggregationTransformer.setThreshold(0.5);
+        FastTransformer aggregationTransformer = new FastTransformer();
+        aggregationTransformer.setThreshold(0.5);
 //        Ability to add more transformer as internal transformers. Not sure why
 //        aggregationTransformer.addPreTransformer();
 //        aggregationTransformer.addInterimTransformer();
 //        aggregationTransformer.addPostTransformer();
-//        aggregationTransformer.transform(fuzzyGraph);
+        aggregationTransformer.transform(fuzzyGraph);
 
 //        Always trowing null pointer exception when called after transformations are done.
-//        StatisticalCleanupTransformer statisticalCleanupTransformer = new StatisticalCleanupTransformer();
-//        statisticalCleanupTransformer.transform(fuzzyGraph);
+        StatisticalCleanupTransformer statisticalCleanupTransformer = new StatisticalCleanupTransformer();
+        statisticalCleanupTransformer.transform(fuzzyGraph);
 //        fuzzyGraph.toString();
 //        String source = ".\\input\\ActivityData.csv";
 //        String target = ".\\input\\ActivityDataLog.csv";
@@ -184,8 +186,8 @@ public class FuzzyMinerImpl {
 //        aggregationTransformer.transform(fuzzyGraph);
 
 //        Always trowing null pointer exception when called after transformations are done.
-//        StatisticalCleanupTransformer statisticalCleanupTransformer = new StatisticalCleanupTransformer();
-//        statisticalCleanupTransformer.transform(fuzzyGraph);
+        StatisticalCleanupTransformer statisticalCleanupTransformer = new StatisticalCleanupTransformer();
+        statisticalCleanupTransformer.transform(fuzzyGraph);
 
 //        String source = ".\\input\\ActivityData.csv";
 //        String target = ".\\input\\ActivityDataLog.csv";

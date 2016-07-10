@@ -1,10 +1,13 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing;
 
+
+
 import org.deckfour.xes.model.XLog;
 
 import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
  * Created by Ivo on 10.07.2016.
@@ -32,13 +35,14 @@ public class CustomXLog {
                 builder.addAttribute("Activity",list.get(i)[2]);
                 builder.addAttribute("ID", list.get(i)[1]);
                 builder.addAttribute("lifecyle:transition","Start");
-                builder.addAttribute("time:timestamp", list.get(i)[3]);
+                builder.addAttribute("time:timestamp", TimeUtils.getDateFromString(list.get(i)[3]));
+
 //				Add Complete Node of an Activity
                 builder.addEvent(list.get(i)[2]);
                 builder.addAttribute("Activity",list.get(i)[2]);
                 builder.addAttribute("ID", list.get(i)[1]);
                 builder.addAttribute("lifecyle:transition","Complete");
-                builder.addAttribute("time:timestamp", list.get(i)[4]);
+                builder.addAttribute("time:timestamp", TimeUtils.getDateFromString(list.get(i)[4]));
             }else{
 //				Add a new Trace to the Builder [this happens for every case]
                 builder.addTrace(list.get(i)[0]);
