@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import java.sql.Time;
 import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -229,12 +230,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param bloodsugar_level
      * @param measure_unit
      */
-    public void InsertBloodsugar(DataBaseHandler handler, int profile_id, double bloodsugar_level, String measure_unit) {
+    public void InsertBloodsugar(DataBaseHandler handler, Date date, Time time, int profile_id, double bloodsugar_level, String measure_unit) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        long tslong = System.currentTimeMillis() / 1000;
-        Log.d("Database","tslong InsertBloodSugar"+tslong);
+        Timestamp timestamp = Timestamp.valueOf(date.toString() + " " + time.toString());
+        Log.d("Database",timestamp + "InsertBloodSugar");
+
         db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
-                + bloodsugar_level + " , '" + tslong + "' , '" +measure_unit+"' , 'bloodsugar');");
+                + bloodsugar_level + " , '" + timestamp.toString() + "' , '" +measure_unit+"' , 'bloodsugar');");
         db1.close();
     }
 
