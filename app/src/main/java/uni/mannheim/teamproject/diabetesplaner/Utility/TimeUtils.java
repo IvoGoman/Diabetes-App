@@ -50,6 +50,24 @@ public class TimeUtils {
         Date date = new Date(Long.parseLong(timestamp));
         return date;
     }
+
+    /**
+     * Methods converts a String in Format YYYY-MM-DD HH:MM:SS to a Data Object
+     * @param dateString
+     * @return
+     */
+    public static Date getDateFromString(String dateString){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = null;
+        try {
+            date = sdf.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+
     /**
      * @author Stefan 26.04.2016
      * converts a timestamp to a Date instance

@@ -30,6 +30,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Random;
 
+import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyModel;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
@@ -122,6 +123,8 @@ public class HistoryFragment extends DailyRoutineFragment {
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         Date date = calendar.getTime();
         dateString = df.format(date);
+                FuzzyModel model = new FuzzyModel();
+        model.getNextActivity();
         //    String dateString = DateFormat.getDateInstance().format(date);
         dateView.setText(dateString);
         onDateSelected(linearLayout, params, date);
