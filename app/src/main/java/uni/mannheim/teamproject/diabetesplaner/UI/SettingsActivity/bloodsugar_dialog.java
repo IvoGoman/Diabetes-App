@@ -14,6 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
+import android.support.design.widget.TextInputLayout;
+
+import java.sql.Date;
+import java.sql.Time;
+import java.text.ParseException;
+import java.util.IllegalFormatException;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
@@ -27,6 +33,11 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
     Button submit,cancel;
     RadioButton mg,percentage,mmol;
     EditText bloodsugar_level;
+    EditText input_date;
+    TextInputLayout input_date_layout;
+    TextInputLayout input_time_layout;
+    TextInputLayout input_measurement_layout;
+    EditText input_time;
     BloodsugarDialog_and_Settings communicator;
     double roundfactor = 10d;
 
@@ -54,6 +65,11 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         mmol = (RadioButton) view.findViewById(R.id.bs_mm);
         percentage = (RadioButton) view.findViewById(R.id.bs_percentage);
         bloodsugar_level = (EditText) view.findViewById(R.id.edit_measure_value);
+        input_time = (EditText) view.findViewById(R.id.edit_time);
+        input_date = (EditText) view.findViewById(R.id.input_date);
+        input_date_layout = (TextInputLayout) view.findViewById(R.id.input_layout_date);
+        input_time_layout = (TextInputLayout) view.findViewById(R.id.input_layout_time);
+        input_measurement_layout = (TextInputLayout) view.findViewById(R.id.input_layout_measurement);
 
         AlertDialog.Builder mybuilder = new AlertDialog.Builder(getActivity());
         mybuilder.setView(view);
@@ -62,30 +78,52 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //if value is changed, then store value and change display
-                if(measure_value.equals(bloodsugar_level.getText().toString()) == false) {
-                    measure_value = bloodsugar_level.getText().toString();
-                    database.InsertBloodsugar(database, 1, Double.parseDouble(measure_value), measure);
-                    communicator.respond(null,measure_value, measure, 1);
-                    Toast.makeText(getActivity(), "Blood sugar level: " + measure_value + " "
-                                    + measure + " stored"
-                            , Toast.LENGTH_LONG).show();
-                    dismiss();
-                }else{
-                    Log.d("bloodsugar_entry","Nothing changed");
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                        new AlertDialog.Builder(getContext())
-                                .setTitle("No Changes")
-                                .setMessage("You did not change the blood_sugar level.")
-                                .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                    public void onClick(DialogInterface dialog, int which) {
+                Date date = null;
+                Time time = null;
+                try {
+                    if (measure_value.equals(bloodsugar_level.getText().toString().replace(".","-")) == false) {
+                        measure_value = bloodsugar_level.getText().toString();
 
-                                    }
-                                })
-                                .setIcon(android.R.drawable.ic_dialog_alert)
-                                .show();
+                        date = Date.valueOf(input_date.getText().toString());
+                        time = Time.valueOf(input_time.getText().toString());
+                        database.InsertBloodsugar(database,
+                                Date.valueOf(input_date.getText().toString()),
+                                Time.valueOf(input_time.getText().toString()),
+                                1, Double.parseDouble(measure_value), measure);
+                        communicator.respond(null, measure_value, measure, 1);
+                        Toast.makeText(getActivity(), "Blood sugar level: " + measure_value + " "
+                                        + measure + " stored"
+                                , Toast.LENGTH_LONG).show();
+                        dismiss();
+                    } else {
+                        Log.d("bloodsugar_entry", "Nothing changed");
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                            new AlertDialog.Builder(getContext())
+                                    .setTitle("No Changes")
+                                    .setMessage("You did not change the blood_sugar level.")
+                                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                        public void onClick(DialogInterface dialog, int which) {
+
+                                        }
+                                    })
+                                    .setIcon(android.R.drawable.ic_dialog_alert)
+                                    .show();
+                        }
                     }
+                } catch (Exception e) {
+                    if (date == null)
+                    {
+                        input_date_layout.setError(getString(R.string.error_date));
+                    }
+                    else if(time == null)
+                    {
+                        input_time_layout.setError(getString(R.string.error_time));
+                    }
+
+
                 }
             }
+
         });
 
         mybuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -110,8 +148,10 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
      */
     private void initialize_measure()
     {
-        bloodsugar_level.setText(database.getLastBloodsugarMeasurement(AppGlobal.getHandler(),1)[0].toString());
-        measure = database.getLastBloodsugarMeasurement(AppGlobal.getHandler(),1)[1].toString();
+        if(database.getLastBloodsugarMeasurement(AppGlobal.getHandler(),1) != null) {
+            bloodsugar_level.setText(database.getLastBloodsugarMeasurement(AppGlobal.getHandler(), 1)[0].toString());
+            measure = database.getLastBloodsugarMeasurement(AppGlobal.getHandler(), 1)[1].toString();
+        }
         if (measure.equals("")) {
             measure = "mg/dl";
         }
