@@ -76,9 +76,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String ACTIVITYLIST_TABLE_NAME = "ActivityList";
     public static final String ACTIVITYLIST_SELECT =
             "SELECT * FROM " + ACTIVITYLIST_TABLE_NAME + ";";
-
-    /* JW: Added Bloodsugar_History Table
-    */
     public static final String ACTIVITYLIST_DELETE_TABLE =
             "DROP TABLE IF EXISTS " + ACTIVITYLIST_TABLE_NAME + ";";
     private static final String ACTIVITYLIST_CREATE_TABLE =
@@ -647,6 +644,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return GetArrayFromCursor(cursor, Date);
     }
 
+    public ActivityItem getCurrentActivity(){
+        Date currentTime = TimeUtils.getCurrentDate();
+        Cursor cursor = db.rawQuery("select * from ActivityList where ActivityList.Start < '" + currentTime.toString() + "' and ActivityList.End >= '"+ currentTime.toString() +"';",null );
+        return GetArrayFromCursor(cursor,currentTime).get(0);
+    }
 
 //    Delete Statements
 
