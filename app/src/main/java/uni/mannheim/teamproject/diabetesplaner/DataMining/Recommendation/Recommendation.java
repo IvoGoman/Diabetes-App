@@ -20,14 +20,22 @@ import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 public abstract class Recommendation extends IntentService {
     public static final int ROUTINE_REC = 0;
     public static final int BS_REC = 1;
+    public static final String TAG = "REC";
+    public static final int MIN = 1000*60;
+    private static int offset = 1;
+    private int midOffset;
+    private int interval = MIN;
+
     private Handler mHandler = new Handler();
     private String name;
-    private int interval = 1000*60;
+
 
 
     public Recommendation(String name) {
         super(name);
         this.name = name;
+        this.midOffset = offset;
+        offset += 100;
     }
 
     @Override
@@ -44,7 +52,6 @@ public abstract class Recommendation extends IntentService {
     Runnable mHandlerTask = new Runnable(){
         @Override
         public void run() {
-            Log.d("Rec","recommend bloodsugar input");
             recommend();
 
             mHandler.postDelayed(mHandlerTask, interval);
@@ -69,6 +76,7 @@ public abstract class Recommendation extends IntentService {
      * sends a notification to the android system
      * @param text
      * @param mId
+     * @author Stefan
      */
     public void sendNotification(String text, int mId){
         NotificationManager mNotificationManager =
@@ -102,7 +110,6 @@ public abstract class Recommendation extends IntentService {
 
         Notification notification = new Notification.BigTextStyle(mBuilder)
                 .bigText(text).build();
-        mNotificationManager.notify(0, notification);
 
         // mId allows you to update the notification later on.
         mNotificationManager.notify(mId, notification);
@@ -118,5 +125,13 @@ public abstract class Recommendation extends IntentService {
             // Return this instance of LocalService so clients can call public methods
             return Recommendation.this;
         }
+    }
+
+    public int getMidOffset(){
+        return this.midOffset;
+    }
+
+    public String getName(){
+        return this.name;
     }
 }
