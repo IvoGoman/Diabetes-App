@@ -111,7 +111,7 @@ public class EntryScreenActivity extends AppCompatActivity
 
             //starts and binds to recommendation service
             startRec(Recommendation.ROUTINE_REC);
-//            startRec(Recommendation.BS_REC);
+            startRec(Recommendation.BS_REC);
 
 
             // ATTENTION: This was auto-generated to implement the App Indexing API.
@@ -409,7 +409,7 @@ public class EntryScreenActivity extends AppCompatActivity
     @Override
     protected void onRestart() {
         startRec(Recommendation.ROUTINE_REC);
-//        startRec(Recommendation.BS_REC);
+        startRec(Recommendation.BS_REC);
         super.onRestart();
     }
 
@@ -419,7 +419,7 @@ public class EntryScreenActivity extends AppCompatActivity
 
         //unbind the recommendation service
         stopRec(Recommendation.ROUTINE_REC);
-//        stopRec(Recommendation.BS_REC);
+        stopRec(Recommendation.BS_REC);
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.

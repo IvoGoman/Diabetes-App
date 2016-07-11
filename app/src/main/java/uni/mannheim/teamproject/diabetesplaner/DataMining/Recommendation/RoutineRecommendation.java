@@ -25,14 +25,14 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 public class RoutineRecommendation extends Recommendation {
 
 //    private final static int INTERVAL = 1000 * 60 * 5; //5 minutes
-    private final static int INTERVAL = 1000 * 10; //10 sec
+    private final static int INTERVAL = MIN * 1; //10 sec
 
     private final static int DEFAUL_REC = 0;
     private final static int FIRST_REC = 1;
 
     Handler mHandler = new Handler();
-    private int mId = 0;
     private long lastRecommendation = 0;
+    private int mIdOffset = 0;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -73,6 +73,8 @@ public class RoutineRecommendation extends Recommendation {
      */
     @Override
     public void recommend(){
+        mIdOffset = getMidOffset();
+
         //switch between different recommendation methods
         int rec = FIRST_REC;
         long time= System.currentTimeMillis();
@@ -104,17 +106,17 @@ public class RoutineRecommendation extends Recommendation {
         if(bsLevel == 0){
             //TODO
             sendNotification("No blood sugar level measurement within the last " + period + " hours. " +
-                    "TODO: give recommendation based on activities" , mId);
+                    "TODO: give recommendation based on activities" , mIdOffset);
         }else{
             if(100<= bsLevel &&  bsLevel < 200){
                 //then Exercise
-                sendNotification("You should better do some exercise because your blood sugar level is high!", mId);
+                sendNotification("You should better do some exercise because your blood sugar level is high!", mIdOffset);
             } else if(bsLevel >=200){
                 //then insulin
-                sendNotification("You should take insulin because your blood sugar is way to high!", mId);
+                sendNotification("You should take insulin because your blood sugar is way to high!", mIdOffset);
             } else{
                 //Eat
-                sendNotification("Your blood sugar is low, have a meal.", mId);
+                sendNotification("Your blood sugar is low, have a meal.", mIdOffset);
             }
         }
     }
@@ -127,14 +129,14 @@ public class RoutineRecommendation extends Recommendation {
         ActivityItem current = getCurrentActivity();
 
         if(checkSleeptime()){
-            sendNotification("You should better go to bed.", mId);
+            sendNotification("You should better go to bed.", mIdOffset);
         }else if(isStressed()){
-            sendNotification("It seems that you are stressed. Better take some insuline.", mId);
+            sendNotification("It seems that you are stressed. Better take some insuline.", mIdOffset);
         }else{
             if(checkInsulin()){
-                sendNotification("Doing a low intense exercise would be good for you", mId);
+                sendNotification("Doing a low intense exercise would be good for you", mIdOffset);
             }else{
-                sendNotification("You should better do some exercise.", mId);
+                sendNotification("You should better do some exercise.", mIdOffset);
             }
         }
 

@@ -577,7 +577,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         MeasureItem measureItem = null;
         if(cursor.moveToFirst()){
             do{
-                measureItem = new MeasureItem(Long.parseLong(cursor.getString(2)),cursor.getDouble(0),cursor.getString(1));
+                measureItem = new MeasureItem(Timestamp.valueOf(cursor.getString(2)).getTime(),cursor.getDouble(0),cursor.getString(1));
                 measureList.add(measureItem);
             } while (cursor.moveToNext());
         }
@@ -601,7 +601,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         MeasureItem measureItem = null;
         if(cursor.moveToFirst()){
             do{
-                measureItem = new MeasureItem(Long.parseLong(cursor.getString(2)),cursor.getDouble(0),cursor.getString(1));
+                measureItem = new MeasureItem(Timestamp.valueOf(cursor.getString(2)).getTime(),cursor.getDouble(0),cursor.getString(1));
                 measureList.add(measureItem);
             } while (cursor.moveToNext());
         }
