@@ -1,11 +1,11 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing;
 
 
-
 import org.deckfour.xes.model.XLog;
 
 import java.util.ArrayList;
 
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
@@ -13,10 +13,17 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
  * Created by Ivo on 10.07.2016.
  */
 public class CustomXLog {
-    public static XLog createXLog(){
-        ArrayList<String[]> list = AppGlobal.getHandler().getAllEvents(AppGlobal.getHandler());
+    public static XLog createXLog() {
+        ArrayList<ActivityItem> list = AppGlobal.getHandler().getAllActivities(AppGlobal.getHandler());
+        ArrayList<String[]> eventList = new ArrayList<>();
+        String[] event;
+        for (ActivityItem item : list
+                ) {
+            event = new String[]{String.valueOf(item.getActivityId()), AppGlobal.getHandler().getActionById(AppGlobal.getHandler(), item.getActivityId()), item.getStarttimeAsString(), item.getEndtimeAsString()};
+            eventList.add(event);
+        }
         //creates a CaseCreator object with the CSV file in an ArrayList
-        CaseCreator creator = new CaseCreator(list);
+        CaseCreator creator = new CaseCreator(eventList);
         //splits the data into cases and adds a column for the case id for each entry
         creator.createCases();
         //adds a column with the day of the week
@@ -24,30 +31,30 @@ public class CustomXLog {
 //		Build the XLog from the List
         LogBuilder builder = new LogBuilder();
         builder.startLog("ActivityLog");
-        list = creator.getList();
+        eventList = creator.getList();
         String caseHelper = "default";
 //		iterate through the event list with cases
-        for (int i=0;i<list.size();i++){
+        for (int i = 0; i < eventList.size(); i++) {
 //			If it is the same case then fill the trace with events
-            if(list.get(i)[0].equals(caseHelper)){
+            if (eventList.get(i)[0].equals(caseHelper)) {
 //				Add Start Node of Activity
-                builder.addEvent(list.get(i)[2]);
-                builder.addAttribute("Activity",list.get(i)[2]);
-                builder.addAttribute("ID", list.get(i)[1]);
-                builder.addAttribute("lifecyle:transition","Start");
-                builder.addAttribute("time:timestamp", TimeUtils.getDateFromString(list.get(i)[3]));
+                builder.addEvent(eventList.get(i)[2]);
+                builder.addAttribute("Activity", eventList.get(i)[2]);
+                builder.addAttribute("ID", eventList.get(i)[1]);
+                builder.addAttribute("lifecyle:transition", "Start");
+                builder.addAttribute("time:timestamp", TimeUtils.getDateFromString(eventList.get(i)[3]));
 
 //				Add Complete Node of an Activity
-                builder.addEvent(list.get(i)[2]);
-                builder.addAttribute("Activity",list.get(i)[2]);
-                builder.addAttribute("ID", list.get(i)[1]);
-                builder.addAttribute("lifecyle:transition","Complete");
-                builder.addAttribute("time:timestamp", TimeUtils.getDateFromString(list.get(i)[4]));
-            }else{
+                builder.addEvent(eventList.get(i)[2]);
+                builder.addAttribute("Activity", eventList.get(i)[2]);
+                builder.addAttribute("ID", eventList.get(i)[1]);
+                builder.addAttribute("lifecyle:transition", "Complete");
+                builder.addAttribute("time:timestamp", TimeUtils.getDateFromString(eventList.get(i)[4]));
+            } else {
 //				Add a new Trace to the Builder [this happens for every case]
-                builder.addTrace(list.get(i)[0]);
+                builder.addTrace(eventList.get(i)[0]);
             }
-            caseHelper = list.get(i)[0];
+            caseHelper = eventList.get(i)[0];
         }
 //		create the XLog Object
         XLog log = builder.build();

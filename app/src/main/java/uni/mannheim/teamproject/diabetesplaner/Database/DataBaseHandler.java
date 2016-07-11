@@ -13,9 +13,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
@@ -518,16 +516,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param helper
      * @return
      */
-    public Map<Integer,String> getAllActionIDsAndTitle(DataBaseHandler helper) {
+    public ArrayList<Integer> getAllActionIDs(DataBaseHandler helper) {
         SQLiteDatabase db = helper.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
-        Map<Integer,String> idMap = new HashMap<Integer,String>();
+        ArrayList<Integer> idList = new ArrayList<Integer>();
         cursor.moveToFirst();
         do {
-            idMap.put(cursor.getInt(0),cursor.getString(1));
+            idList.add(cursor.getInt(0));
         } while(cursor.moveToNext());
-        return idMap;
+        return idList;
     }
 
     /**
@@ -563,6 +561,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * Queries all available activities from the database
+     * TODO: Limit to a threshold?
      * @param handler
      * @return
      */
@@ -570,30 +569,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = handler.getReadableDatabase();
         ActivityItem activity = null;
         ArrayList<ActivityItem> activityList = new ArrayList<ActivityItem>();
-        Cursor cursor = db.rawQuery("select ActivityList.id_Activity, Activities.title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id order by ActivityList.Start ASC", null);
+        Cursor cursor = db.rawQuery("select ActivityList.id, Activities.title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id", null);
         if(cursor.moveToFirst()){
             do {
-                activity = new ActivityItem(cursor.getInt(0),0,TimeUtils.getDateFromString(cursor.getString(2)),TimeUtils.getDateFromString(cursor.getString(3)));
-                activityList.add(activity);
-            } while (cursor.moveToNext());
-        }
-        return activityList;
-    } /**
-     * Queries all available activities from the database.
-     * Filters by day of week
-     * 0==Sunday, 1==Monday, ..., 6==Saturday etc.
-     * @param handler
-     * @param day integer corresponding to the weekday
-     * @return ArrayList<ActivityItem> containing all activities of the weekday provided
-     */
-    public ArrayList<ActivityItem> getAllActivitiesByWeekday(DataBaseHandler handler, int day){
-        SQLiteDatabase db = handler.getReadableDatabase();
-        ActivityItem activity = null;
-        ArrayList<ActivityItem> activityList = new ArrayList<ActivityItem>();
-        Cursor cursor = db.rawQuery("select ActivityList.id_Activity, Activities.title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id  where strftime('%w', ActivityList.Start)='"+day+"' order by ActivityList.Start ASC", null);
-        if(cursor.moveToFirst()){
-            do {
-                activity = new ActivityItem(cursor.getInt(0),0,TimeUtils.getDateFromString(cursor.getString(2)),TimeUtils.getDateFromString(cursor.getString(3)));
+                activity = new ActivityItem(cursor.getInt(0),0,TimeUtils.getDate(cursor.getString(2)),TimeUtils.getDate(cursor.getString(3)));
                 activityList.add(activity);
             } while (cursor.moveToNext());
         }
@@ -678,7 +657,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         MeasureItem measureItem = null;
         if(cursor.moveToFirst()){
             do{
-                measureItem = new MeasureItem(Timestamp.valueOf(cursor.getString(2)).getTime(),cursor.getDouble(0),cursor.getString(1));
+                measureItem = new MeasureItem(Long.parseLong(cursor.getString(2)),cursor.getDouble(0),cursor.getString(1));
                 measureList.add(measureItem);
             } while (cursor.moveToNext());
         }
@@ -726,7 +705,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         MeasureItem measureItem = null;
         if(cursor.moveToFirst()){
             do{
-                measureItem = new MeasureItem(Long.parseLong(cursor.getString(2)),cursor.getDouble(0),cursor.getString(1));
+                measureItem = new MeasureItem(Timestamp.valueOf(cursor.getString(2)).getTime(),cursor.getDouble(0),cursor.getString(1));
                 measureList.add(measureItem);
             } while (cursor.moveToNext());
         }
@@ -766,11 +745,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public ArrayList<ActivityItem> getActivitiesById(DataBaseHandler handler, int activityID){
         SQLiteDatabase db = handler.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.id_Activity ="+activityID+";", null);
+        Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activity.id where ActivityList.id_Activity ="+activityID+";", null);
         ArrayList<ActivityItem> activityItems = new ArrayList<>();
         if(cursor.moveToFirst()){
             do {
-                activityItems.add(new ActivityItem(cursor.getInt(0),0, TimeUtils.getDateFromString(cursor.getString(1)),TimeUtils.getDateFromString(cursor.getString(2))));
+                activityItems.add(new ActivityItem(cursor.getInt(0),cursor.getInt(1), TimeUtils.getDate(cursor.getString(2)),TimeUtils.getDate(cursor.getString(3))));
             } while(cursor.moveToNext());
         }
         return activityItems;

@@ -2,9 +2,9 @@ package uni.mannheim.teamproject.diabetesplaner.DataMining;
 
 import org.deckfour.xes.model.XLog;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
-
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.Default.FMNode;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.Default.FuzzyMinerImpl;
@@ -22,16 +22,18 @@ public class FuzzyModel {
         XLog xLog = CustomXLog.createXLog();
         FuzzyMinerImpl fuzzyMiner = new FuzzyMinerImpl(xLog);
         fuzzyMinerModel = fuzzyMiner.getFuzzyGraph();
-        
+        ArrayList<Integer> idList = new ArrayList<Integer>();
+        int startId = ProcessMiningUtill.getMostFrequentStartActivity();
+        idList.add(startId);
+        this.getNextActivity(startId);
     }
-    public int getNextActivity(){
+    public int getNextActivity(int currentActivityId){
         Set<FMNode> nodes = fuzzyMinerModel.getNodes();
-        int currentActivity = ProcessMiningUtill.getCurrentActivityID();
         Set<FMNode> likelySuccessors = new HashSet<>();
         Set<FMNode> interestingNodes = new HashSet<>();
 //        Retrieve all nodes from the model which have the same ID and are the End of that activity
         for (FMNode node : nodes) {
-            if(node.getElementName().equals(currentActivity) && node.getEventType().equals("Complete")){
+            if(node.getElementName().equals(currentActivityId) && node.getEventType().equals("Complete")){
                likelySuccessors.addAll(node.getSuccessors());
             }
         }
@@ -42,8 +44,6 @@ public class FuzzyModel {
              successorID = Integer.getInteger(node.getElementName());
              successorSignificance = node.getSignificance();
          }
-
-
         }
     return successorID;
     }
