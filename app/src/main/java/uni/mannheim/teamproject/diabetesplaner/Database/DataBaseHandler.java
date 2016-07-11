@@ -427,6 +427,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     /**
+     * Returns a ArrayList containing all Acitivity IDs
+     * @param helper
+     * @return
+     */
+    public ArrayList<Integer> getAllActionIDs(DataBaseHandler helper) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        //Create a Cursor that contains all records from the locations table
+        Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
+        ArrayList<Integer> idList = new ArrayList<Integer>();
+        cursor.moveToFirst();
+        do {
+            idList.add(cursor.getInt(0));
+        } while(cursor.moveToNext());
+        return idList;
+    }
+
+    /**
      * 27.06.2016 Stefan
      * returns all activities as a list
      * @param helper
@@ -457,19 +474,26 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public ArrayList<String[]> getAllEvents(DataBaseHandler handler){
+    /**
+     * Queries all available activities from the database
+     * TODO: Limit to a threshold?
+     * @param handler
+     * @return
+     */
+    public ArrayList<ActivityItem> getAllActivities(DataBaseHandler handler){
         SQLiteDatabase db = handler.getReadableDatabase();
-        ArrayList<String[]> eventList = new ArrayList<String[]>();
+        ActivityItem activity = null;
+        ArrayList<ActivityItem> activityList = new ArrayList<ActivityItem>();
         Cursor cursor = db.rawQuery("select ActivityList.id, Activities.title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id", null);
         if(cursor.moveToFirst()){
             do {
-                String[] event = {cursor.getString(0),cursor.getString(1),cursor.getString(2),cursor.getString(3)};
-                eventList.add(event);
+                activity = new ActivityItem(cursor.getInt(0),0,TimeUtils.getDate(cursor.getString(2)),TimeUtils.getDate(cursor.getString(3)));
+                activityList.add(activity);
             } while (cursor.moveToNext());
         }
-        return eventList;
+        return activityList;
     }
-    /***
+    /**
      * returns the last measurement of blood sugar and insulin of the selected user
      * @param handler
      * @return
@@ -495,7 +519,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    /***
+    /**
      * returns the last measurement of the selected user
      * @param handler
      * @return
@@ -623,6 +647,24 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         ArrayList<ActivityItem> activityList = GetArrayFromCursor(cursor, date);
         return activityList;
+    }
+
+    /**
+     * Returns all Activities with the given Activity ID
+     * @param handler
+     * @param activityID
+     * @return
+     */
+    public ArrayList<ActivityItem> getActivitiesById(DataBaseHandler handler, int activityID){
+        SQLiteDatabase db = handler.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activity.id where ActivityList.id_Activity ="+activityID+";", null);
+        ArrayList<ActivityItem> activityItems = new ArrayList<>();
+        if(cursor.moveToFirst()){
+            do {
+                activityItems.add(new ActivityItem(cursor.getInt(0),cursor.getInt(1), TimeUtils.getDate(cursor.getString(2)),TimeUtils.getDate(cursor.getString(3))));
+            } while(cursor.moveToNext());
+        }
+        return activityItems;
     }
 
     public ArrayList<ActivityItem> GetDay(DataBaseHandler handler, Date Date) {
