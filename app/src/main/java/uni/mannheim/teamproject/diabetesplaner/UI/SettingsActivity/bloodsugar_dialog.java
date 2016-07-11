@@ -23,6 +23,7 @@ import java.util.IllegalFormatException;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.TimePickerFragment;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
@@ -33,13 +34,14 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
     Button submit,cancel;
     RadioButton mg,percentage,mmol;
     EditText bloodsugar_level;
-    EditText input_date;
-    TextInputLayout input_date_layout;
-    TextInputLayout input_time_layout;
-    TextInputLayout input_measurement_layout;
-    EditText input_time;
+    public Date date_picker;
+    public Time time_picker;
+    Button btn_date;
+    Button btn_time;
     BloodsugarDialog_and_Settings communicator;
     double roundfactor = 10d;
+    private TimerPickerFragment TimerPicker;
+    private DatePickerFragment DatePicker;
 
     //the current selected measure
     private String measure;
@@ -59,17 +61,38 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         View view = inflater.inflate(R.layout.dialog_layout, null);
 
         database = AppGlobal.getHandler();
-        //submit = (Button) view.findViewById(R.id.bs_submit);
-        //cancel = (Button) view.findViewById(R.id.bs_cancel);
+
         mg = (RadioButton) view.findViewById(R.id.bs_mg);
         mmol = (RadioButton) view.findViewById(R.id.bs_mm);
         percentage = (RadioButton) view.findViewById(R.id.bs_percentage);
         bloodsugar_level = (EditText) view.findViewById(R.id.edit_measure_value);
-        input_time = (EditText) view.findViewById(R.id.edit_time);
-        input_date = (EditText) view.findViewById(R.id.input_date);
-        input_date_layout = (TextInputLayout) view.findViewById(R.id.input_layout_date);
-        input_time_layout = (TextInputLayout) view.findViewById(R.id.input_layout_time);
-        input_measurement_layout = (TextInputLayout) view.findViewById(R.id.input_layout_measurement);
+
+        //Button for DatePicker
+        btn_date = (Button) view.findViewById(R.id.btn_Date);
+        btn_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePicker = new DatePickerFragment();
+                DatePicker.setBloodsugarDialog(bloodsugar_dialog.this);
+                DatePicker.show(getFragmentManager(), "datePicker");
+
+
+            }
+        });
+
+
+        //Button for TimerPicker
+        btn_time = (Button) view.findViewById(R.id.btn_time);
+        btn_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimerPicker = new TimerPickerFragment();
+                TimerPicker.SetDialog(bloodsugar_dialog.this);
+                TimerPicker.show(getFragmentManager(), "timePicker");
+                //timerpickerfragment.SetDialog(bloodsugar_dialog.this);
+            }
+        });
+
 
         AlertDialog.Builder mybuilder = new AlertDialog.Builder(getActivity());
         mybuilder.setView(view);
@@ -78,17 +101,16 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //if value is changed, then store value and change display
-                Date date = null;
-                Time time = null;
+
                 try {
                     if (measure_value.equals(bloodsugar_level.getText().toString().replace(".","-")) == false) {
                         measure_value = bloodsugar_level.getText().toString();
 
-                        date = Date.valueOf(input_date.getText().toString());
-                        time = Time.valueOf(input_time.getText().toString());
+                        String date_s = btn_date.getText().toString();
+                        String time_s = btn_time.getText().toString();
                         database.InsertBloodsugar(database,
-                                Date.valueOf(input_date.getText().toString()),
-                                Time.valueOf(input_time.getText().toString()),
+                                Date.valueOf(date_s.subSequence(6,9) + "-" + date_s.subSequence(3,4) + "-"+ date_s.subSequence(0,1)),
+                                Time.valueOf(time_s + ":00"),
                                 1, Double.parseDouble(measure_value), measure);
                         communicator.respond(null, measure_value, measure, 1);
                         Toast.makeText(getActivity(), "Blood sugar level: " + measure_value + " "
@@ -111,16 +133,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                         }
                     }
                 } catch (Exception e) {
-                    if (date == null)
-                    {
-                        input_date_layout.setError(getString(R.string.error_date));
-                    }
-                    else if(time == null)
-                    {
-                        input_time_layout.setError(getString(R.string.error_time));
-                    }
-
-
+                    e.getMessage();
                 }
             }
 
@@ -268,6 +281,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
            bs.measure = measurement;
        }
     }
+
 
 
 
