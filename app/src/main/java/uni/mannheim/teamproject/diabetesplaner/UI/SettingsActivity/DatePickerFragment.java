@@ -40,6 +40,10 @@ public class DatePickerFragment extends DialogFragment
             {
                 dialog.btn_date.setText(String.format("0%d.%d.%d",day,month,year));
             }
+            if((day < 10) && (month < 10))
+            {
+                dialog.btn_date.setText(String.format("0%d.0%d.%d",day,month,year));
+            }
             if((day > 10) && (month > 10))
             {
                 dialog.btn_date.setText(String.format("%d.%d.%d",day,month,year));
