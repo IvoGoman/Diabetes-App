@@ -12,6 +12,7 @@ import java.util.Date;
 import java.util.GregorianCalendar;
 
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.bloodsugar_dialog;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**

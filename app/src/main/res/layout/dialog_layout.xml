@@ -17,57 +17,34 @@
         android:layout_width="match_parent"
         android:layout_height="30dp" />
 
-    <TableRow
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
 
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_date"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/input_date"
-                android:ems="10"
-                android:singleLine="true"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:hint="@string/hint_date" />
-
-        </android.support.design.widget.TextInputLayout>
-
-        <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_time"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:inputType="time"
-                android:ems="8"
-                android:singleLine="true"
-                android:id="@+id/edit_time"
-                android:hint="@string/hint_time" />
-                />
-
-        </android.support.design.widget.TextInputLayout>
-
-
-    </TableRow>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_Date"
+        android:text="Enter Date"
+        android:onClick="showTimePickerDialog"/>
 
     <Space
         android:layout_width="match_parent"
         android:layout_height="30dp" />
 
-    <TableRow
+    <Button
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="wrap_content"
+        android:id="@+id/btn_time"
+        android:text="Enter Time"
+        android:onClick="showTimePickerDialog" />
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="150dp">
 
         <android.support.design.widget.TextInputLayout
             android:id="@+id/input_layout_measurement"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:paddingTop="50dp">
 
             <EditText
                 android:layout_width="wrap_content"
@@ -78,7 +55,6 @@
                 android:layout_column="0"
                 android:numeric="decimal"
                 android:singleLine="true"
-                android:gravity="center"
                 android:hint="@string/hint_measurement"
                 android:layout_marginTop="50dp" />
 
