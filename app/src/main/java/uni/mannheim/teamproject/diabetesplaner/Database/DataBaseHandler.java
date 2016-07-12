@@ -12,7 +12,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
@@ -431,16 +433,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param helper
      * @return
      */
-    public ArrayList<Integer> getAllActionIDs(DataBaseHandler helper) {
+    public Map<Integer,String> getAllActionIDsAndTitle(DataBaseHandler helper) {
         SQLiteDatabase db = helper.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
-        ArrayList<Integer> idList = new ArrayList<Integer>();
+        Map<Integer,String> idMap = new HashMap<Integer,String>();
         cursor.moveToFirst();
         do {
-            idList.add(cursor.getInt(0));
+            idMap.put(cursor.getInt(0),cursor.getString(1));
         } while(cursor.moveToNext());
-        return idList;
+        return idMap;
     }
 
     /**
@@ -484,10 +486,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = handler.getReadableDatabase();
         ActivityItem activity = null;
         ArrayList<ActivityItem> activityList = new ArrayList<ActivityItem>();
-        Cursor cursor = db.rawQuery("select ActivityList.id, Activities.title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id", null);
+        Cursor cursor = db.rawQuery("select ActivityList.id_Activity, Activities.title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id order by ActivityList.Start ASC", null);
         if(cursor.moveToFirst()){
             do {
-                activity = new ActivityItem(cursor.getInt(0),0,TimeUtils.getDate(cursor.getString(2)),TimeUtils.getDate(cursor.getString(3)));
+                activity = new ActivityItem(cursor.getInt(0),0,TimeUtils.getDateFromString(cursor.getString(2)),TimeUtils.getDateFromString(cursor.getString(3)));
                 activityList.add(activity);
             } while (cursor.moveToNext());
         }
