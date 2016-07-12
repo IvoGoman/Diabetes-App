@@ -18,8 +18,17 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing.CustomXL
  */
 public class FuzzyModel {
     private MutableFuzzyGraph fuzzyMinerModel;
-    public FuzzyModel() {
+    public FuzzyModel() throws Exception {
+//        DummyDataCreator.createDummyData();
+
         XLog xLog = CustomXLog.createXLog();
+//        String logFile = new File("").getAbsolutePath();
+//        logFile = logFile + "/app/src/test/java/data/activityDataCompleteWithCasesJoined2.xes.gz";
+//        XesXmlGZIPParser xesXmlGZIPParser = new XesXmlGZIPParser();
+//        File file = new File(logFile);
+//        System.out.println(xesXmlGZIPParser.canParse(file));
+//        List<XLog> logs = xesXmlGZIPParser.parse(file);
+//        XLog xLog = logs.get(0);
         FuzzyMinerImpl fuzzyMiner = new FuzzyMinerImpl(xLog);
         fuzzyMinerModel = fuzzyMiner.getFuzzyGraph();
         ArrayList<Integer> idList = new ArrayList<Integer>();
@@ -27,6 +36,12 @@ public class FuzzyModel {
         idList.add(startId);
         this.getNextActivity(startId);
     }
+
+    /**
+     * Return the most likely successor of the current activity based on the significance in the model
+     * @param currentActivityId
+     * @return
+     */
     public int getNextActivity(int currentActivityId){
         Set<FMNode> nodes = fuzzyMinerModel.getNodes();
         Set<FMNode> likelySuccessors = new HashSet<>();

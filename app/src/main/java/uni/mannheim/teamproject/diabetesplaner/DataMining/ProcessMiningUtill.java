@@ -32,9 +32,9 @@ public class ProcessMiningUtill {
      */
     public static Map<Integer,Double> getAverageDurationForActivityID(){
         DataBaseHandler dbHandler = new DataBaseHandler(AppGlobal.getcontext());
-        ArrayList<Integer> activityIds = dbHandler.getAllActionIDs(dbHandler);
+        Map<Integer,String> activityIds = dbHandler.getAllActionIDsAndTitle(dbHandler);
         Map<Integer, Double> averageDurationPerActivity = new HashMap<>();
-        for (int activityId:activityIds) {
+        for (int activityId:activityIds.keySet()) {
             ArrayList<ActivityItem> activityItems = dbHandler.getActivitiesById(dbHandler, activityId);
             Double averageDuration = ProcessMiningUtill.getAverageDuration(activityItems);
             averageDurationPerActivity.put(activityId,averageDuration);
