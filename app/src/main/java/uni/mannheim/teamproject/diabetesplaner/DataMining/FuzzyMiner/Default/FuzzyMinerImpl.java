@@ -101,8 +101,8 @@ public class FuzzyMinerImpl {
         aggregationTransformer.transform(fuzzyGraph);
 
 //        Always trowing null pointer exception when called after transformations are done.
-        StatisticalCleanupTransformer statisticalCleanupTransformer = new StatisticalCleanupTransformer();
-        statisticalCleanupTransformer.transform(fuzzyGraph);
+//        StatisticalCleanupTransformer statisticalCleanupTransformer = new StatisticalCleanupTransformer();
+//        statisticalCleanupTransformer.transform(fuzzyGraph);
 //        fuzzyGraph.toString();
 //        String source = ".\\input\\ActivityData.csv";
 //        String target = ".\\input\\ActivityDataLog.csv";

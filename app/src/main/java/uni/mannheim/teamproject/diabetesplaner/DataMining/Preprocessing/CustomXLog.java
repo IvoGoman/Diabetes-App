@@ -25,7 +25,7 @@ public class CustomXLog {
                 ) {
             Long[] timestamps = TimeUtils.convertDateStringToTimestamp(new String[]{item.getStarttimeAsString(),item.getEndtimeAsString()});
 //            event = new String[]{String.valueOf(item.getActivityId()), AppGlobal.getHandler().getActionById(AppGlobal.getHandler(), item.getActivityId()), String.valueOf(timestamps[0]*1000), String.valueOf(timestamps[1]*1000)};
-            event = new String[]{String.valueOf(item.getActivityId()), String.valueOf(item.getActivityId()), String.valueOf(timestamps[0]*1000), String.valueOf(timestamps[1]*1000)};
+            event = new String[]{String.valueOf(item.getActivityId()), AppGlobal.getHandler().getActionById(AppGlobal.getHandler(), item.getActivityId()), String.valueOf(timestamps[0]*1000), String.valueOf(timestamps[1]*1000)};
             eventList.add(event);
         }
         //creates a CaseCreator object with the CSV file in an ArrayList
@@ -41,54 +41,58 @@ public class CustomXLog {
         String caseHelper = eventList.get(0)[0];
         builder.addTrace(eventList.get(0)[0]);
         int j =0;
-        builder.addEvent("Start");
-        builder.addAttribute("Activity", "Start");
-        builder.addAttribute("lifecyle:transition", "Start");
-//                builder.addAttribute("time:timestamp", Long.valueOf(eventList.get(i)[3]));
-        builder.addAttribute(new XAttributeTimestampImpl("time:timestamp", new Date(Long.valueOf(eventList.get(0)[3]))));
-        builder.addAttribute("ID", "Start");
-//                builder.addEvent(eventList.get(i)[2]);
-        builder.addEvent(String.valueOf(j));
-        builder.addAttribute("Activity", "Start");
-        builder.addAttribute("lifecyle:transition", "Complete");
-//                builder.addAttribute("time:timestamp", Long.valueOf(eventList.get(i)[3]));
-        builder.addAttribute(new XAttributeTimestampImpl("time:timestamp", new Date(Long.valueOf(eventList.get(0)[3]))));
-        builder.addAttribute("ID", "Start");
-//                builder.addEvent(eventList.get(i)[2]);
-        builder.addEvent(String.valueOf(j));
+
+       CustomXLog.createInitalEvent(builder,eventList.get(0));
 //		iterate through the event list with cases
 //        TODO:dont reduce the full amount of activites
         for (int i = 0; i < 150; i++) {
 //			If it is the same case then fill the trace with events
             if (eventList.get(i)[0].equals(caseHelper)) {
 //				Add Start Node of Activity
-                builder.addAttribute("Activity", eventList.get(i)[2]);
-                builder.addAttribute("lifecyle:transition", "Start");
+                builder.addEvent(eventList.get(i)[2]);
+                builder.addAttribute("Activity", eventList.get(i)[1]);
+                builder.addAttribute("lifecycle:transition", "Start");
 //                builder.addAttribute("time:timestamp", Long.valueOf(eventList.get(i)[3]));
-                builder.addAttribute(new XAttributeTimestampImpl("time:timestamp", Long.valueOf(eventList.get(i)[3])));
-                builder.addAttribute("ID", eventList.get(i)[1]);
-//                builder.addEvent(eventList.get(i)[2]);
-                builder.addEvent(String.valueOf(j));
-
+                builder.addAttribute(new XAttributeTimestampImpl("time:timestamp", new Date(Long.valueOf(eventList.get(i)[3]))));
+//                builder.addAttribute("ID", eventList.get(i)[1]);
+//                builder.addEvent(String.valueOf(j));
 //				Add Complete Node of an Activity
-                builder.addAttribute("Activity", eventList.get(i)[2]);
-                builder.addAttribute("lifecyle:transition", "Complete");
+                builder.addEvent(eventList.get(i)[2]);
+                builder.addAttribute("Activity", eventList.get(i)[1]);
+                builder.addAttribute("lifecycle:transition", "Complete");
 //                builder.addAttribute("time:timestamp", TimeUtils.getTimeStampAsDateString(Long.valueOf(eventList.get(i)[4])));
-                builder.addAttribute(new XAttributeTimestampImpl("time:timestamp", Long.valueOf(eventList.get(i)[4])));
-                builder.addAttribute("ID", eventList.get(i)[1]);
+                builder.addAttribute(new XAttributeTimestampImpl("time:timestamp",new Date(Long.valueOf(eventList.get(i)[4]))));
+//                builder.addAttribute("ID", eventList.get(i)[1]);
 //                builder.addEvent(eventList.get(i)[2]);
-                builder.addEvent(String.valueOf(j+1));
-                j+=1;
+//                j+=1;
             } else {
 //				Add a new Trace to the Builder [this happens for every case]
                 builder.addTrace(eventList.get(i)[0]);
-                j = 0;
+            CustomXLog.createInitalEvent(builder,eventList.get(i));
+//                j = 0;
             }
             caseHelper = eventList.get(i)[0];
         }
 //		create the XLog Object
         XLog log = builder.build();
         return log;
+    }
+    public static void createInitalEvent(LogBuilder builder,String[] event){
+        builder.addEvent("Start//Start");
+        builder.addAttribute("Activity", "Start");
+        builder.addAttribute("lifecycle:transition", "Start");
+//                builder.addAttribute("time:timestamp", Long.valueOf(eventList.get(i)[3]));
+        builder.addAttribute(new XAttributeTimestampImpl("time:timestamp", new Date(Long.valueOf(event[3]))));
+//        builder.addAttribute("ID", "Start");
+//                builder.addEvent(eventList.get(i)[2]);
+        builder.addEvent("Start//Start");
+        builder.addAttribute("Activity", "Start");
+        builder.addAttribute("lifecycle:transition", "Complete");
+//                builder.addAttribute("time:timestamp", Long.valueOf(eventList.get(i)[3]));
+        builder.addAttribute(new XAttributeTimestampImpl("time:timestamp",new Date(Long.valueOf(event[3]))));
+//        builder.addAttribute("ID", "Start");
+//                builder.addEvent(eventList.get(i)[2]);
+
     }
 
 }
