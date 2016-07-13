@@ -649,6 +649,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
         cursor.close();
         db.close();
+        if(measureList.size() == 0){
+            return null;
+        }
         return measureList.get(0);
     }
 
