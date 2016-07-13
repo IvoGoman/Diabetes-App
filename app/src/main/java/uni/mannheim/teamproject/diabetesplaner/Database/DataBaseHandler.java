@@ -747,11 +747,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public ArrayList<ActivityItem> getActivitiesById(DataBaseHandler handler, int activityID){
         SQLiteDatabase db = handler.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activity.id where ActivityList.id_Activity ="+activityID+";", null);
+        Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.id_Activity ="+activityID+";", null);
         ArrayList<ActivityItem> activityItems = new ArrayList<>();
         if(cursor.moveToFirst()){
             do {
-                activityItems.add(new ActivityItem(cursor.getInt(0),cursor.getInt(1), TimeUtils.getDate(cursor.getString(2)),TimeUtils.getDate(cursor.getString(3))));
+                activityItems.add(new ActivityItem(cursor.getInt(0),0, TimeUtils.getDateFromString(cursor.getString(1)),TimeUtils.getDateFromString(cursor.getString(2))));
             } while(cursor.moveToNext());
         }
         return activityItems;
