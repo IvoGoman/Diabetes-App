@@ -140,7 +140,13 @@ public class BSInputRecommendation extends Recommendation {
 //                        Log.d(TAG, "timestamp: " + TimeUtils.getTimeStampAsDateString(timestamp) + " - "
 //                                + TimeUtils.getTimeStampAsDateString(mi.getTimestamp()) + " > " + eps + " = "
 //                                + ((timestamp - mi.getTimestamp())/1000/60) + " > " + eps);
-                        if ((timestamp - mi.getTimestamp()) / 1000 / 60 > eps) {
+                        if(mi != null) {
+                            if ((timestamp - mi.getTimestamp()) / 1000 / 60 > eps) {
+                                String usualTime = TimeUtils.getTimeInUserFormat(meanTs, this);
+                                sendNotification("Your usual bloodsugar measurement is at " + usualTime + ". It's time to input your measurement.", mIds.get(mean));
+                                Log.d(TAG, "time to input bloodsugar");
+                            }
+                        }else{
                             String usualTime = TimeUtils.getTimeInUserFormat(meanTs, this);
                             sendNotification("Your usual bloodsugar measurement is at " + usualTime + ". It's time to input your measurement.", mIds.get(mean));
                             Log.d(TAG, "time to input bloodsugar");
