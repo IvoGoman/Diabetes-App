@@ -15,8 +15,8 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
  * Created by Ivo on 10.07.2016.
  */
 public class CustomXLog {
-    public static XLog createXLog() {
-        ArrayList<ActivityItem> list = AppGlobal.getHandler().getAllActivities(AppGlobal.getHandler());
+    public static XLog createXLog(ArrayList<ActivityItem> items) {
+        ArrayList<ActivityItem> list = items;
         ArrayList<String[]> eventList = new ArrayList<>();
         String[] event;
         event = new String[]{"","","starttime","endtime"};
@@ -25,7 +25,7 @@ public class CustomXLog {
                 ) {
             Long[] timestamps = TimeUtils.convertDateStringToTimestamp(new String[]{item.getStarttimeAsString(),item.getEndtimeAsString()});
 //            event = new String[]{String.valueOf(item.getActivityId()), AppGlobal.getHandler().getActionById(AppGlobal.getHandler(), item.getActivityId()), String.valueOf(timestamps[0]*1000), String.valueOf(timestamps[1]*1000)};
-            event = new String[]{String.valueOf(item.getActivityId()), AppGlobal.getHandler().getActionById(AppGlobal.getHandler(), item.getActivityId()), String.valueOf(timestamps[0]*1000), String.valueOf(timestamps[1]*1000)};
+            event = new String[]{AppGlobal.getHandler().getActionById(AppGlobal.getHandler(), item.getActivityId()),String.valueOf(item.getActivityId()), String.valueOf(timestamps[0]*1000), String.valueOf(timestamps[1]*1000)};
             eventList.add(event);
         }
         //creates a CaseCreator object with the CSV file in an ArrayList
