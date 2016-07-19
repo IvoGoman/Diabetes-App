@@ -478,7 +478,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * Queries all available activities from the database
-     * TODO: Limit to a threshold?
      * @param handler
      * @return
      */
@@ -487,6 +486,26 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         ActivityItem activity = null;
         ArrayList<ActivityItem> activityList = new ArrayList<ActivityItem>();
         Cursor cursor = db.rawQuery("select ActivityList.id_Activity, Activities.title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id order by ActivityList.Start ASC", null);
+        if(cursor.moveToFirst()){
+            do {
+                activity = new ActivityItem(cursor.getInt(0),0,TimeUtils.getDateFromString(cursor.getString(2)),TimeUtils.getDateFromString(cursor.getString(3)));
+                activityList.add(activity);
+            } while (cursor.moveToNext());
+        }
+        return activityList;
+    } /**
+     * Queries all available activities from the database.
+     * Filters by day of week
+     * 0==Sunday, 1==Monday, ..., 6==Saturday etc.
+     * @param handler
+     * @param day integer corresponding to the weekday
+     * @return ArrayList<ActivityItem> containing all activities of the weekday provided
+     */
+    public ArrayList<ActivityItem> getAllActivitiesByWeekday(DataBaseHandler handler, int day){
+        SQLiteDatabase db = handler.getReadableDatabase();
+        ActivityItem activity = null;
+        ArrayList<ActivityItem> activityList = new ArrayList<ActivityItem>();
+        Cursor cursor = db.rawQuery("select ActivityList.id_Activity, Activities.title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id  where strftime('%w', ActivityList.Start)='"+day+"' order by ActivityList.Start ASC", null);
         if(cursor.moveToFirst()){
             do {
                 activity = new ActivityItem(cursor.getInt(0),0,TimeUtils.getDateFromString(cursor.getString(2)),TimeUtils.getDateFromString(cursor.getString(3)));

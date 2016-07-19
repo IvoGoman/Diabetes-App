@@ -26,10 +26,39 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 public class FuzzyModel {
     private MutableFuzzyGraph fuzzyMinerModel;
 
+    /**
+     * Create a FuzzyModel based on the Activities of a certain Weekday
+     * @param day
+     * @throws Exception
+     */
+    public FuzzyModel(int day) throws Exception {
+//        DummyDataCreator.createDummyData();
+        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(),day);
+        CustomXLog customXLog = new CustomXLog(items);
+        XLog xLog = customXLog.getXLog();
+        FuzzyMinerImpl fuzzyMiner = new FuzzyMinerImpl(xLog);
+        fuzzyMinerModel = fuzzyMiner.getFuzzyGraph();
+        List<Pair<Integer, Double>> idDurationMap = new ArrayList<>();
+        Map<Integer, Double> durationMap = ProcessMiningUtill.getAverageDurationForActivityID();
+        int currentId = ProcessMiningUtill.getMostFrequentStartActivity();
+        idDurationMap.add(new Pair<Integer, Double>(currentId, durationMap.get(currentId)));
+        while (ProcessMiningUtill.getTotalDuration(idDurationMap)) {
+            currentId = getNextActivity(currentId);
+            idDurationMap.add(new Pair<Integer, Double>(currentId, durationMap.get(currentId)));
+        }
+        idDurationMap.size();
+
+    }
+
+    /**
+     * Create a FuzzyModel based on all available data
+     * @throws Exception
+     */
     public FuzzyModel() throws Exception {
 //        DummyDataCreator.createDummyData();
         ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivities(AppGlobal.getHandler());
-        XLog xLog = CustomXLog.createXLog(items);
+        CustomXLog customXLog = new CustomXLog(items);
+        XLog xLog = customXLog.getXLog();
         FuzzyMinerImpl fuzzyMiner = new FuzzyMinerImpl(xLog);
         fuzzyMinerModel = fuzzyMiner.getFuzzyGraph();
         List<Pair<Integer, Double>> idDurationMap = new ArrayList<>();

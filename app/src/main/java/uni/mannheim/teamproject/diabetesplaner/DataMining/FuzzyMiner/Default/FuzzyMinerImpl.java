@@ -15,7 +15,6 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.metrics.una
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.transform.ConcurrencyEdgeTransformer;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.transform.FastTransformer;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.transform.FuzzyEdgeTransformer;
-import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.transform.StatisticalCleanupTransformer;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.util.FMLogEvents;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.util.FuzzyMinerLog;
 
@@ -186,8 +185,8 @@ public class FuzzyMinerImpl {
 //        aggregationTransformer.transform(fuzzyGraph);
 
 //        Always trowing null pointer exception when called after transformations are done.
-        StatisticalCleanupTransformer statisticalCleanupTransformer = new StatisticalCleanupTransformer();
-        statisticalCleanupTransformer.transform(fuzzyGraph);
+//        StatisticalCleanupTransformer statisticalCleanupTransformer = new StatisticalCleanupTransformer();
+//        statisticalCleanupTransformer.transform(fuzzyGraph);
 
 //        String source = ".\\input\\ActivityData.csv";
 //        String target = ".\\input\\ActivityDataLog.csv";

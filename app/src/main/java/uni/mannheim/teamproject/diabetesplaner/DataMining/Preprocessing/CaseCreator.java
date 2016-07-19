@@ -59,7 +59,7 @@ public class CaseCreator {
 			String[] tmp = list.get(i);
 			if (i == 0) {			
 				initStartAndEndtimeIndex(tmp);
-//				list2.add(insertCase(list.get(i), 0, true));
+				list2.add(insertCase(list.get(i), 0, true));
 			}else if (i == 1) {
 				//init date with starttime of first entry
 				Date date = new Date(Long.parseLong(tmp[starttimeIndex]));
