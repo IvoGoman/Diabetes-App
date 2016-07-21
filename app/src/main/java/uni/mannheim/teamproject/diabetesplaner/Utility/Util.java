@@ -8,6 +8,9 @@ import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.DisplayMetrics;
+import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
@@ -26,6 +29,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing.CaseCreator;
+
+import uni.mannheim.teamproject.diabetesplaner.R;
 
 /**
  * Created by Stefan
@@ -392,5 +397,33 @@ public class Util {
 	 */
 	public static double mg_to_percentage(double mg){
 		return Math.round(((mg+86.0)/33.3)*ROUND_FACTOR)/ROUND_FACTOR;
+	}
+
+	// created by Naira, for the drop down animation of the measurement pop up in Entry screen
+	/**
+	 *
+	 * @param ctx
+	 * @param v
+	 */
+	public static void slide_down(Context ctx, View v){
+		Animation a = AnimationUtils.loadAnimation(ctx, R.anim.slide_down);
+		if(a != null){
+			a.reset();
+			if(v != null){
+				v.clearAnimation();
+				v.startAnimation(a);
+			}
+		}
+	}
+
+	public static void slide_up(Context ctx, View v){
+		Animation a = AnimationUtils.loadAnimation(ctx, R.anim.slide_up);
+		if(a != null){
+			a.reset();
+			if(v != null){
+				v.clearAnimation();
+				v.startAnimation(a);
+			}
+		}
 	}
 }
