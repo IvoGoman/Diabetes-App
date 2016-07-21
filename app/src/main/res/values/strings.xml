@@ -163,6 +163,11 @@
     <string name="hint_time">Enter Time in hh:mm:ss</string>
     <string name="hint_measurement">Enter your measurement value</string>
     <string name="error_time">Format: hh:mm:ss</string>
+    <string name="add_blood_sugar_level">Add Blood sugar Level</string>
+    <string name="add_insulin_dosage">Add Insulin Dosage</string>
+    <string name="enter_insulin_dosage">Enter Insulin dosage</string>
+    <string name="units">Units</string>
+    <string name="ml_cc">mL/cc</string>
 
 
 </resources>

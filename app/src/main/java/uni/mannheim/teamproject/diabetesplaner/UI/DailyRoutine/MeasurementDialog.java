@@ -14,12 +14,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListAdapter;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -35,22 +37,13 @@ import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasurementInputHandler;
 import uni.mannheim.teamproject.diabetesplaner.UI.CustomListView;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * created by Naira
  */
 
 public class MeasurementDialog extends MeasurementInputDialog {
- //   private static ArrayAdapter adapter;
-  //  public static AbsListView lv;
- //   public static ArrayList<String> measurementList = new ArrayList<String>();
-  //  public static final String TAG = MeasurementFragment.class.getSimpleName();
-  //  private static final String ARG_PARAM1 = "param1";
-  //  private static final String ARG_PARAM2 = "param2";
-  //  private String mParam1;
-  //  private String mParam2;
-
-  //  private static View inflaterView;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -59,6 +52,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
         builder.setTitle("Input Measurements");
 
         View view = getLayout();
+
 
         builder.setView(view);
 
@@ -74,6 +68,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
                 });
         // Create the AlertDialog object and return it
         return builder.create();
+
     }
 
 }
