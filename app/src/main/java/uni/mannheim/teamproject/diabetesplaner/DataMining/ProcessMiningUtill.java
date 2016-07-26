@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
@@ -16,7 +17,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
  * Created by Ivo on 10.07.2016.
- * <p/>
+ * <p>
  * Utility Methods for the Process Mining Algorithms
  */
 public class ProcessMiningUtill {
@@ -59,7 +60,7 @@ public class ProcessMiningUtill {
         for (ActivityItem item : activityItems) {
             duration += TimeUtils.getDuration(item.getStarttime(), item.getEndtime());
         }
-        if(numberOfActivities>0) {
+        if (numberOfActivities > 0) {
             duration /= numberOfActivities;
         }
         return duration;
@@ -100,8 +101,80 @@ public class ProcessMiningUtill {
     }
 
     /**
+     * Calculate the most frequent start activity of a day based on the cases
+     * Returns the activity which was most often the first in each case
+     * @param cases Output of the CaseCreator
+     * @return
+     */
+    public static int getMostFrequentStartActivity(ArrayList<String[]> cases) {
+        //        First case only contains meta data
+        cases.remove(0);
+        HashMap<Integer, Integer> activityCount = new HashMap<>();
+        int currentCase = 0, currentActivity = 0, currentCount = 0;
+        String[] caseArray;
+        for (int i = 0; i<cases.size();i++) {
+            caseArray=cases.get(i);
+            if (Integer.valueOf(caseArray[0]) != currentCase | i==cases.size()-1) {
+                currentCase = Integer.valueOf(caseArray[0]);
+                currentActivity = Integer.valueOf(caseArray[2]);
+                if (activityCount.containsKey(currentActivity)) {
+                    currentCount = activityCount.get(currentActivity) + 1;
+                    activityCount.put(currentActivity, currentCount);
+                } else {
+                    activityCount.put(currentActivity, 1);
+                }
+            }
+        }
+        int mostFrequentID = 0, maxCount = 0;
+        for (Entry<Integer, Integer> entry : activityCount.entrySet()) {
+            currentCount = entry.getValue();
+            if (maxCount < currentCount) {
+                maxCount = currentCount;
+                mostFrequentID = entry.getKey();
+            }
+        }
+        return mostFrequentID;
+    }    /**
+     * Calculate the most frequent end activity of a day based on the cases
+     * Returns the activity which was most often the first in each case
+     * @param cases Output of the CaseCreator
+     * @return
+     */
+    public static int getMostFrequentEndActivity(ArrayList<String[]> cases){
+//        First case only contains meta data
+        cases.remove(0);
+        HashMap<Integer, Integer> activityCount = new HashMap<>();
+//       Initial currentCase is 1 so the change between the cases is registered
+        int currentCaseKey = 1, currentActivityKey = 0, currentActivityCount = 0;
+        String[] predecessorCaseValue = null;
+        for (String[] caseArray : cases) {
+            if (Integer.valueOf(caseArray[0]) != currentCaseKey) {
+                currentCaseKey = Integer.valueOf(predecessorCaseValue[0]);
+                currentActivityKey = Integer.valueOf(predecessorCaseValue[2]);
+                if (activityCount.containsKey(currentActivityKey)) {
+                    currentActivityCount = activityCount.get(currentActivityKey) + 1;
+                    activityCount.put(currentActivityKey, currentActivityCount);
+                } else {
+                    activityCount.put(currentActivityKey, 1);
+                }
+            }
+            predecessorCaseValue = caseArray;
+        }
+        int mostFrequentID = 0, maxCount = 0;
+        for (Entry<Integer, Integer> entry : activityCount.entrySet()) {
+            currentActivityCount = entry.getValue();
+            if (maxCount < currentActivityCount) {
+                maxCount = currentActivityCount;
+                mostFrequentID = entry.getKey();
+            }
+        }
+        return mostFrequentID;
+    }
+
+    /**
      * Calculating the sum of the duration of all activities in the ArrayList
      * If the sum is below 24*60 Minutes a full day is not yet reached
+     *
      * @param idDurationMap
      * @return
      */
