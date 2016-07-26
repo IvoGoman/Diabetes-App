@@ -21,12 +21,17 @@ public class CustomXLog {
 
     public CustomXLog(ArrayList<ActivityItem> items){
         this.items = items;
-        this.eventList = this.loadEvents(this.items);
-        this.createXLog(eventList);
+        this.eventList = this.convertActivityItemToStringArray(this.items);
+        this.eventList = this.retrieveCases(eventList);
+        this.createXLog(this.eventList);
     }
+
+    public ArrayList<String[]> getEventList() {return eventList;}
+
     public XLog getXLog(){
         return this.xLog;
     }
+
     private void createXLog(ArrayList<String[]> eventList) {
 //		Build the XLog from the List
         LogBuilder builder = new LogBuilder();
@@ -43,12 +48,12 @@ public class CustomXLog {
             if (eventList.get(i)[0].equals(caseHelper)) {
 //				Add Start Node of Activity
                 builder.addEvent(eventList.get(i)[2]);
-                builder.addAttribute("Activity", eventList.get(i)[1]);
+                builder.addAttribute("Activity", eventList.get(i)[2]);
                 builder.addAttribute("lifecycle:transition", "Start");
                 builder.addAttribute(new XAttributeTimestampImpl("time:timestamp", new Date(Long.valueOf(eventList.get(i)[3]))));
 //				Add Complete Node of an Activity
                 builder.addEvent(eventList.get(i)[2]);
-                builder.addAttribute("Activity", eventList.get(i)[1]);
+                builder.addAttribute("Activity", eventList.get(i)[2]);
                 builder.addAttribute("lifecycle:transition", "Complete");
                 builder.addAttribute(new XAttributeTimestampImpl("time:timestamp",new Date(Long.valueOf(eventList.get(i)[4]))));
             } else {
@@ -79,7 +84,7 @@ public class CustomXLog {
      * @param items
      * @return
      */
-    private ArrayList<String[]> loadEvents(ArrayList<ActivityItem> items){
+    private ArrayList<String[]> convertActivityItemToStringArray(ArrayList<ActivityItem> items){
         ArrayList<ActivityItem> list = items;
         ArrayList<String[]> eventList = new ArrayList<>();
         String[] event;
@@ -91,6 +96,15 @@ public class CustomXLog {
             event = new String[]{AppGlobal.getHandler().getActionById(AppGlobal.getHandler(), item.getActivityId()),String.valueOf(item.getActivityId()), String.valueOf(timestamps[0]*1000), String.valueOf(timestamps[1]*1000)};
             eventList.add(event);
         }
+        return eventList;
+    }
+
+    /**
+     * Create the cases based on the Eventlist
+     * @param eventList
+     * @return ArrayList<String[]> of Events with Cases
+     */
+    public ArrayList<String[]> retrieveCases(ArrayList<String[]> eventList) {
         //creates a CaseCreator object with the CSV file in an ArrayList
         CaseCreator creator = new CaseCreator(eventList);
         //splits the data into cases and adds a column for the case id for each entry

@@ -124,12 +124,11 @@ public class HistoryFragment extends DailyRoutineFragment {
         Date date = calendar.getTime();
         dateString = df.format(date);
         try {
-            FuzzyModel model = new FuzzyModel();
+            FuzzyModel model = new FuzzyModel(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        //    String dateString = DateFormat.getDateInstance().format(date);
         dateView.setText(dateString);
         onDateSelected(linearLayout, params, date);
         dateView.setOnClickListener(new View.OnClickListener() {
