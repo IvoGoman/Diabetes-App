@@ -80,7 +80,7 @@ public class CaseCreator {
 				
 				//System.out.println("Previous: " + calPrev.getTime() + " Actual: " + calActual.getTime());
 				//if days follow each other
-				if (dayActual == dayPrev+1) {					
+				if (dayActual > dayPrev) {
 					//remove last activity in list, which is the last activity of the day. 
 					//It gets split and added in the next steps.
 					list2.remove(list2.size()-1);	
