@@ -22,6 +22,7 @@ import java.util.List;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityInputHandler;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -54,7 +55,7 @@ public class ActivityMeasurementFragment extends Fragment {
     public static AbsListView lv;
     public static ArrayList<String> FileList = new ArrayList<String>();
     ActivityInputHandler ActivityInputHndlr = new ActivityInputHandler ();
-    final DataBaseHandler DBHandler = new DataBaseHandler(getContext());
+    final DataBaseHandler DBHandler = AppGlobal.getHandler();
     private static ListAdapter adapter;
 
     public static ArrayList<String> measurementList = new ArrayList<String>();

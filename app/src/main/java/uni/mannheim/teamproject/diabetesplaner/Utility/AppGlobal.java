@@ -2,6 +2,7 @@ package uni.mannheim.teamproject.diabetesplaner.Utility;
 
 import android.app.Application;
 import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
@@ -37,17 +38,18 @@ public class AppGlobal extends Application {
     public AppGlobal getInstance(){
         return singleton;
     }
+
     @Override
     public void onCreate() {
         super.onCreate();
         singleton = this;
         time=0;
-        AppGlobal.context = getApplicationContext();
-        Handler1 = new DataBaseHandler(context);
+        Handler1 = new DataBaseHandler(this, "mydatabase.db", null, 1);
+        SQLiteDatabase db;
+        db = Handler1.getReadableDatabase();
         Handler1.getAllRoutine(Handler1);
-        android.database.sqlite.SQLiteDatabase db;
-
-
+        Handler1.getSuperActivity(5);
+        Handler1.GetSubActivities(3);
     }
 
     public static DataBaseHandler getHandler(){
