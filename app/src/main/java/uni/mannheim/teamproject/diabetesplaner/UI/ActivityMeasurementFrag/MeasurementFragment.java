@@ -12,24 +12,17 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.AbsListView;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListAdapter;
-import android.widget.TextView;
-import android.widget.Toast;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.Locale;
 
-import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasurementInputHandler;
-import uni.mannheim.teamproject.diabetesplaner.UI.CustomListView;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.UI.CustomListView;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
 /**
  * created by Naira
@@ -48,7 +41,7 @@ public class MeasurementFragment extends Fragment {
     private static View inflaterView;
 
     MeasurementInputHandler MeasurementInputHandlr= new MeasurementInputHandler();
-    final DataBaseHandler DBHandler = new DataBaseHandler(getContext());
+    final DataBaseHandler DBHandler = AppGlobal.getHandler();
 
     public static MeasurementFragment newInstance(String param1, String param2) {
         MeasurementFragment fragment = new MeasurementFragment();

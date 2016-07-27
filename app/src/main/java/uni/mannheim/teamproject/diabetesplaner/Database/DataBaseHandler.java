@@ -49,7 +49,19 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String ACTIVITIES_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " +
                     ACTIVITIES_TABLE_NAME +
+                    " (id INTEGER PRIMARY KEY, title VARCHAR(20), id_SuperActivity INTEGER,  FOREIGN KEY(id_SuperActivity) REFERENCES SuperActivities(id));";
+
+    // Super Activity Table
+    private static final String SUPER_ACTIVITIES_TABLE_NAME = "SuperActivities";
+    public static final String SUPER_ACTIVITES_SELECT =
+            "SELECT * FROM " + SUPER_ACTIVITIES_TABLE_NAME + ";";
+    public static final String SUPER_ACTIVITES_DELETE_TABLE =
+            "DROP TABLE IF EXISTS " + SUPER_ACTIVITIES_TABLE_NAME + ";";
+    private static final String SUPER_ACTIVITIES_CREATE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " +
+                    SUPER_ACTIVITIES_TABLE_NAME +
                     " (id INTEGER PRIMARY KEY, title VARCHAR(20));";
+
     // SubActivity Table
     private static final String SUB_ACTIVITIES_TABLE_NAME = "SubActivities";
     public static final String Sub_ACTIVITIES_SELECT =
@@ -60,6 +72,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             "CREATE TABLE IF NOT EXISTS " +
                     SUB_ACTIVITIES_TABLE_NAME +
                     " (id INTEGER PRIMARY KEY, id_Activity INTEGER, Title VARCHAR(20), FOREIGN KEY(id_Activity) REFERENCES Activities(id));";
+
     //Location Table
     private static final String LOCATION_TABLE_NAME = "Location";
     public static final String LOCATION_SELECT =
@@ -75,6 +88,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             "CREATE TABLE IF NOT EXISTS " +
                     LOCATION1_TABLE_NAME +
                     " (id INTEGER PRIMARY KEY, Latitude double, Longtitude double, Timestamp DateTime);";
+
     //ActivityList Table
     private static final String ACTIVITYLIST_TABLE_NAME = "ActivityList";
     public static final String ACTIVITYLIST_SELECT =
@@ -85,6 +99,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             "CREATE TABLE IF NOT EXISTS " +
                     ACTIVITYLIST_TABLE_NAME +
                     " (id INTEGER PRIMARY KEY, id_Activity Integer, id_Location Integer, Start DateTime, End DateTime, Meal String, ImagePath String, Intensity Integer, FOREIGN KEY(id_Activity) REFERENCES Activities(id), FOREIGN KEY(id_Location) REFERENCES Locations(id) );";
+
     //Profile Table
     private static final String PROFILE_TABLE_NAME = "Profile";
     public static final String PROFILE_SELECT =
@@ -97,9 +112,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                     " (id INTEGER PRIMARY KEY, name VARCHAR(20), lastname VARCHAR(20), " +
                     "age INTEGER, diabetes_type INTEGER, " + "timestamp Timestamp, " +
                     "FOREIGN KEY (id) REFERENCES "+MEASUREMENT_TABLE_NAME+"(profile_ID));";
+
     public SQLiteDatabase db;
-    public DataBaseHandler(Context context) {
-        super(context, DATABASE_NAME, null, DATABASE_VERSION);
+    public DataBaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory,
+                           int version) {
+
+        super(context, DATABASE_NAME, factory, DATABASE_VERSION);
 
         Log.d("Database", "MySQLiteHelper Constructor Started");
     }
@@ -107,37 +125,59 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     @Override
     public void onCreate(SQLiteDatabase db) {   //when the App is first installed
         try {
+
+            // Create Activity Table
+            db.execSQL(SUPER_ACTIVITIES_CREATE_TABLE);
+            Log.d("Database", "Temp Activity Table Created");
+            db.execSQL("insert into SuperActivities(Title) values('Schlafen'); ");
+            db.execSQL("insert into SuperActivities(Title) values('Essen/Trinken'); ");
+            db.execSQL("insert into SuperActivities(Title) values('Insulin'); ");
+            db.execSQL("insert into SuperActivities(Title) values('Exercise'); ");
+            db.execSQL("insert into SuperActivities(Title) values('Stress'); ");
+            db.execSQL("insert into SuperActivities(Title) values('Default'); ");
+
             // Create Activity Table
             db.execSQL(ACTIVITIES_CREATE_TABLE);
             Log.d("Database", "Temp Activity Table Created");
-            db.execSQL("insert into Activities(Title) values('Schlafen'); ");
-            db.execSQL("insert into Activities(Title) values('Essen/Trinken'); ");
-            db.execSQL("insert into Activities(Title) values('Körperpflege'); ");
-            db.execSQL("insert into Activities(Title) values('Transportmittel benutzen'); ");
-            db.execSQL("insert into Activities(Title) values('Entspannen'); ");
-            db.execSQL("insert into Activities(Title) values('Fortbewegen(mit Gehilfe)'); ");
-            db.execSQL("insert into Activities(Title) values('Medikamente einnehmen'); ");
-            db.execSQL("insert into Activities(Title) values('Einkaufen'); ");
-            db.execSQL("insert into Activities(Title) values('Hausarbeit'); ");
-            db.execSQL("insert into Activities(Title) values('Essen zubereiten'); ");
-            db.execSQL("insert into Activities(Title) values('Geselligkeit'); ");
-            db.execSQL("insert into Activities(Title) values('Fortbewegen'); ");
-            db.execSQL("insert into Activities(Title) values('Schreibtischarbeit'); ");
-            db.execSQL("insert into Activities(Title) values('Sport'); ");
-            db.execSQL("insert into Activities(Title) values('Default'); "); //15
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Schlafen','1'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Essen/Trinken','2'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Körperpflege','6'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Transportmittel benutzen','6'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Entspannen','1'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Fortbewegen(mit Gehilfe)','4'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Medikamente einnehmen','3'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Einkaufen','4'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Hausarbeit','4'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Essen zubereiten','6'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Geselligkeit','6'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Fortbewegen','4'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Schreibtischarbeit','5'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Sport','4'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Default','6'); "); //15
+
+
             // Create SubActivities Table
             db.execSQL(SUB_ACTIVITIES_CREATE_TABLE);
             Log.d("Database", "Sub Activities Table Created");
+            db.execSQL("insert into SubActivities(Title, id_Activity) values('Frühstuck','2'); ");
+            db.execSQL("insert into SubActivities(Title, id_Activity) values('Mittagessen','2'); ");
+            db.execSQL("insert into SubActivities(Title, id_Activity) values('Abendessen','2'); ");
+            db.execSQL("insert into SubActivities(Title, id_Activity) values('Gehen','4'); ");
+            db.execSQL("insert into SubActivities(Title, id_Activity) values('Auto fahren','4'); ");
+            db.execSQL("insert into SubActivities(Title, id_Activity) values('Transportmittel benutzen','4'); ");
+
 
             // Create Location Table
             db.execSQL(LOCATION_CREATE_TABLE);
             Log.d("Database", "Location Table Created");
             db.execSQL("insert into Location(Latitude, Longtitude, Title) values (-1,-1,'Other'); ");   //if the location is unknown
 
+
             // Create Location1 Table
             db.execSQL(LOCATION1_CREATE_TABLE);
             Log.d("Database", "Location1 Table Created");
             db.execSQL("insert into Location1(Latitude, Longtitude, TimeStamp) values (-1,-1,'2016-01-01 00:00'); ");   //if the location is unknown
+
 
             //Create ActivityList Table
             db.execSQL(ACTIVITYLIST_CREATE_TABLE);
@@ -147,6 +187,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             //Create BloodSugar Table
             db.execSQL(MEASUREMENT_CREATE_TABLE);
             Log.d("Database", "Measurement Table Created");
+
 
             //Create Profile Table
             db.execSQL(PROFILE_CREATE_TABLE);
@@ -159,6 +200,26 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
        // db.close();
     }
+
+    public ArrayList<String> GetSubActivities(int idActivity)
+    {
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        Cursor cursor = db1.rawQuery("select Title from SubActivities where id_Activity= "+ String.valueOf(idActivity)+ "; ", null);
+        ArrayList<String> SubActivityList = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                SubActivityList.add(cursor.getString(0).replace(" ",""));
+            }
+            while (cursor.moveToNext());
+        }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return SubActivityList;
+    }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -223,6 +284,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             e.getMessage();
         }
     }
+
     /***
      * Insert a new bloodsugar level
      * @param handler
@@ -233,12 +295,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void InsertBloodsugar(DataBaseHandler handler, Date date, Time time, int profile_id, double bloodsugar_level, String measure_unit) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         Timestamp timestamp = Timestamp.valueOf(date.toString() + " " + time.toString());
-        Log.d("Database",timestamp + "InsertBloodSugar");
+        Log.d("Database", timestamp + "InsertBloodSugar");
 
         db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
-                + bloodsugar_level + " , '" + timestamp.toString() + "' , '" +measure_unit+"' , 'bloodsugar');");
+                + bloodsugar_level + " , '" + timestamp.toString() + "' , '" + measure_unit + "' , 'bloodsugar');");
         db1.close();
     }
+
+
+
 
     /***
      * Insert a new insulin level
@@ -250,6 +315,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void InsertInsulin(DataBaseHandler handler, int profile_id, double insulin, String measure_unit) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         long tslong = System.currentTimeMillis() / 1000;
+        db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
+                + insulin + " , '" + tslong + "' , '" +measure_unit+"' , 'insulin');");
+        db1.close();
+    }
+
+    public void InsertInsulin(int profile_id, double insulin, String measure_unit,long tslong) {
+        SQLiteDatabase db1 = this.getWritableDatabase();
+        //long tslong = System.currentTimeMillis() / 1000;
         db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
                 + insulin + " , '" + tslong + "' , '" +measure_unit+"' , 'insulin');");
         db1.close();
@@ -303,7 +376,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
     public void ReplaceActivity(DataBaseHandler handler,  ActivityItem Activ){
         int idActivity = Activ.getActivityId();
-        int idLocation =1;
+        int idLocation =1;  
         String Start = Activ.getStarttimeAsString();
         String End = Activ.getEndtimeAsString();
         findActionbyStartEndTime(handler, Start, End);
@@ -314,6 +387,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         InsertActivity(handler, Activ);
         db1.close();
+    }
+
+    public int getSuperActivity(int idActivity){
+        SQLiteDatabase db = this.getReadableDatabase();
+        //Return Super Activity of idActivity
+        Cursor cursor = db.rawQuery("select * from SuperActivities where id = (select id_SuperActivity from Activities where id =" + idActivity +")", null);
+        if (cursor.moveToFirst()){
+            return cursor.getInt(0);
+        }
+        return 6;
     }
 
     public void ReplaceActivity(DataBaseHandler handler, int idActivity, int idLocation, String Start, String End){
