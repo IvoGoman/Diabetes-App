@@ -45,6 +45,11 @@ public class ActivityItem {
         this.endtime = endtime;
     }
 
+    public ActivityItem(int activityId, int subactivityId){
+        this.activityId = activityId;
+        this.subactivityId = subactivityId;
+    }
+
     public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime, Date date){
         this.activityId = activityId;
         this.subactivityId = subactivityId;

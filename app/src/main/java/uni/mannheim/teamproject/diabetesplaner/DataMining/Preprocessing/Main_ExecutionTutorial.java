@@ -13,8 +13,8 @@ public class Main_ExecutionTutorial {
 
 		//initialize source and destination paths
 		//------------------replace with your filepaths-------------------------------------------------------
-		String source = "C:\\Users\\Stefan\\Documents\\Uni Mannheim\\Master\\Team Project\\ActivityDataTestRemoveConsecutive.csv";
-		String dest = "C:\\Users\\Stefan\\Documents\\Uni Mannheim\\Master\\Team Project\\activityDataCasesDayOfWeek2.csv";
+		String source = "C:\\Users\\Stefan\\Documents\\Uni Mannheim\\Master\\Team Project\\Stefan_Data_27.07.16\\SDC_ActivityData.csv";
+		String dest = "C:\\Users\\Stefan\\Documents\\Uni Mannheim\\Master\\Team Project\\Stefan_Data_27.07.16\\ActivityData_Cases.csv";
 		String destTestData = "C:\\Users\\Stefan\\Documents\\Uni Mannheim\\Master\\Team Project\\activityDataTestData2.csv";
 
 
@@ -51,8 +51,8 @@ public class Main_ExecutionTutorial {
 //		MinuteSplitter splitter = new MinuteSplitter(list);
 //		//splits the list into minutes
 //		splitter.splitLogWithCasesIntoMinutes();
-//		//writes the list to a CSV file that is stored at dest
-//		Util.write(list, dest);
+//		writes the list to a CSV file that is stored at dest
+		Util.write(creator.getList(), dest);
 
 		//creates a test data sheet with the actual day and minute of day as an attribute
 /*		Calendar cal = Calendar.getInstance();
