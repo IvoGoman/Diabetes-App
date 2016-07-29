@@ -457,6 +457,7 @@ public class EntryScreenActivity extends AppCompatActivity
     }
 
 
+
     /**
      *
      * @param requestCode
