@@ -36,6 +36,7 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.Routine
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.GPS_Service.GPS_Service;
+import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.ActivityFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.ActivityMeasurementFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.ActivityLimitDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.AddDialog;
@@ -334,9 +335,9 @@ public class EntryScreenActivity extends AppCompatActivity
 //            addItem.setVisible(true);
 
         }else if (id == R.id.nav_activity_measurement) {
-            Toast.makeText(this, R.string.menu_item_activity_measurement, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.menu_item_activity, Toast.LENGTH_SHORT).show();
 
-            fragment = new ActivityMeasurementFragment();
+            fragment = new ActivityFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
