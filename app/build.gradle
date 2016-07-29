@@ -44,10 +44,10 @@ dependencies {
     compile 'com.android.support:support-v4:24.0.0'
 
     compile 'com.google.android.gms:play-services-appindexing:8.1.0'
-    compile 'com.google.android.gms:play-services:9.2.0'
-    compile 'com.google.android.gms:play-services-ads:9.2.0'
-    compile 'com.google.android.gms:play-services-auth:9.2.0'
-    compile 'com.google.android.gms:play-services-gcm:9.2.0'
+    compile 'com.google.android.gms:play-services:8.3.0'
+    compile 'com.google.android.gms:play-services-ads:8.3.0'
+    compile 'com.google.android.gms:play-services-auth:8.3.0'
+    compile 'com.google.android.gms:play-services-gcm:8.3.0'
 }
 
 

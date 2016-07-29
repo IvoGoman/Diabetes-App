@@ -65,8 +65,11 @@ public class ActivityInputHandler {
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
                     java.util.Date StartD = new Date();
                     java.util.Date EndD = new Date();
-                    StartD.setTime(Long.valueOf(list.get(i)[3]));
+                    StartD.setTime(Long.valueOf(list.get(i)[3])+60000);
                     EndD.setTime(Long.valueOf(list.get(i)[4]));
+
+
+
                     String Start = format.format(StartD);
                     String End = format.format(EndD);
                     AppGlobal.getHandler().InsertActivity(AppGlobal.getHandler(), IdActivity, 1, Start, End);
