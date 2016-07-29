@@ -10,7 +10,7 @@
 
     <string name="menu_item_daily_routine">Daily Routine</string>
     <string name="menu_item_activity_input">Activity Input</string>
-    <string name="menu_item_activity_measurement">Activity/Measurement</string>
+    <string name="menu_item_activity">Activity</string>
     <string name="menu_item_statistics">Statistics</string>
     <string name="menu_item_history">History</string>
     <string name="menu_item_settings">Settings</string>
