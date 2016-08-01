@@ -779,6 +779,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     /**
      * sets the add, edit and remove icons in the action bar
      * depending on the selected activities
+     * @author Stefan
      */
     public static void setActionBarItems() {
         if(selectedActivities.size()==1 || (selectedActivities.size()==0 && selectable)) {

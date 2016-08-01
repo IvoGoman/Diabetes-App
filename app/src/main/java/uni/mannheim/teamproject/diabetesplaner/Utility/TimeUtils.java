@@ -12,6 +12,8 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
 
+import uni.mannheim.teamproject.diabetesplaner.R;
+
 /**
  * Created by Stefan on 26.04.2016.
  */
@@ -126,7 +128,7 @@ public class TimeUtils {
 //		if(tmp.charAt(0) == '0'){
 //			Log.d("Meins","hier");
 //			StringBuilder sb = new StringBuilder(tmp);
-//			sb.delete(0,1);
+//			sb.ic_delete(0,1);
 //			tmp = sb.toString();
 //		}
 //		Log.d("Meins",tmp);
@@ -348,4 +350,38 @@ public class TimeUtils {
         cal.set(Calendar.HOUR_OF_DAY, hour);
         return cal.getTimeInMillis();
     }
+
+    /**
+     * get the day of the week
+     * @param dayOfWeek integer value
+     * @return day of the week as String
+     * @author Stefan
+     */
+    public String getDayOfWeek(int dayOfWeek, Context c){
+        switch (dayOfWeek){
+            case 1: return c.getResources().getString(R.string.Sunday);
+            case 2: return c.getResources().getString(R.string.Monday);
+            case 3: return c.getResources().getString(R.string.Tuesday);
+            case 4: return c.getResources().getString(R.string.Wednesday);
+            case 5: return c.getResources().getString(R.string.Thursday);
+            case 6: return c.getResources().getString(R.string.Friday);
+            case 7: return c.getResources().getString(R.string.Saturday);
+            default: return "";
+        }
+    }
+
+
+    /**
+     * Returns the date adapted to the phones date format
+     * @return date as String
+     * @author Stefan
+     */
+    public static String getDateAsString(){
+        Date date = Calendar.getInstance(Locale.getDefault()).getTime();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, dd.MM.yyyy");
+        String dateString = dateFormat.format(date);
+
+        return dateString;
+    }
+
 }

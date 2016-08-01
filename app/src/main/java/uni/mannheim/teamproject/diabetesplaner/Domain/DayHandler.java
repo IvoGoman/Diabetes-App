@@ -35,7 +35,7 @@ public class DayHandler {
      * @param indexes of activities to be deleted
      */
     public void delete(ArrayList<Integer> indexes) {
-        //delete
+        //ic_delete
         for (int i = indexes.size() - 1; i >= 0; i--) {
             dailyRoutine.remove((int) indexes.get(i));
         }
