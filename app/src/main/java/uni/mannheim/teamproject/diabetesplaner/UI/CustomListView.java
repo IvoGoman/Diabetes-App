@@ -55,7 +55,7 @@ public class CustomListView extends ArrayAdapter<String>{
         txtSubTitle.setText("  Added: " + dateFormat.format(date));
         txtSubTitle.setTextColor(getContext().getResources().getColor(R.color.textColorSecondary));
 
-        //create delete icon and adds onClickListener to it
+        //create ic_delete icon and adds onClickListener to it
         ImageView deleteIcon = (ImageView) rowView.findViewById(R.id.delete_icon_activity_input);
 
         deleteIcon.setOnClickListener(new View.OnClickListener() {
@@ -71,7 +71,7 @@ public class CustomListView extends ArrayAdapter<String>{
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                                 remove(files.get(position));
-                                //delete from database
+                                //ic_delete from database
                             }
                         });
 

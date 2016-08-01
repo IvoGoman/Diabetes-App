@@ -82,7 +82,7 @@ public class GPS_Service extends Service implements LocationListener {
         lng = (double) (location.getLongitude());
         AppGlobal.getHandler().insertLocation(AppGlobal.getHandler(),lat, lng, "" );
 
-        //delete toast if it works
+        //ic_delete toast if it works
         Toast.makeText(getApplicationContext(), lat + " : " + lng, Toast.LENGTH_SHORT).show();
         
     }

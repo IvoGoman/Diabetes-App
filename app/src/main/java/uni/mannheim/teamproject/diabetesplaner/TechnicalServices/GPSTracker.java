@@ -144,7 +144,7 @@ public class GPSTracker extends Service implements LocationListener {
         alertDialog.setMessage("GPS is not enabled. Do you want to go to settings menu?");
 
         // Setting Icon to Dialog
-        //alertDialog.setIcon(R.drawable.delete);
+        //alertDialog.setIcon(R.drawable.ic_delete);
 
         // On pressing Settings button
         alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() {
