@@ -52,9 +52,9 @@ public class MeasurementInputDialog extends DialogFragment {
 
 
     TableRow first_tableRow;
-    TextView blood_sugar_label;
+    RadioButton blood_sugar_label;
     TableRow second_tableRow;
-    TextView insulinDosage_label;
+    RadioButton insulinDosage_label;
 
 
     @Override
@@ -66,11 +66,12 @@ public class MeasurementInputDialog extends DialogFragment {
         LayoutInflater inflater = (LayoutInflater) getActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.popup_measurement_window, null);
         first_tableRow = (TableRow) v.findViewById(R.id.first_tableRow);
-        blood_sugar_label = (TextView) v.findViewById(R.id.blood_sugar_label);
+        blood_sugar_label = (RadioButton) v.findViewById(R.id.blood_sugar_label);
         second_tableRow = (TableRow) v.findViewById(R.id.second_tableRow);
-        insulinDosage_label = (TextView) v.findViewById(R.id.insulinDosage_label);
+        insulinDosage_label = (RadioButton) v.findViewById(R.id.insulinDosage_label);
 
         first_tableRow.setVisibility(View.GONE);
+        second_tableRow.setVisibility(View.GONE);
 
         blood_sugar_label.setOnClickListener(
                 new View.OnClickListener() {
@@ -79,10 +80,16 @@ public class MeasurementInputDialog extends DialogFragment {
                         if(first_tableRow.isShown()){
                             Util.slide_up(getActivity(), first_tableRow);
                             first_tableRow.setVisibility(View.GONE);
+                            blood_sugar_label.setChecked(false);
+
                         }
                         else{
                             first_tableRow.setVisibility(View.VISIBLE);
                             Util.slide_down(getActivity(), first_tableRow);
+                            blood_sugar_label.setChecked(true);
+                            insulinDosage_label.setChecked(false);
+
+
                         }
 
                     }
@@ -96,10 +103,16 @@ public class MeasurementInputDialog extends DialogFragment {
                         if(second_tableRow.isShown()){
                             Util.slide_up(getActivity(), second_tableRow);
                             second_tableRow.setVisibility(View.GONE);
+                            insulinDosage_label.setChecked(false);
+
                         }
                         else{
                             second_tableRow.setVisibility(View.VISIBLE);
                             Util.slide_down(getActivity(), second_tableRow);
+                            blood_sugar_label.setChecked(false);
+                            insulinDosage_label.setChecked(true);
+
+
                         }
 
                     }
