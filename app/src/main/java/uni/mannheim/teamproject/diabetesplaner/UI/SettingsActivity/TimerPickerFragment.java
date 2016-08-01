@@ -1,5 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity;
 
+import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
@@ -13,6 +14,8 @@ import android.widget.TimePicker;
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+
+import uni.mannheim.teamproject.diabetesplaner.R;
 
 
 /**
@@ -31,8 +34,11 @@ public class TimerPickerFragment extends DialogFragment
         int hour = c.get(Calendar.HOUR_OF_DAY);
         int minute = c.get(Calendar.MINUTE);
 
+
         // Create a new instance of TimePickerDialog and return it
-        return new TimePickerDialog(getActivity(), this, hour, minute,
+        //Edit by Naira, Changing date picker color
+        //return new TimePickerDialog(getActivity(), this, year, month, day);
+        return new TimePickerDialog(getActivity(),  R.style.picker,this, hour, minute,
                 DateFormat.is24HourFormat(getActivity()));
     }
 
