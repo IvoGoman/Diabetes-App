@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp" />
 
-    <TextView
+    <RadioButton
         android:layout_width="315dp"
         android:id="@+id/blood_sugar_label"
         android:layout_height="wrap_content"
@@ -19,6 +19,7 @@
         android:text="@string/add_blood_sugar_level"
         android:paddingLeft="12dp"
         android:clickable="true"
+        android:checked="false"
 
         />
 
@@ -95,7 +96,7 @@
         android:layout_width="match_parent"
         android:layout_height="30dp" />
 
-    <TextView
+    <RadioButton
         android:layout_width="315dp"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
@@ -103,6 +104,7 @@
         android:id="@+id/insulinDosage_label"
         android:paddingLeft="12dp"
         android:clickable="true"
+        android:checked="false"
 
         />
 
