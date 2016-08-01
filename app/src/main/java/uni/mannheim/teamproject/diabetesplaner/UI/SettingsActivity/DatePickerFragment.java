@@ -27,7 +27,7 @@ public class DatePickerFragment extends DialogFragment
         int day = c.get(Calendar.DAY_OF_MONTH);
 
         // Create a new instance of DatePickerDialog and return it
-        //Edit by Naira, Changing date picker color
+        //Edit by Naira, Changing  date picker color
         //return new DatePickerDialog(getActivity(), this, year, month, day);
         return new DatePickerDialog(getActivity(), R.style.picker, this,year,month,day);
     }
