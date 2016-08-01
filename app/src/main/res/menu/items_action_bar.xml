@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
     <item
         android:id="@+id/add_icon_action_bar"
-        android:icon="@android:drawable/ic_input_add"
+        android:icon="@drawable/ic_colorize_directions_run"
         android:title=""
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/add_icon_action_bar_routine"
-        android:icon="@android:drawable/ic_input_add"
+        android:icon="@drawable/ic_colorize_directions_run"
         android:title=""
         app:showAsAction="ifRoom"/>
     <item
