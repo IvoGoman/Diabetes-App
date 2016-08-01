@@ -14,11 +14,8 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -118,7 +115,8 @@ public class DailyRoutineFragment extends Fragment {
         linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_daily_routine);
 
         TextView textView = (TextView) inflaterView.findViewById(R.id.daily_routine_date_view);
-        textView.setText(getDate());
+        textView.setText(TimeUtils.getDateAsString());
+        this.date = TimeUtils.getCurrentDate();
 
         //create a DailyRoutineView for every list item, so for every activity in the daily routine
 //        for(int i=0; i<list2.size(); i++){
@@ -200,40 +198,6 @@ public class DailyRoutineFragment extends Fragment {
         //DailyRoutineView.getSelectedActivities().clear();
         //DailyRoutineView.setSelectable(false);
         //DailyRoutineView.setActionBarItems();
-    }
-
-
-
-
-    /**
-     * Returns the date adapted to the phones date format
-     * @return date as String
-     */
-    public String getDate(){
-        Date date = Calendar.getInstance(Locale.getDefault()).getTime();
-        this.date = date;
-        SimpleDateFormat dateFormat = new SimpleDateFormat("EEEE, dd.MM.yyyy");
-        String dateString = dateFormat.format(date);
-
-        return dateString;
-    }
-
-    /**
-     * get the day of the week
-     * @param dayOfWeek integer value
-     * @return day of the week as String
-     */
-    public String getDayOfWeek(int dayOfWeek){
-        switch (dayOfWeek){
-            case 1: return getString(R.string.Sunday);
-            case 2: return getString(R.string.Monday);
-            case 3: return getString(R.string.Tuesday);
-            case 4: return getString(R.string.Wednesday);
-            case 5: return getString(R.string.Thursday);
-            case 6: return getString(R.string.Friday);
-            case 7: return getString(R.string.Saturday);
-            default: return "";
-        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -320,7 +284,7 @@ public class DailyRoutineFragment extends Fragment {
     }
 
     /**
-     * sets the delete icon in the action bar visible true/false
+     * sets the ic_delete icon in the action bar visible true/false
      * @param isVisible visible/invisible
      */
     public static void setDeleteIconVisible(boolean isVisible){
