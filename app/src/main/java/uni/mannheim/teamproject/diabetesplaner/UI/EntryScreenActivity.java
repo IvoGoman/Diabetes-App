@@ -1,17 +1,21 @@
 package uni.mannheim.teamproject.diabetesplaner.UI;
 
 
+import android.Manifest;
 import android.app.NotificationManager;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.support.design.widget.NavigationView;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -60,6 +64,8 @@ public class EntryScreenActivity extends AppCompatActivity
     private static String imagePath;
     private RoutineRecommendation recServiceRoutine;
     private BSInputRecommendation recServiceBS;
+
+    public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 
     public static final String TAG = EntryScreenActivity.class.getSimpleName();
 
@@ -174,7 +180,6 @@ public class EntryScreenActivity extends AppCompatActivity
      */
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
         this.optionsMenu = menu;
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.items_action_bar, menu);
@@ -378,6 +383,9 @@ public class EntryScreenActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
 
+        System.out.println("in onStart");
+        my_permissions();
+
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
         client.connect();
@@ -393,12 +401,44 @@ public class EntryScreenActivity extends AppCompatActivity
         );
         AppIndex.AppIndexApi.start(client, viewAction);
 
-        //startGPS_Service();
+
+    }
+
+    public void my_permissions(){
+
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.ACCESS_FINE_LOCATION)) {
+
+                // Show an expanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+
+            } else {
+
+                // No explanation needed, we can request the permission.
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.ACCESS_FINE_LOCATION},
+                        MY_PERMISSIONS_REQUEST_READ_CONTACTS);
+
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        }else {
+            startGPS_Service();
+        }
 
     }
 
 
     public void startGPS_Service(){
+        System.out.println("in Start GPS Service");
         Intent myIntent = new Intent(this, GPS_Service.class);
         this.startService(myIntent);
     }
@@ -600,5 +640,37 @@ public class EntryScreenActivity extends AppCompatActivity
      */
     public BSInputRecommendation getBSInputRecommendationService(){
         return recServiceBS;
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+
+        System.out.println("in RequestPermissions");
+
+        switch (requestCode) {
+            case MY_PERMISSIONS_REQUEST_READ_CONTACTS: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+
+                    startGPS_Service();
+
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 }
