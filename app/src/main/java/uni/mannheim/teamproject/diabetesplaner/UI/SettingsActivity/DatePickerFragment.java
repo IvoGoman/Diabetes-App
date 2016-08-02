@@ -9,6 +9,8 @@ import android.widget.DatePicker;
 import java.util.Calendar;
 import java.util.concurrent.ExecutionException;
 
+import uni.mannheim.teamproject.diabetesplaner.R;
+
 /**
  * Created by Jan on 11.07.16.
  */
@@ -25,7 +27,9 @@ public class DatePickerFragment extends DialogFragment
         int day = c.get(Calendar.DAY_OF_MONTH);
 
         // Create a new instance of DatePickerDialog and return it
-        return new DatePickerDialog(getActivity(), this, year, month, day);
+        //Edit by Naira, Changing  date picker color
+        //return new DatePickerDialog(getActivity(), this, year, month, day);
+        return new DatePickerDialog(getActivity(), R.style.picker, this,year,month,day);
     }
 
     public void onDateSet(DatePicker view, int year, int month, int day) {

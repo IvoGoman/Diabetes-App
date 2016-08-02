@@ -2,28 +2,43 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
     <item
+        android:id="@+id/addMeasurements_icon_action_bar_routine"
+        android:icon="@drawable/ic_bs_input"
+        android:title=""
+        app:showAsAction="ifRoom"/>
+    <item
         android:id="@+id/add_icon_action_bar"
-        android:icon="@android:drawable/ic_input_add"
+        android:icon="@drawable/ic_add"
         android:title=""
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/add_icon_action_bar_routine"
-        android:icon="@android:drawable/ic_input_add"
-        android:title=""
-        app:showAsAction="ifRoom"/>
-    <item
-        android:id="@+id/addMeasurements_icon_action_bar_routine"
-        android:icon="@drawable/colorize_icon"
+        android:icon="@drawable/ic_add"
         android:title=""
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/edit_icon_action_bar_routine"
-        android:icon="@android:drawable/ic_menu_edit"
+        android:icon="@drawable/ic_edit"
         android:title=""
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/delete_icon_action_bar"
-        android:icon="@android:drawable/ic_menu_delete"
+        android:icon="@drawable/ic_delete"
         android:title=""
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/chooseDate_action_bar"
+        android:icon="@drawable/ic_calendar_range"
+        android:title=""
+        app:showAsAction="ifRoom">
+        <menu
+            android:id="@+id/statistics_menu">
+            <item android:id="@+id/statistic_day"
+                android:title="Current Day"/>
+            <item android:id="@+id/statistic_week"
+                android:title="Last Week"/>
+            <item android:id="@+id/statistic_month"
+                android:title="Last Month"/>
+        </menu>
+    </item>
 </menu>

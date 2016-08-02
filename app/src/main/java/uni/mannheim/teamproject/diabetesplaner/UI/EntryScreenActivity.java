@@ -14,6 +14,7 @@ import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.GravityCompat;
@@ -33,6 +34,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.BSInputRecommendation;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.Recommendation;
@@ -40,7 +42,7 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.Routine
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.GPS_Service.GPS_Service;
-import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.ActivityMeasurementFragment;
+import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.ActivityFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.ActivityLimitDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.AddDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
@@ -49,6 +51,7 @@ import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.EditDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.InputDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.MeasurementDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.SettingsActivity;
+import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.ChartFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.StatisticsFragment;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
@@ -81,6 +84,12 @@ public class EntryScreenActivity extends AppCompatActivity
     private MenuItem actualMenuItem;
     private boolean mBoundRoutineRec = false;
     private boolean mBoundBSRec = false;
+    private MenuItem addMeasurements;
+    private MenuItem editItem;
+    private MenuItem addItem;
+    private MenuItem deleteItem;
+    private MenuItem addItemRoutine;
+    private MenuItem chooseDateItem;
 
     /**
      * @param savedInstanceState
@@ -152,21 +161,32 @@ public class EntryScreenActivity extends AppCompatActivity
      */
     @Override
     public boolean onPrepareOptionsMenu(Menu menu) {
-        //sets visibility of icons in the ActionBar
-        //item for activity input
-        MenuItem addItem = menu.findItem(R.id.add_icon_action_bar);
+        //initialize all icons and set them to invisible
+        addMeasurements = menu.findItem(R.id.addMeasurements_icon_action_bar_routine);
+        addMeasurements.setVisible(false);
+        addItem = menu.findItem(R.id.add_icon_action_bar);
         addItem.setVisible(false);
-
-        //items for daily routine
-        MenuItem addItemRoutine = menu.findItem(R.id.add_icon_action_bar_routine);
-        addItemRoutine.setVisible(true);
-        //created by Nairs, for adding measurements in the entry screen
-        MenuItem addMeasurements = menu.findItem(R.id.addMeasurements_icon_action_bar_routine);
-        addMeasurements.setVisible(true);
-        MenuItem editItem = menu.findItem(R.id.edit_icon_action_bar_routine);
-        editItem.setVisible(false);
-        MenuItem deleteItem = menu.findItem(R.id.delete_icon_action_bar);
+        deleteItem = menu.findItem(R.id.delete_icon_action_bar);
         deleteItem.setVisible(false);
+        editItem = menu.findItem(R.id.edit_icon_action_bar_routine);
+        editItem.setVisible(false);
+        addItemRoutine = menu.findItem(R.id.add_icon_action_bar_routine);
+        addItemRoutine.setVisible(false);
+        chooseDateItem = menu.findItem(R.id.chooseDate_action_bar);
+        chooseDateItem.setVisible(false);
+
+        //handles the visibility of the action bar icons depending on the fragment
+        if(fragment instanceof DailyRoutineFragment){
+            addMeasurements.setVisible(true);
+            addItemRoutine.setVisible(true);
+        }else if(fragment instanceof ActivityFragment){
+
+        }else if(fragment instanceof StatisticsFragment){
+            chooseDateItem.setVisible(true);
+        }else if(fragment instanceof HistoryFragment){
+            addMeasurements.setVisible(true);
+            addItemRoutine.setVisible(true);
+        }
 
         super.onPrepareOptionsMenu(menu);
         return true;
@@ -183,6 +203,7 @@ public class EntryScreenActivity extends AppCompatActivity
         this.optionsMenu = menu;
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.items_action_bar, menu);
+
         return true;
     }
 
@@ -219,7 +240,7 @@ public class EntryScreenActivity extends AppCompatActivity
                         ActivityLimitDialog ald = new ActivityLimitDialog();
                         ald.show(getFragmentManager(), "editDialog");
                     }else {
-                        //  drHandler.delete(getIndexesOfSelected(((DailyRoutineFragment) fragment)));
+                        //  drHandler.ic_delete(getIndexesOfSelected(((DailyRoutineFragment) fragment)));
                         ArrayList<Integer> selected = getIndexesOfSelected((DailyRoutineFragment) fragment);
                         for (int i = 0; i < selected.size(); i++) {
                             String start = TimeUtils.dateToDateTimeString(drHandler.getDailyRoutine().get(selected.get(i)).getStarttime());
@@ -231,7 +252,7 @@ public class EntryScreenActivity extends AppCompatActivity
                     }
                 }
 
-                //do sth with the delete icon
+                //do sth with the ic_delete icon
                 return true;
             case R.id.edit_icon_action_bar_routine:
 
@@ -267,9 +288,51 @@ public class EntryScreenActivity extends AppCompatActivity
                 measurementDialog.show(getFragmentManager(),"MeasurementDialog");
                 return true;
 
+            case R.id.chooseDate_action_bar:
+                int itemId = item.getItemId();
+                //get the currently active fragment that is shown to the user
+                Fragment active = null;
+                FragmentManager fragmentManager = this.getSupportFragmentManager();
+                List<Fragment> fragments = fragmentManager.getFragments();
+                for (Fragment fragment : fragments) {
+                    if (fragment != null && fragment.getUserVisibleHint())
+                        active = fragment;
+                }
+                //update the chart of the fragment based on the TimeWindow selected
+                if (!(active == null)) {
+                    switch (itemId) {
+                        case R.id.statistic_day:
+//                    TODO:Update the charts by calling them by their ID
+                            try{
+                                ChartFragment chartFragment = (ChartFragment) active;
+                                chartFragment.updateChart("DAY");
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                            break;
+                        case R.id.statistic_week:
+//                    TODO: Update the charts by calling them by their ID
+                            try{
+                                ChartFragment chartFragment = (ChartFragment) active;
+                                chartFragment.updateChart("WEEK");
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
 
+                            break;
+                        case R.id.statistic_month:
+//                    TODO:Update the charts by calling them by their ID
+                            try{
+                                ChartFragment chartFragment = (ChartFragment) active;
+                                chartFragment.updateChart("MONTH");
+                            }catch (Exception e){
+                                e.printStackTrace();
+                            }
+                            break;
+                    }
+                }
+                return true;
         }
-
 
         return super.onOptionsItemSelected(item);
     }
@@ -305,17 +368,13 @@ public class EntryScreenActivity extends AppCompatActivity
         actualMenuItem = item;
         fragment = null;
 
-        //set all action items to invisible
-        MenuItem addItem = optionsMenu.findItem(R.id.add_icon_action_bar);
+        //set all action bar items to invisible
         addItem.setVisible(false);
-        MenuItem deleteItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.delete_icon_action_bar);
         deleteItem.setVisible(false);
-        MenuItem editItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.edit_icon_action_bar_routine);
         editItem.setVisible(false);
-        MenuItem addItemRoutine = EntryScreenActivity.getOptionsMenu().findItem(R.id.add_icon_action_bar_routine);
         addItemRoutine.setVisible(false);
-        MenuItem addMeasurements = EntryScreenActivity.getOptionsMenu().findItem(R.id.addMeasurements_icon_action_bar_routine);
         addMeasurements.setVisible(false);
+        chooseDateItem.setVisible(false);
 
         if (id == R.id.nav_daily_routine) {
             Toast.makeText(this, R.string.menu_item_daily_routine, Toast.LENGTH_SHORT).show();
@@ -325,23 +384,13 @@ public class EntryScreenActivity extends AppCompatActivity
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
 
-            addItemRoutine.setVisible(true);
             addMeasurements.setVisible(true);
-
-//        } else if (id == R.id.nav_activity_input) {
-//            Toast.makeText(this, R.string.menu_item_activity_input, Toast.LENGTH_SHORT).show();
-//
-//            fragment = new ActivityInputFragment();
-//            FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
-//            ft.replace(R.id.mainFrame, fragment);
-//            ft.commit();
-//
-//            addItem.setVisible(true);
+            addItemRoutine.setVisible(true);
 
         }else if (id == R.id.nav_activity_measurement) {
-            Toast.makeText(this, R.string.menu_item_activity_measurement, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.menu_item_activity, Toast.LENGTH_SHORT).show();
 
-            fragment = new ActivityMeasurementFragment();
+            fragment = new ActivityFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
@@ -354,6 +403,8 @@ public class EntryScreenActivity extends AppCompatActivity
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
 
+            chooseDateItem.setVisible(true);
+
         } else if (id == R.id.nav_history) {
             Toast.makeText(this, R.string.menu_item_history, Toast.LENGTH_SHORT).show();
 
@@ -363,6 +414,7 @@ public class EntryScreenActivity extends AppCompatActivity
             ft.commit();
 
             addItemRoutine.setVisible(true);
+            addMeasurements.setVisible(true);
 
         } else if (id == R.id.nav_settings) {
             Toast.makeText(this, R.string.menu_item_settings, Toast.LENGTH_SHORT).show();
@@ -494,6 +546,7 @@ public class EntryScreenActivity extends AppCompatActivity
     public static String getImagePath(){
         return imagePath;
     }
+
 
 
     /**

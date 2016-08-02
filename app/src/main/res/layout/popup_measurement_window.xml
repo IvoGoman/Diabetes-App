@@ -1,0 +1,171 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clickable="true"
+    android:contextClickable="true"
+    android:orientation="vertical">
+
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="30dp" />
+
+    <RadioButton
+        android:layout_width="315dp"
+        android:id="@+id/blood_sugar_label"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/add_blood_sugar_level"
+        android:paddingLeft="12dp"
+        android:clickable="true"
+        android:checked="false"
+
+        />
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:id="@+id/first_tableRow">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_measurement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="50dp">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:id="@+id/edit_measure_value"
+                android:layout_column="0"
+                android:numeric="decimal"
+                android:singleLine="true"
+                android:hint="@string/hint_measurement"
+                android:layout_marginTop="50dp"
+                android:paddingLeft="12dp"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="30dp" />
+
+
+        </android.support.design.widget.TextInputLayout>
+
+
+        <RadioGroup
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            >
+            <!-- RadioButton color adjusted by Naira-->
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="52dp"
+                android:text="@string/milligram_dl"
+                android:id="@+id/bs_mg"
+                android:checked="false"
+                android:buttonTint="@color/colorAccent"/>
+
+            <RadioButton
+                android:layout_width="152dp"
+                android:layout_height="57dp"
+                android:text="@string/mmol_l"
+                android:id="@+id/bs_mm"
+                android:checked="false"
+                android:buttonTint="@color/colorAccent"/>
+
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/percentage"
+                android:id="@+id/bs_percentage"
+                android:checked="false"
+                android:buttonTint="@color/colorAccent"/>
+
+
+        </RadioGroup>
+
+
+
+    </TableRow>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="30dp" />
+
+    <RadioButton
+        android:layout_width="315dp"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/add_insulin_dosage"
+        android:id="@+id/insulinDosage_label"
+        android:paddingLeft="12dp"
+        android:clickable="true"
+        android:checked="false"
+
+        />
+
+    <TableRow
+        android:layout_width="wrap_content"
+        android:layout_height="150dp"
+        android:id="@+id/second_tableRow">
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_insulin_measurement"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingTop="50dp">
+
+            <EditText
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:inputType="numberDecimal"
+                android:ems="10"
+                android:id="@+id/edit_insulin_value"
+                android:layout_column="0"
+                android:numeric="decimal"
+                android:singleLine="true"
+                android:hint="@string/enter_insulin_dosage"
+                android:layout_marginTop="50dp"
+                android:paddingLeft="12dp"/>
+
+
+
+
+        </android.support.design.widget.TextInputLayout>
+
+
+        <RadioGroup
+            android:layout_width="180dp"
+            android:layout_height="wrap_content"
+            android:layout_column="1"
+            >
+            <!-- RadioButton color adjusted by Naira-->
+            <RadioButton
+                android:layout_width="wrap_content"
+                android:layout_height="52dp"
+                android:text="@string/units"
+                android:id="@+id/insulin_unit"
+                android:checked="false"
+                android:buttonTint="@color/colorAccent"/>
+
+            <RadioButton
+                android:layout_width="152dp"
+                android:layout_height="57dp"
+                android:text="@string/ml_cc"
+                android:id="@+id/insulin_"
+                android:checked="false"
+                android:buttonTint="@color/colorAccent"/>
+
+
+
+        </RadioGroup>
+
+
+
+    </TableRow>
+
+</LinearLayout>

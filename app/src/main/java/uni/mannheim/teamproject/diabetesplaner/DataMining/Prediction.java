@@ -685,7 +685,7 @@ public class Prediction {
         tree.buildClassifier(data);
 
         Instance inst = data.firstInstance();
-        data.delete();
+        data.ic_delete();
 
         Calendar calendar = Calendar.getInstance();
         int minutesleftfrommidnight = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);

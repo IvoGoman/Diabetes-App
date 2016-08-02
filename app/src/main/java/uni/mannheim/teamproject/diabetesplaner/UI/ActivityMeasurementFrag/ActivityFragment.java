@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +24,7 @@ import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityInputHandler;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.UI.CustomListView;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
 
 /**
@@ -35,8 +37,33 @@ public class ActivityFragment extends Fragment  {
     public static AbsListView lv;
     public static ArrayList<String> FileList = new ArrayList<String>();
     ActivityInputHandler ActivityInputHndlr = new ActivityInputHandler ();
-    final DataBaseHandler DBHandler = new DataBaseHandler(getContext());
+    final DataBaseHandler DBHandler = AppGlobal.getHandler();
 
+    private static final String ARG_PARAM1 = "param1";
+    private static final String ARG_PARAM2 = "param2";
+
+    private String mParam1;
+    private String mParam2;
+
+    private AppCompatActivity aca;
+
+    /**
+     * Use this factory method to create a new instance of
+     * this fragment using the provided parameters.
+     *
+     * @param param1 Parameter 1.
+     * @param param2 Parameter 2.
+     * @return A new instance of fragment HistoryFragment.
+     */
+    // TODO: Rename and change types and number of parameters
+    public static ActivityFragment newInstance(String param1, String param2) {
+        ActivityFragment fragment = new ActivityFragment();
+        Bundle args = new Bundle();
+        args.putString(ARG_PARAM1, param1);
+        args.putString(ARG_PARAM2, param2);
+        fragment.setArguments(args);
+        return fragment;
+    }
 
     public ActivityFragment() {
         // Required empty public constructor
@@ -45,6 +72,12 @@ public class ActivityFragment extends Fragment  {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        if (getArguments() != null) {
+            mParam1 = getArguments().getString(ARG_PARAM1);
+            mParam2 = getArguments().getString(ARG_PARAM2);
+        }
+        aca = (AppCompatActivity) getActivity();
+        aca.getSupportActionBar().setTitle("Activity");
 
 
     }
