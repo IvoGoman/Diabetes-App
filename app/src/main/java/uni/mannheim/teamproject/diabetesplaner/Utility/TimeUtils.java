@@ -305,10 +305,10 @@ public class TimeUtils {
      * @param timeWindow array containing dates as string values
      * @return date array converted to long timestamp array
      */
-    public static Long[] convertDateStringToTimestamp(String[] timeWindow){
-        Timestamp timestampStart=null,timestampEnd = null;
-        try{
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    public static Long[] convertDateStringToTimestamp(String[] timeWindow) {
+        Timestamp timestampStart = null, timestampEnd = null;
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             Date parsedStart = dateFormat.parse(timeWindow[0]);
             Date parsedEnd = dateFormat.parse(timeWindow[1]);
             timestampStart = new java.sql.Timestamp(parsedStart.getTime());
@@ -402,4 +402,15 @@ public class TimeUtils {
         return dateString;
     }
 
+    /**
+     * @param timestamp
+     * @return 0 for AM or 1 for PM
+     */
+
+    public static int isAM(long timestamp) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+        Calendar calendar = TimeUtils.getCalendar(timestamp);
+        int am_pm = calendar.get(Calendar.AM_PM);
+        return am_pm;
+    }
 }

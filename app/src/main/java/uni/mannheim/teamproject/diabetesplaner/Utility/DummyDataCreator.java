@@ -1,7 +1,10 @@
 package uni.mannheim.teamproject.diabetesplaner.Utility;
 
+import java.text.ParseException;
+import java.util.ArrayList;
 import java.util.Date;
 
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing.CaseCreator;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 
@@ -10,11 +13,38 @@ import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
  * yyyy-MM-dd HH:mm
  */
 public class DummyDataCreator {
+    public static void populateDataBase(){
+        String source = "/data/user/0/uni.mannheim.teamproject.diabetesplaner/files/SDC_ActivityData.csv";
+        ArrayList<String[]> eventList = Util.read(source);
+//        eventList.remove(0);
+        DataBaseHandler dbHandler = AppGlobal.getHandler();
+        ActivityItem item;
+        int subId = 0;
+
+        CaseCreator creator = new CaseCreator(eventList);
+        creator.createCases();
+        creator.mergeConsecutiveSameActivity(true);
+        creator.removeFirstCase(true);
+        creator.removeLastCase();
+        eventList = creator.getList();
+        for(String[] event:eventList){
+
+            try{
+                subId = Integer.parseInt(event[3]);
+            } catch(Exception e){
+                subId = 0;
+                e.printStackTrace();
+            }
+            item = new ActivityItem(Integer.parseInt(event[2]),subId, TimeUtils.getDate(event[4]),TimeUtils.getDate(event[5]),1);
+            dbHandler.InsertActivity(dbHandler,item);
+        }
+    }
     public static void createDummyData() {
         DataBaseHandler handler = AppGlobal.getHandler();
         ActivityItem item;
-        Date start,end;
+        Date start, end;
         String i;
+        int randomNumber;
         for (int j = 1; j < 31; j++) {
             if(j<10){ i="0"+j;}else{i=""+j;}
             item = new ActivityItem(1, 0, TimeUtils.getDateFromString("2016-06-" + i + " 00:01"),TimeUtils.getDateFromString("2016-06-" + i + " 06:50"),3);
