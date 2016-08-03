@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Ivo on 10.07.2016.
@@ -18,15 +20,21 @@ public class CustomXLog {
     private ArrayList<ActivityItem> items;
     private XLog xLog;
     private ArrayList<String[]> eventList;
+    private ArrayList<String[]> cases;
 
-    public CustomXLog(ArrayList<ActivityItem> items){
+    public CustomXLog(ArrayList<ActivityItem> items) {
         this.items = items;
         this.eventList = this.convertActivityItemToStringArray(this.items);
-        this.eventList = this.retrieveCases(eventList);
-        this.createXLog(this.eventList);
+        this.cases = this.retrieveCases(this.eventList);
+        this.createXLog(this.cases);
+    }
+    public ArrayList<String[]> getEventList() {
+        return eventList;
     }
 
-    public ArrayList<String[]> getEventList() {return eventList;}
+    public ArrayList<String[]> getCases() {
+        return cases;
+    }
 
     public XLog getXLog(){
         return this.xLog;
@@ -84,16 +92,19 @@ public class CustomXLog {
      * @param items
      * @return
      */
-    private ArrayList<String[]> convertActivityItemToStringArray(ArrayList<ActivityItem> items){
+    private ArrayList<String[]> convertActivityItemToStringArray(ArrayList<ActivityItem> items) {
         ArrayList<ActivityItem> list = items;
         ArrayList<String[]> eventList = new ArrayList<>();
         String[] event;
-        event = new String[]{"","","starttime","endtime"};
+        event = new String[]{"", "", "starttime", "endtime"};
         eventList.add(event);
-        for (ActivityItem item : list
-                ) {
-            Long[] timestamps = TimeUtils.convertDateStringToTimestamp(new String[]{item.getStarttimeAsString(),item.getEndtimeAsString()});
-            event = new String[]{AppGlobal.getHandler().getActionById(AppGlobal.getHandler(), item.getActivityId()),String.valueOf(item.getActivityId()), String.valueOf(timestamps[0]*1000), String.valueOf(timestamps[1]*1000)};
+        String id;
+        int isAM = 0;
+        for (ActivityItem item : list) {
+            id = String.valueOf(item.getActivityId());
+            Long[] timestamps = TimeUtils.convertDateStringToTimestamp(new String[]{item.getStarttimeAsString(), item.getEndtimeAsString()});
+            isAM = TimeUtils.isAM(timestamps[0] * 1000);
+            event = new String[]{AppGlobal.getHandler().getActionById(AppGlobal.getHandler(), item.getActivityId()), id+isAM, String.valueOf(timestamps[0] * 1000), String.valueOf(timestamps[1] * 1000)};
             eventList.add(event);
         }
         return eventList;
@@ -101,16 +112,17 @@ public class CustomXLog {
 
     /**
      * Create the cases based on the Eventlist
+     *
      * @param eventList
      * @return ArrayList<String[]> of Events with Cases
      */
     public ArrayList<String[]> retrieveCases(ArrayList<String[]> eventList) {
         //creates a CaseCreator object with the CSV file in an ArrayList
-        CaseCreator creator = new CaseCreator(eventList);
+        ArrayList<String[]> cases = (ArrayList<String[]>) eventList.clone();
+        CaseCreator creator = new CaseCreator(cases);
         //splits the data into cases and adds a column for the case id for each entry
         creator.createCases();
-        eventList = creator.getList();
-        return eventList;
+        cases = creator.getList();
+        return cases;
     }
-
 }
