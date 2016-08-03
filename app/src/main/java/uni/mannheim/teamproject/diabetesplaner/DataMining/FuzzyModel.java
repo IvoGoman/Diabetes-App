@@ -1,5 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining;
 
+import android.content.res.Resources;
 import android.support.v4.util.Pair;
 
 import org.deckfour.xes.model.XLog;
@@ -52,11 +53,14 @@ public class FuzzyModel {
         idDurationMap.add(new Pair<Integer, Double>(currentId, durationMap.get(currentId)));
         while (ProcessMiningUtill.getTotalDuration(idDurationMap)) {
             tempId = currentId;
-            currentId = getNextActivity(currentId, predecessorId);
-//            currentId = getNextActivity(currentId);
+//            currentId = getNextActivity(currentId, predecessorId);
+            if (currentId != endID) {
+                currentId = getNextActivity(currentId);
+            } else if(currentId == endID){
+                break;
+            }
             idDurationMap.add(new Pair<Integer, Double>(currentId, durationMap.get(currentId)));
             predecessorId=tempId;
-            if(currentId==endID){break;}
         }
         idDurationMap.size();
 
@@ -84,7 +88,12 @@ public class FuzzyModel {
         idDurationMap.add(new Pair<Integer, Double>(currentId, durationMap.get(currentId)));
         while (ProcessMiningUtill.getTotalDuration(idDurationMap)) {
             tempId = currentId;
-            currentId = getNextActivity(currentId, predecessorId);
+            try {
+                currentId = getNextActivity(currentId, predecessorId);
+            } catch(Exception nfe){
+                nfe.printStackTrace();
+                break;
+            }
             idDurationMap.add(new Pair<Integer, Double>(currentId, durationMap.get(currentId)));
             predecessorId=tempId;
         }
@@ -130,7 +139,7 @@ public class FuzzyModel {
      * @param currentActivityId
      * @return
      */
-    public int getNextActivity(int currentActivityId) {
+    public int getNextActivity(int currentActivityId) throws Exception{
         Set<FMNode> nodes = fuzzyMinerModel.getNodes();
         Set<FMEdge<? extends FMNode, ? extends FMNode>> likelySuccessors = new HashSet<>();
         Set<FMNode> interestingNodes = new HashSet<>();

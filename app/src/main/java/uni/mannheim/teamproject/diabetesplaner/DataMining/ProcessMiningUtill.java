@@ -147,11 +147,15 @@ public class ProcessMiningUtill {
         HashMap<Integer, Integer> activityCount = new HashMap<>();
 //       Initial currentCase is 1 so the change between the cases is registered
         int currentCaseKey = 1, currentActivityKey = 0, currentActivityCount = 0;
-        String[] predecessorCaseValue = null;
+        String[] predecessorCaseValues = null;
+//        iterate throught all cases
         for (String[] caseArray : cases) {
+//            is the case of the current caseArray the same as the overall currentCaseKey?
             if (Integer.valueOf(caseArray[0]) != currentCaseKey) {
-                currentCaseKey = Integer.valueOf(predecessorCaseValue[0]);
-                currentActivityKey = Integer.valueOf(predecessorCaseValue[2]);
+//                if so then set the currentCaseKey to the new current
+                currentCaseKey = Integer.valueOf(caseArray[0]);
+//                and set the currentActivity to that of the predecessor , hence the last activity of the old case
+                currentActivityKey = Integer.valueOf(predecessorCaseValues[2]);
                 if (activityCount.containsKey(currentActivityKey)) {
                     currentActivityCount = activityCount.get(currentActivityKey) + 1;
                     activityCount.put(currentActivityKey, currentActivityCount);
@@ -159,7 +163,8 @@ public class ProcessMiningUtill {
                     activityCount.put(currentActivityKey, 1);
                 }
             }
-            predecessorCaseValue = caseArray;
+//            reset the predecessor values to the current values
+            predecessorCaseValues = caseArray;
         }
         int mostFrequentID = 0, maxCount = 0;
         for (Entry<Integer, Integer> entry : activityCount.entrySet()) {
