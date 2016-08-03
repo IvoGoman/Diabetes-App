@@ -17,6 +17,7 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.Default.Mut
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing.CustomXLog;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.DummyDataCreator;
 
 /**
  * Created by Ivo on 10.07.2016.
@@ -33,25 +34,29 @@ public class FuzzyModel {
      * @throws Exception
      */
     public FuzzyModel(int day) throws Exception {
-//        DummyDataCreator.createDummyData();
+//        DummyDataCreator.populateDataBase();
         ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(), day);
         CustomXLog customXLog = new CustomXLog(items);
         XLog xLog = customXLog.getXLog();
         FuzzyMinerImpl fuzzyMiner = new FuzzyMinerImpl(xLog);
         fuzzyMinerModel = fuzzyMiner.getFuzzyGraph();
         List<Pair<Integer, Double>> idDurationMap = new ArrayList<>();
-        Map<Integer, Double> durationMap = ProcessMiningUtill.getAverageDurationForActivityID();
-        ArrayList<String[]> cases = customXLog.getEventList();
+        ArrayList<String[]> cases = customXLog.getCases();
+        ArrayList<String[]> eventList = customXLog.getEventList();
+        cases.remove(0);
+        eventList.remove(0);
+        Map<Integer, Double> durationMap = ProcessMiningUtill.getAverageDurations(eventList);
         int startID = ProcessMiningUtill.getMostFrequentStartActivity(cases);
         int endID = ProcessMiningUtill.getMostFrequentEndActivity(cases);
         int currentId = startID, predecessorId = startID, tempId = startID;
         idDurationMap.add(new Pair<Integer, Double>(currentId, durationMap.get(currentId)));
         while (ProcessMiningUtill.getTotalDuration(idDurationMap)) {
             tempId = currentId;
-//            currentId = getNextActivity(currentId, predecessorId);
-            currentId = getNextActivity(currentId);
+            currentId = getNextActivity(currentId, predecessorId);
+//            currentId = getNextActivity(currentId);
             idDurationMap.add(new Pair<Integer, Double>(currentId, durationMap.get(currentId)));
             predecessorId=tempId;
+            if(currentId==endID){break;}
         }
         idDurationMap.size();
 
@@ -63,15 +68,16 @@ public class FuzzyModel {
      * @throws Exception
      */
     public FuzzyModel() throws Exception {
-//        DummyDataCreator.createDummyData();
+        DummyDataCreator.populateDataBase();
         ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivities(AppGlobal.getHandler());
-        CustomXLog customXLog = new CustomXLog(items);
+                CustomXLog customXLog = new CustomXLog(items);
         XLog xLog = customXLog.getXLog();
         FuzzyMinerImpl fuzzyMiner = new FuzzyMinerImpl(xLog);
         fuzzyMinerModel = fuzzyMiner.getFuzzyGraph();
         List<Pair<Integer, Double>> idDurationMap = new ArrayList<>();
-        Map<Integer, Double> durationMap = ProcessMiningUtill.getAverageDurationForActivityID();
         ArrayList<String[]> cases = customXLog.getEventList();
+        cases.remove(0);
+        Map<Integer, Double> durationMap = ProcessMiningUtill.getAverageDurations(cases);
         int startID = ProcessMiningUtill.getMostFrequentStartActivity(cases);
         int endID = ProcessMiningUtill.getMostFrequentEndActivity(cases);
         int currentId = startID, predecessorId = startID, tempId = startID;
@@ -108,7 +114,7 @@ public class FuzzyModel {
         double successorCorrelation = 0.0;
         for (FMEdge edge : likelySuccessors) {
             target = (FMNode) edge.getTarget();
-            if (edge.getSignificance() > successorSignificance && Integer.parseInt(target.getElementName())!=predecessorId) {
+            if ((edge.getSignificance() > successorSignificance) && (Integer.parseInt(target.getElementName())!=predecessorId) && (Integer.parseInt(target.getElementName())!=currentActivityId) && (Integer.parseInt(target.getElementName())!=0)) {
                 if (target.getEventType().equals("Start")) {
                     successorID = Integer.parseInt(target.getElementName());
                     successorSignificance = edge.getSignificance();
@@ -141,7 +147,7 @@ public class FuzzyModel {
         double successorCorrelation = 0.0;
         for (FMEdge edge : likelySuccessors) {
             target = (FMNode) edge.getTarget();
-            if (edge.getSignificance() > successorSignificance ) {
+            if (edge.getSignificance() > successorSignificance && Integer.parseInt(target.getElementName())!=currentActivityId && (Integer.parseInt(target.getElementName())!=0)){
                 if (target.getEventType().equals("Start")) {
                     successorID = Integer.parseInt(target.getElementName());
                     successorSignificance = edge.getSignificance();
