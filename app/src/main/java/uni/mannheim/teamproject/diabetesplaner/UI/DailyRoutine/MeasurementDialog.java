@@ -93,6 +93,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
         builder.setPositiveButton(R.string.ADD, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //add measurements
+
                 try {
                     measure_value = addBloodSugar.getText().toString();
 
