@@ -36,6 +36,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             "SELECT * FROM " + MEASUREMENT_TABLE_NAME + ";";
     public static final String MEASUREMENT_DELETE_TABLE =
             "DROP TABLE IF EXISTS " + MEASUREMENT_TABLE_NAME + ";";
+
+   //InsulinHistory
+   public static final String INSULIN_TABLE_NAME = "Insulin";
+    public static final String INSULIN_CREATE_TABLE = " CREATE TABLE IF NOT EXISTS " + INSULIN_TABLE_NAME +
+            "(timestamp DateTime PRIMARY KEY, profile_ID INTEGER, insulin_value double, insulin_unit VARCHAR(8), insulin_kind VARCHAR(8));";
+    public static final String INSULIN_SELECT =
+            "SELECT * FROM " + INSULIN_TABLE_NAME + ";";
+    public static final String INSULIN_DELETE_TABLE =
+            "DROP TABLE IF EXISTS " + INSULIN_TABLE_NAME + ";";
+
     // Database Constants
     private static final int DATABASE_VERSION = 1;
     // Activity Table
@@ -189,6 +199,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             db.execSQL(MEASUREMENT_CREATE_TABLE);
             Log.d("Database", "Measurement Table Created");
 
+            //Create Insulin Table
+            db.execSQL(INSULIN_CREATE_TABLE);
+            Log.d("Database", "Insulin Table Created");
+
 
             //Create Profile Table
             db.execSQL(PROFILE_CREATE_TABLE);
@@ -304,7 +318,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
 
+    public void InsertBloodsugarEntryScreen(DataBaseHandler handler, String date, int profile_id, double bloodsugar_level, String measure_unit) {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        Log.d("Database", date + "InsertBloodSugar");
 
+        db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
+                + bloodsugar_level + " , '" + date + "' , '" + measure_unit + "' , 'bloodsugar');");
+        db1.close();
+    }
+
+    public void InsertInsulinEntryScreen(DataBaseHandler handler, String date, int profile_id, double insulin_level, String insulin_unit) {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        Log.d("Database", date + "InsertInsulin");
+
+        db1.execSQL("insert into " + INSULIN_TABLE_NAME + "(profile_ID, insulin_value, timestamp, insulin_unit, insulin_kind) values(" + profile_id + ","
+                + insulin_level + " , '" + date + "' , '" + insulin_unit + "' , 'insulin');");
+        db1.close();
+    }
 
     /***
      * Insert a new insulin level
@@ -321,13 +351,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
-    public void InsertInsulin(int profile_id, double insulin, String measure_unit,long tslong) {
+  /*  public void InsertInsulin(int profile_id, double insulin, String measure_unit,long tslong) {
         SQLiteDatabase db1 = this.getWritableDatabase();
         //long tslong = System.currentTimeMillis() / 1000;
         db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
                 + insulin + " , '" + tslong + "' , '" +measure_unit+"' , 'insulin');");
         db1.close();
-    }
+    }*/
 
     /***
      * Insert a new weight measurement
@@ -614,7 +644,36 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     }
 
+    /***
+     * returns the last insulin of the selected user
+     * @param handler
+     * @return
+     */
+    public String[] getLastInsulinMeasurement(DataBaseHandler handler, int profile_id){
+        try {
+            SQLiteDatabase db1 = handler.getWritableDatabase();
+            String[] result = new String[2];
+            Cursor cursor = db1.rawQuery("SELECT insulin_value,insulin_unit " +
+                    "FROM " + INSULIN_TABLE_NAME + " " +
+                    "where profile_ID = " + profile_id + " " +
+                    "and insulin_kind = 'insulin'" +
+                    "ORDER BY timestamp DESC;", null);
+            cursor.moveToFirst();
+            if (cursor.getCount() >= 1) {
+                result[0] = cursor.getString(0);
+                result[1] = cursor.getString(1);
+            } else {
+                result = null;
+            }
+            return result;
+        }
+        catch (Exception e)
+        {
+            return null;
+        }
 
+
+    }
     /**
      * @author Ivo Gosemann 18.03.2016
      * Method to retrieve all Values as MeasureItems for a given measurekind and timeframe

@@ -434,6 +434,15 @@ public class Util {
 		return Math.round(((mg+86.0)/33.3)*ROUND_FACTOR)/ROUND_FACTOR;
 	}
 
+
+	public static double Units_to_ml(double units){
+		return units/100;
+	}
+
+	public static double ml_to_Units(double ml){
+		return ml* 100;
+	}
+
 	// created by Naira, for the drop down animation of the measurement pop up in Entry screen
 	/**
 	 *

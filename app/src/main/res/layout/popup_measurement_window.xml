@@ -29,7 +29,7 @@
         android:id="@+id/first_tableRow">
 
         <android.support.design.widget.TextInputLayout
-            android:id="@+id/input_layout_measurement"
+            android:id="@+id/input_layout_measurement_entryscreen"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingTop="50dp">
@@ -39,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:inputType="numberDecimal"
                 android:ems="10"
-                android:id="@+id/edit_measure_value"
+                android:id="@+id/edit_measure_value_entryscreen"
                 android:layout_column="0"
                 android:numeric="decimal"
                 android:singleLine="true"
@@ -156,7 +156,7 @@
                 android:layout_width="152dp"
                 android:layout_height="57dp"
                 android:text="@string/ml_cc"
-                android:id="@+id/insulin_"
+                android:id="@+id/insulin_ml"
                 android:checked="false"
                 android:buttonTint="@color/colorAccent"/>
 
