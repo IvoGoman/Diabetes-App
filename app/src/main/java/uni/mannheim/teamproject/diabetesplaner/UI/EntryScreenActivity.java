@@ -128,8 +128,11 @@ public class EntryScreenActivity extends AppCompatActivity
                     //Change of Username
                     TextView textView = (TextView) navigationView.findViewById(R.id.username);
                     DataBaseHandler database = AppGlobal.getHandler();
-                    textView.setText(database.getUser(AppGlobal.getHandler(),database.getUserID(AppGlobal.getHandler()))[0] + " " +
-                            database.getUser(AppGlobal.getHandler(),database.getUserID(AppGlobal.getHandler()))[1]);
+                    if (database.getUser(AppGlobal.getHandler(),database.getUserID(AppGlobal.getHandler()))!=null)
+                    {
+                        textView.setText(database.getUser(AppGlobal.getHandler(), database.getUserID(AppGlobal.getHandler()))[0] + " " +
+                                database.getUser(AppGlobal.getHandler(), database.getUserID(AppGlobal.getHandler()))[1]);
+                    }
                 }
             });
 
