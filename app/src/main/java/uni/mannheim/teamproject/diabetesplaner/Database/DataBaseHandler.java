@@ -18,6 +18,7 @@ import java.util.Locale;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 
@@ -109,7 +110,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String ACTIVITYLIST_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " +
                     ACTIVITYLIST_TABLE_NAME +
-                    " (id INTEGER PRIMARY KEY, id_Activity Integer, id_Location Integer, Start DateTime, End DateTime, Meal String, ImagePath String, Intensity Integer, FOREIGN KEY(id_Activity) REFERENCES Activities(id), FOREIGN KEY(id_Location) REFERENCES Locations(id) );";
+                    " (id INTEGER PRIMARY KEY, id_Activity Integer, id_Location Integer, Start DateTime, End DateTime, Meal String, ImagePath String, Intensity Integer,id_SubActivity Integer, FOREIGN KEY(id_Activity) REFERENCES Activities(id), FOREIGN KEY(id_Location) REFERENCES Locations(id));";
 
     //Profile Table
     private static final String PROFILE_TABLE_NAME = "Profile";
@@ -235,6 +236,36 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return SubActivityList;
     }
 
+    public int getActivityID(String activity)
+    {
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        Cursor cursor = db1.rawQuery("select id from Activities where title= '"+ activity+ "'; ", null);
+        if (cursor.moveToFirst()) {
+                return (cursor.getInt(0));
+        }
+        return -1;
+    }
+
+    public int getSubactivityID(String subactivity)
+    {
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        Cursor cursor = db1.rawQuery("select id from SubActivities where title= '"+ subactivity + "'; ", null);
+        if (cursor.moveToFirst()) {
+            return (cursor.getInt(0));
+        }
+        return -1;
+    }
+
+    public String getSubactivity(int subactivityID)
+    {
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        Cursor cursor = db1.rawQuery("select title from SubActivities where id= "+ subactivityID + "; ", null);
+        if (cursor.moveToFirst()) {
+            return (cursor.getString(0));
+        }
+        return "";
+    }
+
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
@@ -273,11 +304,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         int Intensity = Activ.getIntensity();
 
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End, Meal, ImagePath, Intensity) values(" + idActivity + "," + idLocation + " , '" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
+        db1.execSQL("insert into ActivityList(id_Activity, id_SubActivity, id_Location, Start, End, Meal, ImagePath, Intensity) values(" + idActivity + ","+ idSubActivity + "," + idLocation + " , '" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
         db1.close();
     }
-
-
 
 
     public void InsertActivity(DataBaseHandler handler, int idActivity, int idLocation, String Start, String End) {
@@ -801,14 +830,26 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         String Start = Activ.getStarttimeAsString();
         String End = Activ.getEndtimeAsString();
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        db1.execSQL("ic_delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
-        db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(15,1,'"+Start+"','"+End+"')");
+        if (AppGlobal.getEditFlag()) {
+            db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
+        }
+        else{
+            db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
+            db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(15,1,'"+Start+"','"+End+"');");
+        }
+
         db1.close();
     }
     public void DeleteActivity(DataBaseHandler handler, String Start, String End) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        db1.execSQL("ic_delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
-        db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(15,1,'"+Start+"','"+End+"')");
+
+        if (AppGlobal.getEditFlag()) {
+            db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
+        }
+        else{
+            db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
+            db1.execSQL("insert into ActivityList(id_Activity, id_Location, Start, End) values(15,1,'"+Start+"','"+End+"');");
+        }
         db1.close();
     }
 
@@ -840,7 +881,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start >= '" + Start + "' and End <= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                db1.execSQL("ic_delete from ActivityList where id = '" + cursor.getString(0) + "';");
+                db1.execSQL("delete from ActivityList where id = '" + cursor.getString(0) + "';");
             } while (cursor.moveToNext());
             db1.close();
         }

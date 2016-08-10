@@ -35,6 +35,7 @@ public class AppGlobal extends Application {
     private static Location LastLocation;
     private static DataBaseHandler Handler1;
     private static Context context;
+    private static boolean EditFlag;
     public AppGlobal getInstance(){
         return singleton;
     }
@@ -62,6 +63,14 @@ public class AppGlobal extends Application {
 
     public static void setTime(long time1){
         time = time1;
+    }
+
+    public static boolean getEditFlag(){
+        return EditFlag;
+    }
+
+    public static void setEditFlag(boolean b){
+        EditFlag = b;
     }
 
     public static long getTime(){

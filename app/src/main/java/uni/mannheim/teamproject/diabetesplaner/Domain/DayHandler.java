@@ -36,12 +36,15 @@ public class DayHandler {
      */
     public void delete(ArrayList<Integer> indexes) {
         //ic_delete
+        AppGlobal.setEditFlag(false);
         for (int i = indexes.size() - 1; i >= 0; i--) {
             dailyRoutine.remove((int) indexes.get(i));
         }
 
         //adapt times TODO
+
         for (int i = 0; i < dailyRoutine.size(); i++) {
+
             if (i == 0 && dailyRoutine.get(i).getStarttime().compareTo(TimeUtils.getTime("00:00")) != 0) {
                 //first activity of the day
                 dailyRoutine.get(i).setStarttime(TimeUtils.getTime("00:00"));
@@ -60,6 +63,18 @@ public class DayHandler {
         DailyRoutineView.setSelectable(false);
         DailyRoutineView.setActionBarItems();
 
+        for (int i = 1; i < dailyRoutine.size(); i++) {
+            if (dailyRoutine.get(i-1).getActivityId()==dailyRoutine.get(i).getActivityId()){
+                ActivityItem Act = dailyRoutine.get(i-1);
+                String Start = dailyRoutine.get(i-1).getStarttimeAsString();
+                Date End = dailyRoutine.get(i-1).getEndtime();
+                Act.setEndtime(End);
+                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
+                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
+                AppGlobal.getHandler().InsertActivity(AppGlobal.getHandler(),Act);
+            }
+        }
+
         drFragment.updateView();
         //TODO combine with backend, adapt the daily routine
     }
@@ -70,6 +85,17 @@ public class DayHandler {
         DailyRoutineView.setActionBarItems();
         this.clearDailyRoutine();
         this.getDayRoutine(date);
+        for (int i = 1; i < dailyRoutine.size(); i++) {
+            if (dailyRoutine.get(i-1).getActivityId()==dailyRoutine.get(i).getActivityId()){
+                ActivityItem Act = dailyRoutine.get(i-1);
+                String Start = dailyRoutine.get(i-1).getStarttimeAsString();
+                Date End = dailyRoutine.get(i-1).getEndtime();
+                Act.setEndtime(End);
+                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
+                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
+                AppGlobal.getHandler().InsertActivity(AppGlobal.getHandler(),Act);
+            }
+        }
         this.drFragment.updateView();
     }
 
@@ -83,10 +109,22 @@ public class DayHandler {
      */
     public void edit(int indexSelected, ActivityItem activityItem) {
         //TODO edit the daily routine
+        AppGlobal.setEditFlag(true);
         ArrayList<Integer> selected = new ArrayList<Integer>();
         selected.add(indexSelected);
         delete(selected);
         add(activityItem);
+        for (int i = 1; i < dailyRoutine.size(); i++) {
+            if (dailyRoutine.get(i-1).getActivityId()==dailyRoutine.get(i).getActivityId()){
+                ActivityItem Act = dailyRoutine.get(i-1);
+                String Start = dailyRoutine.get(i-1).getStarttimeAsString();
+                Date End = dailyRoutine.get(i-1).getEndtime();
+                Act.setEndtime(End);
+                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
+                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
+                AppGlobal.getHandler().InsertActivity(AppGlobal.getHandler(),Act);
+            }
+        }
     }
 
     /**
@@ -96,6 +134,7 @@ public class DayHandler {
      * @param activityItem
      */
     public void add(ActivityItem activityItem) {
+
         //get the start and endtime of the new activity
         Date start = activityItem.getStarttime();
         Date startItem = null;
@@ -170,6 +209,17 @@ public class DayHandler {
 
             //add activity
             dailyRoutine.add(startindex + 1, activityItem);
+        }
+        for (int i = 1; i < dailyRoutine.size(); i++) {
+            if (dailyRoutine.get(i-1).getActivityId()==dailyRoutine.get(i).getActivityId()){
+                ActivityItem Act = dailyRoutine.get(i-1);
+                String Start = dailyRoutine.get(i-1).getStarttimeAsString();
+                Date End = dailyRoutine.get(i-1).getEndtime();
+                Act.setEndtime(End);
+                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
+                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
+                AppGlobal.getHandler().InsertActivity(AppGlobal.getHandler(),Act);
+            }
         }
         drFragment.updateView();
     }
