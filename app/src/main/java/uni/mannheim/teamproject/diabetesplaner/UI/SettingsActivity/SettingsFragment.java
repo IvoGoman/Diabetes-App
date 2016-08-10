@@ -12,8 +12,11 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -110,9 +113,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             //Write User Data in the Summary Fields
 
             pref_name = (EditTextPreference) findPreference("pref_key_name");
-            String Test1 = sharedPrefs.getString("pref_key_name", "Vorname, Name");
-            pref_name.setSummary(Test1);
-
+//            String Test1 = sharedPrefs.getString("pref_key_name", "Vorname, Name");
+//            pref_name.setSummary(Test1);
+            int id = database.getUserID(AppGlobal.getHandler());
+            pref_name.setSummary(database.getUser(AppGlobal.getHandler(),id)[0] + " " + database.getUser(AppGlobal.getHandler(),id)[1] );
         }catch(Exception e)
         {
             e.getMessage();
@@ -179,14 +183,23 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
             //username, weight and blood sugar level
             if (editTextPref.getKey().equals("pref_key_name")) {
-                editTextPref.setSummary(nameDialog.getText());
 
-                View header = EntryScreenActivity.navigationView.getHeaderView(0);
+
+//                Menu menu = EntryScreenActivity.navigationView.getMenu();
+//                MenuItem user  = menu.findItem(R.id.username);
+//                user.setTitle(nameDialog.getText().toString().split(" ")[0] +" " +nameDialog.getText().toString().split(" ")[1]);
+                //View header = EntryScreenActivity.navigationView.getHeaderView(0);
+                NavigationView navigationView = EntryScreenActivity.navigationView;
+
+                View header = navigationView.getHeaderView(0);
                 TextView name = (TextView) header.findViewById(R.id.username);
-                name.setText(nameDialog.getText());
-                // Log.d(TAG, String.valueOf(getActivity().findViewById(R.id.username)));
+
+                name.setText(nameDialog.getText().toString().split(" ")[0] +" " +nameDialog.getText().toString().split(" ")[1]);
+
+                Log.d(TAG, String.valueOf(R.string.username));
                 database.InsertProfile(database, nameDialog.getText().toString().split(" ")[0],
                         nameDialog.getText().toString().split(" ")[1], 20);
+                editTextPref.setSummary(nameDialog.getText());
             } else if (editTextPref.getKey().equals("pref_key_weight")) {
 
                 if (pref_weight_measurement.getEntry().equals("Kilogramm")) {
@@ -289,20 +302,22 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         {
 
         }
-        pref_weight.setSummary(database.GetLastWeight(AppGlobal.getHandler(),1)[0] + " " + database.GetLastWeight(AppGlobal.getHandler(),1)[1]);
-        pref_weight.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-            @Override
-            public boolean onPreferenceChange(Preference preference, Object newValue) {
-                try {
-                    database.InsertWeight(AppGlobal.getHandler(), 1, Double.parseDouble(pref_weight.getText()), pref_weight_measurement.getValue());
-                    pref_weight.setSummary(pref_weight.getText() + " " + pref_weight_measurement.getValue());
-                    return true;
-                } catch (Exception e) {
+        if(database.GetLastWeight(AppGlobal.getHandler(),database.getUserID(AppGlobal.getHandler())) != null) {
+            pref_weight.setSummary(database.GetLastWeight(AppGlobal.getHandler(), 1)[0] + " " + database.GetLastWeight(AppGlobal.getHandler(), 1)[1]);
+            pref_weight.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    try {
+                        database.InsertWeight(AppGlobal.getHandler(), 1, Double.parseDouble(pref_weight.getText()), pref_weight_measurement.getValue());
+                        pref_weight.setSummary(pref_weight.getText() + " " + pref_weight_measurement.getValue());
+                        return true;
+                    } catch (Exception e) {
 
+                    }
+                    return false;
                 }
-                return false;
-            }
-        });
+            });
+        }
     }
 
 

@@ -25,6 +25,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,6 +40,7 @@ import java.util.List;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.BSInputRecommendation;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.Recommendation;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.RoutineRecommendation;
+import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.GPS_Service.GPS_Service;
@@ -114,8 +116,22 @@ public class EntryScreenActivity extends AppCompatActivity
             drawer.setDrawerListener(toggle);
             toggle.syncState();
 
+
             navigationView = (NavigationView) findViewById(R.id.nav_view);
             navigationView.setNavigationItemSelectedListener(this);
+            navigationView.addOnLayoutChangeListener(new View.OnLayoutChangeListener() {
+                @Override
+                public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
+
+                    navigationView.removeOnLayoutChangeListener( this );
+
+                    //Change of Username
+                    TextView textView = (TextView) navigationView.findViewById(R.id.username);
+                    DataBaseHandler database = AppGlobal.getHandler();
+                    textView.setText(database.getUser(AppGlobal.getHandler(),database.getUserID(AppGlobal.getHandler()))[0] + " " +
+                            database.getUser(AppGlobal.getHandler(),database.getUserID(AppGlobal.getHandler()))[1]);
+                }
+            });
 
 
             //create a DailyRoutineFragment (start page)

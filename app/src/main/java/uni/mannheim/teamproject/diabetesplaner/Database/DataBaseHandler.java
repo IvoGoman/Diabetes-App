@@ -999,6 +999,50 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return SDate1;
     }
 
+
+
+    public String[] getUser(DataBaseHandler handler, int id)
+    {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        try {
+
+            String[] result = new String[2];
+            Cursor cursor = db1.rawQuery("SELECT name, lastname from "+ PROFILE_TABLE_NAME + " where id = " + id +";",null);
+            if (cursor.getCount() >= 1) {
+                cursor.moveToFirst();
+                result[0] = cursor.getString(0);
+                //cursor.moveToNext();
+                result[1] = cursor.getString(1);
+                return result;
+            } else {
+                result = null;
+            }
+            return result;
+        }catch(Exception e)
+        {
+            e.getMessage();
+            return null;
+        }
+    }
+
+    public int getUserID(DataBaseHandler handler)
+    {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        try {
+            Cursor cursor = db1.rawQuery("SELECT MAX(id) from "+ PROFILE_TABLE_NAME +";",null);
+            if (cursor.getCount() >= 1) {
+                cursor.moveToFirst();
+                return cursor.getInt(0);
+            } else {
+                return cursor.getInt(0);
+            }
+        }catch(Exception e)
+        {
+            e.getMessage();
+            return 0;
+        }
+    }
+
 }
 
 //  TODO: Methods which will be deleted
