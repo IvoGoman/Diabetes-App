@@ -271,6 +271,35 @@ public class TimeUtils {
         return cal.getTime();
     }
 
+    public static Date[] getDate(Date date, int minutes) {
+        Date[] result = new Date[2];
+        int hour, minute;
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+//        Start Date is Date + 1 Minute;
+        minute = cal.get(Calendar.MINUTE) + 1;
+        cal.set(Calendar.MINUTE,minute);
+        result[0] = cal.getTime();
+//        End Date is Date + minutes
+        hour = cal.get(Calendar.HOUR_OF_DAY) + minutes / 60;
+        minute = cal.get(Calendar.MINUTE) + minutes % 60;
+//        if minute is over 60 another hour is added
+        if(minute > 59){
+            hour += minute / 60;
+            minute = minute % 60;
+        }
+        if(hour < 24 | (hour == 24 && minute == 0)) {
+            cal.set(Calendar.HOUR_OF_DAY, hour);
+            cal.set(Calendar.MINUTE, minute);
+        } else{
+            cal.set(Calendar.HOUR_OF_DAY,23);
+            cal.set(Calendar.MINUTE,59);
+        }
+        cal.set(Calendar.SECOND, 0);
+        result[1] = cal.getTime();
+        return result;
+    }
+
     /**
      * @author Stefan 30.03.2016
      * returns time in format HH:mm if timeformat is 24h and in format KK:mm AM/PM if timeformat is 12h
