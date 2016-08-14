@@ -3,6 +3,9 @@ package uni.mannheim.teamproject.diabetesplaner.DataMining;
 
 import android.support.v4.util.Pair;
 
+import java.sql.Array;
+import java.sql.Time;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -65,6 +68,41 @@ public class ProcessMiningUtill {
             activityAvgDuration.put(activityId, average);
         }
         return activityAvgDuration;
+    }
+    /**
+     * Calculates the average % for the day of every unique activity
+     *
+     * @return
+     */
+    public static Map<Integer, Double> getAveragePercentualDurations(ArrayList<String[]> eventList) {
+        Map<Integer, Integer> activityCount = new HashMap<>();
+        Map<Integer, Double> activityPercentage = new HashMap<>();
+        Map<Integer, Double> activityAvgPercentage = new HashMap<>();
+        int id, count;
+        double duration, average, percentage;
+        Date startTime, endTime;
+        for (String[] event : eventList) {
+            id = Integer.valueOf(event[1]);
+            startTime = TimeUtils.getDate(event[2]);
+            endTime = TimeUtils.getDate(event[3]);
+            duration = TimeUtils.getDuration(startTime, endTime);
+            percentage = duration / 1440 * 100;
+            if (activityCount.containsKey(id) && activityPercentage.containsKey(id)) {
+                activityCount.put(id, activityCount.get(id) + 1);
+                activityPercentage.put(id, activityPercentage.get(id) + percentage);
+            } else {
+                activityCount.put(id, 1);
+                activityPercentage.put(id, percentage);
+
+            }
+        }
+        for (int activityId : activityCount.keySet()) {
+            count = activityCount.get(activityId);
+            duration = activityPercentage.get(activityId);
+            average = duration / count;
+            activityAvgPercentage.put(activityId, average);
+        }
+        return activityAvgPercentage;
     }
 
     /**
@@ -184,15 +222,89 @@ public class ProcessMiningUtill {
      * @param idDurationMap
      * @return
      */
-    public static boolean getTotalDuration(List<Pair<Integer, Double>> idDurationMap) {
+    public static boolean isTotalDurationReached(List<Pair<Integer, Double>> idDurationMap) {
         Double total = 0.0;
-        Boolean result = false;
         for (Pair<Integer, Double> pair : idDurationMap) {
             total += pair.second;
         }
         if (total <= 1440) {
-            result = true;
+            return false;
+        } else return true;
+    }
+
+    /**
+     * Method calculating the total percentage of the day covered by the Activities in the the List Provided
+     * If the sum is below 100.00 the total day is not yet reached.
+     * @param idDurationMap
+     * @return
+     */
+    public static boolean isTotalPercentageReached(List<Pair<Integer,Double>> idDurationMap){
+        Double total = 0.0;
+        for(Pair<Integer, Double> pair: idDurationMap){
+            total += pair.second;
         }
-        return result;
+        if(total<= 100.0){
+            return false;
+        } else return true;
+
+    }
+    public static void createActivities(List<Pair<Integer,Double>> idDurationMap, boolean percentage){
+        double total = 0.0;
+        int duration = 0;
+        DataBaseHandler dbHandler = AppGlobal.getHandler();
+        Date[] startEndDate;
+        ActivityItem item = null;
+//        How much is every minute/ percent worth towards the total day
+        double relativeDurationOfUnit;
+
+//      how much of the 1440 minutes / 100% of the day are covered by the result?
+        for(Pair<Integer, Double> pair:idDurationMap){
+            total += pair.second;
+        }
+//      if the total is not reached compute how much every minute/ % is worth
+        if(total < 1440 && !percentage) {
+            relativeDurationOfUnit = 1440 / total;
+        }else if(total <100.00 && percentage){
+            relativeDurationOfUnit = 100.0 / total;
+        } else{
+            relativeDurationOfUnit = 1;
+        }
+//      Create activity items based on the list and the relativeDurationOfUnit
+
+        Date date = TimeUtils.getCurrentDate();
+        date = TimeUtils.getDate(date,0,0);
+        for( int i = 0; i < idDurationMap.size(); i++){
+//            TODO: How to handle SubActivity and Intensity?
+
+            duration = (int) Math.floor(idDurationMap.get(i).second * relativeDurationOfUnit);
+//            calculate the minutes of the activity from the percentage it takes from the day
+            if (percentage){
+                duration = duration * 1440 / 100;
+            }
+            startEndDate = TimeUtils.getDate(date,duration);
+//            remove the am/pm-flag from the id
+            int id = idDurationMap.get(i).first;
+            String tempId = String.valueOf(id);
+            id = Integer.parseInt(tempId.substring(0,tempId.length()-1));
+            item = new ActivityItem(id,0,startEndDate[0], startEndDate[1],0);
+            dbHandler.InsertActivity(dbHandler, item);
+            date = startEndDate[1];
+        }
+    }
+
+    /**
+     * Calculate how long each activity is in minutes with the real computed duration of each unit
+     * @param duration either in percent or minutes of the day
+     * @param realDuration actual contribution of each percent/ minute towards the day
+     * @param percentual duration in percent or minutes
+     * @return Duration converted into minutes and calculated with the realDuration
+     */
+    public static double getActualDuration(double duration, double realDuration, boolean percentual){
+        if(percentual){
+            duration = realDuration * duration;
+        } else {
+            duration = realDuration * duration;
+        }
+        return duration;
     }
 }

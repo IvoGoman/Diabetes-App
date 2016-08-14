@@ -123,8 +123,9 @@ public class HistoryFragment extends DailyRoutineFragment {
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         Date date = calendar.getTime();
         dateString = df.format(date);
+       String dataDirectory= getContext().getApplicationInfo().dataDir;
         try {
-            FuzzyModel model = new FuzzyModel(0);
+            FuzzyModel model = new FuzzyModel(0,false);
         } catch (Exception e) {
             e.printStackTrace();
         }
