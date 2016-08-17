@@ -11,9 +11,11 @@ import java.util.Map;
 public class ActivityPrediction {
 
     private int activityID;
+    private int subActivityID;
+    private String activityName;
     private HashMap<Integer, Double> followerProbabilityMap;
     private int averageDuration;
-
+// TODO: Add Average Start and End Date for the Activity
 
     public int getActivityID() {
         return activityID;
@@ -23,6 +25,13 @@ public class ActivityPrediction {
         this.activityID = activityID;
     }
 
+    public String getActivityName() {
+        return activityName;
+    }
+
+    public void setActivityName(String activityName) {
+        this.activityName = activityName;
+    }
     public Map<Integer, Double> getFollowerProbabilityMap() {
         return followerProbabilityMap;
     }
@@ -38,4 +47,5 @@ public class ActivityPrediction {
     public void setAverageDuration(int averageDuration) {
         this.averageDuration = averageDuration;
     }
+
 }
