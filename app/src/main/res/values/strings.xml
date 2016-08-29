@@ -120,23 +120,6 @@
     <string name="DoneButton">Done</string>
     <string name="gl">Glucose Level</string>
 
-    <!-- temporary should be accessed from database-->
-    <string-array name="activity_array">
-        <item>Schlafen</item>
-        <item>Essen/Trinken</item>
-        <item>Körperpflege</item>
-        <item>Transportmittel benutzen</item>
-        <item>Entspannen</item>
-        <!--<item>Fortbewegen (mit Gehilfe)</item>-->
-        <item>Medikamente einnehmen</item>
-        <item>Einkaufen</item>
-        <item>Hausarbeit</item>
-        <item>Essen zubereiten</item>
-        <item>Geselligkeit</item>
-        <item>Fortbewegen</item>
-        <item>Schreibtischarbeit</item>
-        <item>Sport</item>
-    </string-array>
     <string name="title_activity_main2">Main2Activity</string>
 
     <!-- days -->

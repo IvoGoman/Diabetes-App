@@ -44,6 +44,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 public class InputDialog extends DialogFragment{
     private static final String TAG = InputDialog.class.getSimpleName();
     private int activity = 0;
+    private int subactivity = 0;
     private String meal;
     private Date date;
     private Date startDate;
@@ -209,31 +210,32 @@ public class InputDialog extends DialogFragment{
             @Override
             public void onItemSelected(AdapterView adapter, View view, int position, long id) {
                 activity = ActivityItem.getActivityId(adapter.getItemAtPosition(position).toString());
-//                ArrayList<String> subactivities = dbHandler.getSubactivities(activity);
-//                if(subactivities.size() != 0){
-//                    final ArrayAdapter<String> subAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, Util.toArray(subactivities));
-//                    // Specify the layout to use when the list of choices appears
-//                    subAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//                    // Apply the adapter to the spinner
-//                    subSpinner.setAdapter(subAdapter);
-//                    subSpinner.setSelection(activity);
-//                    subSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//                        @Override
-//                        public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-//                            subactivity = ActivityItem.getSubactivityId(subAdapter.getItemAtPosition(position).toString());
-//                        }
-//
-//                        @Override
-//                        public void onNothingSelected(AdapterView<?> parent) {
-//
-//                        }
-//                    });
-//                    subactivityText.setVisibility(View.VISIBLE);
-//                    subSpinner.setVisibility(View.VISIBLE);
-//                }else{
-//                    subactivityText.setVisibility(View.GONE);
-//                    subSpinner.setVisibility(View.GONE);
-//                }
+                ArrayList<String> subactivities = dbHandler.GetSubActivities(activity);
+                if(subactivities.size() != 0){
+                    final ArrayAdapter<String> subAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, Util.toArray(subactivities));
+                    // Specify the layout to use when the list of choices appears
+                    subAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                    // Apply the adapter to the spinner
+                    subSpinner.setAdapter(subAdapter);
+                    subSpinner.setSelection(subactivity);
+                    subSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+                        @Override
+                        public void onItemSelected(AdapterView<?> subAdapter, View view, int subPosition, long id) {
+                            subactivity = dbHandler.getSubactivityID(subAdapter.getItemAtPosition(subPosition).toString());
+                        }
+
+                        @Override
+                        public void onNothingSelected(AdapterView<?> parent) {
+
+                        }
+                    });
+                    subactivityText.setVisibility(View.VISIBLE);
+                    subSpinner.setVisibility(View.VISIBLE);
+                }else{
+                    subactivity = 0;
+                    subactivityText.setVisibility(View.GONE);
+                    subSpinner.setVisibility(View.GONE);
+                }
 
                 if(activity == 2){
                     mealInput.setVisibility(View.VISIBLE);
@@ -344,7 +346,16 @@ public class InputDialog extends DialogFragment{
      * @param activity activity id
      */
     public void setActivity(int activity){
-        this.activity = activity;
+        this.activity = activity-1;
+    }
+
+    /**
+     * set the subactivity of the input dialog
+     * @param subactivity
+     * @author Stefan 29.08.2016
+     */
+    public void setSubactivity(int subactivity){
+        this.subactivity = subactivity-1;
     }
 
     public int getChosenActivity(){
@@ -377,7 +388,8 @@ public class InputDialog extends DialogFragment{
 
     public void setActivityItem(ActivityItem activityItem) {
         this.activityItem = activityItem;
-        setActivity(activityItem.getActivityId() - 1);
+        setActivity(activityItem.getActivityId());
+        setSubactivity(activityItem.getSubactivityId());
         setStartDate(activityItem.getStarttime());
         setEndDate(activityItem.getEndtime());
 
@@ -406,9 +418,20 @@ public class InputDialog extends DialogFragment{
      * returns id of selected activity
      * @return
      */
-    public Integer getSelectedItem() {
+    public Integer getSelectedActivity() {
         return activity;
     }
+
+    /**
+     * returns id of selected subactivity, returns 0 if there is no subactivity
+     * @return
+     * @author Stefan 29.08.2016
+     */
+    public Integer getSelectedSubActivity(){
+        return subactivity;
+    }
+
+
 
     public void setDayHandler(DayHandler drHandler){
         this.drHandler = drHandler;

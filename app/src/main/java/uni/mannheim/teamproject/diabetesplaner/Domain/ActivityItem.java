@@ -2,7 +2,6 @@ package uni.mannheim.teamproject.diabetesplaner.Domain;
 
 import android.graphics.Bitmap;
 
-import java.util.ArrayList;
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
@@ -187,20 +186,7 @@ public class ActivityItem {
      * @return name of activity
      */
     public static String getSubactivity(int id) {
-        switch (id) {
-            case 1:
-                return "Joggen";
-            case 2:
-                return "Biken";
-            case 3:
-                return "Climbing";
-            case 4:
-                return "Frühstück";
-            case 5:
-                return "Mittagessen";
-            default:
-                return "";
-        }
+        return AppGlobal.getHandler().getSubactivity(id);
     }
 
     /**
@@ -211,13 +197,14 @@ public class ActivityItem {
      */
     public static Integer getActivityId(String name){
 
-        ArrayList<String> actionsList = AppGlobal.getHandler().getAllActionsAsList(AppGlobal.getHandler());
-        for(int i=0; i<actionsList.size(); i++){
-            if(actionsList.get(i).equals(name)){
-                return i+1;
-            }
-        }
-        return actionsList.size();
+        return AppGlobal.getHandler().getActivityID(name);
+//        ArrayList<String> actionsList = AppGlobal.getHandler().getAllActionsAsList(AppGlobal.getHandler());
+//        for(int i=0; i<actionsList.size(); i++){
+//            if(actionsList.get(i).equals(name)){
+//                return i+1;
+//            }
+//        }
+//        return actionsList.size();
     }
 
 
