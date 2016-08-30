@@ -5,17 +5,18 @@ import com.opencsv.CSVReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
-import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 
 /**
  * @author Stefan
@@ -24,16 +25,16 @@ public class GSP_Util {
 
 	public static ArrayList<String[]> read(String filename){
 		ArrayList<String[]> tmp = new ArrayList<>();
-	    CSVReader reader;
+		CSVReader reader;
 		try {
 			reader = new CSVReader(new FileReader(filename));
 			//read first
 			reader.readNext();
-		    String [] nextLine;
-		    while ((nextLine = reader.readNext()) != null) {
-		       tmp.add(nextLine);
-		    }
-	    
+			String [] nextLine;
+			while ((nextLine = reader.readNext()) != null) {
+				tmp.add(nextLine);
+			}
+
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -41,10 +42,10 @@ public class GSP_Util {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	    
-	    return tmp;
+
+		return tmp;
 	}
-	
+
 	/**
 	 * prints HashMap to console
 	 * @param map
@@ -55,7 +56,7 @@ public class GSP_Util {
 			System.out.println(m.getKey().toString() + ": " + m.getValue());
 		}
 	}
-	
+
 	/**
 	 * prints HashMap to console
 	 * @param map
@@ -66,7 +67,7 @@ public class GSP_Util {
 			System.out.println(m.getKey().toString() + ": " + m.getValue());
 		}
 	}
-	
+
 	/**
 	 * prints ArrayList to console
 	 * @param list
@@ -77,7 +78,7 @@ public class GSP_Util {
 			System.out.println(list.get(i));
 		}
 	}
-	
+
 
 	/**
 	 * Sorts a HashMap by value (desc or asc)
@@ -98,15 +99,15 @@ public class GSP_Util {
 			}
 		});
 
-    Map<K, V> result = new LinkedHashMap<K, V>();
-    for (Map.Entry<K, V> entry : list)
-    {
-        result.put( entry.getKey(), entry.getValue() );
-    }
-    return result;
-}
-	
-	
+		Map<K, V> result = new LinkedHashMap<K, V>();
+		for (Map.Entry<K, V> entry : list)
+		{
+			result.put( entry.getKey(), entry.getValue() );
+		}
+		return result;
+	}
+
+
 	/**
 	 * returns the max value in a HashMap
 	 * @param map
@@ -125,32 +126,6 @@ public class GSP_Util {
 	}
 
 	/**
-	 * parses the sequence with activities and subactivities combined by String combinations to activity items
-	 * @param s
-	 * @return
-	 * @author Stefan 27.07.2016
-     */
-	public static ArrayList<ActivityItem> parseSequence(Sequence s){
-		ArrayList<ActivityItem> dailyRoutine = new ArrayList<>();
-		for(int i=0; i<s.size(); i++){
-			String event = (String) s.get(i);
-			int activityID = Integer.parseInt(event.replaceAll("_.*",""));
-			String tmp = event.replaceAll(".*_","");
-			int subactivityID = 0;
-			if(!tmp.equals("")) {
-				subactivityID = Integer.parseInt(tmp);
-			}
-
-			String activity = ActivityItem.getActivityString(activityID);
-			String subactivity = ActivityItem.getSubactivity(subactivityID);
-
-			ActivityItem item = new ActivityItem(activityID, subactivityID);
-			dailyRoutine.add(item);
-		}
-		return dailyRoutine;
-	}
-
-	/**
 	 * returns average time of an activity subactivity combination
 	 * @param data
 	 * @return
@@ -160,12 +135,23 @@ public class GSP_Util {
 		HashMap<String, Long> sum = new HashMap<>();
 		HashMap<String, Integer> count = new HashMap<>();
 		for(int i=0; i<data.size(); i++){
-			long starttime = Long.parseLong(data.get(i)[4]);
-			long endtime = Long.parseLong(data.get(i)[5]);
+			long starttime = Long.parseLong(data.get(i)[GSP.iStarttime]);
+			long endtime = Long.parseLong(data.get(i)[GSP.iEndtime]);
 
 			long diff = endtime-starttime;
 
-			String key = data.get(i)[2] + "_" + data.get(i)[3];
+			Timestamp stamp = new Timestamp(starttime);
+			Date date = new Date(stamp.getTime());
+			SimpleDateFormat sdf = new SimpleDateFormat("a");
+			String amPm = sdf.format(date);
+
+			String key;
+			if(amPm.equals("AM")){
+				key = data.get(i)[GSP.iActivity] + "_" + data.get(i)[GSP.iSubactivity] + "_AM";
+			}else{
+				key = data.get(i)[GSP.iActivity] + "_" + data.get(i)[GSP.iSubactivity] + "_PM";
+			}
+
 
 			if(!sum.containsKey(key)){
 				sum.put(key, diff);
