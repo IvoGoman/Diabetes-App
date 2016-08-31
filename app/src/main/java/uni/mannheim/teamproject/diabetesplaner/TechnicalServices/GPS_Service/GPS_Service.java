@@ -119,11 +119,11 @@ public class GPS_Service extends Service implements LocationListener {
         }
 
         //zeigt alle gespeicherten locations an == locationList
-        for (int i = 0; i<locationList.size();i++){
-            System.out.println("Test4: "+ locationList.get(i).time + " info: " + locationList.get(i).lat + " / " + locationList.get(i).lng);
-        }
+        //for (int i = 0; i<locationList.size();i++){
+        //    System.out.println("Test4: "+ locationList.get(i).time + " info: " + locationList.get(i).lat + " / " + locationList.get(i).lng);
+        //}
 
-        System.out.println("Test4 , Anzahl Locations: " + locationList.size());
+        //System.out.println("Test4 , Anzahl Locations: " + locationList.size());
 
         //look for locations that are near to the current location
         for (int i = 0; i<locationList.size()-1;i++){ //-1 das letzte gespeicherte Location nicht mitgezählt wird
@@ -131,9 +131,9 @@ public class GPS_Service extends Service implements LocationListener {
             x_Location.setLatitude(locationList.get(i).lat);
             x_Location.setLongitude(locationList.get(i).lng);
 
-            System.out.println("Test4: CurrentLocation : " + current_location);
-            System.out.println("Test4: x_Location : " + x_Location);
-            System.out.println("Test4 , Distance: " + current_location.distanceTo(x_Location));
+           // System.out.println("Test4: CurrentLocation : " + current_location);
+           // System.out.println("Test4: x_Location : " + x_Location);
+           // System.out.println("Test4 , Distance: " + current_location.distanceTo(x_Location));
 
             //300 meter treshold
             if (current_location.distanceTo(x_Location) < 300){
@@ -141,12 +141,12 @@ public class GPS_Service extends Service implements LocationListener {
             }
         }
 
-        System.out.println("Test4 , Anzahl nearLocations: " + near_locationList.size());
+       // System.out.println("Test4 , Anzahl nearLocations: " + near_locationList.size());
 
 
         //get all Activities
         ArrayList<String[]> eventlist  = AppGlobal.getHandler().getAllEvents(AppGlobal.getHandler());
-        System.out.println("Test4 , Anzahl Activities: " + eventlist.size());
+       // System.out.println("Test4 , Anzahl Activities: " + eventlist.size());
 
 
 
@@ -159,14 +159,14 @@ public class GPS_Service extends Service implements LocationListener {
 
             String[] x = eventlist.get(i);
             //id, name, startdate, enddate
-            System.out.println("MyTest4 Activity " + i + " : " + x[0] + "  " + x[1] + "  " + x[2] + "  " + x[3]);
+           // System.out.println("MyTest4 Activity " + i + " : " + x[0] + "  " + x[1] + "  " + x[2] + "  " + x[3]);
 
             //Daten zum Vergleich konvertieren
 
             try {
                 time_von = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(x[2]);
                 time_bis = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(x[3]);
-                System.out.println("MyTest4 Activity " + i + " : " + time_von + " bis " + time_bis);
+               // System.out.println("MyTest4 Activity " + i + " : " + time_von + " bis " + time_bis);
             } catch (ParseException e) {
                 //Handle exception here, most of the time you will just log it.
                 e.printStackTrace();
