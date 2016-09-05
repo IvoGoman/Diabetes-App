@@ -58,6 +58,6 @@ public class DatePickerFragmentM extends DialogFragment
 
     public void setBloodsugarDialog(MeasurementDialog bs_dialog)
     {
-        dialog = bs_dialog;
+        this.dialog = bs_dialog;
     }
 }

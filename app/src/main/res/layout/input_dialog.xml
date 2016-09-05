@@ -116,12 +116,14 @@
         android:progress="0"
         android:secondaryProgress="0" />
 
+
     <TableLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="0.16"
         android:layout_marginLeft="16dp">
 
+        <!-- edited by Naira, adjusting button formats -->
         <TableRow
             android:layout_width="match_parent"
             android:layout_height="match_parent">
@@ -138,8 +140,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:id="@+id/start_button"
+                android:background="@drawable/button_style"
+                style="@style/buttonStyle"
                 android:layout_column="1" />
+
         </TableRow>
+
 
 
         <TableRow
@@ -158,6 +164,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="16dp"
                 android:id="@+id/end_button"
+                android:background="@drawable/button_style"
+                style="@style/buttonStyle"
                 android:layout_column="1" />
         </TableRow>
     </TableLayout>
