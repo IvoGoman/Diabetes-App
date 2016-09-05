@@ -867,8 +867,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         //String S = "select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.Start > '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "'";
 
         SQLiteDatabase db = handler.getReadableDatabase();
-        String S = "select SubActivities.id, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id where (ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "') or (ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "');";
-        Cursor cursor = db.rawQuery("select SubActivities.id, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id where ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "' or ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "' order by ActivityList.Start;", null);
+        String Query = "select SubActivities.id as id_SubActivity, Activities.id as id_Activity, ActivityList.Meal, ActivityList.ImagePath,ActivityList.Intensity, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id inner join Activities on Subactivities.id_Activity = Activities.id where (ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "') or (ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "');";
+        Cursor cursor = db.rawQuery(Query, null);
         //(ActivityList.End > '2016-01-01 00:00' and ActivityList.Start < '2016-01-01 23:59') or (ActivityList.Start < '2016-01-01 23:59' and ActivityList.Start > '2016-01-01 00:00')
         return GetArrayFromCursor(cursor, Date);
     }
@@ -976,18 +976,27 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     public ArrayList<ActivityItem> GetArrayFromCursor(Cursor cursor, Date Date) {
-        int ActionID;
-        Date Start;
-        Date End;
+        int activityId;
+        int subactivityId;
+
+        Date starttime;
+        Date endtime;
         Date EndOfDay,StartOfDay;
+        String meal;
+        String imagePath;
+        Integer intensity;
         ArrayList<ActivityItem> Activities = new ArrayList<>();
         if (cursor.moveToFirst()) {
             do {
                 try {
-                    ActionID = cursor.getInt(0);
+                    activityId = cursor.getInt(cursor.getColumnIndex("id_Activity"));
+                    subactivityId = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
+                    meal = cursor.getString(cursor.getColumnIndex("Meal"));
+                    imagePath = cursor.getString(cursor.getColumnIndex("ImagePath"));
+                    intensity = cursor.getInt(cursor.getColumnIndex("Intensity"));
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-                    Start = format.parse(cursor.getString(1));
-                    End = format.parse(cursor.getString(2));
+                    starttime = format.parse(cursor.getString(cursor.getColumnIndex("Start")));
+                    endtime = format.parse(cursor.getString(cursor.getColumnIndex("End")));
                     Calendar calendar = Calendar.getInstance();
                     calendar.setTime(Date);
                     calendar.set(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), 23, 59);
@@ -1001,7 +1010,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 //                    if (Start.before(StartOfDay)){
 //                        Start = StartOfDay;
 //                    }
-                    ActivityItem PA = new ActivityItem(ActionID,0,Start,End);
+                    ActivityItem PA = new ActivityItem(activityId,subactivityId,starttime,endtime,imagePath,meal,intensity);
                     Activities.add(PA);
                     } catch (ParseException e) {
                         e.printStackTrace();

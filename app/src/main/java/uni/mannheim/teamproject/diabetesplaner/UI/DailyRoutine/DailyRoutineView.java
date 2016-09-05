@@ -150,7 +150,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         this.subactivity = activityItem.getSubactivityId();
         this.meal = activityItem.getMeal();
         this.imagePath = activityItem.getImagePath();
-        if(imagePath != null) {
+        if(this.imagePath != null && this.imagePath.length()>1) {
             this.mealImage = Util.getCompressedPic(imagePath);
         }
         this.date = activityItem.getDate();

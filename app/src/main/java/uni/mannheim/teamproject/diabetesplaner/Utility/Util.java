@@ -351,7 +351,7 @@ public class Util {
 
 		Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath, bmOptions);
 
-		float factor = targetW/bitmap.getWidth();
+ 		float factor = targetW/bitmap.getWidth();
 
 		Bitmap image = Bitmap.createScaledBitmap(bitmap, (int)(targetW), (int)(photoH*factor), false);
 		return image;

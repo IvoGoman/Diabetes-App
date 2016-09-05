@@ -60,7 +60,7 @@ public class DailyRoutineHandler extends DayHandler{
                     String dateString = null;
                     for (int i = 0; i < Day1.size(); i++) {
                         dateString = TimeUtils.convertDateToDateString(date);
-                        dailyRoutine.add(new ActivityItem(Day1.get(i).getActivityId(), 0, Day1.get(i).getStarttime(), Day1.get(i).getEndtime()));
+                        dailyRoutine.add(Day1.get(i));
                     }
 
                     Log.i(TAG, dailyRoutine.toString());
