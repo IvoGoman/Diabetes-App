@@ -118,7 +118,7 @@ public class ActivityFragment extends Fragment  {
             @Override
             public void onClick(View v)
             {
-                new FileChooser(getActivity()).setFileListener(new FileChooser.FileSelectedListener() {
+                 new FileChooser(getActivity()).setFileListener(new FileChooser.FileSelectedListener() {
                     @Override
                     public void fileSelected(final File file) {
                         String fileString = (String) file.toString();

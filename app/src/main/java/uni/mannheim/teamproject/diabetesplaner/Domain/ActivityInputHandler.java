@@ -60,16 +60,35 @@ public class ActivityInputHandler {
 
             if ((header.length >=5) && (header[0].equals("id")) && (header[1].equals("activityid")) && (header[2].equals("subactivityid")) && (header[3].equals("starttime")) && (header[4].equals("endtime")) ) {
                 //iterate over all lines of the CSV file
+                java.util.Date StartDlast = null;
+                java.util.Date EndDlast = null;
                 for (int i = 1; i < list.size(); i++) {
                     int IdActivity = Integer.valueOf(list.get(i)[1]);
+                    if (IdActivity==2) {
+                        int IdSubActivity = Integer.valueOf(list.get(i)[2]);
+                        switch (IdSubActivity) {
+                            case 3:
+                                IdActivity = 17;
+                            case 4:
+                                IdActivity = 18;
+                        }
+                    }
+
                     SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
                     java.util.Date StartD = new Date();
                     java.util.Date EndD = new Date();
                     StartD.setTime(Long.valueOf(list.get(i)[3])+60000);
                     EndD.setTime(Long.valueOf(list.get(i)[4]));
-
-
-
+                    if (StartDlast!=null && EndDlast!=null && StartDlast.before(StartD) && EndDlast.after(EndD)) {
+                        continue;
+                    }
+                    if (StartDlast!=null && EndDlast!=null && StartDlast.before(StartD) && EndDlast.before(EndD)) {
+                        StartD.setTime(EndDlast.getTime()+60000);
+                        String Start = format.format(StartD);
+                        String End = format.format(EndD);
+                        AppGlobal.getHandler().InsertActivity(AppGlobal.getHandler(), IdActivity, 1, Start, End);
+                        continue;
+                    }
                     String Start = format.format(StartD);
                     String End = format.format(EndD);
                     AppGlobal.getHandler().InsertActivity(AppGlobal.getHandler(), IdActivity, 1, Start, End);

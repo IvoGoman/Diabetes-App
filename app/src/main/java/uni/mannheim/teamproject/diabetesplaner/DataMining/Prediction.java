@@ -32,9 +32,13 @@ public class Prediction {
 
     private static ArrayList<PeriodAction> PA1 = new ArrayList<PeriodAction>();
 
-    private static class TimeAction{
+    public static class TimeAction{
         int Time;
         double Action;
+        public TimeAction(int time, double action){
+            this.Time = time;
+            this.Action = action;
+        }
     }
     public static class PeriodAction {
         public String Start;
@@ -264,6 +268,126 @@ public class Prediction {
 
     */
 
+    public static ArrayList<TimeAction> GetRoutineAsTimeAction() throws Exception {
+
+        if (PA1.isEmpty() == false) {
+            PA1.clear();
+        }
+        FastVector Activities = new FastVector();
+
+
+        Cursor cursor1 = AppGlobal.getHandler().getAllActions(AppGlobal.getHandler());
+        if (cursor1.moveToFirst()) {
+            do {
+                Activities.addElement(cursor1.getString(1).replace(" ", ""));
+            }
+            while (cursor1.moveToNext());
+        }
+        // close cursor
+        if (!cursor1.isClosed()) {
+            cursor1.close();
+        }
+
+        Attribute Activity = new Attribute("Activity", Activities);
+        Attribute Activity1 = new Attribute("Activity1", Activities);
+        Attribute Time = new Attribute("Time");
+        Attribute Dur = new Attribute("Duration");
+
+        FastVector attinfo = new FastVector(4);
+        attinfo.addElement(Time);
+        attinfo.addElement(Dur);
+        attinfo.addElement(Activity);
+        attinfo.addElement(Activity1);
+        ArrayList<Attribute> attinfo1 = new ArrayList<>();
+        attinfo1.add(Time);
+        attinfo1.add(Dur);
+        attinfo1.add(Activity);
+        attinfo1.add(Activity1);
+
+
+        Cursor cursor2 = AppGlobal.getHandler().getAllRoutine();
+        int p = cursor2.getCount();
+        Instances inst = new Instances("output", attinfo, 1);
+        Instance newInstance = new Instance(4);
+        newInstance.setDataset(inst);
+
+        ActivityBefore1 = "Schlafen";
+        //////////////////////////////////////////////
+        if (cursor2.moveToFirst()) {
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+            int duration = 0;
+            do {
+                java.util.Date Start = format.parse(cursor2.getString(3));
+                Calendar calendar = Calendar.getInstance();
+                ActivityCur = cursor2.getString(1).replace(" ", "");
+                java.util.Date End = format.parse(cursor2.getString(4));
+                java.util.Date CurDate = Start;
+                int num = 0;
+                while (CurDate.before(End)) {
+                    num += 1;
+                    if (num == 2) {
+                        duration = 0;
+                    }
+                    calendar.setTime(Start);
+
+                    int minutesleftfrommidnight = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
+                    duration += 1;
+                    //inst.instance(0).setValue(0,minutesleftfrommidnight);
+                    //inst.instance(0).setValue(1,duration);
+                    //inst.instance(0).setValue(2,ActivityCur);
+                    //inst.instance(0).setValue(3,ActivityBefore1);
+
+                    newInstance.setValue(0, (double) minutesleftfrommidnight);
+                    newInstance.setValue(1, (double) duration);
+                    newInstance.setValue(2, ActivityCur);
+                    newInstance.setValue(3, ActivityBefore1);
+
+                    inst.add(newInstance);
+                    inst.add(newInstance);
+                    inst.add(newInstance);
+                    inst.add(newInstance);
+
+                    CurDate.setTime(CurDate.getTime() + 1 * 60 * 1000);
+                    ActivityBefore1 = ActivityCur;
+                }
+            }
+            while (cursor2.moveToNext());
+        }
+        // close cursor
+        if (!cursor2.isClosed()) {
+            cursor2.close();
+        }
+        /////////////////////////////////////////
+        inst.setClassIndex(inst.numAttributes() - 2);
+        J48 tree = new J48();
+        tree.buildClassifier(inst);
+
+        ArrayList<TimeAction> TimeAction1 = new ArrayList<TimeAction>();
+        int Duration = 1;
+        double lastactionpr = 0.0;
+        for (int i = 0; i < 1440; i += 1) {
+            //Instance inst1 = new Instance(2);
+            newInstance.setValue(0, i);
+            newInstance.setValue(1, Duration);
+            newInstance.setValue(3, lastactionpr);
+
+            //inst1.setValue(0,i);
+            double curentaction = tree.classifyInstance(newInstance);
+
+            if (lastactionpr == curentaction) {
+                Duration += 1;
+            } else {
+                Duration = 1;
+            }
+            lastactionpr = curentaction;
+            TimeAction T1 = new TimeAction(i, curentaction);
+//            T1.Action = curentaction;
+//            T1.Time = i;
+            TimeAction1.add(T1);
+        }
+        return TimeAction1;
+    }
+
     public static ArrayList<PeriodAction> GetRoutine1() throws Exception {
 
       if(PA1.isEmpty()==false){ PA1.clear();}
@@ -300,7 +424,7 @@ public class Prediction {
         attinfo1.add(Activity1);
 
 
-        Cursor cursor2 = AppGlobal.getHandler().getAllRoutine(AppGlobal.getHandler());
+        Cursor cursor2 = AppGlobal.getHandler().getAllRoutine();
         int p = cursor2.getCount();
         Instances inst = new Instances("output",attinfo,1);
         Instance newInstance  = new Instance(4);
@@ -376,9 +500,9 @@ public class Prediction {
                 Duration = 1;
             }
             lastactionpr = curentaction;
-            TimeAction T1 = new TimeAction();
-            T1.Action = curentaction;
-            T1.Time = i;
+            TimeAction T1 = new TimeAction(i,curentaction);
+//            T1.Action = curentaction;
+//            T1.Time = i;
             TimeAction1.add(T1);
         }
 

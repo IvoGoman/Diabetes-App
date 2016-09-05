@@ -14,16 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
-import android.support.design.widget.TextInputLayout;
 
 import java.sql.Date;
 import java.sql.Time;
-import java.text.ParseException;
-import java.util.IllegalFormatException;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
-import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.TimePickerFragment;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 

@@ -1,7 +1,5 @@
 package uni.mannheim.teamproject.diabetesplaner.TechnicalServices.GPS_Service;
 
-import android.location.Location;
-
 /**
  * Created by Jens on 19.07.2016.
  */

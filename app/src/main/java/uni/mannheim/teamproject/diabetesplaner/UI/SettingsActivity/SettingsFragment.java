@@ -15,19 +15,17 @@ import android.preference.PreferenceFragment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
+import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.Accelerometer;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.GPS_Service.GPS_Service;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.Wifi;
-import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
-import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
-import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.Accelerometer;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
-import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
@@ -340,7 +338,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         }
         pref_bloodsugar = (Preference) findPreference("pref_key_bloodsugar");
         //Set initial values for bloodsugar measurement. Values retrieved from database
-        pref_bloodsugar.setSummary(bloodsugar_measure_value +" "+ bloodsugar_measure);
+        pref_bloodsugar.setSummary(bloodsugar_measure_value + " " + bloodsugar_measure);
 
         //clickListener for bloodsugar_dialog
         pref_bloodsugar.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
@@ -348,9 +346,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             public boolean onPreferenceClick(Preference preference) {
                 FragmentManager manager = getFragmentManager();
                 bloodsugar_dialog bs = new bloodsugar_dialog();
-                bs.show(manager,"Test");
+                bs.show(manager, "Test");
                 //Set the numberpicker to the current value
-                communicator.respond(bs,bloodsugar_measure_value,bloodsugar_measure,2);
+                communicator.respond(bs, bloodsugar_measure_value, bloodsugar_measure, 2);
                 return true;
             }
         });
@@ -364,6 +362,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         accelerometerCollection = new Intent();
         accelerometerCollection.setClass(getActivity().getApplicationContext(), Accelerometer.class);
         getActivity().startService(accelerometerCollection);
+
+        if (accelerometerCollection!=null){
+            System.out.println("accelerom intent");
+        }
 
         wifi = new Intent();
         wifi.setClass(getActivity().getApplicationContext(), Wifi.class);
