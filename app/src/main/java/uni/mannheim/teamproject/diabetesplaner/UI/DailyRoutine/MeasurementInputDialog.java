@@ -149,11 +149,9 @@ public class MeasurementInputDialog extends DialogFragment {
                             first_tableRow.setVisibility(View.VISIBLE);
                             Util.slide_down(getActivity(), first_tableRow);
                         }
-
                     }
                 }
         );
-
         return inflater.inflate(R.layout.popup_measurement_window, parent, false);
     }*/
 

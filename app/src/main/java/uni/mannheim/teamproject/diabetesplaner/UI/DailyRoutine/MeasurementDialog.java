@@ -2,18 +2,51 @@ package uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.database.Cursor;
+import android.os.Build;
 import android.os.Bundle;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.v4.app.Fragment;
+import android.text.InputType;
+import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
+import android.view.animation.Animation;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListAdapter;
 import android.widget.RadioButton;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import java.sql.Time;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
-import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
-import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.MeasurementFragment;
+import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.DatePickerFragment;
+import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.TimerPickerFragment;
+import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.bloodsugar_dialog;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
+import uni.mannheim.teamproject.diabetesplaner.Domain.MeasurementInputHandler;
+import uni.mannheim.teamproject.diabetesplaner.UI.CustomListView;
+import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
@@ -35,6 +68,11 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
 
     DataBaseHandler database;
+
+    Button btn_date;
+    Button btn_time;
+    private TimerPickerFragmentM TimerPicker;
+    private DatePickerFragmentM DatePicker;
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -61,6 +99,35 @@ public class MeasurementDialog extends MeasurementInputDialog {
         insulin = "";
 
 
+        //Button for DatePicker
+        btn_date = (Button) view.findViewById(R.id.btn_date);
+        btn_date.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePicker = new DatePickerFragmentM();
+                DatePicker.setBloodsugarDialog(MeasurementDialog.this);
+                DatePicker.show(getFragmentManager(), "datePicker");
+
+
+            }
+        });
+
+
+        //Button for TimerPicker
+        btn_time = (Button) view.findViewById(R.id.btn_time);
+        btn_time.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TimerPicker = new TimerPickerFragmentM();
+                TimerPicker.SetDialog(MeasurementDialog.this);
+                TimerPicker.show(getFragmentManager(), "timePicker");
+                //timerpickerfragment.SetDialog(bloodsugar_dialog.this);
+            }
+        });
+
+
+
+
         builder.setPositiveButton(R.string.ADD, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //add measurements
@@ -69,9 +136,21 @@ public class MeasurementDialog extends MeasurementInputDialog {
                     measure_value = addBloodSugar.getText().toString();
 
                     insulin_value = addInsulin.getText().toString();
-                    database.InsertBloodsugarEntryScreen(Calendar.getInstance().getTimeInMillis(), 1, Double.parseDouble(measure_value), measure);
+                    String date_s = btn_date.getText().toString();
+                    String time_s = btn_time.getText().toString();
 
-                   database.InsertInsulinEntryScreen(Calendar.getInstance().getTimeInMillis(), 1, Double.parseDouble(insulin_value), insulin);
+                    database.InsertBloodsugar(database,
+                            java.sql.Date.valueOf(date_s.subSequence(6,9) + "-" + date_s.subSequence(3,4) + "-"+ date_s.subSequence(0,1)),
+                            Time.valueOf(time_s + ":00"),
+                            1, Double.parseDouble(measure_value), measure);
+                    // database.InsertBloodsugarEntryScreen(database, TimeUtils.getTimeStampAsDateString(Calendar.getInstance().getTimeInMillis()), 1, Double.parseDouble(measure_value), measure);
+
+                    //  database.InsertInsulinEntryScreen(database, TimeUtils.getTimeStampAsDateString(Calendar.getInstance().getTimeInMillis()), 1, Double.parseDouble(insulin_value), insulin);
+                    database.InsertInsulinEntryScreen(database,
+                            java.sql.Date.valueOf(date_s.subSequence(6,9) + "-" + date_s.subSequence(3,4) + "-"+ date_s.subSequence(0,1)),
+                            Time.valueOf(time_s + ":00"),
+                            1, Double.parseDouble(insulin_value), insulin);
+
                     Toast.makeText(getActivity(), "Measurements: " + measure_value + " " + measure + "," + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
                     dismiss();
                     /* else {
@@ -82,12 +161,10 @@ public class MeasurementDialog extends MeasurementInputDialog {
                                     .setMessage("You did not change the blood_sugar level.")
                                     .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
                                         public void onClick(DialogInterface dialog, int which) {
-
                                         }
                                     })
                                     .setIcon(android.R.drawable.ic_dialog_alert)
                                     .show();
-
                     }*/
                 } catch (Exception e) {
                     e.getMessage();
@@ -102,7 +179,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
                 });
 
         initialize_measure();
-       // initialize_insulinMeasure();
+        // initialize_insulinMeasure();
         mg.setOnClickListener(myListenser);
         mmol.setOnClickListener(myListenser);
         percentage.setOnClickListener(myListenser);
@@ -153,7 +230,6 @@ public class MeasurementDialog extends MeasurementInputDialog {
                 mmol.setActivated(false);
                 mmol.setChecked(false);
                 break;
-
         }
         if(database.getLastInsulinMeasurement(AppGlobal.getHandler(),1) != null) {
             addInsulin.setText(database.getLastInsulinMeasurement(AppGlobal.getHandler(), 1)[0].toString());
@@ -183,16 +259,13 @@ public class MeasurementDialog extends MeasurementInputDialog {
     }
 
   /*  private void initialize_insulinMeasure() {
-
         if(database.getLastInsulinMeasurement(AppGlobal.getHandler(),1) != null) {
             addInsulin.setText(database.getLastInsulinMeasurement(AppGlobal.getHandler(), 1)[0].toString());
             insulin = database.getLastInsulinMeasurement(AppGlobal.getHandler(), 1)[1].toString();
         }
-
         if (insulin.equals("")) {
             insulin = "Units";
         }
-
         switch (insulin) {
             case "Units":
                 units.setActivated(true);
@@ -200,14 +273,12 @@ public class MeasurementDialog extends MeasurementInputDialog {
                 ml.setActivated(false);
                 ml.setChecked(false);
                 break;
-
             case "mL/cc":
                 ml.setActivated(true);
                 ml.setChecked(true);
                 units.setActivated(false);
                 units.setChecked(false);
                 break;
-
         }
     }*/
 
@@ -316,7 +387,6 @@ public class MeasurementDialog extends MeasurementInputDialog {
                     }
                     insulin = "Units";
                 }
-
             }
             };*/
 

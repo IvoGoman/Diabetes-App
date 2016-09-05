@@ -9,6 +9,7 @@ import android.widget.DatePicker;
 import java.util.Calendar;
 
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.bloodsugar_dialog;
 
 
 public class DatePickerFragmentM extends DialogFragment
@@ -35,19 +36,19 @@ public class DatePickerFragmentM extends DialogFragment
         {
             if (month < 10)
             {
-//                dialog.btn_date.setText(String.format("%d.0%d.%d",day,month,year));
+                dialog.btn_date.setText(String.format("%d.0%d.%d",day,month,year));
             }
             if(day < 10)
             {
-//                dialog.btn_date.setText(String.format("0%d.%d.%d",day,month,year));
+                dialog.btn_date.setText(String.format("0%d.%d.%d",day,month,year));
             }
             if((day < 10) && (month < 10))
             {
-//                dialog.btn_date.setText(String.format("0%d.0%d.%d",day,month,year));
+                dialog.btn_date.setText(String.format("0%d.0%d.%d",day,month,year));
             }
             if((day > 10) && (month > 10))
             {
-//                dialog.btn_date.setText(String.format("%d.%d.%d",day,month,year));
+                dialog.btn_date.setText(String.format("%d.%d.%d",day,month,year));
             }
 
         }catch (Exception e)
@@ -58,6 +59,6 @@ public class DatePickerFragmentM extends DialogFragment
 
     public void setBloodsugarDialog(MeasurementDialog bs_dialog)
     {
-        dialog = bs_dialog;
+        this.dialog = bs_dialog;
     }
 }
