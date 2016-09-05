@@ -17,7 +17,7 @@ public class GSP_Prediction {
 //		ArrayList<String[]> data = Util.read("C:\\Users\\Stefan\\Documents\\Uni Mannheim\\Master\\Team Project\\activityDataCompleteWithCases.csv");
 		ArrayList<String[]> data = Util.read("C:\\Users\\Stefan\\Documents\\Uni Mannheim\\Master\\Team Project\\Stefan_Data_27.07.16\\ActivityData_Cases.csv");
 
-		GSP gsp = new GSP(data, 0, 2, 3);
+		GSP gsp = new GSP(data, 0, 2, 3, 4, 5);
 		float minsup = gsp.getSupportXOccurance(1);
 		HashMap<Sequence, Float> result = gsp.findFrequentPatterns(minsup);
 

@@ -156,7 +156,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             db.execSQL("insert into Activities(Title, id_SuperActivity) values('Körperpflege','6'); ");
             db.execSQL("insert into Activities(Title, id_SuperActivity) values('Transportmittel benutzen','6'); ");
             db.execSQL("insert into Activities(Title, id_SuperActivity) values('Entspannen','1'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Fortbewegen(mit Gehilfe)','4'); ");
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Fortbewegen','4'); ");
             db.execSQL("insert into Activities(Title, id_SuperActivity) values('Medikamente einnehmen','3'); ");
             db.execSQL("insert into Activities(Title, id_SuperActivity) values('Einkaufen','4'); ");
             db.execSQL("insert into Activities(Title, id_SuperActivity) values('Hausarbeit','4'); ");
@@ -175,7 +175,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             db.execSQL("insert into SubActivities(Title, id_Activity) values('Mittagessen','2'); ");
             db.execSQL("insert into SubActivities(Title, id_Activity) values('Abendessen','2'); ");
             db.execSQL("insert into SubActivities(Title, id_Activity) values('Auto fahren','4'); ");
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Transportmittel benutzen','4'); ");
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Transportmittel benutzen','4'); ");
 
 
             // Create Location Table
@@ -749,7 +749,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         MeasureItem measureItem = null;
         if(cursor.moveToFirst()){
             do{
-                measureItem = new MeasureItem(Timestamp.valueOf(cursor.getString(2)).getTime(),cursor.getDouble(0),cursor.getString(1));
+                measureItem = new MeasureItem(Long.valueOf(cursor.getString(2)),cursor.getDouble(0),cursor.getString(1));
                 measureList.add(measureItem);
             } while (cursor.moveToNext());
         }
@@ -773,7 +773,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         MeasureItem measureItem = null;
         if(cursor.moveToFirst()){
             do{
-                measureItem = new MeasureItem(Timestamp.valueOf(cursor.getString(2)).getTime(),cursor.getDouble(0),cursor.getString(1));
+                measureItem = new MeasureItem(Long.valueOf(cursor.getString(2)),cursor.getDouble(0),cursor.getString(1));
                 measureList.add(measureItem);
             } while (cursor.moveToNext());
         }
