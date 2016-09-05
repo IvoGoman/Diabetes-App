@@ -267,6 +267,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
             insulin = database.getLastInsulinMeasurement(AppGlobal.getHandler(), 1)[1].toString();
         }
 
+
         if (insulin.equals("")) {
             insulin = "Units";
         }
