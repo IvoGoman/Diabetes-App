@@ -232,6 +232,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
                 mmol.setActivated(false);
                 mmol.setChecked(false);
                 break;
+
         }
         if(database.getLastInsulinMeasurement(AppGlobal.getHandler(),1) != null) {
             addInsulin.setText(database.getLastInsulinMeasurement(AppGlobal.getHandler(), 1)[0].toString());
