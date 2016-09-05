@@ -36,4 +36,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="buttonStyle" parent="@android:style/Widget.Button.Toggle">
+        <item name="android:textColor">#FFFFFF</item>
+
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

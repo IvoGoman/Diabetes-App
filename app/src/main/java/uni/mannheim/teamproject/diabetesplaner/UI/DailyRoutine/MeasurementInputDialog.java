@@ -1,5 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine;
 
+
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
@@ -19,6 +20,7 @@ import android.view.animation.Transformation;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -36,6 +38,9 @@ import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.MeasurementFragment;
+import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.DatePickerFragment;
+import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.TimerPickerFragment;
+import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.bloodsugar_dialog;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasurementInputHandler;
@@ -57,6 +62,8 @@ public class MeasurementInputDialog extends DialogFragment {
     RadioButton insulinDosage_label;
 
 
+
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,6 +72,7 @@ public class MeasurementInputDialog extends DialogFragment {
     public View getLayout(){
         LayoutInflater inflater = (LayoutInflater) getActivity().getLayoutInflater();
         View v = inflater.inflate(R.layout.popup_measurement_window, null);
+
         first_tableRow = (TableRow) v.findViewById(R.id.first_tableRow);
         blood_sugar_label = (RadioButton) v.findViewById(R.id.blood_sugar_label);
         second_tableRow = (TableRow) v.findViewById(R.id.second_tableRow);
@@ -72,6 +80,8 @@ public class MeasurementInputDialog extends DialogFragment {
 
         first_tableRow.setVisibility(View.GONE);
         second_tableRow.setVisibility(View.GONE);
+
+
 
         blood_sugar_label.setOnClickListener(
                 new View.OnClickListener() {

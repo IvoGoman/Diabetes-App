@@ -122,7 +122,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private Rect dest;
 
 
-    public static int testActivity = 0;
+//    public static int testActivity = 0;
 
 
     public DailyRoutineView(Context context) {
@@ -136,15 +136,15 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         this.context = context;
         this.activityItem = activityItem;
 
-        if(testActivity == 1){
-            activityItem.setSubactivityId(4);
-            activityItem.setMeal("Pizza");
-        }
-        if(testActivity == 2){
-            activityItem.setIntensity(ActivityItem.INTENSITY_HIGH);
-        }
-
-        testActivity++;
+//        if(testActivity == 1){
+//            activityItem.setSubactivityId(4);
+//            activityItem.setMeal("Pizza");
+//        }
+//        if(testActivity == 2){
+//            activityItem.setIntensity(ActivityItem.INTENSITY_HIGH);
+//        }
+//
+//        testActivity++;
 
         this.activity = activityItem.getActivityId();
         this.subactivity = activityItem.getSubactivityId();
@@ -534,14 +534,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         DailyRoutineView.getCurrentRunning().getLocationOnScreen(loc);
         DailyRoutineFragment.getScrollView().scrollTo(0, loc[1]);
         super.onLayout(changed, left, top, right, bottom);
-    }
-
-    /**
-     * returns activity id
-     * @return
-     */
-    public int getActivityID(){
-        return activity;
     }
 
     /**
