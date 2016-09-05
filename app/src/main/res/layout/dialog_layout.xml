@@ -17,24 +17,50 @@
         android:layout_width="match_parent"
         android:layout_height="30dp" />
 
-
-    <Button
-        android:layout_width="match_parent"
+<!-- created by Naira, adjusting button formats -->
+    <LinearLayout
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/btn_Date"
-        android:text="Enter Date"
-        android:onClick="showTimePickerDialog"/>
+        android:orientation="horizontal">
+
+        <Space
+            android:layout_width="70dp"
+            android:layout_height="10dp"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_Date"
+            android:text="@string/m_date"
+            android:onClick="showTimePickerDialog"
+            android:background="@drawable/button_style"
+            style="@style/buttonStyle"
+            android:layout_gravity="left"
+            />
+
+        <Space
+            android:layout_width="30dp"
+            android:layout_height="0dp"
+            />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/btn_time"
+            android:text="@string/m_time"
+            android:onClick="showTimePickerDialog"
+            android:background="@drawable/button_style"
+            style="@style/buttonStyle"
+            android:layout_gravity="right"/>
+
+    </LinearLayout>
 
     <Space
         android:layout_width="match_parent"
         android:layout_height="30dp" />
 
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:id="@+id/btn_time"
-        android:text="Enter Time"
-        android:onClick="showTimePickerDialog" />
+
 
     <TableRow
         android:layout_width="wrap_content"
