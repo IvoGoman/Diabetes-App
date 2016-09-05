@@ -355,12 +355,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
-    public void InsertInsulinEntryScreen(DataBaseHandler handler, String date, int profile_id, double insulin_level, String insulin_unit) {
+    public void InsertInsulinEntryScreen(DataBaseHandler handler,Date date, Time time, int profile_id, double insulin_level, String insulin_unit) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         Log.d("Database", date + "InsertInsulin");
+        Timestamp timestamp = Timestamp.valueOf(date.toString() + " " + time.toString());
+        Log.d("Database", timestamp + "InsertInsulin");
 
         db1.execSQL("insert into " + INSULIN_TABLE_NAME + "(profile_ID, insulin_value, timestamp, insulin_unit, insulin_kind) values(" + profile_id + ","
-                + insulin_level + " , '" + date + "' , '" + insulin_unit + "' , 'insulin');");
+                + insulin_level + " , '" + timestamp.toString() + "' , '" + insulin_unit + "' , 'insulin');");
         db1.close();
     }
 

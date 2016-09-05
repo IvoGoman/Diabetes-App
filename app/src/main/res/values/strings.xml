@@ -169,6 +169,8 @@
     <string name="enter_insulin_dosage">Enter Insulin dosage</string>
     <string name="units">Units</string>
     <string name="ml_cc">mL/cc</string>
+    <string name="m_date"> Date</string>
+    <string name="m_time"> Time</string>
 
 
 </resources>
