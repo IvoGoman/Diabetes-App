@@ -48,7 +48,7 @@ public class AppGlobal extends Application {
         Handler1 = new DataBaseHandler(this, "mydatabase.db", null, 1);
         SQLiteDatabase db;
         db = Handler1.getReadableDatabase();
-        Handler1.getAllRoutine(Handler1);
+        Handler1.getAllRoutine();
     }
 
     public static DataBaseHandler getHandler(){

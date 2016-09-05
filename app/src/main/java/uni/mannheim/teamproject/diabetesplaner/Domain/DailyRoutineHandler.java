@@ -8,7 +8,6 @@ import java.util.Calendar;
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
-import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
@@ -37,7 +36,6 @@ public class DailyRoutineHandler extends DayHandler{
     public void predictDailyRoutine(Date date){
         this.setDate(date);
         ArrayList<Prediction.PeriodAction> prediction = new ArrayList<Prediction.PeriodAction>();
-        DataBaseHandler handler = null;
         Context context = AppGlobal.getcontext();
         Prediction prediction1 = new Prediction();
         try{

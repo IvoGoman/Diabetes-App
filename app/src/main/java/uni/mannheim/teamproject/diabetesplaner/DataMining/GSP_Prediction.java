@@ -121,7 +121,7 @@ public class GSP_Prediction {
         attrList.add(activity);
         attrList.add(starttime);
 
-        Cursor cursor2 = AppGlobal.getHandler().getAllRoutine(AppGlobal.getHandler());
+        Cursor cursor2 = AppGlobal.getHandler().getAllRoutine();
         int p = cursor2.getCount();
         Instances inst = new Instances("output",fv,1);
         Instance instance  = new Instance(3);

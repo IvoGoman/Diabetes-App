@@ -40,7 +40,7 @@ public class Accelerometer extends Service implements SensorEventListener {
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
-        Toast.makeText(this, "Data Collection started", Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, "Data Collection started accelerometer", Toast.LENGTH_SHORT).show();
     }
 
 
@@ -122,12 +122,12 @@ public class Accelerometer extends Service implements SensorEventListener {
 
                     Toast.makeText(this, aggregatedRecords[1], Toast.LENGTH_SHORT).show();
 
-                    //write aggregated records and location label to database
-                    final Runnable runnerDatabase = new Runnable() {
-                        public void run() {
-                            int u = 1;//Calculation.writetoDatabase(testHelper, aggregatedRecords, location);
-                        }
-                    };
+                    System.out.println(aggregatedRecords[1]);
+
+                    if (aggregatedRecords[1]=="Walking" || aggregatedRecords[1]=="Climbing up" || aggregatedRecords[1]=="Climbing down" || aggregatedRecords[1]=="Running" || aggregatedRecords[1]=="Jumping")
+                    {
+
+                    }
 
                     try {
                         //threadHandler.post(runnerDatabase);

@@ -211,7 +211,7 @@ public class InputDialog extends DialogFragment{
             public void onItemSelected(AdapterView adapter, View view, int position, long id) {
                 activity = ActivityItem.getActivityId(adapter.getItemAtPosition(position).toString());
                 ArrayList<String> subactivities = dbHandler.GetSubActivities(activity);
-                if(subactivities.size() != 0){
+                if(subactivities.size() > 1){
                     final ArrayAdapter<String> subAdapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, Util.toArray(subactivities));
                     // Specify the layout to use when the list of choices appears
                     subAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
