@@ -1,10 +1,5 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern;
 
-import com.opencsv.CSVReader;
-
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -18,33 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+
 /**
  * @author Stefan
  */
 public class GSP_Util {
-
-	public static ArrayList<String[]> read(String filename){
-		ArrayList<String[]> tmp = new ArrayList<>();
-		CSVReader reader;
-		try {
-			reader = new CSVReader(new FileReader(filename));
-			//read first
-			reader.readNext();
-			String [] nextLine;
-			while ((nextLine = reader.readNext()) != null) {
-				tmp.add(nextLine);
-			}
-
-		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-
-		return tmp;
-	}
 
 	/**
 	 * prints HashMap to console
@@ -126,39 +100,42 @@ public class GSP_Util {
 	}
 
 	/**
-	 * returns average time of an activity subactivity combination
+	 * returns average time of an activity subactivity combination in milliseconds
 	 * @param data
 	 * @return
 	 * @author Stefan 27.07.2016
 	 */
-	public static HashMap<String, Long> getAvgTime(ArrayList<String[]> data){
+	public static HashMap<String, Long> getAvgTime(ArrayList<ArrayList<ActivityItem>> data){
 		HashMap<String, Long> sum = new HashMap<>();
 		HashMap<String, Integer> count = new HashMap<>();
-		for(int i=0; i<data.size(); i++){
-			long starttime = Long.parseLong(data.get(i)[GSP.iStarttime]);
-			long endtime = Long.parseLong(data.get(i)[GSP.iEndtime]);
+		for(int i=0; i<data.size(); i++) {
+			for (int j = 0; j < data.get(i).size(); j++){
+				ActivityItem item = data.get(i).get(j);
+				long starttime = item.getStarttime().getTime();
+				long endtime = item.getEndtime().getTime();
 
-			long diff = endtime-starttime;
+				long diff = endtime - starttime;
 
-			Timestamp stamp = new Timestamp(starttime);
-			Date date = new Date(stamp.getTime());
-			SimpleDateFormat sdf = new SimpleDateFormat("a");
-			String amPm = sdf.format(date);
+				Timestamp stamp = new Timestamp(starttime);
+				Date date = new Date(stamp.getTime());
+				SimpleDateFormat sdf = new SimpleDateFormat("a");
+				String amPm = sdf.format(date);
 
-			String key;
-			if(amPm.equals("AM")){
-				key = data.get(i)[GSP.iActivity] + "_" + data.get(i)[GSP.iSubactivity] + "_AM";
-			}else{
-				key = data.get(i)[GSP.iActivity] + "_" + data.get(i)[GSP.iSubactivity] + "_PM";
-			}
+				String key;
+				if (amPm.equals("AM")) {
+					key = item.getActivityId() + "_" + item.getSubactivityId() + "_AM";
+				} else {
+					key = item.getActivityId() + "_" + item.getSubactivityId() + "_PM";
+				}
 
 
-			if(!sum.containsKey(key)){
-				sum.put(key, diff);
-				count.put(key, 1);
-			}else{
-				sum.put(key, sum.get(key) + diff);
-				count.put(key, count.get(key) + 1);
+				if (!sum.containsKey(key)) {
+					sum.put(key, diff);
+					count.put(key, 1);
+				} else {
+					sum.put(key, sum.get(key) + diff);
+					count.put(key, count.get(key) + 1);
+				}
 			}
 		}
 

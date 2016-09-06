@@ -25,6 +25,7 @@ public class ActivityItem {
     private String imagePath;
     private Date date;
     private Integer intensity;
+    private Integer duration;
 
     public static final Integer INTENSITY_HIGH = 3;
     public static final Integer INTENSITY_MEDIUM = 2;
@@ -263,5 +264,13 @@ public class ActivityItem {
         tmp += "\nMeal: " + meal;
         tmp += "\nIntensity: " + intensity;
         return tmp;
+    }
+
+    public Integer getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Integer duration) {
+        this.duration = duration;
     }
 }

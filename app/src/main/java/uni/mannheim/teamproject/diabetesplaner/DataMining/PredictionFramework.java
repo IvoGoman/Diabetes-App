@@ -3,6 +3,7 @@ package uni.mannheim.teamproject.diabetesplaner.DataMining;
 import java.util.ArrayList;
 import java.util.Calendar;
 
+import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -51,8 +52,7 @@ public class PredictionFramework {
                 //TODO predict with decision tree
                 break;
             case PREDICTION_GSP:
-                //TODO predict with gsp
-                break;
+                return GSP_Prediction.makeGSPPrediction(train, 0.2f);
             case PREDICTION_FUZZY_MINER:
                 //TODO predict with fuzzy miner
                 break;

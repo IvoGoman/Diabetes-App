@@ -369,7 +369,7 @@ public class TimeUtils {
      * the minOfDay does not specify information like day, month or year.
      * @param minOfDay
      * @return timestamp
-     * @author Stefan 09.07.2015
+     * @author Stefan 09.07.2016
      */
     public static long minutesOfDayToTimestamp(int minOfDay){
         int min = minOfDay%60;

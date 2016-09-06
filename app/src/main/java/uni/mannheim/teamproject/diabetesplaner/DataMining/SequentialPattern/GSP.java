@@ -1,6 +1,5 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern;
 
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 
 /**
  * @author Stefan
@@ -16,37 +15,17 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 public class GSP {
 
 	private ArrayList<String[]> data;
-	private ArrayList<ArrayList<String[]>> cases = new ArrayList<>();
+	private ArrayList<ArrayList<ActivityItem>> cases;
 	private HashMap<Sequence, Integer> count = new HashMap<>();
 	private HashMap<Sequence, Float> freqSubSeq = new HashMap<>();
 	ArrayList<Sequence> newFreqKSeq = new ArrayList<>();
 	private ArrayList<Sequence> completeSeqs = new ArrayList<>();
 	private HashMap<Sequence, Float> freqSubSeqKminus1 = new HashMap<>();
 
-	public static int iCaseId;
-	public static int iActivity;
-	public static int iSubactivity;
-	public static int iStarttime;
-	public static int iEndtime;
 	private int k = 1;
 
-	/**
-	 *
-	 * @param data
-	 * @param indexCaseId index of caseId
-	 * @param indexActivity index of activity
-	 * @param indexSubactivity index of subactivity
-	 */
-	public GSP(ArrayList<String[]> data, int indexCaseId, int indexActivity, int indexSubactivity, int indexStart, int indexEnd){
-		this.data = data;
-		this.iCaseId = indexCaseId;
-		this.iActivity = indexActivity;
-		this.iSubactivity = indexSubactivity;
-		this.iStarttime = indexStart;
-		this.iEndtime = indexEnd;
-
-		createListWithCases();
-
+	public GSP(ArrayList<ArrayList<ActivityItem>> cases){
+		this.cases = cases;
 	}
 
 	/**
@@ -57,31 +36,6 @@ public class GSP {
 	 */
 	public float getSupportXOccurance(int x){
 		return ((float)x)/((float)cases.size());
-	}
-
-	/**
-	 * creates a list that contains for each caseID an own list with the data
-	 * @author Stefan 19.07.2016
-	 */
-	public void createListWithCases(){
-		int currCase = 0;
-		ArrayList<String[]> tmpList = new ArrayList<>();
-		for(int i=0; i<data.size(); i++){
-			if(i==0){
-				currCase = Integer.valueOf(data.get(i)[iCaseId]);
-				tmpList.add(data.get(i));
-			}else{
-				int tmpCase = Integer.valueOf(data.get(i)[iCaseId]);
-				if(tmpCase > currCase){
-					currCase = tmpCase;
-					cases.add(tmpList);
-					tmpList = new ArrayList<>();
-					tmpList.add(data.get(i));
-				}else{
-					tmpList.add(data.get(i));
-				}
-			}
-		}
 	}
 
 	/**
@@ -121,7 +75,7 @@ public class GSP {
 			findFrequentKSequences(minsup);
 
 
-			if(newSeqs()){
+			if(!newSeqs()){
 				HashMap<Sequence, Float> result = new HashMap<>();
 				for(Entry<Sequence, Float> m : freqSubSeq.entrySet()){
 					if(m.getKey().size() > 1){
@@ -146,9 +100,7 @@ public class GSP {
 			//set present items
 			Sequence tmp = new Sequence();
 			for(int j=0; j<cases.get(i).size(); j++){
-				long starttime = Long.parseLong(cases.get(i).get(j)[iStarttime]);
-				Timestamp stamp = new Timestamp(starttime);
-				Date date = new Date(stamp.getTime());
+				Date date = cases.get(i).get(j).getStarttime();
 				SimpleDateFormat sdf = new SimpleDateFormat("a");
 				String amPm = sdf.format(date);
 
@@ -156,9 +108,9 @@ public class GSP {
 
 				//starttime is in the morning or eventing
 				if(amPm.equals("AM")){
-					item = cases.get(i).get(j)[iActivity] + "_" + cases.get(i).get(j)[iSubactivity] + "_" + "AM";
+					item = cases.get(i).get(j).getActivityId() + "_" + cases.get(i).get(j).getSubactivityId() + "_" + "AM";
 				}else{
-					item = cases.get(i).get(j)[iActivity] + "_" + cases.get(i).get(j)[iSubactivity] + "_" + "PM";
+					item = cases.get(i).get(j).getActivityId() + "_" + cases.get(i).get(j).getSubactivityId() + "_" + "PM";
 				}
 
 				tmp.add(item);
@@ -232,7 +184,7 @@ public class GSP {
 	}
 
 	/**
-	 * prune sequences which contain infrequent k-1 sequences 
+	 * prune sequences which contain infrequent k-1 sequences
 	 * @author Stefan 19.07.2016
 	 */
 	public void pruneCandidates(){

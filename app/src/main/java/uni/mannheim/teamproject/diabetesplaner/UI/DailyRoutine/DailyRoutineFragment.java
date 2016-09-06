@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionFramework;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
@@ -127,7 +128,8 @@ public class DailyRoutineFragment extends Fragment {
 //            items.add(drv);
 //        }
 
-        drHandler.predictDailyRoutine(this.date);
+        drHandler.predictDailyRoutine(PredictionFramework.PREDICTION_GSP, PredictionFramework.EVERY_DAY);
+//        drHandler.predictDailyRoutine(this.date);
         DailyRoutineView.clearSelectedActivities();
         updateView();
 

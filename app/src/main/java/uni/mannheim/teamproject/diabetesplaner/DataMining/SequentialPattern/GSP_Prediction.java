@@ -1,80 +1,99 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
  * @author Stefan
  */
 public class GSP_Prediction {
 
-	public static void main(String[] args) {
-
-//		ArrayList<String[]> data = Util.read("C:\\Users\\Stefan\\Documents\\Uni Mannheim\\Master\\Team Project\\activityDataCompleteWithCases.csv");
-		ArrayList<String[]> data = Util.read("C:\\Users\\Stefan\\Documents\\Uni Mannheim\\Master\\Team Project\\Stefan_Data_27.07.16\\ActivityData_Cases.csv");
-
-		GSP gsp = new GSP(data, 0, 2, 3, 4, 5);
-		float minsup = gsp.getSupportXOccurance(1);
+	/**
+	 * Does the actual GSP prediction.
+	 * First of all the GSP is executed to find the frequent sequential patterns,
+	 * then the path from the most frequent start activity of a day to the most frequent end activity of a day is created.
+	 * Times are based on the average times (AM and PM) and normalized to sum to one day.
+	 * Finally the result is converted into ActivityItems and returned
+	 * @param train training data in ArrayList<ArrayList<ActivityItem>> format
+	 * @param minsup minsup that should be used
+     * @return daily routine in ArrayList<ActivityItem> format
+	 * @author Stefan 06.09.2016
+     */
+	public static ArrayList<ActivityItem> makeGSPPrediction(ArrayList<ArrayList<ActivityItem>> train, float minsup){
+		GSP gsp = new GSP(train);
 		HashMap<Sequence, Float> result = gsp.findFrequentPatterns(minsup);
 
+		//get most frequent start and end activities
+		String mostFreqStart = GSP_Prediction.findMostFreqStartActivity(gsp.getCompleteSeqs());
+		String mostFreqEnd = GSP_Prediction.findMostFreqEndActivity(gsp.getCompleteSeqs());
 
-		System.out.println("Frequent Sequences: ");
-		for(Map.Entry<Sequence, Float> m : result.entrySet()){
-			Sequence s = m.getKey();
-			System.out.print(s.toString());
-			System.out.print(" support: " + m.getValue());
-			System.out.println();
-		}
-
-		String mostFreqStart = findMostFreqStartActivity(gsp.getCompleteSeqs());
-		String mostFreqEnd = findMostFreqEndActivity(gsp.getCompleteSeqs());
-
-		System.out.println("Most frequent start: " + mostFreqStart);
-		System.out.println("Most frequent end: " + mostFreqEnd);
-
-
-		ArrayList<String> drList = createDailyRoutine(mostFreqStart, mostFreqEnd, result);
+		//create a path from start of a day to the end of the day
+		ArrayList<String> drList = GSP_Prediction.createDailyRoutine(mostFreqStart, mostFreqEnd, result);
 		Sequence dailyRoutine = new Sequence(drList);
 
-		HashMap<String, Long> avgTimes = GSP_Util.getAvgTime(data);
+		HashMap<String, Long> avgTimes = GSP_Util.getAvgTime(train);
 
-		for(Entry<String, Long> m: avgTimes.entrySet()){
-			System.out.println(m.getKey() + " " + m.getValue());
+		//create list with the average times for each activity
+		//sum up times
+		Long sum = 0l;
+		ArrayList<Long> times = new ArrayList<>();
+		for(int i = 0; i<drList.size(); i++){
+			Long avgTime = avgTimes.get(drList.get(i));
+			times.add(avgTime);
+			sum += avgTime;
 		}
 
-		System.out.println("Daily Routine: ");
-
-		int sum = 0;
-		for(int i=0; i<dailyRoutine.size(); i++){
-			String act = (String)dailyRoutine.get(i);
-			sum += (int)(avgTimes.get(act)/1000/60);
-		}
+		//normalize times to fit a day
 		float ratio = 1440f/(float)sum;
-		float s = 0;
 
-		for(int i=0; i<dailyRoutine.size(); i++){
-			String act = (String)dailyRoutine.get(i);
-			//Tag: 1440
-			float dur = (avgTimes.get(act)/1000/60)*ratio;
-			int min = (int) (dur%60);
-			int hour = (int) (dur/60);
-
-			System.out.println(act + " duration: " + hour + " h " + min + " min ");
-			s += ((avgTimes.get(act)/1000/60)*ratio);
+		for(int i=0; i<times.size(); i++){
+			times.set(i, (long) ((times.get(i)/1000/60)*ratio));
 		}
-		System.out.println("Sum: " + s + " should match 1440");
-		
+
+		//create the actual daily routine where an activity is represented as an ActivityItem
+		ArrayList<ActivityItem> aiRoutine = new ArrayList<>();
+		int minOfDay = 0;
+		for(int i=0; i<drList.size(); i++){
+			String[] params = drList.get(i).split("_");
+			Integer activityId = Integer.parseInt(params[0]);
+			Integer subactivityId = null;
+			try {
+				subactivityId = Integer.parseInt(params[1]);
+			}catch(NumberFormatException e){
+				subactivityId = null;
+			}
+			int duration = times.get(i) != null ? times.get(i).intValue() : 0;
+
+			Date starttime = TimeUtils.getDate(TimeUtils.minutesOfDayToTimestamp(minOfDay));
+			Date endtime = TimeUtils.getDate(TimeUtils.minutesOfDayToTimestamp(duration-1));
+			minOfDay += duration;
+
+			ActivityItem item = new ActivityItem(activityId, subactivityId, starttime, endtime);
+			aiRoutine.add(item);
+		}
+
+		return aiRoutine;
 	}
-	
+
+
+	/**
+	 * runs through the map with sequences and selects the path with the maximum support
+	 * @param mfStart
+	 * @param mfEnd
+	 * @param seqPat
+	 * @return arrayList with activities in the right order
+	 * @author Stefan
+	 */
 	public static ArrayList<String> createDailyRoutine(String mfStart, String mfEnd, HashMap<Sequence, Float> seqPat){
 		ArrayList<String> dr = new ArrayList<>();
 		String latest = mfStart;
 		dr.add(mfStart);
-		
+
 		while(true){
 			Sequence seq = null;
 			for(Entry<Sequence, Float> m : seqPat.entrySet()){
@@ -82,7 +101,7 @@ public class GSP_Prediction {
 				if(seq.get(0).equals(latest)){
 					for(int i=1; i<m.getKey().size(); i++){
 						dr.add((String)seq.get(i));
-					}					
+					}
 					break;
 				}
 			}
@@ -95,7 +114,7 @@ public class GSP_Prediction {
 			}
 		}
 	}
-	
+
 	/**
 	 * finds most frequent start activity
 	 * @param s
@@ -104,7 +123,7 @@ public class GSP_Prediction {
 	 */
 	public static String findMostFreqStartActivity(ArrayList<Sequence> s){
 		HashMap<String, Integer> count = new HashMap<>();
-		
+
 		for(int i=0; i<s.size(); i++){
 			String start = (String)s.get(i).get(0);
 			if(count.containsKey(start)){
@@ -116,7 +135,7 @@ public class GSP_Prediction {
 		Entry<String, Integer> e = GSP_Util.getMaxValue(count);
 		return e.getKey();
 	}
-	
+
 	/**
 	 * finds most frequent end activity
 	 * @param s
@@ -125,7 +144,7 @@ public class GSP_Prediction {
 	 */
 	public static String findMostFreqEndActivity(ArrayList<Sequence> s){
 		HashMap<String, Integer> count = new HashMap<>();
-		
+
 		for(int i=0; i<s.size(); i++){
 			String start = (String)s.get(i).get(s.get(i).size()-1);
 			if(count.containsKey(start)){
@@ -137,4 +156,5 @@ public class GSP_Prediction {
 		Entry<String, Integer> e = GSP_Util.getMaxValue(count);
 		return e.getKey();
 	}
+
 }
