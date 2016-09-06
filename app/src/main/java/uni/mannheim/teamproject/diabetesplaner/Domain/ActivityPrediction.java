@@ -14,8 +14,41 @@ public class ActivityPrediction {
     private int subActivityID;
     private String activityName;
     private HashMap<Integer, Double> followerProbabilityMap;
-    private int averageDuration;
+    private double averageDuration;
+    private boolean isStart = false;
+    private boolean isEnd = false;
 // TODO: Add Average Start and End Date for the Activity
+
+
+    public ActivityPrediction(int activityID, int subActivityID, String activityName, HashMap<Integer, Double> followerProbabilityMap, double averageDuration) {
+        this.activityID = activityID;
+        this.subActivityID = subActivityID;
+        this.activityName = activityName;
+        this.followerProbabilityMap = followerProbabilityMap;
+        this.averageDuration = averageDuration;
+    }
+
+    public ActivityPrediction(int activityID, int subActivityID, String activityName) {
+        this.activityID = activityID;
+        this.subActivityID = subActivityID;
+        this.activityName = activityName;
+    }
+
+    public void setStart(boolean start) {
+        isStart = start;
+    }
+
+    public void setEnd(boolean end) {
+        isEnd = end;
+    }
+
+    public boolean isStart() {
+        return isStart;
+    }
+
+    public boolean isEnd() {
+        return isEnd;
+    }
 
     public int getActivityID() {
         return activityID;
@@ -40,12 +73,14 @@ public class ActivityPrediction {
         this.followerProbabilityMap = followerProbabilityMap;
     }
 
-    public int getAverageDuration() {
+    public double getAverageDuration() {
         return averageDuration;
     }
 
     public void setAverageDuration(int averageDuration) {
         this.averageDuration = averageDuration;
     }
+
+
 
 }

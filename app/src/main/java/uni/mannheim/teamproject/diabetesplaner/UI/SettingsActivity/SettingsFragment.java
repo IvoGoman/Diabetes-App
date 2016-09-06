@@ -18,6 +18,7 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.HeuristicsMinerImplementation;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.GPS_Service.GPS_Service;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.Wifi;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -62,7 +63,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             //Edit field for the entry of the weight
             pref_weight = (EditTextPreference) findPreference("pref_key_weight");
             pref_vacation = (CheckBoxPreference) findPreference("pref_vacation");
-
+            HeuristicsMinerImplementation myHeuristic = new HeuristicsMinerImplementation();
+            myHeuristic.mineApp();
             database = AppGlobal.getHandler();
             sharedPrefs = getPreferenceManager().getSharedPreferences();
 

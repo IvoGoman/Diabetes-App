@@ -1,5 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.Utility;
 
+import java.io.File;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -14,7 +15,9 @@ import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
  */
 public class DummyDataCreator {
     public static void populateDataBase(){
-        String source = "/data/user/0/uni.mannheim.teamproject.diabetesplaner/files/SDC_ActivityData.csv";
+        //String logFile = new File("").getAbsolutePath();
+        //String source = logFile + "/app/src/test/java/data/SDC_ActivityData.csv";
+        String source = "/data/data/uni.mannheim.teamproject.diabetesplaner/files/ActivityData.csv";
         ArrayList<String[]> eventList = Util.read(source);
 //        eventList.remove(0);
         DataBaseHandler dbHandler = AppGlobal.getHandler();
