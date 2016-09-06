@@ -408,6 +408,15 @@ public class EntryScreenActivity extends AppCompatActivity
 
         }else if (id == R.id.nav_activity_measurement) {
             Toast.makeText(this, R.string.menu_item_activity, Toast.LENGTH_SHORT).show();
+//            //TEST
+//            Log.d(TAG,"All Days: ");
+//            ArrayList<ArrayList<ActivityItem>> list = AppGlobal.getHandler().getAllDays(PredictionFramework.WEEKDAYS);
+//            for(int i=0; i<list.size(); i++){
+//                Log.d(TAG, "New Day");
+//                for(int j=0; j<list.get(i).size(); j++){
+//                    Log.d(TAG, list.get(i).get(j).print());
+//                }
+//            }
 
             fragment = new ActivityFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -416,6 +425,7 @@ public class EntryScreenActivity extends AppCompatActivity
         }
         else if (id == R.id.nav_statistics) {
             Toast.makeText(this, R.string.menu_item_statistics, Toast.LENGTH_SHORT).show();
+
 
             fragment = new StatisticsFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();

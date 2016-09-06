@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionFramework;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -1100,7 +1101,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
 
-
     public String[] getUser(DataBaseHandler handler, int id)
     {
         SQLiteDatabase db1 = handler.getWritableDatabase();
@@ -1141,6 +1141,215 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             e.getMessage();
             return 0;
         }
+    }
+
+    /**
+     * returns a list with all relevant days from the database (training data)
+     * @param mode specifies which days should be returned. <br/>
+     *             Valid values are: <br/>
+     *
+     *             <li><b>PredictionFramework.EVERY_DAY</b>: returns every day</li>
+     *             <li><b>PredictionFramework.WEEKDAYS</b>: returns all weekdays </li>
+     *             <li><b>PredictionFramework.WEEKENDS</b>: returns all weekend days </li>
+     *             <li><b>Calendar.MONDAY</b>,...,<b>Calendar.SUNDAY</b>: returns all days of the specified day </li>
+     * @return ArrayList contains an arraylist with ActivityItems for every single day <br/>
+     * @author Stefan 06.09.2016
+     */
+    public ArrayList<ArrayList<ActivityItem>> getAllDays(int mode) {
+        String query = "SELECT al.*, s.id_Activity FROM " + ACTIVITYLIST_TABLE_NAME + " al " +
+                "INNER JOIN " + SUB_ACTIVITIES_TABLE_NAME + " s " + "ON al.id_SubActivity = s.id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        ArrayList<ArrayList<ActivityItem>> relevantDays = new ArrayList<>();
+        switch (mode) {
+            case PredictionFramework.EVERY_DAY: {
+
+                Date startPrev = null;
+
+                ArrayList<ActivityItem> day = new ArrayList<>();
+                ActivityItem item;
+                if (cursor.moveToFirst()) {
+                    do {
+                        int activityId = cursor.getInt(cursor.getColumnIndex("id_Activity"));
+                        int subactivityId = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
+                        String meal = cursor.getString(cursor.getColumnIndex("Meal"));
+                        String imagePath = cursor.getString(cursor.getColumnIndex("ImagePath"));
+                        int intensity = cursor.getInt(cursor.getColumnIndex("Intensity"));
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                        Date starttime = null;
+                        Date endtime = null;
+                        try {
+                            starttime = format.parse(cursor.getString(cursor.getColumnIndex("Start")));
+                            endtime = format.parse(cursor.getString(cursor.getColumnIndex("End")));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        //if startPrev is initialized (not initialized in first run)
+                        if (startPrev != null) {
+                            //if starttime of previous activity was on a different day
+                            if (TimeUtils.isDifferentDay(startPrev, starttime)) {
+                                relevantDays.add(day);
+                                day = new ArrayList<>();
+                            }
+                        }
+                        item = new ActivityItem(activityId, subactivityId, starttime, endtime, imagePath, meal, intensity);
+                        day.add(item);
+
+                        startPrev = starttime;
+                    } while (cursor.moveToNext());
+                    relevantDays.add(day);
+                }
+                break;
+            }
+            case PredictionFramework.WEEKDAYS: {
+                Date startPrev = null;
+
+                ArrayList<ActivityItem> day = new ArrayList<>();
+                ActivityItem item;
+                if (cursor.moveToFirst()) {
+                    do {
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                        Date starttime = null;
+                        Date endtime = null;
+                        try {
+                            starttime = format.parse(cursor.getString(cursor.getColumnIndex("Start")));
+                            endtime = format.parse(cursor.getString(cursor.getColumnIndex("End")));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        if(starttime != null) {
+                            //get the day of week from starttime
+                            Calendar cal1 = Calendar.getInstance();
+                            cal1.setTime(starttime);
+                            int dayOfWeek = cal1.get(Calendar.DAY_OF_WEEK);
+
+                            if (dayOfWeek == Calendar.MONDAY || dayOfWeek == Calendar.TUESDAY || dayOfWeek == Calendar.WEDNESDAY || dayOfWeek == Calendar.THURSDAY || dayOfWeek == Calendar.FRIDAY) {
+                                //get the rest of the parameters
+                                int activityId = cursor.getInt(cursor.getColumnIndex("id_Activity"));
+                                int subactivityId = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
+                                String meal = cursor.getString(cursor.getColumnIndex("Meal"));
+                                String imagePath = cursor.getString(cursor.getColumnIndex("ImagePath"));
+                                int intensity = cursor.getInt(cursor.getColumnIndex("Intensity"));
+
+                                if (startPrev != null) {
+                                    if (TimeUtils.isDifferentDay(startPrev, starttime)) {
+                                        relevantDays.add(day);
+                                        day = new ArrayList<>();
+                                    }
+                                }
+                                item = new ActivityItem(activityId, subactivityId, starttime, endtime, imagePath, meal, intensity);
+                                day.add(item);
+
+                                startPrev = starttime;
+                            }
+                        }
+                    } while (cursor.moveToNext());
+                    relevantDays.add(day);
+                }
+                break;
+            }
+            case PredictionFramework.WEEKENDS: {
+                Date startPrev = null;
+
+                ArrayList<ActivityItem> day = new ArrayList<>();
+                ActivityItem item;
+                if (cursor.moveToFirst()) {
+                    do {
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                        Date starttime = null;
+                        Date endtime = null;
+                        try {
+                            starttime = format.parse(cursor.getString(cursor.getColumnIndex("Start")));
+                            endtime = format.parse(cursor.getString(cursor.getColumnIndex("End")));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (starttime != null) {
+                            //get the day of week from starttime
+                            Calendar cal1 = Calendar.getInstance();
+                            cal1.setTime(starttime);
+                            int dayOfWeek = cal1.get(Calendar.DAY_OF_WEEK);
+
+                            if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+                                //get the rest of the parameters
+                                int activityId = cursor.getInt(cursor.getColumnIndex("id_Activity"));
+                                int subactivityId = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
+                                String meal = cursor.getString(cursor.getColumnIndex("Meal"));
+                                String imagePath = cursor.getString(cursor.getColumnIndex("ImagePath"));
+                                int intensity = cursor.getInt(cursor.getColumnIndex("Intensity"));
+
+                                if (startPrev != null) {
+                                    if (TimeUtils.isDifferentDay(startPrev, starttime)) {
+                                        relevantDays.add(day);
+                                        day = new ArrayList<>();
+                                    }
+                                }
+                                item = new ActivityItem(activityId, subactivityId, starttime, endtime, imagePath, meal, intensity);
+                                day.add(item);
+
+                                startPrev = starttime;
+                            }
+                        }
+                    } while (cursor.moveToNext());
+                    relevantDays.add(day);
+                }
+                break;
+            }
+            default:
+                //single day
+                if (mode >= Calendar.SUNDAY && mode <= Calendar.SATURDAY) {
+                    Date startPrev = null;
+
+                    ArrayList<ActivityItem> day = new ArrayList<>();
+                    ActivityItem item;
+                    if (cursor.moveToFirst()) {
+                        do {
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                            Date starttime = null;
+                            Date endtime = null;
+                            try {
+                                starttime = format.parse(cursor.getString(cursor.getColumnIndex("Start")));
+                                endtime = format.parse(cursor.getString(cursor.getColumnIndex("End")));
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            //get the day of week from starttime
+                            if (starttime != null) {
+                                Calendar cal1 = Calendar.getInstance();
+                                cal1.setTime(starttime);
+                                int dayOfWeek = cal1.get(Calendar.DAY_OF_WEEK);
+
+                                if (dayOfWeek == mode) {
+                                    //get the rest of the parameters
+                                    int activityId = cursor.getInt(cursor.getColumnIndex("id_Activity"));
+                                    int subactivityId = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
+                                    String meal = cursor.getString(cursor.getColumnIndex("Meal"));
+                                    String imagePath = cursor.getString(cursor.getColumnIndex("ImagePath"));
+                                    int intensity = cursor.getInt(cursor.getColumnIndex("Intensity"));
+
+                                    if (startPrev != null) {
+                                        if (TimeUtils.isDifferentDay(startPrev, starttime)) {
+                                            relevantDays.add(day);
+                                            day = new ArrayList<>();
+                                        }
+                                    }
+                                    item = new ActivityItem(activityId, subactivityId, starttime, endtime, imagePath, meal, intensity);
+                                    day.add(item);
+
+                                    startPrev = starttime;
+                                }
+                            }
+                        } while (cursor.moveToNext());
+                        relevantDays.add(day);
+
+                    }
+                }
+        }
+        return relevantDays;
     }
 
 }

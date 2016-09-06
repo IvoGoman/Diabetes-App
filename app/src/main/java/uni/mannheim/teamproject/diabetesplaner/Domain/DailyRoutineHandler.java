@@ -8,6 +8,7 @@ import java.util.Calendar;
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionFramework;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
@@ -25,6 +26,19 @@ public class DailyRoutineHandler extends DayHandler{
     public DailyRoutineHandler(DailyRoutineFragment drFragment) {
         super(drFragment);
         dailyRoutine = getDailyRoutine();
+    }
+
+    /**
+     * predicts the daily routine and lets you choose between different algorithms
+     * @param algorithm <li>PredictionFramework.PREDICTION_DECISION_TREE</li>
+     *                  <li>PredictionFramework.PREDICTION_GSP</li>
+     *                  <li>PredictionFramework.PREDICTION_FUZZY_MINER</li>
+     *                  <li>PredictionFramework.PREDICTION_HEURISTICS_MINER</li>
+     * @param mode     EVERY_DAY, WEEKDAYS, WEEKENDS, MONDAY, ... , SUNDAY
+     * @author Stefan 06.09.2016
+     */
+    public void predictDailyRoutine(int algorithm, int mode){
+        dailyRoutine = PredictionFramework.predict(PredictionFramework.retrieveTrainingData(mode), PredictionFramework.PREDICTION_GSP);
     }
 
 

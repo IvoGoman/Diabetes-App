@@ -240,4 +240,28 @@ public class ActivityItem {
         return this.intensity;
     }
 
+    /**
+     * returns properties as a String that can be printed to the console
+     * @return
+     * @author Stefan 06.09.2016
+     */
+    public String print() {
+        String tmp = "";
+        tmp += "Activity: " + activityId;
+        tmp += "\nSubactivity: " + subactivityId;
+        if(starttime != null) {
+            tmp += "\nStarttime: " + TimeUtils.dateToDateTimeString(starttime);
+        }else{
+            tmp += "\nStarttime: null";
+        }
+        if(endtime != null) {
+            tmp += "\nEndtime: " + TimeUtils.dateToDateTimeString(endtime);
+        }else{
+            tmp += "\nEndtime: null";
+        }
+        tmp += "\nImagePath: " + imagePath;
+        tmp += "\nMeal: " + meal;
+        tmp += "\nIntensity: " + intensity;
+        return tmp;
+    }
 }

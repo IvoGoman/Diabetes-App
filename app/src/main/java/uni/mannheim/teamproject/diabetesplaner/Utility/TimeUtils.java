@@ -18,6 +18,36 @@ import uni.mannheim.teamproject.diabetesplaner.R;
  * Created by Stefan on 26.04.2016.
  */
 public class TimeUtils {
+
+    /**
+     * checks if the second date is a new day
+     * @param date1
+     * @param date2
+     * @return
+     * @author Stefan 06.09.2016
+     */
+    public static boolean isDifferentDay(Date date1, Date date2){
+        if(date1 == null || date2 == null){
+            return false;
+        }
+        Calendar cal1 = Calendar.getInstance();
+        cal1.setTime(date1);
+        int d1 = cal1.get(Calendar.DAY_OF_MONTH);
+        int m1 = cal1.get(Calendar.MONTH);
+        int y1 = cal1.get(Calendar.YEAR);
+
+        Calendar cal2 = Calendar.getInstance();
+        cal1.setTime(date2);
+        int d2 = cal1.get(Calendar.DAY_OF_MONTH);
+        int m2 = cal1.get(Calendar.MONTH);
+        int y2 = cal1.get(Calendar.YEAR);
+
+        if(d1 != d2 || m1 != m2 || y1 != y2){
+            return true;
+        }
+        return false;
+    }
+
     /**
      * converts a timestamp String to a Calendar instance
      * @param timestamp as String

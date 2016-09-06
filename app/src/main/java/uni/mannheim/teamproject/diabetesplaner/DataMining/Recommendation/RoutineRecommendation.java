@@ -104,7 +104,7 @@ public class RoutineRecommendation extends Recommendation {
 
         //there is no measurment within specified time interval
         if(bsLevel == 0){
-            //TODO
+            //TODO Ammars rules missing
             sendNotification("No blood sugar level measurement within the last " + period + " hours. " +
                     "TODO: give recommendation based on activities" , mIdOffset);
         }else{

@@ -2,51 +2,19 @@ package uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
-import android.app.DialogFragment;
 import android.content.DialogInterface;
-import android.database.Cursor;
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.CoordinatorLayout;
-import android.support.v4.app.Fragment;
-import android.text.InputType;
-import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
-import android.view.animation.Animation;
-import android.widget.AbsListView;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.ListAdapter;
 import android.widget.RadioButton;
-import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.sql.Time;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.Locale;
 
-import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.MeasurementFragment;
-import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.DatePickerFragment;
-import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.TimerPickerFragment;
-import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.bloodsugar_dialog;
-import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
-import uni.mannheim.teamproject.diabetesplaner.Domain.MeasurementInputHandler;
-import uni.mannheim.teamproject.diabetesplaner.UI.CustomListView;
 import uni.mannheim.teamproject.diabetesplaner.R;
-import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
@@ -146,10 +114,10 @@ public class MeasurementDialog extends MeasurementInputDialog {
                     // database.InsertBloodsugarEntryScreen(database, TimeUtils.getTimeStampAsDateString(Calendar.getInstance().getTimeInMillis()), 1, Double.parseDouble(measure_value), measure);
 
                     //  database.InsertInsulinEntryScreen(database, TimeUtils.getTimeStampAsDateString(Calendar.getInstance().getTimeInMillis()), 1, Double.parseDouble(insulin_value), insulin);
-                    database.InsertInsulinEntryScreen(database,
-                            java.sql.Date.valueOf(date_s.subSequence(6,9) + "-" + date_s.subSequence(3,4) + "-"+ date_s.subSequence(0,1)),
-                            Time.valueOf(time_s + ":00"),
-                            1, Double.parseDouble(insulin_value), insulin);
+//                    database.InsertInsulinEntryScreen(database,
+//                            java.sql.Date.valueOf(date_s.subSequence(6,9) + "-" + date_s.subSequence(3,4) + "-"+ date_s.subSequence(0,1)),
+//                            Time.valueOf(time_s + ":00"),
+//                            1, Double.parseDouble(insulin_value), insulin);
 
                     Toast.makeText(getActivity(), "Measurements: " + measure_value + " " + measure + "," + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
                     dismiss();
