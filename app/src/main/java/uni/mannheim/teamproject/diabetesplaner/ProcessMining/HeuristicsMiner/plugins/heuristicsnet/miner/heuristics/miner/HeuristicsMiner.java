@@ -124,6 +124,11 @@ public class HeuristicsMiner {
 		return SimpleNet.toString();
 	}
 
+	public SimpleHeuristicsNet getSimpleNet2()
+	{
+		return SimpleNet;
+	}
+
 	public HeuristicsMetrics getMetrics()
 	{
 		return SimpleNet.getMetrics();

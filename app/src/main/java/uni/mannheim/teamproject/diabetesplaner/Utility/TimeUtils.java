@@ -82,6 +82,24 @@ public class TimeUtils {
         Date date = new Date(Long.parseLong(timestamp));
         return date;
     }
+
+    /**
+     * Methods converts a String in Format YYYY-MM-DD HH:MM:SS to a Data Object
+     * @param dateString
+     * @return
+     */
+    public static Date getDateFromString(String dateString){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        Date date = null;
+        try {
+            date = sdf.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return date;
+    }
+
+
     /**
      * @author Stefan 26.04.2016
      * converts a timestamp to a Date instance
@@ -283,6 +301,35 @@ public class TimeUtils {
         return cal.getTime();
     }
 
+    public static Date[] getDate(Date date, int minutes) {
+        Date[] result = new Date[2];
+        int hour, minute;
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+//        Start Date is Date + 1 Minute;
+        minute = cal.get(Calendar.MINUTE) + 1;
+        cal.set(Calendar.MINUTE,minute);
+        result[0] = cal.getTime();
+//        End Date is Date + minutes
+        hour = cal.get(Calendar.HOUR_OF_DAY) + minutes / 60;
+        minute = cal.get(Calendar.MINUTE) + minutes % 60;
+//        if minute is over 60 another hour is added
+        if(minute > 59){
+            hour += minute / 60;
+            minute = minute % 60;
+        }
+        if(hour < 24 | (hour == 24 && minute == 0)) {
+            cal.set(Calendar.HOUR_OF_DAY, hour);
+            cal.set(Calendar.MINUTE, minute);
+        } else{
+            cal.set(Calendar.HOUR_OF_DAY,23);
+            cal.set(Calendar.MINUTE,59);
+        }
+        cal.set(Calendar.SECOND, 0);
+        result[1] = cal.getTime();
+        return result;
+    }
+
     /**
      * @author Stefan 30.03.2016
      * returns time in format HH:mm if timeformat is 24h and in format KK:mm AM/PM if timeformat is 12h
@@ -317,10 +364,10 @@ public class TimeUtils {
      * @param timeWindow array containing dates as string values
      * @return date array converted to long timestamp array
      */
-    public static Long[] convertDateStringToTimestamp(String[] timeWindow){
-        Timestamp timestampStart=null,timestampEnd = null;
-        try{
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh:mm");
+    public static Long[] convertDateStringToTimestamp(String[] timeWindow) {
+        Timestamp timestampStart = null, timestampEnd = null;
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             Date parsedStart = dateFormat.parse(timeWindow[0]);
             Date parsedEnd = dateFormat.parse(timeWindow[1]);
             timestampStart = new java.sql.Timestamp(parsedStart.getTime());
@@ -414,4 +461,15 @@ public class TimeUtils {
         return dateString;
     }
 
+    /**
+     * @param timestamp
+     * @return 0 for AM or 1 for PM
+     */
+
+    public static int isAM(long timestamp) {
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
+        Calendar calendar = TimeUtils.getCalendar(timestamp);
+        int am_pm = calendar.get(Calendar.AM_PM);
+        return am_pm;
+    }
 }

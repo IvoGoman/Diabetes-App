@@ -13,7 +13,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionFramework;
@@ -103,9 +105,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String ACTIVITYLIST_TABLE_NAME = "ActivityList";
     public static final String ACTIVITYLIST_SELECT =
             "SELECT * FROM " + ACTIVITYLIST_TABLE_NAME + ";";
-
-    /* JW: Added Bloodsugar_History Table
-    */
     public static final String ACTIVITYLIST_DELETE_TABLE =
             "DROP TABLE IF EXISTS " + ACTIVITYLIST_TABLE_NAME + ";";
     private static final String ACTIVITYLIST_CREATE_TABLE =
@@ -419,6 +418,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
+
+
+
     /***
      * Insert a new insulin level
      * @param handler
@@ -625,6 +627,23 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     /**
+     * Returns a ArrayList containing all Acitivity IDs
+     * @param helper
+     * @return
+     */
+    public Map<Integer,String> getAllActionIDsAndTitle(DataBaseHandler helper) {
+        SQLiteDatabase db = helper.getWritableDatabase();
+        //Create a Cursor that contains all records from the locations table
+        Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
+        Map<Integer,String> idMap = new HashMap<Integer,String>();
+        cursor.moveToFirst();
+        do {
+            idMap.put(cursor.getInt(0),cursor.getString(1));
+        } while(cursor.moveToNext());
+        return idMap;
+    }
+
+    /**
      * 27.06.2016 Stefan
      * returns all activities as a list
      * @param helper
@@ -655,7 +674,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return cursor;
     }
 
-    public ArrayList<String[]> getAllEvents(DataBaseHandler handler){
+    /**
+     * Queries all available activities from the database
+     * @param handler
+     * @return
+     */
+    public ArrayList<ActivityItem> getAllActivities(DataBaseHandler handler){
         SQLiteDatabase db = handler.getReadableDatabase();
         ArrayList<String[]> eventList = new ArrayList<String[]>();
         Cursor cursor = db.rawQuery("select ActivityList.id, SubActivities.title, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id", null);
@@ -666,8 +690,28 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         return eventList;
+    } /**
+     * Queries all available activities from the database.
+     * Filters by day of week
+     * 0==Sunday, 1==Monday, ..., 6==Saturday etc.
+     * @param handler
+     * @param day integer corresponding to the weekday
+     * @return ArrayList<ActivityItem> containing all activities of the weekday provided
+     */
+    public ArrayList<ActivityItem> getAllActivitiesByWeekday(DataBaseHandler handler, int day){
+        SQLiteDatabase db = handler.getReadableDatabase();
+        ActivityItem activity = null;
+        ArrayList<ActivityItem> activityList = new ArrayList<ActivityItem>();
+        Cursor cursor = db.rawQuery("select ActivityList.id_Activity, Activities.title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id  where strftime('%w', ActivityList.Start)='"+day+"' order by ActivityList.Start ASC", null);
+        if(cursor.moveToFirst()){
+            do {
+                activity = new ActivityItem(cursor.getInt(0),0,TimeUtils.getDateFromString(cursor.getString(2)),TimeUtils.getDateFromString(cursor.getString(3)));
+                activityList.add(activity);
+            } while (cursor.moveToNext());
+        }
+        return activityList;
     }
-    /***
+    /**
      * returns the last measurement of blood sugar and insulin of the selected user
      * @param handler
      * @return
@@ -693,7 +737,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    /***
+    /**
      * returns the last measurement of the selected user
      * @param handler
      * @return
@@ -855,6 +899,24 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return activityList;
     }
 
+    /**
+     * Returns all Activities with the given Activity ID
+     * @param handler
+     * @param activityID
+     * @return
+     */
+    public ArrayList<ActivityItem> getActivitiesById(DataBaseHandler handler, int activityID){
+        SQLiteDatabase db = handler.getReadableDatabase();
+        Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.id_Activity ="+activityID+";", null);
+        ArrayList<ActivityItem> activityItems = new ArrayList<>();
+        if(cursor.moveToFirst()){
+            do {
+                activityItems.add(new ActivityItem(cursor.getInt(0),0, TimeUtils.getDateFromString(cursor.getString(1)),TimeUtils.getDateFromString(cursor.getString(2))));
+            } while(cursor.moveToNext());
+        }
+        return activityItems;
+    }
+
     public ArrayList<ActivityItem> GetDay(DataBaseHandler handler, Date Date) {
         String StartOfDay, EndOfDay;
         Calendar calendar = Calendar.getInstance();
@@ -874,6 +936,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return GetArrayFromCursor(cursor, Date);
     }
 
+    public ActivityItem getCurrentActivity(){
+        Date currentTime = TimeUtils.getCurrentDate();
+        Cursor cursor = db.rawQuery("select * from ActivityList where ActivityList.Start < '" + currentTime.toString() + "' and ActivityList.End >= '"+ currentTime.toString() +"';",null );
+        return GetArrayFromCursor(cursor,currentTime).get(0);
+    }
 
 //    Delete Statements
 

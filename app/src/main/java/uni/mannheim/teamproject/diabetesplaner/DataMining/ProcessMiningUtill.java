@@ -1,0 +1,316 @@
+package uni.mannheim.teamproject.diabetesplaner.DataMining;
+
+
+import android.support.v4.util.Pair;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+
+import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
+
+/**
+ * Created by Ivo on 10.07.2016.
+ * <p/>
+ * Utility Methods for the Process Mining Algorithms
+ */
+public class ProcessMiningUtill {
+
+    /**
+     * @return ID of the current activity
+     */
+    public static int getCurrentActivityID() {
+        DataBaseHandler dbHandler = AppGlobal.getHandler();
+        ActivityItem currentActivity = dbHandler.getCurrentActivity();
+        return currentActivity.getActivityId();
+    }
+
+    /**
+     * Calculates the Average Duration of every unique activity contained in the eventList
+     *
+     * @return
+     */
+    public static Map<Integer, Double> getAverageDurations(ArrayList<String[]> eventList) {
+        Map<Integer, Integer> activityCount = new HashMap<>();
+        Map<Integer, Double> activityDuration = new HashMap<>();
+        Map<Integer, Double> activityAvgDuration = new HashMap<>();
+        int id, count;
+        double duration, average;
+        Date startTime, endTime;
+        for (String[] event : eventList) {
+            id = Integer.valueOf(event[1]);
+            startTime = TimeUtils.getDate(event[2]);
+            endTime = TimeUtils.getDate(event[3]);
+            duration = TimeUtils.getDuration(startTime, endTime);
+            if (activityCount.containsKey(id) && activityDuration.containsKey(id)) {
+                activityCount.put(id, activityCount.get(id) + 1);
+                activityDuration.put(id, activityDuration.get(id) + duration);
+            } else {
+                activityCount.put(id, 1);
+                activityDuration.put(id, duration);
+
+            }
+        }
+        for (int activityId : activityCount.keySet()) {
+            count = activityCount.get(activityId);
+            duration = activityDuration.get(activityId);
+            average = duration / count;
+            activityAvgDuration.put(activityId, average);
+        }
+        return activityAvgDuration;
+    }
+
+    /**
+     * Calculates the average % for the day of every unique activity
+     *
+     * @return
+     */
+    public static Map<Integer, Double> getAveragePercentualDurations(ArrayList<String[]> eventList) {
+        Map<Integer, Integer> activityCount = new HashMap<>();
+        Map<Integer, Double> activityPercentage = new HashMap<>();
+        Map<Integer, Double> activityAvgPercentage = new HashMap<>();
+        int id, count;
+        double duration, average, percentage;
+        Date startTime, endTime;
+        for (String[] event : eventList) {
+            id = Integer.valueOf(event[1]);
+            startTime = TimeUtils.getDate(event[2]);
+            endTime = TimeUtils.getDate(event[3]);
+            duration = TimeUtils.getDuration(startTime, endTime);
+            percentage = duration / 1440 * 100;
+            if (activityCount.containsKey(id) && activityPercentage.containsKey(id)) {
+                activityCount.put(id, activityCount.get(id) + 1);
+                activityPercentage.put(id, activityPercentage.get(id) + percentage);
+            } else {
+                activityCount.put(id, 1);
+                activityPercentage.put(id, percentage);
+
+            }
+        }
+        for (int activityId : activityCount.keySet()) {
+            count = activityCount.get(activityId);
+            duration = activityPercentage.get(activityId);
+            average = duration / count;
+            activityAvgPercentage.put(activityId, average);
+        }
+        return activityAvgPercentage;
+    }
+
+    /**
+     * Returns the ID of the most frequent Activity that occured at 00:01
+     *
+     * @return
+     */
+    public static int getMostFrequentStartActivity() {
+        DataBaseHandler dbHandler = AppGlobal.getHandler();
+        ArrayList<ActivityItem> activities = dbHandler.getAllActivities(dbHandler);
+        HashMap<Integer, Integer> activityCount = new HashMap<>();
+        int currentCount = 0;
+        for (ActivityItem item : activities) {
+//            TODO: 00:01 might not be the time where the first activity occured, if it is not mainted over night
+            if (TimeUtils.dateToTimeString(item.getStarttimeAsString()).equals("00:01")) {
+                if (activityCount.containsKey(item.getActivityId())) {
+                    currentCount = activityCount.get(item.getActivityId()) + 1;
+                    activityCount.put(item.getActivityId(), currentCount);
+                } else {
+                    activityCount.put(item.getActivityId(), 1);
+                }
+            }
+        }
+        int mostFrequentID = 0;
+        int maxCount = 0;
+        Set<Integer> ids = activityCount.keySet();
+        for (Integer id : ids) {
+            currentCount = activityCount.get(id);
+            if (currentCount > maxCount) {
+                maxCount = currentCount;
+                mostFrequentID = id;
+            }
+        }
+        return mostFrequentID;
+    }
+
+    /**
+     * Calculate the most frequent start activity of a day based on the cases
+     * Returns the activity which was most often the first in each case
+     *
+     * @param cases Output of the CaseCreator
+     * @return
+     */
+    public static int getMostFrequentStartActivity(ArrayList<String[]> cases) {
+        HashMap<Integer, Integer> activityCount = new HashMap<>();
+        int currentCase = 0, currentActivity = 0, currentCount = 0;
+        String[] caseArray;
+        for (int i = 0; i < cases.size(); i++) {
+            caseArray = cases.get(i);
+            if (Integer.valueOf(caseArray[0]) != currentCase | i == cases.size() - 1) {
+                currentCase = Integer.valueOf(caseArray[0]);
+                currentActivity = Integer.valueOf(caseArray[2]);
+                if (activityCount.containsKey(currentActivity)) {
+                    currentCount = activityCount.get(currentActivity) + 1;
+                    activityCount.put(currentActivity, currentCount);
+                } else {
+                    activityCount.put(currentActivity, 1);
+                }
+            }
+        }
+        int mostFrequentID = 0, maxCount = 0;
+        for (Entry<Integer, Integer> entry : activityCount.entrySet()) {
+            currentCount = entry.getValue();
+            if (maxCount < currentCount) {
+                maxCount = currentCount;
+                mostFrequentID = entry.getKey();
+            }
+        }
+        return mostFrequentID;
+    }
+
+    /**
+     * Calculate the most frequent end activity of a day based on the cases
+     * Returns the activity which was most often the first in each case
+     *
+     * @param cases Output of the CaseCreator
+     * @return
+     */
+    public static int getMostFrequentEndActivity(ArrayList<String[]> cases) {
+        HashMap<Integer, Integer> activityCount = new HashMap<>();
+//       Initial currentCase is 1 so the change between the cases is registered
+        int currentCaseKey = 1, currentActivityKey = 0, currentActivityCount = 0;
+        String[] predecessorCaseValues = null;
+//        iterate throught all cases
+        for (String[] caseArray : cases) {
+//            is the case of the current caseArray the same as the overall currentCaseKey?
+            if (Integer.valueOf(caseArray[0]) != currentCaseKey) {
+//                if so then set the currentCaseKey to the new current
+                currentCaseKey = Integer.valueOf(caseArray[0]);
+//                and set the currentActivity to that of the predecessor , hence the last activity of the old case
+                currentActivityKey = Integer.valueOf(predecessorCaseValues[2]);
+                if (activityCount.containsKey(currentActivityKey)) {
+                    currentActivityCount = activityCount.get(currentActivityKey) + 1;
+                    activityCount.put(currentActivityKey, currentActivityCount);
+                } else {
+                    activityCount.put(currentActivityKey, 1);
+                }
+            }
+//            reset the predecessor values to the current values
+            predecessorCaseValues = caseArray;
+        }
+        int mostFrequentID = 0, maxCount = 0;
+        for (Entry<Integer, Integer> entry : activityCount.entrySet()) {
+            currentActivityCount = entry.getValue();
+            if (maxCount < currentActivityCount) {
+                maxCount = currentActivityCount;
+                mostFrequentID = entry.getKey();
+            }
+        }
+        return mostFrequentID;
+    }
+
+    /**
+     * Calculating the sum of the duration of all activities in the ArrayList
+     * If the sum is below 24*60 Minutes a full day is not yet reached
+     *
+     * @param idDurationMap
+     * @return
+     */
+    public static boolean isTotalDurationReached(List<Pair<Integer, Double>> idDurationMap) {
+        Double total = 0.0;
+        for (Pair<Integer, Double> pair : idDurationMap) {
+            total += pair.second;
+        }
+        if (total <= 1440) {
+            return false;
+        } else return true;
+    }
+
+    /**
+     * Method calculating the total percentage of the day covered by the Activities in the the List Provided
+     * If the sum is below 100.00 the total day is not yet reached.
+     *
+     * @param idDurationMap
+     * @return
+     */
+    public static boolean isTotalPercentageReached(List<Pair<Integer, Double>> idDurationMap) {
+        Double total = 0.0;
+        for (Pair<Integer, Double> pair : idDurationMap) {
+            total += pair.second;
+        }
+        if (total <= 100.0) {
+            return false;
+        } else return true;
+
+    }
+
+    public static void createActivities(List<Pair<Integer, Double>> idDurationMap, boolean percentage) {
+        double total = 0.0;
+        int duration = 0;
+        DataBaseHandler dbHandler = AppGlobal.getHandler();
+        Date[] startEndDate;
+        ActivityItem item = null;
+//        How much is every minute/ percent worth towards the total day
+        double relativeDurationOfUnit;
+
+//      how much of the 1440 minutes / 100% of the day are covered by the result?
+        for (Pair<Integer, Double> pair : idDurationMap) {
+            total += pair.second;
+        }
+//      if the total is not reached compute how much every minute/ % is worth
+        if (total < 1440 && !percentage) {
+            relativeDurationOfUnit = 1440 / total;
+        } else if (total < 100.00 && percentage) {
+            relativeDurationOfUnit = 100.0 / total;
+        } else {
+            relativeDurationOfUnit = 1;
+        }
+//      Create activity items based on the list and the relativeDurationOfUnit
+
+        Date date = TimeUtils.getCurrentDate();
+        date = TimeUtils.getDate(date, 0, 0);
+        for (int i = 0; i < idDurationMap.size(); i++) {
+//            TODO: How to handle SubActivity and Intensity?
+
+            duration = (int) Math.floor(idDurationMap.get(i).second * relativeDurationOfUnit);
+//            calculate the minutes of the activity from the percentage it takes from the day
+            if (percentage) {
+                duration = duration * 1440 / 100;
+            }
+            startEndDate = TimeUtils.getDate(date, duration);
+//            remove the am/pm-flag from the id
+            int id = removeAMPMFlag(idDurationMap.get(i).first);
+            item = new ActivityItem(id, 0, startEndDate[0], startEndDate[1], 0);
+            dbHandler.InsertActivity(dbHandler, item);
+            date = startEndDate[1];
+        }
+    }
+
+    /**
+     * Calculate how long each activity is in minutes with the real computed duration of each unit
+     *
+     * @param duration     either in percent or minutes of the day
+     * @param realDuration actual contribution of each percent/ minute towards the day
+     * @param percentual   duration in percent or minutes
+     * @return Duration converted into minutes and calculated with the realDuration
+     */
+    public static double getActualDuration(double duration, double realDuration, boolean percentual) {
+        if (percentual) {
+            duration = realDuration * duration;
+        } else {
+            duration = realDuration * duration;
+        }
+        return duration;
+    }
+
+    public static int removeAMPMFlag(int id){
+    //            remove the am/pm-flag from the id
+    String tempId = String.valueOf(id);
+    id=Integer.parseInt(tempId.substring(0,tempId.length()-1));
+        return id;
+}
+}

@@ -2,6 +2,12 @@ package uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.pl
 
 import org.deckfour.xes.classification.XEventClassifier;
 import org.deckfour.xes.info.XLogInfo;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.models.heuristics.impl.HNSubSet;
 
 import cern.colt.matrix.DoubleFactory1D;
@@ -323,6 +329,23 @@ public HeuristicsMetrics(XLogInfo logInfo, XEventClassifier classifier){
 	//ABdependencyMeasuresAll (,,1)
 	public double getABdependencyMeasuresAll(int x, int y){
 		return this.ABdependencyMeasuresAll.get(x, y);
+	}
+
+	public HashMap<Integer,Double> getDependencyMeasuresAcceptedElement(int element)
+	{
+		HashMap<Integer, Double> Endlist = new HashMap();
+		for(int i = 0;i<dependencyMeasuresAccepted.columns();i++)
+		{
+			if(getDependencyMeasuresAccepted(element,i) > 0)
+			{
+				Endlist.put(i,getDependencyMeasuresAccepted(element,i));
+			}
+		}
+		if(Endlist.isEmpty())
+		{
+			return null;
+		}
+		return Endlist;
 	}
 	
 	public void incrementABdependencyMeasuresAll(int x, int y, double value){

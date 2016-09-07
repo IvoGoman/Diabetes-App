@@ -29,7 +29,7 @@ android {
 }
 
 dependencies {
-    compile fileTree(include: ['*.jar'], dir: 'uni.mannheim.teamproject.diabetesplaner.libs')
+    //    compile fileTree(include: ['*.jar'], dir: 'uni.mannheim.teamproject.diabetesplaner.libs')
     testCompile 'junit:junit:4.12'
     compile files('src/main/java/libr/opencsv-3.6.jar')
     compile files('src/main/java/libr/weka.jar')
@@ -49,7 +49,4 @@ dependencies {
     compile 'com.google.android.gms:play-services-auth:8.3.0'
     compile 'com.google.android.gms:play-services-gcm:8.3.0'
 }
-
-
-
 

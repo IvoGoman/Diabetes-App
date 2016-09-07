@@ -17,6 +17,8 @@ import com.opencsv.CSVWriter;
 
 //import org.deckfour.xes.model.XLog;
 
+import org.deckfour.xes.model.XLog;
+
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
@@ -25,6 +27,8 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing.CaseCreator;
 
 import uni.mannheim.teamproject.diabetesplaner.R;
 
@@ -357,45 +361,6 @@ public class Util {
 		return image;
 	}
 
-//	public static XLog createXLog(){
-//		ArrayList<String[]> list = AppGlobal.getHandler().getAllEvents(AppGlobal.getHandler());
-//		//creates a CaseCreator object with the CSV file in an ArrayList
-//		CaseCreator creator = new CaseCreator(list);
-//		//splits the data into cases and adds a column for the case id for each entry
-//		creator.createCases();
-//		//adds a column with the day of the week
-////		creator.addDayOfWeek();
-////		Build the XLog from the List
-//		LogBuilder builder = new LogBuilder();
-//		builder.startLog("ActivityLog");
-//		list = creator.getList();
-//		String caseHelper = "default";
-////		iterate through the event list with cases
-//		for (int i=0;i<list.size();i++){
-////			If it is the same case then fill the trace with events
-//			if(list.get(i)[0].equals(caseHelper)){
-////				Add Start Node of Activity
-//				builder.addEvent(list.get(i)[2]);
-//				builder.addAttribute("Activity",list.get(i)[2]);
-//				builder.addAttribute("ID", list.get(i)[1]);
-//				builder.addAttribute("time:timestamp", list.get(i)[3]);
-//				builder.addAttribute("lifecyle:transition","start");
-////				Add Complete Node of an Activity
-//				builder.addEvent(list.get(i)[2]);
-//				builder.addAttribute("Activity",list.get(i)[2]);
-//				builder.addAttribute("ID", list.get(i)[1]);
-//				builder.addAttribute("lifecyle:transition","complete");
-//				builder.addAttribute("time:timestamp", list.get(i)[4]);
-//			}else{
-////				Add a new Trace to the Builder [this happens for every case]
-//				builder.addTrace(list.get(i)[0]);
-//			}
-//			caseHelper = list.get(i)[0];
-//		}
-////		create the XLog Object
-//		XLog log = builder.build();
-//		return log;
-//	}
 
 	/***
 	 * Converts mg/dl in mmol/l
