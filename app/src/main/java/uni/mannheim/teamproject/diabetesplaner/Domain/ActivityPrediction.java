@@ -73,11 +73,12 @@ public class ActivityPrediction {
         this.followerProbabilityMap = followerProbabilityMap;
     }
 
+
     public double getAverageDuration() {
         return averageDuration;
     }
 
-    public void setAverageDuration(int averageDuration) {
+    public void setAverageDuration(double averageDuration) {
         this.averageDuration = averageDuration;
     }
 
