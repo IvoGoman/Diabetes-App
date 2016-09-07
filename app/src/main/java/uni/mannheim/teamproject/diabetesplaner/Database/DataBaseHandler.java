@@ -679,7 +679,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param handler
      * @return
      */
-    public ArrayList<ActivityItem> getAllActivities(DataBaseHandler handler){
+    public ArrayList<String[]> getAllEvents(DataBaseHandler handler){
         SQLiteDatabase db = handler.getReadableDatabase();
         ArrayList<String[]> eventList = new ArrayList<String[]>();
         Cursor cursor = db.rawQuery("select ActivityList.id, SubActivities.title, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id", null);
@@ -690,7 +690,32 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         return eventList;
-    } /**
+    }
+
+    /**
+     * Queries all available activities from the database.
+     * Filters by day of week
+     * 0==Sunday, 1==Monday, ..., 6==Saturday etc.
+     * @param handler
+     * @return ArrayList<ActivityItem> containing all activities of the weekday provided
+     */
+    public ArrayList<ActivityItem> getAllActivities(DataBaseHandler handler){
+        SQLiteDatabase db = handler.getReadableDatabase();
+        ActivityItem activity = null;
+        ArrayList<ActivityItem> activityList = new ArrayList<ActivityItem>();
+        Cursor cursor = db.rawQuery("select ActivityList.id_SubActivity, SubActivities.title, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id order by ActivityList.Start ASC", null);
+        if(cursor.moveToFirst()){
+            do {
+                activity = new ActivityItem(cursor.getInt(0),0,TimeUtils.getDateFromString(cursor.getString(2)),TimeUtils.getDateFromString(cursor.getString(3)));
+                activityList.add(activity);
+            } while (cursor.moveToNext());
+        }
+
+
+        return activityList;
+    }
+
+    /**
      * Queries all available activities from the database.
      * Filters by day of week
      * 0==Sunday, 1==Monday, ..., 6==Saturday etc.
@@ -702,7 +727,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = handler.getReadableDatabase();
         ActivityItem activity = null;
         ArrayList<ActivityItem> activityList = new ArrayList<ActivityItem>();
-        Cursor cursor = db.rawQuery("select ActivityList.id_Activity, Activities.title, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id  where strftime('%w', ActivityList.Start)='"+day+"' order by ActivityList.Start ASC", null);
+        Cursor cursor = db.rawQuery("select ActivityList.id_SubActivity, SubActivities.title, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id  where strftime('%w', ActivityList.Start)='"+day+"' order by ActivityList.Start ASC", null);
         if(cursor.moveToFirst()){
             do {
                 activity = new ActivityItem(cursor.getInt(0),0,TimeUtils.getDateFromString(cursor.getString(2)),TimeUtils.getDateFromString(cursor.getString(3)));
