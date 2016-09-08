@@ -105,7 +105,7 @@ public class RoutineRecommendation extends Recommendation {
      * @author Stefan 05.07.2016, edited 08.09.2016
      */
     public void giveBSbasedRecommendation() {
-        int period = 5 * 60;
+        int period = 6 * 60; //because diabetes 1 people usually measure their bloodsugar level at least 4 times a day
         DataBaseHandler dbHandler = AppGlobal.getHandler();
         MeasureItem bs = getLastBloodsugarlevel(period);
         if(bs != null) {
@@ -138,25 +138,27 @@ public class RoutineRecommendation extends Recommendation {
      * @author Stefan 08.09.2016
      */
     private void giveBSLbasedRec(MeasureItem bs, MeasureItem insulin){
-        double bsLevel = bs.getMeasureValueInMol();
+        double bsLevel = bs.getMeasureValueInMG();
+
+        String bsString = " ("+bsLevel+" mg/dl)";
 
         if (150 <= bsLevel && bsLevel < 200) {
             //then Exercise
-            sendNotification(getResources().getString(R.string.rec_bs_between_150_200)+" ("+bsLevel+" "+bs.getMeasure_unit()+")", mIdOffset);
+            sendNotification(getResources().getString(R.string.rec_bs_between_150_200)+bsString, mIdOffset);
         } else if (bsLevel >= 200) {
             //then insulin
             if (insulin != null) {
                 Date ins = new Date(insulin.getTimestamp());
                 Date bsl = new Date(bs.getTimestamp());
                 if (ins.before(bsl)) {
-                    sendNotification(getResources().getString(R.string.rec_bs_above_200)+" ("+bsLevel+" "+bs.getMeasure_unit()+")", mIdOffset);
+                    sendNotification(getResources().getString(R.string.rec_bs_above_200)+bsString, mIdOffset);
                 }
             } else {
-                sendNotification(getResources().getString(R.string.rec_bs_above_200)+" ("+bsLevel+" "+bs.getMeasure_unit()+")", mIdOffset);
+                sendNotification(getResources().getString(R.string.rec_bs_above_200)+bsString, mIdOffset);
             }
         } else if (bsLevel < 100) {
             //Eat
-            sendNotification(getResources().getString(R.string.rec_bs_blow_100)+" ("+bsLevel+" "+bs.getMeasure_unit()+")", mIdOffset);
+            sendNotification(getResources().getString(R.string.rec_bs_blow_100)+bsString, mIdOffset);
         }
     }
 

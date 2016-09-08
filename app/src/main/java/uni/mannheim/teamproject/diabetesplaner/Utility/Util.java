@@ -59,6 +59,28 @@ public class Util {
 	}
 
 	/**
+	 * converts a bloodsugar level into mg/dl
+	 * @param value
+	 * @param unit
+	 * @return
+	 * @author Stefan 08.09.2016
+	 */
+	public static double convertBSToMG(double value, String unit){
+		switch (unit) {
+			case "%":
+				return Util.percentage_to_mg(value);
+
+			case "mmol/l":
+				return Util.mmol_to_milligram(value);
+
+			case "mg/dl":
+				return value;
+			default:
+				return 0;
+		}
+	}
+
+	/**
 	 * converts an ArrayList<String> to String array
 	 * @param tmpList ArrayList<String>
 	 * @return String[]

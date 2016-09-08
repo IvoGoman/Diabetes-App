@@ -53,6 +53,15 @@ public class MeasureItem {
     }
 
     /**
+     * returns the blood sugar level in mg/dl
+     * @return
+     * @author Stefan 08.09.2016
+     */
+    public double getMeasureValueInMG(){
+        return Util.convertBSToMG(measure_value, measure_unit);
+    }
+
+    /**
      * compares two MeasureItems
      * @param o
      * @return
