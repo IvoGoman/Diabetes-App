@@ -24,7 +24,7 @@ public abstract class Recommendation extends IntentService {
     public static final int MIN = 1000*60;
     private static int offset = 1;
     private int midOffset;
-    private int interval = MIN;
+    private int interval = MIN*60;
 
     private Handler mHandler = new Handler();
     private String name;

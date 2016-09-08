@@ -15,10 +15,6 @@ import android.view.animation.AnimationUtils;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
-//import org.deckfour.xes.model.XLog;
-
-import org.deckfour.xes.model.XLog;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
@@ -28,9 +24,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing.CaseCreator;
-
 import uni.mannheim.teamproject.diabetesplaner.R;
+
+//import org.deckfour.xes.model.XLog;
 
 /**
  * Created by Stefan
@@ -40,11 +36,33 @@ public class Util {
 
 	public static final double ROUND_FACTOR = 10d;
 
+	/**
+	 * converts a bloodsugar level into mol
+	 * @param value
+	 * @param unit
+     * @return
+	 * @author Stefan 08.09.2016
+     */
+	public static double convertBSToMol(double value, String unit){
+		switch (unit) {
+			case "%":
+				return Util.miligram_to_mol(Util.percentage_to_mg(value));
+
+			case "mmol/l":
+				return value;
+
+			case "mg/dl":
+				return Util.miligram_to_mol(value);
+			default:
+				return 0;
+		}
+	}
 
 	/**
 	 * converts an ArrayList<String> to String array
 	 * @param tmpList ArrayList<String>
 	 * @return String[]
+	 * @author Stefan
 	 */
 	public static String[] toArray(ArrayList<String> tmpList){
 		String[] stockArr = new String[tmpList.size()];
@@ -55,6 +73,7 @@ public class Util {
 	 * writes a ArrayList into another ArrayList
 	 * @param source ArrayList
 	 * @param dest ArrayList
+	 * @author Stefan
 	 */
 	public static void writeListToList(ArrayList<String[]> source, ArrayList<String[]> dest){
 		dest.clear();
@@ -67,6 +86,7 @@ public class Util {
 	 * converts a String[] to an ArrayList<String>
 	 * @param array String[]
 	 * @return ArrayList<String>
+	 * @author Stefan
 	 */
 	public static ArrayList<String> toArrayList(String[] array){
 		ArrayList<String> list = new ArrayList<>();
@@ -80,6 +100,7 @@ public class Util {
 	 * converts and ArrayList<ArrayList<String>> to an ArrayList <String[]>
 	 * @param tmp ArrayList<ArrayList<String>>
 	 * @return ArrayList<String[]>
+	 * @author Stefan
 	 */
 	public static ArrayList<String[]> convertToArrayListStringArray(ArrayList<ArrayList<String>> tmp){
 		ArrayList<String[]> str = new ArrayList<String[]>();
@@ -159,6 +180,7 @@ public class Util {
 	 * creates a test data sheet with attributes "minuteOfDay" and "dayOfWeek"
 	 * @param dest destination path
 	 * @param dayOfWeek actual day
+	 * @author Stefan
 	 */
 	public static void createTestData(String dest, int dayOfWeek){
 		ArrayList<String[]> list = new ArrayList<>();
@@ -181,6 +203,7 @@ public class Util {
 	 * finds column that is called "starttime"
 	 * @param list
 	 * @return
+	 * @author Stefan
 	 */
 	public static Integer getStartTimeIndex(ArrayList<String[]> list){
 		for(int i=0; i<list.get(0).length; i++){
@@ -195,6 +218,7 @@ public class Util {
 	 * finds column that is called "endtime"
 	 * @param list
 	 * @return
+	 * @author Stefan
 	 */
 	public static Integer getEndTimeIndex(ArrayList<String[]> list){
 		for(int i=0; i<list.get(0).length; i++){
@@ -208,6 +232,7 @@ public class Util {
 	/**
 	 * prints a csv file and converts the start and end date from a timestamp to a readable date
 	 * @param list
+	 * @author Stefan
 	 */
 	public static void printList(ArrayList<String[]> list){
 		int startIndex = getStartTimeIndex(list);
@@ -230,6 +255,7 @@ public class Util {
 	/**
 	 * prints the final list with the model
 	 * @param list
+	 * @author Stefan
 	 */
 	public static void print(ArrayList<String[]> list){
 		for(int i=0; i<list.size(); i++){
@@ -266,6 +292,7 @@ public class Util {
 	/**
 	 * creates a filepath
 	 * @return
+	 * @author Stefan
 	 */
 	public static File createImageFile(){
 		// Create an image file name
@@ -296,6 +323,7 @@ public class Util {
 	 * @param inContext
 	 * @param inImage
 	 * @return
+	 * @author Stefan
 	 */
 	public static Uri getImageUri(Context inContext, Bitmap inImage) {
 		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
@@ -308,6 +336,7 @@ public class Util {
 	 * compresses a bitmap width to the screen width and adapts the height percentually
 	 * @param mCurrentPhotoPath
 	 * @return
+	 * @author Stefan
 	 */
 	public static Bitmap getCompressedPic(String mCurrentPhotoPath) {
 		return compressPic(mCurrentPhotoPath, 0);
@@ -317,6 +346,7 @@ public class Util {
 	 * compresses a bitmap width to the width parameter and adapts the height percentually
 	 * @param mCurrentPhotoPath
 	 * @return
+	 * @author Stefan
 	 */
 	public static Bitmap getCompressedPic(String mCurrentPhotoPath, int width) {
 		return compressPic(mCurrentPhotoPath, width);
@@ -324,11 +354,12 @@ public class Util {
 
 
 	/**
-	 * @author Stefan
+
 	 * compresses a pic from a path with a certain width.
 	 * @param mCurrentPhotoPath
 	 * @param width width to compress. If 0 width of screen is taken
 	 * @return
+	 * @author Stefan
 	 */
 	private static Bitmap compressPic(String mCurrentPhotoPath, int width){
 		// Get the dimensions of the Screen
@@ -366,6 +397,7 @@ public class Util {
 	 * Converts mg/dl in mmol/l
 	 * @param mg
 	 * @return mmol/l
+	 * @author Stefan
 	 */
 	public static double miligram_to_mol(double mg){
 
@@ -376,6 +408,7 @@ public class Util {
 	 * Converts mmol/l in mg/dl
 	 * @param mmol
 	 * @return mg/dl
+	 * @author Stefan
 	 */
 	public static double mmol_to_milligram(double mmol){
 		return Math.round(mmol * 18.0182*ROUND_FACTOR)/ROUND_FACTOR;
@@ -385,6 +418,7 @@ public class Util {
 	 * Converts HbA1c percentage to mg/dl
 	 * @param percent
 	 * @return mg/dl
+	 * @author Stefan
 	 */
 	public static double percentage_to_mg(double percent){
 		return Math.round((percent*33.3-86.0)*ROUND_FACTOR)/ROUND_FACTOR;
@@ -394,6 +428,7 @@ public class Util {
 	 * Converts mg/dl to HbA1c percentage
 	 * @param mg
 	 * @return percentage of HbA1c
+	 * @author Stefan
 	 */
 	public static double mg_to_percentage(double mg){
 		return Math.round(((mg+86.0)/33.3)*ROUND_FACTOR)/ROUND_FACTOR;

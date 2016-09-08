@@ -14,19 +14,12 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
-import android.support.design.widget.TextInputLayout;
-
-import java.sql.Date;
-import java.sql.Time;
-import java.text.ParseException;
-import java.util.IllegalFormatException;
 
 import java.sql.Date;
 import java.sql.Time;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
-import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.TimePickerFragment;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
@@ -120,6 +113,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                                         + measure + " stored"
                                 , Toast.LENGTH_LONG).show();
                         dismiss();
+
                     } else {
                         Log.d("bloodsugar_entry", "Nothing changed");
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

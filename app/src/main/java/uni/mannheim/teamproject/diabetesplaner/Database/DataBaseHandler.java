@@ -765,13 +765,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     /**
      * returns the last measurement of the selected user
      * @param handler
-     * @return
+     * @return String[value, unit, timestamp]
+     * Changed 08.09.2016 by Stefan
      */
     public String[] getLastBloodsugarMeasurement(DataBaseHandler handler, int profile_id){
         try {
             SQLiteDatabase db1 = handler.getWritableDatabase();
-            String[] result = new String[2];
-            Cursor cursor = db1.rawQuery("SELECT measure_value,measure_unit " +
+            String[] result = new String[3];
+            Cursor cursor = db1.rawQuery("SELECT measure_value,measure_unit,timestamp " +
                     "FROM " + MEASUREMENT_TABLE_NAME + " " +
                     "where profile_ID = " + profile_id + " " +
                     "and measure_kind = 'bloodsugar'" +
@@ -780,6 +781,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             if (cursor.getCount() >= 1) {
                 result[0] = cursor.getString(0);
                 result[1] = cursor.getString(1);
+                result[2] = cursor.getString(2);
             } else {
                 result = null;
             }
@@ -887,21 +889,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public MeasureItem getMostRecentMeasurmentValue(DataBaseHandler handler, String measure_kind){
         SQLiteDatabase db = handler.getReadableDatabase();
         Cursor cursor = db.rawQuery("select measure_value, measure_unit, MAX(timestamp) from  " + MEASUREMENT_TABLE_NAME + " "  +
-                "where measure_kind = '"+measure_kind+"' group by measure_value, measure_unit;",null);
-        ArrayList<MeasureItem> measureList = new ArrayList<>();
+                "where measure_kind = '"+measure_kind+"' ;",null);
         MeasureItem measureItem = null;
         if(cursor.moveToFirst()){
-            do{
-                measureItem = new MeasureItem(cursor.getLong(2),cursor.getDouble(0),cursor.getString(1));
-                measureList.add(measureItem);
-            } while (cursor.moveToNext());
+            measureItem = new MeasureItem(cursor.getLong(2),cursor.getDouble(0),cursor.getString(1));
         }
         cursor.close();
         db.close();
-        if(measureList.size() == 0){
-            return null;
-        }
-        return measureList.get(0);
+        return measureItem;
     }
 
     /**
