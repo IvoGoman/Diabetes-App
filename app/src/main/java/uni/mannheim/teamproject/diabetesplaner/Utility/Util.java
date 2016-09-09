@@ -565,4 +565,24 @@ public class Util {
         }
         return list;
     }
+
+    /**
+     * checks if String is null, "null" or a valid String
+     * @param tmp
+     * @return null or valid String
+     * @author Stefan 09.09.2016
+     */
+    public static String getValidString(String tmp){
+        if(tmp == null){
+            return null;
+        }else{
+            if(tmp.equals("null")){
+                return null;
+            }else if(tmp.equals("")){
+                return null;
+            }else{
+                return tmp;
+            }
+        }
+    }
 }

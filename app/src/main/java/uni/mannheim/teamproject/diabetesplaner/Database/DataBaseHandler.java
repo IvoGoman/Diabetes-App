@@ -379,10 +379,47 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
+    /**
+     * Inserts an actitvity item from a CSV file
+     * Difference to other function: idActivity = #activities + Activ.subactivityId (to get the right offset)
+     * @param handler
+     * @param Activ
+     * @author Stefan 09.09.2016
+     */
+    public void InsertActivityFromCSV(DataBaseHandler handler, ActivityItem Activ) {
+        String ImagePath = Activ.getImagePath();
+        int idActivity;
+        if(GetSubActivities(Activ.getActivityId()).size() > 0){
+            idActivity = Activ.getSubactivityId() + AppGlobal.getHandler().getNumberOfActivities();
+        }else{
+            idActivity = Activ.getActivityId();
+        }
+        int idLocation =1;
+        String Start = Activ.getStarttimeAsString();
+        String End = Activ.getEndtimeAsString();
+        String Meal = Activ.getMeal();
+        if (ImagePath== null){
+            ImagePath = "";
+        }
+        else {
+            ImagePath = Activ.getImagePath();
+        }
+        Integer Intensity = Activ.getIntensity();
+
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        db1.execSQL("insert into ActivityList(id_SubActivity, id_Location, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation + " , '" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
+        db1.close();
+    }
+
+    /**
+     *
+     * @param handler
+     * @param Activ
+     * @author edited 09.09.2016 by Stefan
+     */
     public void InsertActivity(DataBaseHandler handler, ActivityItem Activ) {
         String ImagePath = Activ.getImagePath();
-        int idActivity = Activ.getActivityId();
-        int idSubActivity = Activ.getSubactivityId();
+        int idActivity = Activ.getSubactivityId();
         int idLocation =1;
         String Start = Activ.getStarttimeAsString();
         String End = Activ.getEndtimeAsString();

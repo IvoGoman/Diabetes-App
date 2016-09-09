@@ -104,30 +104,9 @@ public class ActivityInputHandler {
                     subId = 0;
                     e.printStackTrace();
                 }
-                item = new ActivityItem(Integer.parseInt(event[2]),subId, TimeUtils.getDate(event[4]),TimeUtils.getDate(event[5]),1);
-                dbHandler.InsertActivity(dbHandler,item);
+                item = new ActivityItem(Integer.parseInt(event[2]), subId, TimeUtils.getDate(event[4]),TimeUtils.getDate(event[5]));
+                dbHandler.InsertActivityFromCSV(dbHandler,item);
             }
-
-//            for(int i=0; i < list.size(); i++){
-//                int activityID = Integer.parseInt(list.get(i)[iActId]);
-//                int subactivityID = Integer.parseInt(list.get(i)[iSubActId]);
-//
-//                Date starttime = TimeUtils.getDate(Long.parseLong(list.get(i)[iStart]));
-//                Date endtime = TimeUtils.getDate(Long.parseLong(list.get(i)[iEnd]));
-//
-//
-//
-//                if(subactivityID != 0){
-//                    subactivityID = subactivityID + AppGlobal.getHandler().getNumberOfActivities();
-//                    ActivityItem item = new ActivityItem(activityID, subactivityID, starttime, endtime);
-//
-//                    AppGlobal.getHandler().InsertActivity(AppGlobal.getHandler(), item);
-//                }else{
-//                    ActivityItem item = new ActivityItem(activityID, subactivityID, starttime, endtime);
-//                    AppGlobal.getHandler().InsertActivity(AppGlobal.getHandler(), item);
-//                }
-//
-//            }
 
             //Old version
 //            if ((header.length >=5)) {
