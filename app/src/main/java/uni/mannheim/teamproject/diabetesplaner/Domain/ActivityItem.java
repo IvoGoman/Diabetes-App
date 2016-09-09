@@ -33,24 +33,25 @@ public class ActivityItem {
 
     /**
      * constructor for an Activity Item with times as Date
+     *
      * @param activityId
      * @param subactivityId
-     * @param starttime as Date
-     * @param endtime as Date
+     * @param starttime     as Date
+     * @param endtime       as Date
      */
-    public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime){
-         this.activityId = activityId;
+    public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime) {
+        this.activityId = activityId;
         this.subactivityId = subactivityId;
         this.starttime = starttime;
         this.endtime = endtime;
     }
 
-    public ActivityItem(int activityId, int subactivityId){
+    public ActivityItem(int activityId, int subactivityId) {
         this.activityId = activityId;
         this.subactivityId = subactivityId;
     }
 
-    public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime, Date date){
+    public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime, Date date) {
         this.activityId = activityId;
         this.subactivityId = subactivityId;
         this.starttime = starttime;
@@ -85,44 +86,47 @@ public class ActivityItem {
         this.intensity = intensity;
     }
 
-    public ActivityItem(ActivityItem activityItem){
+    public ActivityItem(ActivityItem activityItem) {
         this.activityId = activityItem.getActivityId();
         this.subactivityId = activityItem.getSubactivityId();
         this.starttime = activityItem.getStarttime();
         this.endtime = activityItem.getEndtime();
         this.date = activityItem.getDate();
         this.meal = activityItem.getMeal();
-        this.imagePath =activityItem.getImagePath();
+        this.imagePath = activityItem.getImagePath();
         this.date = activityItem.getDate();
         this.intensity = activityItem.getIntensity();
     }
 
     /**
      * constructor for an Activity Item with times as String
+     *
      * @param activityId
      * @param subactivityId
-     * @param starttime as String
-     * @param endtime as String
+     * @param starttime     as String
+     * @param endtime       as String
      */
-    public ActivityItem(int activityId, int subactivityId, String starttime, String endtime){
+    public ActivityItem(int activityId, int subactivityId, String starttime, String endtime) {
         this.activityId = activityId;
         this.subactivityId = subactivityId;
         this.starttime = TimeUtils.getTime(starttime);
         this.endtime = TimeUtils.getTime(endtime);
     }
-/*
-    public ActivityItem(int activityId, int subactivityId, String starttime, String endtime, String imagePath, String meal){
-        this.activityId = activityId;
-        this.subactivityId = subactivityId;
-        this.starttime = starttime;
-        this.endtime = endtime;
-        this.meal = meal;
-        this.imagePath = imagePath;
-    }
-*/
+
+    /*
+        public ActivityItem(int activityId, int subactivityId, String starttime, String endtime, String imagePath, String meal){
+            this.activityId = activityId;
+            this.subactivityId = subactivityId;
+            this.starttime = starttime;
+            this.endtime = endtime;
+            this.meal = meal;
+            this.imagePath = imagePath;
+        }
+    */
     public int getActivityId() {
         return activityId;
     }
+
     public int getSubactivityId() {
         return subactivityId;
     }
@@ -133,6 +137,7 @@ public class ActivityItem {
 
     /**
      * returns starttime in HH:mm format
+     *
      * @return
      */
     public String getStarttimeAsString() {
@@ -141,6 +146,7 @@ public class ActivityItem {
 
     /**
      * returns endtime in HH:mm format
+     *
      * @return
      */
     public String getEndtimeAsString() {
@@ -155,9 +161,10 @@ public class ActivityItem {
         return date;
     }
 
-    public void setStarttime(Date date){
+    public void setStarttime(Date date) {
         this.starttime = date;
     }
+
     public void setEndtime(Date endtime) {
         this.endtime = endtime;
     }
@@ -172,10 +179,11 @@ public class ActivityItem {
 
     /**
      * returns the name of the activity with id
+     *
      * @param id
      * @return
      */
-    public static String getActivityString(int id){
+    public static String getActivityString(int id) {
         DataBaseHandler dbHandler = AppGlobal.getHandler();
         return dbHandler.getActionById(dbHandler, id);
     }
@@ -193,10 +201,11 @@ public class ActivityItem {
     /**
      * 27.06.16 Stefan
      * returns the id of an activity by the name
+     *
      * @param name
      * @return id
      */
-    public static Integer getActivityId(String name){
+    public static Integer getActivityId(String name) {
 
         return AppGlobal.getHandler().getActivityID(name);
 //        ArrayList<String> actionsList = AppGlobal.getHandler().getAllActionsAsList(AppGlobal.getHandler());
@@ -211,38 +220,40 @@ public class ActivityItem {
 
     /**
      * returns a compressed bitmap image. Returns null if imagePath is null
+     *
      * @return
      */
     public Bitmap getMealImage() {
-        if(imagePath != null) {
+        if (imagePath != null) {
             return Util.getCompressedPic(imagePath);
-        }else{
+        } else {
             return null;
         }
     }
 
-    public String getMeal(){
+    public String getMeal() {
         return meal;
     }
 
-    public void setMeal(String meal){
+    public void setMeal(String meal) {
         this.meal = meal;
     }
 
-    public String getImagePath(){
+    public String getImagePath() {
         return imagePath;
     }
 
-    public void setIntensity(Integer intensity){
+    public void setIntensity(Integer intensity) {
         this.intensity = intensity;
     }
 
-    public Integer getIntensity(){
+    public Integer getIntensity() {
         return this.intensity;
     }
 
     /**
      * returns properties as a String that can be printed to the console
+     *
      * @return
      * @author Stefan 06.09.2016
      */
@@ -250,14 +261,14 @@ public class ActivityItem {
         String tmp = "";
         tmp += "Activity: " + activityId;
         tmp += "\nSubactivity: " + subactivityId;
-        if(starttime != null) {
+        if (starttime != null) {
             tmp += "\nStarttime: " + TimeUtils.dateToDateTimeString(starttime);
-        }else{
+        } else {
             tmp += "\nStarttime: null";
         }
-        if(endtime != null) {
+        if (endtime != null) {
             tmp += "\nEndtime: " + TimeUtils.dateToDateTimeString(endtime);
-        }else{
+        } else {
             tmp += "\nEndtime: null";
         }
         tmp += "\nImagePath: " + imagePath;

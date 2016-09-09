@@ -217,10 +217,19 @@ public class InputDialog extends DialogFragment{
                     subAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                     // Apply the adapter to the spinner
                     subSpinner.setAdapter(subAdapter);
-                    subSpinner.setSelection(subactivity);
+                    //find subactivity index
+                    String tmpSubact = dbHandler.getSubactivity(subactivity);
+                    int subactivityIndex = 0;
+                    for(int i=0; i<subactivities.size(); i++){
+                        if(subactivities.get(i).equals(tmpSubact)){
+                            subactivityIndex = i+1;
+                        }
+                    }
+                    subSpinner.setSelection(subactivityIndex);
                     subSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> subAdapter, View view, int subPosition, long id) {
+                            int tmp = subPosition;
                             subactivity = dbHandler.getSubactivityID(subAdapter.getItemAtPosition(subPosition).toString());
                         }
 

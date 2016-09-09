@@ -23,13 +23,15 @@ import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
-
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 
 /**
  * Created by leonidgunko on 31.10.15.
  */
 public class DataBaseHandler extends SQLiteOpenHelper {
+
+    private final Context context;
 
     public static final String DATABASE_NAME = "Diabetes.db";
     //Bloodsugar History
@@ -128,15 +130,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public SQLiteDatabase db;
     public DataBaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory,
                            int version) {
-
         super(context, DATABASE_NAME, factory, DATABASE_VERSION);
+
+        this.context = context;
 
         Log.d("Database", "MySQLiteHelper Constructor Started");
     }
 
     @Override
     public void onCreate(SQLiteDatabase db) {   //when the App is first installed
-        try {
+//        try {
 
             // Create Activity Table
             db.execSQL(SUPER_ACTIVITIES_CREATE_TABLE);
@@ -151,45 +154,62 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             // Create Activity Table
             db.execSQL(ACTIVITIES_CREATE_TABLE);
             Log.d("Database", "Temp Activity Table Created");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Schlafen','1'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Essen/Trinken','2'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Körperpflege','6'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Transportmittel benutzen','6'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Entspannen','1'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Fortbewegen(mit Gehilfe)','4'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Medikamente einnehmen','3'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Einkaufen','4'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Hausarbeit','4'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Essen zubereiten','6'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Geselligkeit','6'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Fortbewegen','4'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Schreibtischarbeit','5'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Sport','4'); ");
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Default','6'); "); //15
+            ArrayList<String[]> activities = Util.readActivities("Activity.csv", context);
+
+
+            for(int i=0 ;i< activities.size(); i++){
+                db.execSQL("insert into Activities(Title, id_SuperActivity) values('" + activities.get(i)[1] + "','" + activities.get(i)[2] + "'); ");
+            }
+
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Schlafen','1'); ");
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Essen/Trinken','2'); ");
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Körperpflege','6'); ");
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Transportmittel benutzen','6'); ");
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Entspannen','1'); ");
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Fortbewegen(mit Gehilfe)','4'); ");
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Medikamente einnehmen','3'); ");
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Einkaufen','4'); ");
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Hausarbeit','4'); ");
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Essen zubereiten','6'); ");
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Geselligkeit','6'); ");
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Fortbewegen','4'); ");
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Schreibtischarbeit','5'); ");
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Sport','4'); ");
+//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Default','6'); "); //15
 
 
             // Create SubActivities Table
             db.execSQL(SUB_ACTIVITIES_CREATE_TABLE);
             Log.d("Database", "Sub Activities Table Created");
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Schlafen','1'); ");   //1
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Mittagessen','2'); ");//2
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Körperpflege','3'); ");//3
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Transportmittel benutzen','4'); ");//4
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Entspannen','5'); ");//5
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Fortbewegen(mit Gehilfe)','6'); ");//6
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Medikamente einnehmen','7'); ");//7
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Einkaufen','8'); ");//8
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Hausarbeit','9'); ");//9
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Essen zubereiten','10'); ");//10
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Geselligkeit','11'); ");//11
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Fortbewegen','12'); ");//12
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Schreibtischarbeit','13'); ");//13
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Sport','14'); ");//14
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Default','15'); "); //15
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Frühstuck','2'); ");//16
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Mittagessen','2'); ");//17
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Abendessen','2'); ");//18
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('Auto fahren','4'); ");//19
+            for(int i=0 ;i< activities.size(); i++){
+                db.execSQL("insert into SubActivities(Title, id_Activity) values('"+ activities.get(i)[1] +"','"+ activities.get(i)[0] +"'); ");
+            }
+
+            ArrayList<String[]> subActs = Util.readSubActivities("SubActivity.csv", context);
+            for(int i=0 ;i< subActs.size(); i++){
+                db.execSQL("insert into SubActivities(Title, id_Activity) values('"+ subActs.get(i)[2] +"','"+ subActs.get(i)[1] +"'); ");
+            }
+
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Schlafen','1'); ");   //1
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Mittagessen','2'); ");//2
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Körperpflege','3'); ");//3
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Transportmittel benutzen','4'); ");//4
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Entspannen','5'); ");//5
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Fortbewegen(mit Gehilfe)','6'); ");//6
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Medikamente einnehmen','7'); ");//7
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Einkaufen','8'); ");//8
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Hausarbeit','9'); ");//9
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Essen zubereiten','10'); ");//10
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Geselligkeit','11'); ");//11
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Fortbewegen','12'); ");//12
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Schreibtischarbeit','13'); ");//13
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Sport','14'); ");//14
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Default','15'); "); //15
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Frühstuck','2'); ");//16
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Mittagessen','2'); ");//17
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Abendessen','2'); ");//18
+//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Auto fahren','4'); ");//19
+
 
 
             // Create Location Table
@@ -223,22 +243,41 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             Log.d("Database", "Profile Table Created");
 
             //db.close();
-        }catch(Exception e)
-        {
-            e.getMessage();
-        }
+//        }catch(Exception e){
+//            e.getMessage();
+//            Log.e("Database", e+"");
+//        }
        // db.close();
+    }
+
+    /**
+     * returns the number of different activities in the database
+     * @return
+     * @author Stefan 09.09.2016
+     */
+    public int getNumberOfActivities(){
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        Cursor cursor = db1.rawQuery("select count(*) from Activities; ", null);
+
+        if (cursor.moveToFirst()) {
+            return Integer.parseInt(cursor.getString(0));
+        }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return 0;
     }
 
     public ArrayList<String> GetSubActivities(int idActivity)
     {
         SQLiteDatabase db1 = this.getReadableDatabase();
-        Cursor cursor = db1.rawQuery("select Title from SubActivities where id_Activity= "+ String.valueOf(idActivity)+ "; ", null);
+        Cursor cursor = db1.rawQuery("select Title from SubActivities where id_Activity= "+ String.valueOf(idActivity)+ " and id_Activity != id; ", null);
         ArrayList<String> SubActivityList = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
             do {
-                SubActivityList.add(cursor.getString(0).replace(" ",""));
+                SubActivityList.add(cursor.getString(0));
             }
             while (cursor.moveToNext());
         }
@@ -354,7 +393,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         else {
             ImagePath = Activ.getImagePath();
         }
-        int Intensity = Activ.getIntensity();
+        Integer Intensity = Activ.getIntensity();
 
         SQLiteDatabase db1 = handler.getWritableDatabase();
         db1.execSQL("insert into ActivityList(id_SubActivity, id_Location, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation + " , '" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
@@ -657,7 +696,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         if (cursor.moveToFirst()) {
             do {
-                actionsList.add(cursor.getString(1).replace(" ",""));
+                actionsList.add(cursor.getString(1));
             }
             while (cursor.moveToNext());
         }
