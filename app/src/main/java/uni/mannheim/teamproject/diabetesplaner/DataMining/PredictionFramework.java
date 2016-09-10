@@ -6,6 +6,7 @@ import java.util.Calendar;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.HeuristicsMinerImplementation;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
 /**
@@ -57,8 +58,8 @@ public class PredictionFramework {
                 //TODO predict with fuzzy miner
                 break;
             case PREDICTION_HEURISTICS_MINER:
-                //TODO predict with heuristics miner
-                break;
+                return HeuristicsMinerImplementation.runHeuristicsMiner(train.get(0));
+
         }
         return null;
     }

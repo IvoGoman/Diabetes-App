@@ -126,6 +126,10 @@ public class HeuristicsMiner {
 
 	public SimpleHeuristicsNet getSimpleNet2()
 	{
+		if(SimpleNet == null)
+		{
+			SimpleNet = new SimpleHeuristicsNet(makeBasicRelations(metrics), metrics, settings);
+		}
 		return SimpleNet;
 	}
 

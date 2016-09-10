@@ -48,7 +48,7 @@ public class HeuristicsMinerImplementation {
 //            System.out.println(xesXmlGZIPParser.canParse(file));
 //            List<XLog> logs = xesXmlGZIPParser.parse(file);
 
-            DummyDataCreator.populateDataBase();
+            //DummyDataCreator.populateDataBase();
             //ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivities(AppGlobal.getHandler());
             ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(),0);
             CustomXLog customXLog = new CustomXLog(items);
@@ -143,8 +143,49 @@ public class HeuristicsMinerImplementation {
 
             myPrediction.add(PredictElement);
         }
-
-
         return myPrediction;
+    }
+
+    public static ArrayList<ActivityItem> runHeuristicsMiner(ArrayList<ActivityItem> train)
+    {
+        if(train == null) {
+            return null;
+        }
+        else
+        {
+            CustomXLog xLog = new CustomXLog(train);
+            XLog log = xLog.getXLog();
+            ArrayList<String[]> cases = xLog.getCases();
+            ArrayList<String[]> eventList = xLog.getEventList();
+            cases.remove(0);
+            eventList.remove(0);
+
+
+            XLogInfo logInfo = XLogInfoFactory.createLogInfo(log);
+            XEventClassifier classifier = logInfo.getEventClassifiers().iterator().next();
+            HeuristicsMinerSettings hms = new HeuristicsMinerSettings();
+            hms.setPositiveObservationThreshold(1);
+            hms.setDependencyThreshold(0.2);
+            hms.setClassifier(classifier);
+
+            XEventClasses EventClasses = XEventClasses.deriveEventClasses(classifier,log);
+            ActivitiesMappingStructures struct = new ActivitiesMappingStructures(EventClasses);
+
+            HeuristicsMiner miner = new HeuristicsMiner(log,logInfo,hms);
+            SimpleHeuristicsNet myNet = miner.getSimpleNet2();
+
+            ArrayList<ActivityItem> PredictedActivities = new ArrayList<ActivityItem>();
+
+            for(int i = 0;i< myNet.getActivitiesMappingStructures().getActivitiesMapping().length; i++)
+            {
+                ActivityItem PredictElement = new ActivityItem(i,0);
+                
+                //// TODO: 10.09.16 Add Starttime and Endtime 
+                PredictedActivities.add(PredictElement);
+            }
+
+
+            return PredictedActivities;
+        }
     }
 }
