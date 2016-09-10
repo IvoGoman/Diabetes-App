@@ -5,27 +5,27 @@ import android.content.SharedPreferences;
 import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.concurrent.TimeUnit;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
+import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Stefan on 26.04.2016.
  */
 public class RoutineRecommendation extends Recommendation {
 
-//    private final static int INTERVAL = 1000 * 60 * 5; //5 minutes
-    private final static int INTERVAL = MIN * 1; //10 sec
+    //    private final static int INTERVAL = 1000 * 60 * 5; //5 minutes
+    private final static int INTERVAL = 1000 * 10; //10 sec
 
     private final static int DEFAUL_REC = 0;
     private final static int FIRST_REC = 1;
@@ -33,6 +33,8 @@ public class RoutineRecommendation extends Recommendation {
     Handler mHandler = new Handler();
     private long lastRecommendation = 0;
     private int mIdOffset = 0;
+
+    private MeasureItem previous = null;
 
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
@@ -69,25 +71,28 @@ public class RoutineRecommendation extends Recommendation {
     /**
      * Launches recommendation process.
      * Recommendation not started if the last recommendation was within a specified interval
+     *
      * @author Stefan 29.06.2016
      */
     @Override
-    public void recommend(){
+    public void recommend() {
+        Log.d("Rec", "recommend based on bsl");
         mIdOffset = getMidOffset();
 
         //switch between different recommendation methods
         int rec = FIRST_REC;
-        long time= System.currentTimeMillis();
+        long time = System.currentTimeMillis();
 
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
         boolean notify = preferences.getBoolean("pref_key_assistant", true);
-        if(time-lastRecommendation>=INTERVAL && notify){
-            switch(rec) {
+//        if(time-lastRecommendation>=INTERVAL && notify){
+        if (notify) {
+            switch (rec) {
                 case DEFAUL_REC:
                     giveDefaultRecommendation();
                     break;
                 case FIRST_REC:
-                    giveFirstRecommendation();
+                    giveBSbasedRecommendation();
                     break;
             }
         }
@@ -95,83 +100,120 @@ public class RoutineRecommendation extends Recommendation {
     }
 
     /**
-     * first recommendation process
-     * @author Stefan 05.07.2016
+     * gives a recommendation based on the blood sugar level
+     *
+     * @author Stefan 05.07.2016, edited 08.09.2016
      */
-    public void giveFirstRecommendation(){
-        int period = 5;
-        double bsLevel = getLastBloodsugarlevel(period);
-
-        //there is no measurment within specified time interval
-        if(bsLevel == 0){
-            //TODO Ammars rules missing
-            sendNotification("No blood sugar level measurement within the last " + period + " hours. " +
-                    "TODO: give recommendation based on activities" , mIdOffset);
+    public void giveBSbasedRecommendation() {
+        int period = 6 * 60; //because diabetes 1 people usually measure their bloodsugar level at least 4 times a day
+        DataBaseHandler dbHandler = AppGlobal.getHandler();
+        MeasureItem bs = getLastBloodsugarlevel(period);
+        if(bs != null) {
+            Log.d("Rec", "getLastbsl: " + bs.getMeasure_value() + " : " + bs.getTimestamp());
         }else{
-            if(100<= bsLevel &&  bsLevel < 200){
-                //then Exercise
-                sendNotification("You should better do some exercise because your blood sugar level is high!", mIdOffset);
-            } else if(bsLevel >=200){
-                //then insulin
-                sendNotification("You should take insulin because your blood sugar is way to high!", mIdOffset);
-            } else{
-                //Eat
-                sendNotification("Your blood sugar is low, have a meal.", mIdOffset);
+            Log.d("Rec", "bs = null");
+        }
+        MeasureItem insulin = dbHandler.getMostRecentMeasurmentValue(dbHandler, MeasureItem.MEASURE_KIND_INSULIN);
+
+        //there is no measurment within the specified time interval
+        if (bs == null) {
+//            //TODO Ammars rules missing
+//            sendNotification("No blood sugar level measurement within the last " + period / 60 + " hours " + period % 60 + " minutes." +
+//                    "TODO: give recommendation based on activities", mIdOffset);
+        } else {
+            if (previous == null) {
+                giveBSLbasedRec(bs, insulin);
+                previous = bs;
+            }else if(!previous.equals(bs)){
+                giveBSLbasedRec(bs, insulin);
+                previous = bs;
             }
+        }
+    }
+
+    /**
+     * rules for the recommendation based on the blood sugar level
+     * @param bs
+     * @param insulin
+     * @author Stefan 08.09.2016
+     */
+    private void giveBSLbasedRec(MeasureItem bs, MeasureItem insulin){
+        double bsLevel = bs.getMeasureValueInMG();
+
+        String bsString = " ("+bsLevel+" mg/dl)";
+
+        if (150 <= bsLevel && bsLevel < 200) {
+            //then Exercise
+            sendNotification(getResources().getString(R.string.rec_bs_between_150_200)+bsString, mIdOffset);
+        } else if (bsLevel >= 200) {
+            //then insulin
+            if (insulin != null) {
+                Date ins = new Date(insulin.getTimestamp());
+                Date bsl = new Date(bs.getTimestamp());
+                if (ins.before(bsl)) {
+                    sendNotification(getResources().getString(R.string.rec_bs_above_200)+bsString, mIdOffset);
+                }
+            } else {
+                sendNotification(getResources().getString(R.string.rec_bs_above_200)+bsString, mIdOffset);
+            }
+        } else if (bsLevel < 100) {
+            //Eat
+            sendNotification(getResources().getString(R.string.rec_bs_blow_100)+bsString, mIdOffset);
         }
     }
 
     /**
      * gives default recommendation
+     *
      * @author Stefan 30.04.2016
      */
-    public void giveDefaultRecommendation(){
+    public void giveDefaultRecommendation() {
         ActivityItem current = getCurrentActivity();
 
-        if(checkSleeptime()){
+        if (checkSleeptime()) {
             sendNotification("You should better go to bed.", mIdOffset);
-        }else if(isStressed()){
+        } else if (isStressed()) {
             sendNotification("It seems that you are stressed. Better take some insuline.", mIdOffset);
-        }else{
-            if(checkInsulin()){
+        } else {
+            if (checkInsulin()) {
                 sendNotification("Doing a low intense exercise would be good for you", mIdOffset);
-            }else{
+            } else {
                 sendNotification("You should better do some exercise.", mIdOffset);
             }
         }
 
-        if(isExercise(current)){
+        if (isExercise(current)) {
 
         }
-        if(isLowIntenseExercise(current)){
-            if(checkSleeptime()){
+        if (isLowIntenseExercise(current)) {
+            if (checkSleeptime()) {
 
             }
         }
     }
 
-    public boolean isExercise(ActivityItem curr){
+    public boolean isExercise(ActivityItem curr) {
         return false;
     }
 
-    public boolean isLowIntenseExercise(ActivityItem curr){
+    public boolean isLowIntenseExercise(ActivityItem curr) {
         return false;
     }
 
 
     /**
+     * @return
      * @author Stefan 30.04.2016
      * returns current activity
-     * @return
      */
-    public ActivityItem getCurrentActivity(){
+    public ActivityItem getCurrentActivity() {
         ArrayList<ActivityItem> routine = DayHandler.getDailyRoutine();
 
         Date current = TimeUtils.getCurrentDate();
 
-        for(int i=0; i<routine.size(); i++) {
+        for (int i = 0; i < routine.size(); i++) {
             ActivityItem item = routine.get(i);
-            if(TimeUtils.isTimeInbetween(item.getStarttime(), item.getEndtime(), current)){
+            if (TimeUtils.isTimeInbetween(item.getStarttime(), item.getEndtime(), current)) {
                 return item;
             }
         }
@@ -179,20 +221,20 @@ public class RoutineRecommendation extends Recommendation {
     }
 
     /**
+     * @return
      * @author Stefan 30.04.2016
      * returns previous activity
-     * @return
      */
-    public ActivityItem getPreviousActivity(){
+    public ActivityItem getPreviousActivity() {
         ArrayList<ActivityItem> routine = DayHandler.getDailyRoutine();
 
         Date current = TimeUtils.getCurrentDate();
 
-        for(int i=0; i<routine.size(); i++) {
+        for (int i = 0; i < routine.size(); i++) {
             ActivityItem item = routine.get(i);
-            if(TimeUtils.isTimeInbetween(item.getStarttime(), item.getEndtime(), current)){
-                if(i>0) {
-                    return routine.get(i-1);
+            if (TimeUtils.isTimeInbetween(item.getStarttime(), item.getEndtime(), current)) {
+                if (i > 0) {
+                    return routine.get(i - 1);
                 }
             }
         }
@@ -200,13 +242,13 @@ public class RoutineRecommendation extends Recommendation {
     }
 
     /**
+     * @return
      * @author Stefan 30.04.2016
      * returns true if it is sleeptime in daily routine at the current time
-     * @return
      */
-    public boolean checkSleeptime(){
+    public boolean checkSleeptime() {
         ActivityItem item = getCurrentActivity();
-        if(item != null) {
+        if (item != null) {
             if (item.getActivityId() == 1) {
                 return true;
             }
@@ -214,22 +256,22 @@ public class RoutineRecommendation extends Recommendation {
         return false;
     }
 
-    public boolean checkInsulin(){
+    public boolean checkInsulin() {
         DataBaseHandler dbHandler = AppGlobal.getHandler();
         return false;
     }
 
     /**
+     * @return
      * @author Stefan 30.04.2016
      * checks if current activity is Schreibtischarbeit and returns true if user is stressed
-     * @return
      */
-    public boolean isStressed(){
+    public boolean isStressed() {
         ActivityItem item = getCurrentActivity();
 
-        if(item != null){
-            if(item.getIntensity() != null){
-                if(item.getIntensity() > 2 && item.getActivityId() == 12){
+        if (item != null) {
+            if (item.getIntensity() != null) {
+                if (item.getIntensity() > 2 && item.getActivityId() == 12) {
                     return true;
                 }
             }
@@ -238,20 +280,45 @@ public class RoutineRecommendation extends Recommendation {
     }
 
     /**
+     * @return true if intensity was high (intensity = 3)
      * @author Stefan 30.04.2016
      * checks if intensity was high or medium/low
-     * @return true if intensity was high (intensity = 3)
      */
-    public boolean checkIntensityOfExercise(){
+    public boolean checkIntensityOfExercise() {
         ActivityItem item = getPreviousActivity();
-        if(item != null){
-            if(item.getIntensity() != null) {
+        if (item != null) {
+            if (item.getIntensity() != null) {
                 if (item.getIntensity() > 2 && item.getActivityId() == 13) {
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    /**
+     * returns the last blood sugar measurement from the database
+     * in case it is within the specified time interval
+     *
+     * @param minSinceMM minutes since measurement
+     * @return MeasureItem or null if there was no measurement within the specified interval
+     * @author Stefan 08.09.2016
+     */
+    public MeasureItem getLastBloodsugarlevel(int minSinceMM) {
+        DataBaseHandler dbHandler = AppGlobal.getHandler();
+        MeasureItem bs = dbHandler.getMostRecentMeasurmentValue(dbHandler, MeasureItem.MEASURE_KIND_BLOODSUGAR);
+        if (bs == null) {
+            return null;
+        }else {
+            long bs_timestamp = bs.getTimestamp();
+            long curr = TimeUtils.getCurrentDate().getTime();
+
+            if ((curr - bs_timestamp) / (60 * 1000) <= minSinceMM) {
+                return bs;
+            }
+//            return bs;
+        }
+        return null;
     }
 
     /**
@@ -262,41 +329,41 @@ public class RoutineRecommendation extends Recommendation {
      *                      that the measurement should be to be taken into account
      * @return
      */
-    public double getLastBloodsugarlevel(int hoursSinceMM){
-        Date curr = TimeUtils.getCurrentDate();
-
-        DataBaseHandler dbHandler = AppGlobal.getHandler();
-        ArrayList<MeasureItem> mms = dbHandler.getMeasurementValues(dbHandler, curr, "DAY", MeasureItem.MEASURE_KIND_BLOODSUGAR);
-
-        MeasureItem last = null;
-        long timediff = Long.MAX_VALUE;
-
-        //find recent measurement
-        for(int i=0; i<mms.size(); i++){
-            //compares actual time with time from measurement
-            long tmpDiff = curr.getTime()-mms.get(i).getTimestamp();
-            if(tmpDiff <timediff){
-                last = mms.get(i);
-                timediff = tmpDiff;
-            }
-        }
-
-        long timeSinceMM = TimeUnit.MILLISECONDS.toMinutes(timediff);
-
-        if(timeSinceMM <hoursSinceMM && last!= null){
-            double value = last.getMeasure_value();
-            switch (last.getMeasure_unit()) {
-                case "%":
-                    return Util.miligram_to_mol(Util.percentage_to_mg(value));
-
-                case "mmol/l":
-                    return value;
-
-                case "mg/dl":
-                    return Util.miligram_to_mol(value);
-            }
-        }
-        return 0;
-    }
+//    public double getLastBloodsugarlevel(int hoursSinceMM){
+//        Date curr = TimeUtils.getCurrentDate();
+//
+//        DataBaseHandler dbHandler = AppGlobal.getHandler();
+//        ArrayList<MeasureItem> mms = dbHandler.getMeasurementValues(dbHandler, curr, "DAY", MeasureItem.MEASURE_KIND_BLOODSUGAR);
+//
+//        MeasureItem last = null;
+//        long timediff = Long.MAX_VALUE;
+//
+//        //find recent measurement
+//        for(int i=0; i<mms.size(); i++){
+//            //compares actual time with time from measurement
+//            long tmpDiff = curr.getTime()-mms.get(i).getTimestamp();
+//            if(tmpDiff <timediff){
+//                last = mms.get(i);
+//                timediff = tmpDiff;
+//            }
+//        }
+//
+//        long timeSinceMM = TimeUnit.MILLISECONDS.toMinutes(timediff);
+//
+//        if(timeSinceMM <hoursSinceMM && last!= null){
+//            double value = last.getMeasure_value();
+//            switch (last.getMeasure_unit()) {
+//                case "%":
+//                    return Util.miligram_to_mol(Util.percentage_to_mg(value));
+//
+//                case "mmol/l":
+//                    return value;
+//
+//                case "mg/dl":
+//                    return Util.miligram_to_mol(value);
+//            }
+//        }
+//        return 0;
+//    }
 
 }

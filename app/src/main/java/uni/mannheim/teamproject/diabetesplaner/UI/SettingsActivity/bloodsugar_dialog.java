@@ -113,6 +113,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                                         + measure + " stored"
                                 , Toast.LENGTH_LONG).show();
                         dismiss();
+
                     } else {
                         Log.d("bloodsugar_entry", "Nothing changed");
                         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
