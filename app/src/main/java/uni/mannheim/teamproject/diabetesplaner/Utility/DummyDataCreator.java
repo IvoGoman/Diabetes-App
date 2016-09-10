@@ -1,9 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.Utility;
 
-import java.io.File;
-import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing.CaseCreator;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
@@ -22,7 +19,7 @@ public class DummyDataCreator {
 //        eventList.remove(0);
         DataBaseHandler dbHandler = AppGlobal.getHandler();
         ActivityItem item;
-        int subId = 0;
+        int subId;
 
         CaseCreator creator = new CaseCreator(eventList);
         creator.createCases();
@@ -45,9 +42,7 @@ public class DummyDataCreator {
     public static void createDummyData() {
         DataBaseHandler handler = AppGlobal.getHandler();
         ActivityItem item;
-        Date start, end;
         String i;
-        int randomNumber;
         for (int j = 1; j < 31; j++) {
             if(j<10){ i="0"+j;}else{i=""+j;}
             item = new ActivityItem(1, 0, TimeUtils.getDateFromString("2016-06-" + i + " 00:01"),TimeUtils.getDateFromString("2016-06-" + i + " 06:50"),3);

@@ -203,7 +203,8 @@ public class GSP {
 			for(int j=0; j<seq.size(); j++){
 //				System.out.println(seq.get(j) + " contained in freqSubSeq: " + freqSubSeq.containsKey(seq.get(j)));
 				if(!freqSubSeq.containsKey(seq.get(j))){
-					inFreqSubSeq = true;;				}
+					inFreqSubSeq = true;
+				}
 
 			}
 

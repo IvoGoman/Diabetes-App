@@ -114,4 +114,4 @@ public abstract class FMEdge<S extends FMNode, T extends FMNode> extends Abstrac
 		return new String[] { MutableFuzzyGraph.format(this.significance), MutableFuzzyGraph.format(this.correlation) };
 	}
 
-};
+}

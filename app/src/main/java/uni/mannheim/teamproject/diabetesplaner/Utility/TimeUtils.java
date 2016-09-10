@@ -251,7 +251,7 @@ public class TimeUtils {
      */
     public static String dateToTimeString(String dateValue) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date date = null;
+        Date date;
         String timeString ="";
         try {
             date = sdf.parse(dateValue);
@@ -337,7 +337,7 @@ public class TimeUtils {
      * @return String
      */
     public static String getTimeInUserFormat(Date date, Context context){
-        String time = "";
+        String time;
         if(DateFormat.is24HourFormat(context)){
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
             time = sdf.format(date);
@@ -467,7 +467,6 @@ public class TimeUtils {
      */
 
     public static int isAM(long timestamp) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         Calendar calendar = TimeUtils.getCalendar(timestamp);
         int am_pm = calendar.get(Calendar.AM_PM);
         return am_pm;

@@ -35,7 +35,7 @@ public class FuzzyModel {
     /**
      * Create a FuzzyModel based on the Activities of a certain Weekday
      *
-     * @param day
+     * @param day number between 0 and 6 (where 0 is sunday)
      * @throws Exception
      */
     public FuzzyModel(int day, boolean percentage) throws Exception {
@@ -49,7 +49,7 @@ public class FuzzyModel {
         ArrayList<String[]> eventList = customXLog.getEventList();
         cases.remove(0);
         eventList.remove(0);
-        Map<Integer, Double> durationMap = new HashMap<>();
+        Map<Integer, Double> durationMap;
         if (percentage) {
             durationMap = ProcessMiningUtill.getAveragePercentualDurations(eventList);
         } else {
@@ -61,7 +61,7 @@ public class FuzzyModel {
         List<Pair<Integer, Double>> idDurationMap = createDailyRoutine(startID,endID,durationMap,percentage);
         ArrayList<ActivityPrediction> activityPredictions = createPredictionDataStructure(durationMap);
         idDurationMap.size();
-//        ProcessMiningUtill.createActivities(idDurationMap, percentage);
+//        ProcessMiningUtil.createActivities(idDurationMap, percentage);
 
     }
 
@@ -80,7 +80,7 @@ public class FuzzyModel {
         List<Pair<Integer, Double>> idDurationMap = new ArrayList<>();
         ArrayList<String[]> cases = customXLog.getEventList();
         cases.remove(0);
-        Map<Integer, Double> durationMap = new HashMap<>();
+        Map<Integer, Double> durationMap;
         if (percentage) {
             durationMap = ProcessMiningUtill.getAveragePercentualDurations(cases);
         } else {
@@ -89,16 +89,16 @@ public class FuzzyModel {
         int startID = ProcessMiningUtill.getMostFrequentStartActivity(cases);
         int endID = ProcessMiningUtill.getMostFrequentEndActivity(cases);
         int currentId = startID, predecessorId = startID, tempId = startID;
-        idDurationMap.add(new Pair<Integer, Double>(currentId, durationMap.get(currentId)));
+        idDurationMap.add(new Pair<>(currentId, durationMap.get(currentId)));
         if (percentage) {
             while (!ProcessMiningUtill.isTotalPercentageReached(idDurationMap)) {
                 tempId = currentId;
                 if (currentId != endID) {
                     currentId = getNextActivity(currentId);
-                } else if (currentId == endID) {
+                } else {
                     break;
                 }
-                idDurationMap.add(new Pair<Integer, Double>(currentId, durationMap.get(currentId)));
+                idDurationMap.add(new Pair<>(currentId, durationMap.get(currentId)));
                 predecessorId = tempId;
             }
         } else {
@@ -107,20 +107,20 @@ public class FuzzyModel {
 //            currentId = getNextActivity(currentId, predecessorId);
                 if (currentId != endID) {
                     currentId = getNextActivity(currentId);
-                } else if (currentId == endID) {
+                } else {
                     break;
                 }
-                idDurationMap.add(new Pair<Integer, Double>(currentId, durationMap.get(currentId)));
+                idDurationMap.add(new Pair<>(currentId, durationMap.get(currentId)));
                 predecessorId = tempId;
             }
         }
         idDurationMap.size();
-//        ProcessMiningUtill.createActivities(idDurationMap, percentage);
+//        ProcessMiningUtil.createActivities(idDurationMap, percentage);
     }
-public  List<Pair<Integer, Double>> createDailyRoutine(int startID,int endID,Map<Integer, Double> durationMap, boolean percentage) throws Exception{
+private List<Pair<Integer, Double>> createDailyRoutine(int startID, int endID, Map<Integer, Double> durationMap, boolean percentage) throws Exception{
     List<Pair<Integer, Double>> idDurationMap = new ArrayList<>();
-    int currentId = startID, predecessorId = startID, tempId = startID;
-    idDurationMap.add(new Pair<Integer, Double>(currentId,durationMap.get(currentId)));
+    int currentId = startID, predecessorId = startID, tempId;
+    idDurationMap.add(new Pair<>(currentId, durationMap.get(currentId)));
     if(percentage)
 
     {
@@ -128,10 +128,10 @@ public  List<Pair<Integer, Double>> createDailyRoutine(int startID,int endID,Map
             tempId = currentId;
             if (currentId != endID) {
                 currentId = getNextActivity(currentId);
-            } else if (currentId == endID) {
+            } else {
                 break;
             }
-            idDurationMap.add(new Pair<Integer, Double>(currentId, durationMap.get(currentId)));
+            idDurationMap.add(new Pair<>(currentId, durationMap.get(currentId)));
             predecessorId = tempId;
         }
     }
@@ -144,10 +144,10 @@ public  List<Pair<Integer, Double>> createDailyRoutine(int startID,int endID,Map
 //            currentId = getNextActivity(currentId, predecessorId);
             if (currentId != endID) {
                 currentId = getNextActivity(currentId);
-            } else if (currentId == endID) {
+            } else {
                 break;
             }
-            idDurationMap.add(new Pair<Integer, Double>(currentId, durationMap.get(currentId)));
+            idDurationMap.add(new Pair<>(currentId, durationMap.get(currentId)));
             predecessorId = tempId;
         }
     }
@@ -156,8 +156,8 @@ return idDurationMap;
     /**
      * Return the most likely successor of the current activity based on the significance in the model
      * Loops are forbidden as Activity A followed by Activity B followed by Activity A
-     * @param currentActivityId
-     * @return
+     * @param currentActivityId id of the current activity
+     * @return return most likely successor activity id for current activity
      */
     public int getNextActivity(int currentActivityId, int predecessorId) {
         Set<FMNode> nodes = fuzzyMinerModel.getNodes();
@@ -189,10 +189,10 @@ return idDurationMap;
     /**
      * Return the most likely successor of the current activity based on the significance in the model
      *
-     * @param currentActivityId
-     * @return
+     * @param currentActivityId id of the current activity
+     * @return most likely successor activity id of the current activity
      */
-    public int getNextActivity(int currentActivityId) throws Exception{
+    private int getNextActivity(int currentActivityId) {
         Set<FMNode> nodes = fuzzyMinerModel.getNodes();
         Set<FMEdge<? extends FMNode, ? extends FMNode>> likelySuccessors = new HashSet<>();
         Set<FMNode> interestingNodes = new HashSet<>();
@@ -220,13 +220,13 @@ return idDurationMap;
         return successorID;
     }
 
-    public ArrayList<ActivityPrediction> createPredictionDataStructure(Map<Integer, Double> durationMap){
+    private ArrayList<ActivityPrediction> createPredictionDataStructure(Map<Integer, Double> durationMap){
         ArrayList<ActivityPrediction> activityPredictions = new ArrayList<>();
         DataBaseHandler handler = AppGlobal.getHandler();
-        String activityName = null;
-        int activityID = 0;
+        String activityName;
+        int activityID;
         HashMap<Integer, Double> successorProbabilityMap = new HashMap<>();
-        ActivityPrediction activityPrediction = null;
+        ActivityPrediction activityPrediction;
         for(FMNode node : fuzzyMinerModel.getNodes()){
             if(!node.getElementName().equals("Start//Start") && node.getEventType().equals("Complete")) {
                 activityID = Integer.parseInt(node.getElementName());

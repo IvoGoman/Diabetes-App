@@ -18,7 +18,6 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
  * Created by Ivo on 10.07.2016.
- * <p/>
  * Utility Methods for the Process Mining Algorithms
  */
 public class ProcessMiningUtill {
@@ -35,7 +34,7 @@ public class ProcessMiningUtill {
     /**
      * Calculates the Average Duration of every unique activity contained in the eventList
      *
-     * @return
+     * @return Map of Activity IDs and average durations in minutes
      */
     public static Map<Integer, Double> getAverageDurations(ArrayList<String[]> eventList) {
         Map<Integer, Integer> activityCount = new HashMap<>();
@@ -70,7 +69,7 @@ public class ProcessMiningUtill {
     /**
      * Calculates the average % for the day of every unique activity
      *
-     * @return
+     * @return Map of Activity IDs and average durations in %
      */
     public static Map<Integer, Double> getAveragePercentualDurations(ArrayList<String[]> eventList) {
         Map<Integer, Integer> activityCount = new HashMap<>();
@@ -106,7 +105,7 @@ public class ProcessMiningUtill {
     /**
      * Returns the ID of the most frequent Activity that occured at 00:01
      *
-     * @return
+     * @return activity id
      */
     public static int getMostFrequentStartActivity() {
         DataBaseHandler dbHandler = AppGlobal.getHandler();
@@ -142,7 +141,7 @@ public class ProcessMiningUtill {
      * Returns the activity which was most often the first in each case
      *
      * @param cases Output of the CaseCreator
-     * @return
+     * @return activity id
      */
     public static int getMostFrequentStartActivity(ArrayList<String[]> cases) {
         HashMap<Integer, Integer> activityCount = new HashMap<>();
@@ -177,7 +176,7 @@ public class ProcessMiningUtill {
      * Returns the activity which was most often the first in each case
      *
      * @param cases Output of the CaseCreator
-     * @return
+     * @return activity id
      */
     public static int getMostFrequentEndActivity(ArrayList<String[]> cases) {
         HashMap<Integer, Integer> activityCount = new HashMap<>();
@@ -218,7 +217,7 @@ public class ProcessMiningUtill {
      * If the sum is below 24*60 Minutes a full day is not yet reached
      *
      * @param idDurationMap
-     * @return
+     * @return duration of 1440 met? True or False
      */
     public static boolean isTotalDurationReached(List<Pair<Integer, Double>> idDurationMap) {
         Double total = 0.0;
@@ -235,7 +234,7 @@ public class ProcessMiningUtill {
      * If the sum is below 100.00 the total day is not yet reached.
      *
      * @param idDurationMap
-     * @return
+     * @return duration of 100% met? True or False
      */
     public static boolean isTotalPercentageReached(List<Pair<Integer, Double>> idDurationMap) {
         Double total = 0.0;
@@ -248,6 +247,12 @@ public class ProcessMiningUtill {
 
     }
 
+    /**
+     * Creates corresponding entries in the database for every pair of activity id and duration
+     *
+     * @param idDurationMap list of pairs of activity ids and the corresponding average durations
+     * @param percentage flag if the durations are percentage(True) values or minutes(False)
+     */
     public static void createActivities(List<Pair<Integer, Double>> idDurationMap, boolean percentage) {
         double total = 0.0;
         int duration = 0;
@@ -307,6 +312,12 @@ public class ProcessMiningUtill {
         return duration;
     }
 
+    /**
+     * Removes the flag of the activity for AM/PM
+     *
+     * @param id activity id with AM/PM flag
+     * @return cleaned activity id
+     */
     public static int removeAMPMFlag(int id){
     //            remove the am/pm-flag from the id
     String tempId = String.valueOf(id);

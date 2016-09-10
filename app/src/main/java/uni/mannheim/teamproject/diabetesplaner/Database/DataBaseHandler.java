@@ -316,6 +316,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             return (cursor.getString(0));
         }
+        cursor.close();
         return "";
     }
 
@@ -482,6 +483,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } else {
                 result = null;
             }
+            cursor.close();
             return result;
         }
         catch (Exception e)
@@ -510,6 +512,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()){
             return cursor.getInt(0);
         }
+        cursor.close();
         return 6;
     }
 
@@ -520,6 +523,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()){
             return cursor.getString(1);
         }
+        cursor.close();
         return "Default";
     }
 
@@ -616,6 +620,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         if(cursor.moveToFirst()){
             name = cursor.getString(0);
         }
+        cursor.close();
         return name;
     }
 
@@ -640,6 +645,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         do {
             idMap.put(cursor.getInt(0),cursor.getString(1));
         } while(cursor.moveToNext());
+        cursor.close();
         return idMap;
     }
 
@@ -689,6 +695,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 eventList.add(event);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return eventList;
     }
 
@@ -711,7 +718,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
 
-
+        cursor.close();
         return activityList;
     }
 
@@ -734,6 +741,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 activityList.add(activity);
             } while (cursor.moveToNext());
         }
+        cursor.close();
         return activityList;
     }
     /**
@@ -783,6 +791,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } else {
                 result = null;
             }
+            cursor.close();
             return result;
         }
         catch (Exception e)
@@ -814,6 +823,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } else {
                 result = null;
             }
+            cursor.close();
             return result;
         }
         catch (Exception e)
@@ -841,7 +851,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 "where timestamp>='"+windowStartEnd[0]+"' and timestamp <'"+windowStartEnd[1]+"'" +
                 "AND measure_kind = '"+measure_kind+"';",null);
         ArrayList<MeasureItem> measureList = new ArrayList<>();
-        MeasureItem measureItem = null;
+        MeasureItem measureItem;
         if(cursor.moveToFirst()){
             do{
                 measureItem = new MeasureItem(Long.parseLong(cursor.getString(2)),cursor.getDouble(0),cursor.getString(1));
@@ -865,7 +875,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("select measure_value, measure_unit, timestamp from  " + MEASUREMENT_TABLE_NAME + " "  +
                 "where measure_kind = '"+measure_kind+"';",null);
         ArrayList<MeasureItem> measureList = new ArrayList<>();
-        MeasureItem measureItem = null;
+        MeasureItem measureItem;
         if(cursor.moveToFirst()){
             do{
                 measureItem = new MeasureItem(cursor.getLong(2),cursor.getDouble(0),cursor.getString(1));
@@ -889,7 +899,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("select measure_value, measure_unit, MAX(timestamp) from  " + MEASUREMENT_TABLE_NAME + " "  +
                 "where measure_kind = '"+measure_kind+"' group by measure_value, measure_unit;",null);
         ArrayList<MeasureItem> measureList = new ArrayList<>();
-        MeasureItem measureItem = null;
+        MeasureItem measureItem;
         if(cursor.moveToFirst()){
             do{
                 measureItem = new MeasureItem(cursor.getLong(2),cursor.getDouble(0),cursor.getString(1));
@@ -918,7 +928,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         String StartOfDay = timeWindow[0],EndOfDay = timeWindow[1];
         SQLiteDatabase db = handler.getReadableDatabase();
         String S = "select SubActivities.id, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id where (ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "') or (ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "');";
-        Cursor cursor = db.rawQuery("select SubActivities.id, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id where ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "' or ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "' order by ActivityList.Start;", null);
+        Cursor cursor = db.rawQuery("select SubActivities.id_Activity,ActivityList.id_SubActivity, ActivityList.Meal, ActivityList.Intensity, ActivityList.ImagePath, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id where ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "' or ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "' order by ActivityList.Start;", null);
 
         ArrayList<ActivityItem> activityList = GetArrayFromCursor(cursor, date);
         return activityList;
@@ -939,6 +949,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 activityItems.add(new ActivityItem(cursor.getInt(0),0, TimeUtils.getDateFromString(cursor.getString(1)),TimeUtils.getDateFromString(cursor.getString(2))));
             } while(cursor.moveToNext());
         }
+        cursor.close();
         return activityItems;
     }
 
@@ -1005,6 +1016,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + cursor.getString(0) + "';");
             } while (cursor.moveToNext());
             db1.close();
+            cursor.close();
         }
     }
 
@@ -1016,6 +1028,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 db1.execSQL("update ActivityList set Start = '" + PlusMinute(End) + "' where id = '" + cursor.getString(0) + "';");
             } while (cursor.moveToNext());
             db1.close();
+            cursor.close();
         }
     }
 
@@ -1027,6 +1040,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 db1.execSQL("delete from ActivityList where id = '" + cursor.getString(0) + "';");
             } while (cursor.moveToNext());
             db1.close();
+            cursor.close();
         }
     }
 
@@ -1045,6 +1059,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 InsertActivity(handler, idSubActivity, idLocation, End, End1);
             } while (cursor.moveToNext());
             db1.close();
+            cursor.close();
         }
     }
 
@@ -1061,9 +1076,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("select * from ActivityList where Start>= '" + StartOfDay + "' and End<= '" + EndOfDay + "'", null);
         if (cursor.getCount() < 1)
         {
+            cursor.close();
             return false;
         }
         else{
+            cursor.close();
             return true;
         }
     }
@@ -1131,7 +1148,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     private String[] getWindowStartEnd(Date date,String window) {
         String startDay, endDay;
-        Timestamp timestampStart=null,timestampEnd =null;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(date);
 //      Set the end of the time window
@@ -1205,6 +1221,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 result[0] = cursor.getString(0);
                 //cursor.moveToNext();
                 result[1] = cursor.getString(1);
+                cursor.close();
                 return result;
             } else {
                 result = null;
@@ -1441,6 +1458,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                     }
                 }
         }
+        cursor.close();
         return relevantDays;
     }
 

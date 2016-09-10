@@ -15,10 +15,6 @@ import android.view.animation.AnimationUtils;
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
-//import org.deckfour.xes.model.XLog;
-
-import org.deckfour.xes.model.XLog;
-
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileReader;
@@ -28,9 +24,9 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
-import uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing.CaseCreator;
-
 import uni.mannheim.teamproject.diabetesplaner.R;
+
+//import org.deckfour.xes.model.XLog;
 
 /**
  * Created by Stefan
