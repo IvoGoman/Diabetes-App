@@ -54,8 +54,8 @@ public class PredictionFramework {
             case PREDICTION_GSP:
                 return GSP_Prediction.makeGSPPrediction(train, 0.2f);
             case PREDICTION_FUZZY_MINER:
-                //TODO predict with fuzzy miner
-                break;
+                FuzzyModel model = new FuzzyModel(train,false);
+                return model.makeFuzzyMinerPrediction();
             case PREDICTION_HEURISTICS_MINER:
                 //TODO predict with heuristics miner
                 break;

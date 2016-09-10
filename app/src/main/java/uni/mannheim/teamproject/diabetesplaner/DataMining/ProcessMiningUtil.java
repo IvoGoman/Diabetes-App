@@ -21,7 +21,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
  * <p/>
  * Utility Methods for the Process Mining Algorithms
  */
-public class ProcessMiningUtill {
+public class ProcessMiningUtil {
 
     /**
      * @return ID of the current activity
@@ -35,7 +35,7 @@ public class ProcessMiningUtill {
     /**
      * Calculates the Average Duration of every unique activity contained in the eventList
      *
-     * @return
+     * @return Map of ActivityIDs and Average Duration in minutes
      */
     public static Map<Integer, Double> getAverageDurations(ArrayList<String[]> eventList) {
         Map<Integer, Integer> activityCount = new HashMap<>();
@@ -70,7 +70,7 @@ public class ProcessMiningUtill {
     /**
      * Calculates the average % for the day of every unique activity
      *
-     * @return
+     * @return Map of ActivityIDs and Average Duration in %
      */
     public static Map<Integer, Double> getAveragePercentualDurations(ArrayList<String[]> eventList) {
         Map<Integer, Integer> activityCount = new HashMap<>();
@@ -104,17 +104,17 @@ public class ProcessMiningUtill {
     }
 
     /**
-     * Returns the ID of the most frequent Activity that occured at 00:01
+     * Returns the ID of the most frequent Activity that occurred at 00:01
      *
-     * @return
+     * @return activity ID of the most frequent start activity
      */
     public static int getMostFrequentStartActivity() {
         DataBaseHandler dbHandler = AppGlobal.getHandler();
         ArrayList<ActivityItem> activities = dbHandler.getAllActivities(dbHandler);
         HashMap<Integer, Integer> activityCount = new HashMap<>();
-        int currentCount = 0;
+        int currentCount;
         for (ActivityItem item : activities) {
-//            TODO: 00:01 might not be the time where the first activity occured, if it is not mainted over night
+//            TODO: 00:01 might not be the time where the first activity occurred, if it is not maintained over night
             if (TimeUtils.dateToTimeString(item.getStarttimeAsString()).equals("00:01")) {
                 if (activityCount.containsKey(item.getActivityId())) {
                     currentCount = activityCount.get(item.getActivityId()) + 1;
@@ -142,11 +142,11 @@ public class ProcessMiningUtill {
      * Returns the activity which was most often the first in each case
      *
      * @param cases Output of the CaseCreator
-     * @return
+     * @return  activity ID of the most frequent start activity
      */
     public static int getMostFrequentStartActivity(ArrayList<String[]> cases) {
         HashMap<Integer, Integer> activityCount = new HashMap<>();
-        int currentCase = 0, currentActivity = 0, currentCount = 0;
+        int currentCase = 0, currentActivity, currentCount;
         String[] caseArray;
         for (int i = 0; i < cases.size(); i++) {
             caseArray = cases.get(i);
@@ -177,14 +177,14 @@ public class ProcessMiningUtill {
      * Returns the activity which was most often the first in each case
      *
      * @param cases Output of the CaseCreator
-     * @return
+     * @return  activity ID of the most frequent end activity
      */
     public static int getMostFrequentEndActivity(ArrayList<String[]> cases) {
         HashMap<Integer, Integer> activityCount = new HashMap<>();
 //       Initial currentCase is 1 so the change between the cases is registered
-        int currentCaseKey = 1, currentActivityKey = 0, currentActivityCount = 0;
+        int currentCaseKey = 1, currentActivityKey, currentActivityCount;
         String[] predecessorCaseValues = null;
-//        iterate throught all cases
+//        iterate through all cases
         for (String[] caseArray : cases) {
 //            is the case of the current caseArray the same as the overall currentCaseKey?
             if (Integer.valueOf(caseArray[0]) != currentCaseKey) {
@@ -217,43 +217,40 @@ public class ProcessMiningUtill {
      * Calculating the sum of the duration of all activities in the ArrayList
      * If the sum is below 24*60 Minutes a full day is not yet reached
      *
-     * @param idDurationMap
-     * @return
+     * @param idDurationMap map activity ID and duration pairs
+     * @return True if sum of durations >= 1440 else False
      */
     public static boolean isTotalDurationReached(List<Pair<Integer, Double>> idDurationMap) {
         Double total = 0.0;
         for (Pair<Integer, Double> pair : idDurationMap) {
             total += pair.second;
         }
-        if (total <= 1440) {
-            return false;
-        } else return true;
+        return total > 1440;
     }
 
     /**
      * Method calculating the total percentage of the day covered by the Activities in the the List Provided
      * If the sum is below 100.00 the total day is not yet reached.
      *
-     * @param idDurationMap
-     * @return
+     * @param idDurationMap map activity ID and duration pairs
+     * @return True if sum of durations >= 100% else False
      */
     public static boolean isTotalPercentageReached(List<Pair<Integer, Double>> idDurationMap) {
         Double total = 0.0;
         for (Pair<Integer, Double> pair : idDurationMap) {
             total += pair.second;
         }
-        if (total <= 100.0) {
-            return false;
-        } else return true;
+        return total > 100.0;
 
     }
 
-    public static void createActivities(List<Pair<Integer, Double>> idDurationMap, boolean percentage) {
+    public static ArrayList<ActivityItem> createActivities(List<Pair<Integer, Double>> idDurationMap, boolean percentage) {
         double total = 0.0;
-        int duration = 0;
-        DataBaseHandler dbHandler = AppGlobal.getHandler();
+        int duration;
+        ArrayList<ActivityItem> result = new ArrayList<>();
+//        DataBaseHandler dbHandler = AppGlobal.getHandler();
         Date[] startEndDate;
-        ActivityItem item = null;
+        ActivityItem item;
 //        How much is every minute/ percent worth towards the total day
         double relativeDurationOfUnit;
 
@@ -285,9 +282,11 @@ public class ProcessMiningUtill {
 //            remove the am/pm-flag from the id
             int id = removeAMPMFlag(idDurationMap.get(i).first);
             item = new ActivityItem(id, 0, startEndDate[0], startEndDate[1], 0);
-            dbHandler.InsertActivity(dbHandler, item);
+            result.add(item);
+//            dbHandler.InsertActivity(dbHandler, item);
             date = startEndDate[1];
         }
+        return result;
     }
 
     /**
@@ -313,4 +312,20 @@ public class ProcessMiningUtill {
     id=Integer.parseInt(tempId.substring(0,tempId.length()-1));
         return id;
 }
+
+    /**
+     * Convert the list of activities grouped by days as one big list
+     *
+     * @param train the training data provided by the Prediction Framework
+     * @return training data format used by FuzzyMiner
+     */
+    public static ArrayList<ActivityItem> convertDayToAllStructure(ArrayList<ArrayList<ActivityItem>> train){
+        ArrayList<ActivityItem> items = new ArrayList<>();
+        for (ArrayList<ActivityItem> list: train) {
+            for (ActivityItem item: list) {
+                items.add(item);
+            }
+        }
+        return items;
+    }
 }
