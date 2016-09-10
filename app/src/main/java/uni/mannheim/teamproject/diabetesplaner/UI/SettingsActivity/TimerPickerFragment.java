@@ -1,19 +1,13 @@
 package uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity;
 
-import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
 import android.text.format.DateFormat;
-import android.text.format.Time;
-import android.util.TimeUtils;
 import android.widget.TimePicker;
 
-
 import java.util.Calendar;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import uni.mannheim.teamproject.diabetesplaner.R;
 

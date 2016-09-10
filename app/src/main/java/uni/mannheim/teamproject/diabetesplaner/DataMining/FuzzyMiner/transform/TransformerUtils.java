@@ -7,7 +7,7 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.Default.Mut
 
 public class TransformerUtils {
 	public static String getNodeLabel(FMNode fmNode) {
-		String label = "";
+		String label;
 		if (fmNode instanceof FMClusterNode) {
 			FMClusterNode clusterNode = (FMClusterNode) fmNode;
 			label = "<html>" + clusterNode.id() + "<br>" + Integer.toString(clusterNode.size()) + " elements " + "<br>"

@@ -18,7 +18,6 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
  * Created by Ivo on 10.07.2016.
- * <p/>
  * Utility Methods for the Process Mining Algorithms
  */
 public class ProcessMiningUtil {
@@ -306,6 +305,12 @@ public class ProcessMiningUtil {
         return duration;
     }
 
+    /**
+     * Removes the flag of the activity for AM/PM
+     *
+     * @param id activity id with AM/PM flag
+     * @return cleaned activity id
+     */
     public static int removeAMPMFlag(int id){
     //            remove the am/pm-flag from the id
     String tempId = String.valueOf(id);

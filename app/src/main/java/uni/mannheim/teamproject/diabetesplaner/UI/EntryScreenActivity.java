@@ -67,8 +67,8 @@ public class EntryScreenActivity extends AppCompatActivity
     private static Menu optionsMenu;
     public static NavigationView navigationView;
     private static String imagePath;
-    private RoutineRecommendation recServiceRoutine;
-    private BSInputRecommendation recServiceBS;
+    public static RoutineRecommendation recServiceRoutine;
+    public static BSInputRecommendation recServiceBS;
 
     public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 
@@ -408,7 +408,7 @@ public class EntryScreenActivity extends AppCompatActivity
 
         }else if (id == R.id.nav_activity_measurement) {
             Toast.makeText(this, R.string.menu_item_activity, Toast.LENGTH_SHORT).show();
-//            //TEST
+//            TEST
 //            Log.d(TAG,"All Days: ");
 //            ArrayList<ArrayList<ActivityItem>> list = AppGlobal.getHandler().getAllDays(PredictionFramework.WEEKDAYS);
 //            for(int i=0; i<list.size(); i++){
@@ -623,7 +623,9 @@ public class EntryScreenActivity extends AppCompatActivity
         public void onServiceConnected(ComponentName name, IBinder binder) {
             Log.d(TAG, "onTaskServiceConnected");
             RoutineRecommendation.RecBinder recBinder = (RoutineRecommendation.RecBinder) binder;
-            recServiceRoutine = (RoutineRecommendation)recBinder.getService();
+            recServiceRoutine = (RoutineRecommendation)(recBinder.getService());
+            Log.d("Rec", "Is really null?" + recBinder.getClass().getSimpleName());
+
             mBoundRoutineRec = true;
         }
 
@@ -643,7 +645,7 @@ public class EntryScreenActivity extends AppCompatActivity
         public void onServiceConnected(ComponentName name, IBinder binder) {
             Log.d(TAG, "onBSServiceConnected");
             RoutineRecommendation.RecBinder recBinder = (BSInputRecommendation.RecBinder) binder;
-            recServiceBS = (BSInputRecommendation)recBinder.getService();
+            recServiceBS = (BSInputRecommendation)(recBinder.getService());
             mBoundBSRec = true;
         }
 

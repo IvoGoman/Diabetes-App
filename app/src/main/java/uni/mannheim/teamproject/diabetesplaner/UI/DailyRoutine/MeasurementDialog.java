@@ -4,6 +4,7 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -120,6 +121,8 @@ public class MeasurementDialog extends MeasurementInputDialog {
 //                            1, Double.parseDouble(insulin_value), insulin);
 
                     Toast.makeText(getActivity(), "Measurements: " + measure_value + " " + measure + "," + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
+                    //starts the recommendations
+
                     dismiss();
                     /* else {
                         Log.d("bloodsugar_entry", "Nothing changed");
@@ -134,7 +137,9 @@ public class MeasurementDialog extends MeasurementInputDialog {
                                     .setIcon(android.R.drawable.ic_dialog_alert)
                                     .show();
                     }*/
+
                 } catch (Exception e) {
+                    Log.d("Rec", ""+e);
                     e.getMessage();
                 }
             }

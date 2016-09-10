@@ -8,10 +8,8 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
-import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Ivo on 10.07.2016.
@@ -46,11 +44,10 @@ public class CustomXLog {
         builder.startLog("ActivityLog");
         String caseHelper = eventList.get(1)[0];
         builder.addTrace(eventList.get(1)[0]);
-        int j =0;
 
-       this.createInitalEvent(builder,eventList.get(1));
+       this.createInitialEvent(builder,eventList.get(1));
 //		iterate through the event list with cases
-//        TODO:dont reduce the full amount of activites
+//        TODO:do not reduce the full amount of activities
         for (int i = 1; i < eventList.size(); i++) {
 //			If it is the same case then fill the trace with events
             if (eventList.get(i)[0].equals(caseHelper)) {
@@ -67,15 +64,15 @@ public class CustomXLog {
             } else {
 //				Add a new Trace to the Builder [this happens for every case]
                 builder.addTrace(eventList.get(i)[0]);
-            this.createInitalEvent(builder,eventList.get(i));
+            this.createInitialEvent(builder,eventList.get(i));
             }
             caseHelper = eventList.get(i)[0];
         }
 //		create the XLog Object
-        XLog log = builder.build();
-        this.xLog = log;
+
+        this.xLog =  builder.build();
     }
-    private void createInitalEvent(LogBuilder builder,String[] event){
+    private void createInitialEvent(LogBuilder builder, String[] event){
         builder.addEvent("Start//Start");
         builder.addAttribute("Activity", "Start");
         builder.addAttribute("lifecycle:transition", "Start");
@@ -89,18 +86,17 @@ public class CustomXLog {
 
     /**
      * Create the cases from the ArrayList of ActivityItems queried
-     * @param items
-     * @return
+     * @param items ArrayList of Activity Items
+     * @return returns the ActivityItems converted into String Arrays
      */
     private ArrayList<String[]> convertActivityItemToStringArray(ArrayList<ActivityItem> items) {
-        ArrayList<ActivityItem> list = items;
         ArrayList<String[]> eventList = new ArrayList<>();
         String[] event;
         event = new String[]{"", "", "starttime", "endtime"};
         eventList.add(event);
         String id;
-        int isAM = 0;
-        for (ActivityItem item : list) {
+        int isAM;
+        for (ActivityItem item : items) {
             id = String.valueOf(item.getActivityId());
             Long[] timestamps = TimeUtils.convertDateStringToTimestamp(new String[]{item.getStarttimeAsString(), item.getEndtimeAsString()});
             isAM = TimeUtils.isAM(timestamps[0] * 1000);
@@ -111,10 +107,10 @@ public class CustomXLog {
     }
 
     /**
-     * Create the cases based on the Eventlist
+     * Create the cases based on the list of events
      *
-     * @param eventList
-     * @return ArrayList<String[]> of Events with Cases
+     * @param eventList List of Events/Activities in StringArray format
+     * @return ArrayList of StringArrays of Events with Cases
      */
     public ArrayList<String[]> retrieveCases(ArrayList<String[]> eventList) {
         //creates a CaseCreator object with the CSV file in an ArrayList

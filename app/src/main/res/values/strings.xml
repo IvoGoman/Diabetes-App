@@ -155,5 +155,8 @@
     <string name="m_date"> Date</string>
     <string name="m_time"> Time</string>
 
+    <string name="rec_bs_between_150_200">You should better do some exercise because your blood sugar level is high!</string>
+    <string name="rec_bs_above_200">You should take insulin because your blood sugar is way to high!</string>
+    <string name="rec_bs_blow_100">Your blood sugar is low, have a meal.</string>
 
 </resources>

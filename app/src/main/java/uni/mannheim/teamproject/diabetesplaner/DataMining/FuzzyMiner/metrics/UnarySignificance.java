@@ -46,14 +46,14 @@ public class UnarySignificance {
             if (maxFrequency < i) {
                 maxFrequency = frequencyMap.get(i);
             }
-        };
+        }
         System.out.println("Max Frequency: "+maxFrequency);
         for (Node n : nodes) {
             significance = (frequencyMap.get(n.getActivityID()) / maxFrequency);
             n.setUnarySignificance(significance);
         }
         return nodes;
-    };
+    }
 
 
 }

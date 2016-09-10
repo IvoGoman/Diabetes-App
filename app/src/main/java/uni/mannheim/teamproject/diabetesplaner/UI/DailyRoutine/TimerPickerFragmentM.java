@@ -40,19 +40,19 @@ public class TimerPickerFragmentM extends DialogFragment
         {
             if(hourOfDay < 10)
             {
-                //dialog.btn_time.setText(String.format("0%d:%d",hourOfDay,minute));
+                dialog.btn_time.setText(String.format("0%d:%d",hourOfDay,minute));
             }
             if (minute < 10)
             {
-                //dialog.btn_time.setText(String.format("%d:0%d",hourOfDay,minute));
+                dialog.btn_time.setText(String.format("%d:0%d",hourOfDay,minute));
             }
             if((hourOfDay<10) && (minute < 10))
             {
-                //dialog.btn_time.setText(String.format("%0d:0%d",hourOfDay,minute));
+                dialog.btn_time.setText(String.format("%0d:0%d",hourOfDay,minute));
             }
             if((hourOfDay>10) && (minute > 10))
             {
-                //dialog.btn_time.setText(String.format("%d:%d",hourOfDay,minute));
+                dialog.btn_time.setText(String.format("%d:%d",hourOfDay,minute));
             }
 
         }catch (Exception e)

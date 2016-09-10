@@ -1,5 +1,7 @@
 package uni.mannheim.teamproject.diabetesplaner.Domain;
 
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
+
 /**
  * Created by Ivo on 4/18/2016.
  */
@@ -39,5 +41,35 @@ public class MeasureItem {
 
     public void setMeasure_unit(String measure_unit) {
         this.measure_unit = measure_unit;
+    }
+
+    /**
+     * returns the blood sugar level in mmol
+     * @return
+     * @author Stefan 08.09.2016
+     */
+    public double getMeasureValueInMol(){
+        return Util.convertBSToMol(measure_value, measure_unit);
+    }
+
+    /**
+     * returns the blood sugar level in mg/dl
+     * @return
+     * @author Stefan 08.09.2016
+     */
+    public double getMeasureValueInMG(){
+        return Util.convertBSToMG(measure_value, measure_unit);
+    }
+
+    /**
+     * compares two MeasureItems
+     * @param o
+     * @return
+     * @author Stefan 08.09.2016
+     */
+    @Override
+    public boolean equals(Object o) {
+        MeasureItem mi = (MeasureItem) o;
+        return this.getMeasureValueInMol() == mi.getMeasureValueInMol() && this.getTimestamp().equals(mi.getTimestamp());
     }
 }
