@@ -183,5 +183,10 @@
     <string name="tea">unsweetened tea</string>
     <string name="tuna">tuna</string>
     <string name="quinoa">quinoa</string>
+    <string name="pref_food_rec">Food Recommendation</string>
+    <string name="pref_bs_input">Reminder for blood sugar input</string>
+    <string name="pref_activity_rec">Recommendations for Activities</string>
+    <string name="Sonntag">Sunday</string>
+    <string name="pref_rec">Recommendations</string>
 
 </resources>

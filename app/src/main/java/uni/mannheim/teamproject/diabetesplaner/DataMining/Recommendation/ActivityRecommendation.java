@@ -71,17 +71,17 @@ public class ActivityRecommendation extends Recommendation {
      */
     @Override
     public void recommend() {
-        Log.d("Rec", "recommend based on bsl");
-        mIdOffset = getMidOffset();
-
-        //switch between different recommendation methods
-        int rec = FIRST_REC;
-        long time = System.currentTimeMillis();
-
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean notify = preferences.getBoolean("pref_key_assistant", true);
-//        if(time-lastRecommendation>=INTERVAL && notify){
-        if (notify) {
+        boolean notify = preferences.getBoolean("pref_key_activity_rec", true);
+
+        if(notify) {
+            Log.d("Rec", "recommend based on bsl");
+            mIdOffset = getMidOffset();
+
+            //switch between different recommendation methods
+            int rec = FIRST_REC;
+            long time = System.currentTimeMillis();
+
             switch (rec) {
                 case DEFAUL_REC:
                     giveDefaultRecommendation();
@@ -90,8 +90,9 @@ public class ActivityRecommendation extends Recommendation {
                     giveBSbasedRecommendation();
                     break;
             }
+
+            lastRecommendation = time;
         }
-        lastRecommendation = time;
     }
 
     /**

@@ -143,4 +143,10 @@
     <string name="an_eine">eine</string>
     <string name="or">oder</string>
     <string name="a_ein">ein</string>
+    <string name="ADD">Hinzufügen</string>
+    <string name="pref_activity_rec">Empfehlung von Aktivitiäten</string>
+    <string name="pref_bs_input">Erinnerung zur Blutzuckerspiegel Eingabe</string>
+    <string name="pref_help_dialog_message"></string>
+    <string name="pref_food_rec">Ernährungsempfehlungen</string>
+    <string name="pref_rec">Empfehlungen</string>
 </resources>
