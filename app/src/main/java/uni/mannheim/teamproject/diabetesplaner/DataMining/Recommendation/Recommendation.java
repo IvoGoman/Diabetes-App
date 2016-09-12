@@ -18,8 +18,10 @@ import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
  * @author Stefan 09.07.2016
  */
 public abstract class Recommendation extends IntentService {
-    public static final int ROUTINE_REC = 0;
+    public static final int ACTIVITY_REC = 0;
     public static final int BS_REC = 1;
+    public static final int FOOD_REC = 2;
+
     public static final String TAG = "REC";
     public static final int MIN = 1000*60;
     private static int offset = 1;

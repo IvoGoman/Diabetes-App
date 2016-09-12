@@ -102,6 +102,7 @@ public class BSInputRecommendation extends Recommendation {
 
     /**
      * recommends to input bloodsugar when its the time the user usually inputs the bloodsugar
+     * @author Stefan
      */
     @Override
     public void recommend(){
