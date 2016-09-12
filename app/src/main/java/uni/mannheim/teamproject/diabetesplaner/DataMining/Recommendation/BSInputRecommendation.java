@@ -102,22 +102,22 @@ public class BSInputRecommendation extends Recommendation {
 
     /**
      * recommends to input bloodsugar when its the time the user usually inputs the bloodsugar
+     * @author Stefan
      */
     @Override
     public void recommend(){
-        mIdOffset = getMidOffset();
-        //for testing
-        for(int i=0;i<means.size(); i++){
-            int tmp = (int)((double)means.get(i));
-            String date = TimeUtils.getTimeInUserFormat(TimeUtils.minutesOfDayToTimestamp(tmp), this);
-            Log.d(TAG,"Cluster Mean: " + date);
-        }
-
         //check if notifications are switched on
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean notify = preferences.getBoolean("pref_key_assistant", true);
+        boolean notify = preferences.getBoolean("pref_key_bs_input", true);
 
         if(notify) {
+            mIdOffset = getMidOffset();
+            //for testing
+            for(int i=0;i<means.size(); i++){
+                int tmp = (int)((double)means.get(i));
+                String date = TimeUtils.getTimeInUserFormat(TimeUtils.minutesOfDayToTimestamp(tmp), this);
+                Log.d(TAG,"Cluster Mean: " + date);
+            }
 
             Date date = new Date();
             long timestamp = date.getTime();

@@ -19,7 +19,6 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
 public class Evaluation {
 
-
     ArrayList<Prediction.TimeAction> CreatorRealRoutine(ArrayList<ActivityItem> Routine){
         ArrayList<Prediction.TimeAction> result = new ArrayList<Prediction.TimeAction>();
 
