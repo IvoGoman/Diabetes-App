@@ -161,22 +161,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 db.execSQL("insert into Activities(Title, id_SuperActivity) values('" + activities.get(i)[1] + "','" + activities.get(i)[2] + "'); ");
             }
 
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Schlafen','1'); ");
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Essen/Trinken','2'); ");
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Körperpflege','6'); ");
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Transportmittel benutzen','6'); ");
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Entspannen','1'); ");
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Fortbewegen(mit Gehilfe)','4'); ");
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Medikamente einnehmen','3'); ");
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Einkaufen','4'); ");
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Hausarbeit','4'); ");
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Essen zubereiten','6'); ");
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Geselligkeit','6'); ");
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Fortbewegen','4'); ");
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Schreibtischarbeit','5'); ");
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Sport','4'); ");
-//            db.execSQL("insert into Activities(Title, id_SuperActivity) values('Default','6'); "); //15
-
 
             // Create SubActivities Table
             db.execSQL(SUB_ACTIVITIES_CREATE_TABLE);
@@ -189,26 +173,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             for(int i=0 ;i< subActs.size(); i++){
                 db.execSQL("insert into SubActivities(Title, id_Activity) values('"+ subActs.get(i)[2] +"','"+ subActs.get(i)[1] +"'); ");
             }
-
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Schlafen','1'); ");   //1
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Mittagessen','2'); ");//2
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Körperpflege','3'); ");//3
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Transportmittel benutzen','4'); ");//4
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Entspannen','5'); ");//5
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Fortbewegen(mit Gehilfe)','6'); ");//6
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Medikamente einnehmen','7'); ");//7
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Einkaufen','8'); ");//8
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Hausarbeit','9'); ");//9
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Essen zubereiten','10'); ");//10
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Geselligkeit','11'); ");//11
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Fortbewegen','12'); ");//12
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Schreibtischarbeit','13'); ");//13
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Sport','14'); ");//14
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Default','15'); "); //15
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Frühstuck','2'); ");//16
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Mittagessen','2'); ");//17
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Abendessen','2'); ");//18
-//            db.execSQL("insert into SubActivities(Title, id_Activity) values('Auto fahren','4'); ");//19
 
 
 
@@ -241,13 +205,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             //Create Profile Table
             db.execSQL(PROFILE_CREATE_TABLE);
             Log.d("Database", "Profile Table Created");
-
-            //db.close();
-//        }catch(Exception e){
-//            e.getMessage();
-//            Log.e("Database", e+"");
-//        }
-       // db.close();
     }
 
     /**
@@ -360,6 +317,37 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
 
+    public ArrayList<String> getAllSubactivities()
+    {
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        ArrayList<String> result = new ArrayList<>();
+        Cursor cursor = db1.rawQuery("select title from SubActivities; ", null);
+        if (cursor.moveToFirst()) {
+            do {
+                result.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+
+        }
+        cursor.close();
+        return result;
+    }
+
+    public ArrayList<String> getAllActivityNames()
+    {
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        ArrayList<String> result = new ArrayList<>();
+        Cursor cursor = db1.rawQuery("select title from Activities; ", null);
+        if (cursor.moveToFirst()) {
+            do {
+                result.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+
+        }
+        cursor.close();
+        return result;
+    }
+
+
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 
@@ -414,11 +402,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      *
-     * @param handler
      * @param Activ
      * @author edited 09.09.2016 by Stefan
      */
-    public void InsertActivity(DataBaseHandler handler, ActivityItem Activ) {
+    public void InsertActivity(ActivityItem Activ) {
         String ImagePath = Activ.getImagePath();
         int idActivity = Activ.getSubactivityId();
         int idLocation =1;
@@ -432,8 +419,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             ImagePath = Activ.getImagePath();
         }
         Integer Intensity = Activ.getIntensity();
-
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+        if (Intensity!=null && Intensity==-1){
+            Intensity=null;
+        }
+        SQLiteDatabase db1 = this.getWritableDatabase();
+        System.out.println("insert into ActivityList(id_SubActivity, id_Location, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation + " , '" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
         db1.execSQL("insert into ActivityList(id_SubActivity, id_Location, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation + " , '" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
         db1.close();
     }
@@ -577,7 +567,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         findActionbyEndTime(handler, End);
 
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        InsertActivity(handler, Activ);
+        InsertActivity(Activ);
         db1.close();
     }
 
@@ -672,8 +662,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
-//    Select Statements
-    //METHODS
 
     public Cursor getAllLocations(DataBaseHandler helper) {
         SQLiteDatabase db = helper.getWritableDatabase();
@@ -1110,8 +1098,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             do {
                 db1.execSQL("delete from ActivityList where id = '" + cursor.getString(0) + "';");
             } while (cursor.moveToNext());
-            db1.close();
             cursor.close();
+            db1.close();
         }
     }
 
@@ -1121,13 +1109,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select * from ActivityList where Start <= '" + Start + "' and End >= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                String id = cursor.getString(0);
                 int idSubActivity = cursor.getInt(1);
-                int idLocation = cursor.getInt(2);
-                String Start1 = cursor.getString(3);
                 String End1 = cursor.getString(4);
-                db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + cursor.getString(0) + "';");
-                InsertActivity(handler, idSubActivity, idLocation, End, End1);
+                Date StartNew = TimeUtils.getDateFromString(End);
+                Date EndNew = TimeUtils.getDateFromString(End1);
+
+                ActivityItem activityItem = new ActivityItem(getActivityIdbySubActicityId(idSubActivity),idSubActivity,StartNew,EndNew);
+                String id = cursor.getString(0);
+                int idLocation = cursor.getInt(2);
+                db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + id + "';");
+                InsertActivity(activityItem);
             } while (cursor.moveToNext());
             db1.close();
             cursor.close();

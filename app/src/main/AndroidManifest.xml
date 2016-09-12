@@ -35,7 +35,7 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".DataMining.Recommendation.RoutineRecommendation" />
+        <service android:name=".DataMining.Recommendation.ActivityRecommendation" />
 
         <activity
             android:name=".UI.SettingsActivity.SettingsActivity"

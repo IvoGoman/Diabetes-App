@@ -29,27 +29,13 @@ public class AddDialog extends InputDialog {
         builder.setPositiveButton(R.string.add, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 
-//                Date date = getDrHandler().getDate();
-//                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-//                String dateString = sdf.format(date);
-
-
-                //String dateStringStart = Util.dateToDateTimeString(getStartDate());
-                //String dateStringEnd = Util.dateToDateTimeString(getEndDate());
-
                 if(!isTimeValid()){
                     InvalidTimeDialog itd = new InvalidTimeDialog();
                     itd.show(getFragmentManager(),"invalidTime");
                 }else {
-
-                    //AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), getSelectedItem(), 1, dateStringStart, dateStringEnd);
                     ActivityItem activityItem = new ActivityItem(getSelectedActivity(), getSelectedSubActivity(), getStartDate(), getEndDate(), getImagePath(), getMeal(), getIntensity());
                     AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), activityItem);
 
-
-//                    AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), getSelectedItem(), 1, dateString + " " + getStarttime(), dateString + " " + getEndtime());
-//                    ActivityItem activityItem = new ActivityItem(getSelectedItem(), 0, Util.setTime(dateString, getStarttime()), Util.setTime(dateString, getEndtime()), getImageUri(), getImage(), getMeal());
-//                    getDrHandler().add(activityItem);
                     getDrHandler().update();
 
                 }

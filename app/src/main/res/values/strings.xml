@@ -155,8 +155,38 @@
     <string name="m_date"> Date</string>
     <string name="m_time"> Time</string>
 
+    <!--Recommendations-->
     <string name="rec_bs_between_150_200">You should better do some exercise because your blood sugar level is high!</string>
     <string name="rec_bs_above_200">You should take insulin because your blood sugar is way to high!</string>
     <string name="rec_bs_blow_100">Your blood sugar is low, have a meal.</string>
+
+    <string name="your_activity">Your current activity is</string>
+    <string name="recom_pre">Therefore we recommend to eat/drink</string>
+    <string name="banana">banana</string>
+    <string name="and">and</string>
+    <string name="a">a</string>
+    <string name="a_ein">a</string>
+    <string name="a_eine">a</string>
+    <string name="an">an</string>
+    <string name="an_eine">an</string>
+    <string name="or">or</string>
+    <string name="two">two</string>
+    <string name="orange">orange</string>
+    <string name="strawberry">strawberry</string>
+    <string name="apple">apple</string>
+    <string name="apples">apples</string>
+    <string name="reg_soda">regular soda</string>
+    <string name="b_potatoes">boiled potatoes</string>
+    <string name="kale">kale - cooked, boiled or drained</string>
+    <string name="yoghurt">yoghurt - full cream plain</string>
+    <string name="diet_soda">diet soda</string>
+    <string name="tea">unsweetened tea</string>
+    <string name="tuna">tuna</string>
+    <string name="quinoa">quinoa</string>
+    <string name="pref_food_rec">Food Recommendation</string>
+    <string name="pref_bs_input">Reminder for blood sugar input</string>
+    <string name="pref_activity_rec">Recommendations for Activities</string>
+    <string name="Sonntag">Sunday</string>
+    <string name="pref_rec">Recommendations</string>
 
 </resources>

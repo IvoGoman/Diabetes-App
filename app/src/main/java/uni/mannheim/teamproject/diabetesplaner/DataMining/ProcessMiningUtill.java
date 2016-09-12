@@ -290,7 +290,7 @@ public class ProcessMiningUtill {
 //            remove the am/pm-flag from the id
             int id = removeAMPMFlag(idDurationMap.get(i).first);
             item = new ActivityItem(id, 0, startEndDate[0], startEndDate[1], 0);
-            dbHandler.InsertActivity(dbHandler, item);
+            dbHandler.InsertActivity(item);
             date = startEndDate[1];
         }
     }

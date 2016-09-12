@@ -51,6 +51,23 @@
             android:defaultValue="true"/>
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:title="@string/pref_rec"
+        android:key="pref_rec">
+        <CheckBoxPreference
+            android:key="pref_key_food_rec"
+            android:title="@string/pref_food_rec"
+            android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:key="pref_key_bs_input"
+            android:title="@string/pref_bs_input"
+            android:defaultValue="true"/>
+        <CheckBoxPreference
+            android:key="pref_key_activity_rec"
+            android:title="@string/pref_activity_rec"
+            android:defaultValue="true"/>
+    </PreferenceCategory>
+
     <!-- Prediction Model -->
     <PreferenceCategory
         android:title="@string/pref_predModel"
