@@ -316,13 +316,32 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return "";
     }
 
+
     public ArrayList<String> getAllSubactivities()
     {
         SQLiteDatabase db1 = this.getReadableDatabase();
         ArrayList<String> result = new ArrayList<>();
         Cursor cursor = db1.rawQuery("select title from SubActivities; ", null);
         if (cursor.moveToFirst()) {
-            result.add(cursor.getString(0));
+            do {
+                result.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+
+        }
+        cursor.close();
+        return result;
+    }
+
+    public ArrayList<String> getAllActivityNames()
+    {
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        ArrayList<String> result = new ArrayList<>();
+        Cursor cursor = db1.rawQuery("select title from Activities; ", null);
+        if (cursor.moveToFirst()) {
+            do {
+                result.add(cursor.getString(0));
+            } while (cursor.moveToNext());
+
         }
         cursor.close();
         return result;
