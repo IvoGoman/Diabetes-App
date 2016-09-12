@@ -400,7 +400,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             ImagePath = Activ.getImagePath();
         }
         Integer Intensity = Activ.getIntensity();
-        if (Intensity==-1){
+        if (Intensity!=null && Intensity==-1){
             Intensity=null;
         }
         SQLiteDatabase db1 = this.getWritableDatabase();
@@ -1090,13 +1090,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select * from ActivityList where Start <= '" + Start + "' and End >= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                String id = cursor.getString(0);
                 int idSubActivity = cursor.getInt(1);
-                int idLocation = cursor.getInt(2);
-                String Start1 = cursor.getString(3);
                 String End1 = cursor.getString(4);
+                Date StartNew = TimeUtils.getDateFromString(End);
+                Date EndNew = TimeUtils.getDateFromString(End1);
+
+                ActivityItem activityItem = new ActivityItem(getActivityIdbySubActicityId(idSubActivity),idSubActivity,StartNew,EndNew);
+                String id = cursor.getString(0);
+                int idLocation = cursor.getInt(2);
                 db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + id + "';");
-                InsertActivity(handler, idSubActivity, idLocation, End, End1);
+                InsertActivity(activityItem);
             } while (cursor.moveToNext());
             db1.close();
             cursor.close();
