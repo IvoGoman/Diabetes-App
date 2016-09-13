@@ -56,7 +56,7 @@ public class Wifi extends BroadcastReceiver {
         Date time_von;
         Date time_bis;
         Date time_wifi;
-        Wifi currentWifi;
+      //  Wifi currentWifi;
 
         @Override
         public int onStartCommand(Intent intent, int flags, int startId) {
@@ -74,7 +74,7 @@ public class Wifi extends BroadcastReceiver {
                     //save
                     Date current_date = new Date();
                     //save attributes
-                    AppGlobal.getHandler().insertWIFI(AppGlobal.getHandler(),ssid, TimeUtils.dateToDateTimeString(current_date));
+                   // AppGlobal.getHandler().insertWIFI(AppGlobal.getHandler(),ssid, TimeUtils.dateToDateTimeString(current_date));
 
                   //
 
@@ -111,7 +111,7 @@ public class Wifi extends BroadcastReceiver {
                     .notify(0, n);
         }
 
-        public void makePredictionWifi(String ssid){
+       public void makePredictionWifi(String ssid){
 
             System.out.println("MyTest1: in make Prediction");
 
