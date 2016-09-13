@@ -1315,7 +1315,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     /**
-     * returns a list with all relevant days from the database (training data)
+     * returns a list with all relevant days from the database (training data).
+     * Only days that have a complete daily routine will be returned
      * @param mode specifies which days should be returned. <br/>
      *             Valid values are: <br/>
      *
@@ -1362,7 +1363,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                         if (startPrev != null) {
                             //if starttime of previous activity was on a different day
                             if (TimeUtils.isDifferentDay(startPrev, starttime)) {
-                                relevantDays.add(day);
+                                if(Util.isDayComplete(day)) {
+                                    relevantDays.add(day);
+                                }
                                 day = new ArrayList<>();
                             }
                         }
@@ -1371,7 +1374,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
                         startPrev = starttime;
                     } while (cursor.moveToNext());
-                    relevantDays.add(day);
+                    if(Util.isDayComplete(day)) {
+                        relevantDays.add(day);
+                    }
                 }
                 break;
             }
@@ -1407,7 +1412,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
                                 if (startPrev != null) {
                                     if (TimeUtils.isDifferentDay(startPrev, starttime)) {
-                                        relevantDays.add(day);
+                                        if(Util.isDayComplete(day)) {
+                                            relevantDays.add(day);
+                                        }
                                         day = new ArrayList<>();
                                     }
                                 }
@@ -1418,7 +1425,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                             }
                         }
                     } while (cursor.moveToNext());
-                    relevantDays.add(day);
+                    if(Util.isDayComplete(day)) {
+                        relevantDays.add(day);
+                    }
                 }
                 break;
             }
@@ -1455,7 +1464,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
                                 if (startPrev != null) {
                                     if (TimeUtils.isDifferentDay(startPrev, starttime)) {
-                                        relevantDays.add(day);
+                                        if(Util.isDayComplete(day)) {
+                                            relevantDays.add(day);
+                                        }
                                         day = new ArrayList<>();
                                     }
                                 }
@@ -1466,7 +1477,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                             }
                         }
                     } while (cursor.moveToNext());
-                    relevantDays.add(day);
+                    if(Util.isDayComplete(day)) {
+                        relevantDays.add(day);
+                    }
                 }
                 break;
             }
@@ -1504,7 +1517,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
                                     if (startPrev != null) {
                                         if (TimeUtils.isDifferentDay(startPrev, starttime)) {
-                                            relevantDays.add(day);
+                                            if(Util.isDayComplete(day)) {
+                                                relevantDays.add(day);
+                                            }
                                             day = new ArrayList<>();
                                         }
                                     }
@@ -1515,7 +1530,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                                 }
                             }
                         } while (cursor.moveToNext());
-                        relevantDays.add(day);
+                        if(Util.isDayComplete(day)) {
+                            relevantDays.add(day);
+                        }
 
                     }
                 }

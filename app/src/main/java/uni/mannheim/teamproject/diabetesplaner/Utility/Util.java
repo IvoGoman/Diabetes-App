@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 //import org.deckfour.xes.model.XLog;
@@ -584,5 +585,56 @@ public class Util {
                 return tmp;
             }
         }
+    }
+
+    /**
+     * checks whether a day is complete or not. In a complete day there is an activity specified for every single minute.
+     * @param day ArrayList that represents one day
+     * @return true if day is complete, false otherwise
+     * @author Stefan 13.09.2016
+     */
+    public static boolean isDayComplete(ArrayList<ActivityItem> day){
+        if(day.size()>0) {
+            if (TimeUtils.getMinutesOfDay(day.get(0).getStarttime().getTime()) != 0){
+                return false;
+            }else if(TimeUtils.getMinutesOfDay(day.get(day.size()-1).getEndtime().getTime()) != 1439){
+                return false;
+            }else{
+                int prevEnd = 0;
+                for(int i=0; i<day.size();i++){
+                    if(i==0){
+                        prevEnd = TimeUtils.getMinutesOfDay(day.get(i).getEndtime().getTime());
+                    }else{
+                        int currStart = TimeUtils.getMinutesOfDay(day.get(i).getStarttime().getTime());
+                        if(currStart != (prevEnd+1)){
+                            return false;
+                        }
+                    }
+                }
+                return true;
+            }
+        }else {
+            return false;
+        }
+    }
+
+    /**
+     * returns the activity that is at the specified minute
+     * @param day list that contains a daily routine
+     * @param minute the  minute of interest
+     * @return
+     * @author Stefan 13.09.2016
+     */
+    public static ActivityItem getActivityAtMinute(ArrayList<ActivityItem> day, int minute){
+        for(int i=0; i<day.size(); i++){
+            ActivityItem item = day.get(i);
+            int start = TimeUtils.getMinutesOfDay(item.getStarttime().getTime());
+            int end = TimeUtils.getMinutesOfDay(item.getEndtime().getTime());
+
+            if(start <= minute && minute <= end){
+                return item;
+            }
+        }
+        return null;
     }
 }

@@ -1,13 +1,21 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining;
 
+import android.util.Pair;
+
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.HeuristicsMinerImplementation;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
+import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Stefan on 06.09.2016.
@@ -17,6 +25,7 @@ public class PredictionFramework {
     public static final int PREDICTION_GSP = 1;
     public static final int PREDICTION_FUZZY_MINER = 2;
     public static final int PREDICTION_HEURISTICS_MINER = 3;
+    public static final int VOTING = 4;
 
     public static final int EVERY_DAY = 100;
     public static final int WEEKDAYS = 101;
@@ -51,10 +60,121 @@ public class PredictionFramework {
         switch (algorithm){
             case PREDICTION_DECISION_TREE:
                 //TODO predict with decision tree
-                break;
+                return null;
             case PREDICTION_GSP:
                 return GSP_Prediction.makeGSPPrediction(train, 0.2f);
             case PREDICTION_FUZZY_MINER:
+                FuzzyModel model = new FuzzyModel(train,false);
+                return model.makeFuzzyMinerPrediction();
+            case PREDICTION_HEURISTICS_MINER:
+                //TODO predict with heuristics miner
+                return null;
+            case VOTING:
+                ArrayList<Integer> algos = new ArrayList<>();
+                algos.add(PREDICTION_DECISION_TREE);
+                algos.add(PREDICTION_GSP);
+                algos.add(PREDICTION_FUZZY_MINER);
+                algos.add(PREDICTION_HEURISTICS_MINER);
+                return vote(algos, train);
+        }
+        return null;
+    }
+
+    /**
+     * implements a voting
+     * @param algos algorithms to use
+     * @param train training data
+     * @return dailyRoutine
+     * @author Stefan 13.09.2016
+     */
+    public static ArrayList<ActivityItem> vote(ArrayList<Integer> algos, ArrayList<ArrayList<ActivityItem>> train){
+        HashMap<Integer, ArrayList<ActivityItem>> results = new HashMap<>();
+        //run the algorithms specified in parameter algos
+        for(int i=0; i<algos.size(); i++){
+            int algo = algos.get(i);
+            switch (algo){
+                case PREDICTION_DECISION_TREE:
+                    //TODO predict with decision tree
+                    break;
+                case PREDICTION_GSP:
+                    results.put(PREDICTION_GSP,GSP_Prediction.makeGSPPrediction(train, 0.2f));
+                case PREDICTION_FUZZY_MINER:
+                    FuzzyModel model = new FuzzyModel(train,false);
+                    results.put(PREDICTION_FUZZY_MINER, model.makeFuzzyMinerPrediction());
+                case PREDICTION_HEURISTICS_MINER:
+                    return HeuristicsMinerImplementation.runHeuristicsMiner(train.get(0));
+                    //TODO predict with heuristics miner
+                    break;
+            }
+        }
+
+        ArrayList<Pair<Integer, Integer>> dailyRoutinePairs = new ArrayList<>();
+        //iterate through every minute of the day
+        for(int i=0; i<1440; i++){
+
+            //iterate through the list with <algo, prediction>-pairs and get the activity items for the i-th minute
+            ArrayList<ActivityItem> minuteVotes = new ArrayList<>();
+            for(Map.Entry<Integer, ArrayList<ActivityItem>> entry : results.entrySet()){
+                int algo = entry.getKey();
+                ArrayList<ActivityItem> item = entry.getValue();
+                minuteVotes.add(Util.getActivityAtMinute(item, i));
+            }
+
+            //iterate through the list that contains a predicted activity item for this minute from every algorithm
+            HashMap<Pair, Integer> pairCount = new HashMap<>();
+            for(int j=0; j<minuteVotes.size(); j++){
+                ActivityItem tmp = minuteVotes.get(j);
+                Pair<Integer, Integer> pair = new Pair<>(tmp.getActivityId(), tmp.getSubactivityId());
+                if(pairCount.get(pair) == null){
+                    pairCount.put(pair, 1);
+                }else {
+                    pairCount.put(pair, (pairCount.get(pair) + 1));
+                }
+            }
+
+            //iterate through the list that contains the counts for each prediction and determine the most frequent one,
+            //or decide randomly if two pairs occur with the same frequency
+            Pair<Integer, Integer> pairVote = null;
+            int count=0;
+            for(Map.Entry<Pair, Integer> entry: pairCount.entrySet()){
+                Pair key = entry.getKey();
+                int value = entry.getValue();
+
+                if(value > count){
+                    count = value;
+                    pairVote = key;
+                }else if(value == count){
+                    Random random = new Random();
+                    if(random.nextBoolean()){
+                        count = value;
+                        pairVote = key;
+                    }
+                }
+            }
+            dailyRoutinePairs.add(pairVote);
+        }
+
+        ArrayList<ActivityItem> dailyRoutine = new ArrayList<>();
+
+        //dailyRoutinePairs is a list, that contains a <activityID ,subactivityID>-pair for every minute
+        //now those pairs are combined into ActivityItems
+        Pair<Integer, Integer> prevPair = null;
+        int start = 0;
+        Date date = new Date();
+        for(int i=0; i<dailyRoutinePairs.size(); i++){
+            Pair<Integer, Integer> pair = dailyRoutinePairs.get(i);
+            if(prevPair == null){
+                prevPair = pair;
+            }else{
+                if(!pair.equals(prevPair)){
+                    ActivityItem item = new ActivityItem(prevPair.first,prevPair.second, TimeUtils.minOfDayToDate(start, date), TimeUtils.minOfDayToDate((i-1),date));
+                    start = i;
+                    prevPair = pair;
+                    dailyRoutine.add(item);
+                }
+            }
+        }
+        return dailyRoutine;
                 //TODO predict with fuzzy miner
                 break;
             case PREDICTION_HEURISTICS_MINER:

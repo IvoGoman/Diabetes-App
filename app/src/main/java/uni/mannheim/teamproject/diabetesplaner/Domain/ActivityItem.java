@@ -285,4 +285,15 @@ public class ActivityItem {
         this.duration = duration;
     }
 
+
+    @Override
+    public boolean equals(Object o) {
+        ActivityItem i = (ActivityItem)o;
+        if(this.activityId == i.activityId && this.subactivityId == i.subactivityId && this.starttime == i.starttime && this.endtime == i.endtime
+                && this.imagePath == i.imagePath && this.intensity == i.intensity && this.meal == i.meal){
+            return true;
+        }else {
+            return super.equals(o);
+        }
+    }
 }
