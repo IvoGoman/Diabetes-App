@@ -12,10 +12,15 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 
 import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
@@ -42,6 +47,8 @@ public class MeasurementDialog extends MeasurementInputDialog {
     Button btn_time;
     private TimerPickerFragmentM TimerPicker;
     private DatePickerFragmentM DatePicker;
+    Date current_date;
+
 
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
@@ -55,6 +62,13 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
 
         builder.setView(view);
+
+        Date date = Calendar.getInstance(Locale.getDefault()).getTime();
+        current_date = date;
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        String dateString = dateFormat.format(date);
+
+
 
         addBloodSugar = (EditText) view.findViewById(R.id.edit_measure_value_entryscreen);
         addInsulin = (EditText) view.findViewById(R.id.edit_insulin_value);
@@ -70,6 +84,8 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
         //Button for DatePicker
         btn_date = (Button) view.findViewById(R.id.btn_date);
+        btn_date.setText(dateString);
+
         btn_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -84,6 +100,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
         //Button for TimerPicker
         btn_time = (Button) view.findViewById(R.id.btn_time);
+        btn_time.setText(TimeUtils.getTimeInUserFormat(current_date, getActivity()));
         btn_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -367,6 +384,8 @@ public class MeasurementDialog extends MeasurementInputDialog {
                 }
             }
             };*/
+
+
 
 
 
