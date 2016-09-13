@@ -6,6 +6,8 @@ import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.location.Location;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
@@ -13,13 +15,22 @@ import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 // created by: Naira Ibrahim
 
 public class Wifi extends BroadcastReceiver {
 
     private final static String TAG = Wifi.class.getSimpleName();
+    private static String ssid;
+
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
@@ -42,6 +53,10 @@ public class Wifi extends BroadcastReceiver {
     public static class WifiActiveService extends Service {
 
         private final static String TAG = WifiActiveService.class.getSimpleName();
+        Date time_von;
+        Date time_bis;
+        Date time_wifi;
+        Wifi currentWifi;
 
         @Override
         public int onStartCommand(Intent intent, int flags, int startId) {
@@ -54,13 +69,22 @@ public class Wifi extends BroadcastReceiver {
                     WifiInfo info = wifiManager.getConnectionInfo();
                     String mac = info.getMacAddress();
                     // name of wifi
-                    String ssid = info.getSSID();
+                     ssid = info.getSSID();
+
+                    //save
+                    Date current_date = new Date();
+                    //save attributes
+                    AppGlobal.getHandler().insertWIFI(AppGlobal.getHandler(),ssid, TimeUtils.dateToDateTimeString(current_date));
+
+                  //
+
                     if (Log.isLoggable(TAG, Log.VERBOSE)) {
                         Log.v(TAG, "The SSID & MAC are " + ssid + " " + mac);
                     }
                     // could be removed just created to make sure it is working properly
                     createNotification(ssid, mac);
                     stopSelf();
+                    makePredictionWifi(ssid);
                 }
             }, 5000);
             return START_NOT_STICKY;
@@ -86,5 +110,65 @@ public class Wifi extends BroadcastReceiver {
             ((NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE))
                     .notify(0, n);
         }
+
+        public void makePredictionWifi(String ssid){
+
+            System.out.println("MyTest1: in make Prediction");
+
+            //get all wifis
+            ArrayList<myWifi> WifiList = new ArrayList<myWifi>();
+
+
+            ////////////////////////
+            Cursor cursor = AppGlobal.getHandler().getAllWIFIs(AppGlobal.getHandler());
+/////////////////////////////////////////////////////////////////////////////////////////////
+            if (cursor.moveToFirst()) {
+                do {
+                    myWifi wifi = new myWifi(cursor.getString(1), cursor.getString(2));
+                    WifiList.add(wifi);
+                }
+                while (cursor.moveToNext());
+            }
+
+            //get all Activities
+            ArrayList<String[]> eventlist  = AppGlobal.getHandler().getAllEvents(AppGlobal.getHandler());
+            // für alle activities
+            for(int i = 0; i < eventlist.size(); i++){ //geh durch alle activities
+                //activity laden
+                String[] x = eventlist.get(i);
+                //id, name, startdate, enddate
+                //Daten zum Vergleich konvertieren
+                try {
+                    time_von = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(x[2]);
+                    time_bis = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(x[3]);
+                } catch (ParseException e) {
+                    //Handle exception here, most of the time you will just log it.
+                    e.printStackTrace();
+                }
+
+                //schauen ob location timestamp innerhalb einer activity ist
+                //for schleife für alle near locations pro einzelne activity
+
+                for(int q = 0; q < WifiList.size(); q++){
+                    //timestamp location zwischen start und end zeit von activity dann mögliche activity für diese location
+                    try {
+                        time_wifi = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(WifiList.get(q).time);
+
+                    } catch (ParseException e) {
+                        //Handle exception here, most of the time you will just log it.
+                        e.printStackTrace();
+                    }
+
+                    if (TimeUtils.isTimeInbetween(time_von, time_bis, time_wifi) == true ) {
+                        System.out.println("relevante Activity für aktuelle WIFI: " + x[1]);
+                    } else {
+                        System.out.println("keine relevante Activity für aktuelle WIFI: " + x[1]);
+                    }
+
+                }
+
+            } //for schleife für alle activities
+        }
+
     }
 }

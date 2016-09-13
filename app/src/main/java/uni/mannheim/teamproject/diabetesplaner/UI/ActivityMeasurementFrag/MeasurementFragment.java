@@ -19,7 +19,6 @@ import android.widget.ImageButton;
 import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
-import uni.mannheim.teamproject.diabetesplaner.Domain.MeasurementInputHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.UI.CustomListView;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -40,7 +39,7 @@ public class MeasurementFragment extends Fragment {
 
     private static View inflaterView;
 
-    MeasurementInputHandler MeasurementInputHandlr= new MeasurementInputHandler();
+   // MeasurementInputHandler MeasurementInputHandlr= new MeasurementInputHandler();
     final DataBaseHandler DBHandler = AppGlobal.getHandler();
 
     public static MeasurementFragment newInstance(String param1, String param2) {
