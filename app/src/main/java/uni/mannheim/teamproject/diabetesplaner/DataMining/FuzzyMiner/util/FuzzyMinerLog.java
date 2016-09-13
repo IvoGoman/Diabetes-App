@@ -117,7 +117,7 @@ public class FuzzyMinerLog {
 		FMLogEvents logEvents = new FMLogEvents(log);
 		// if the value of isExistingEvent is -1,there is no such XEvent in the FMLogEvents yet
 		// if the value of isExistingEvent is bigger than -1,there has already this XEvent.
-		int isExistingEvent = -1;
+		int isExistingEvent;
 		for (XTrace pi : FuzzyMinerLog.getTraces(log)) {
 			for (XEvent evt : FuzzyMinerLog.getEvents(pi)) {
 				// System.out.println("the size of the FMLogEvents is " + logEvents.size());

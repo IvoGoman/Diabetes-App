@@ -6,7 +6,6 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,7 +21,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 /**
  * Created by Stefan on 26.04.2016.
  */
-public class RoutineRecommendation extends Recommendation {
+public class ActivityRecommendation extends Recommendation {
 
     //    private final static int INTERVAL = 1000 * 60 * 5; //5 minutes
     private final static int INTERVAL = 1000 * 10; //10 sec
@@ -39,15 +38,13 @@ public class RoutineRecommendation extends Recommendation {
     /**
      * Creates an IntentService.  Invoked by your subclass's constructor.
      */
-    public RoutineRecommendation() {
+    public ActivityRecommendation() {
         super("RoutineRecommendationProcess");
     }
 
 
     @Override
     public IBinder onBind(Intent intent) {
-        Toast.makeText(this, "service starting", Toast.LENGTH_SHORT).show();
-
         setInterval(INTERVAL);
         startRecommendation();
 
@@ -56,8 +53,6 @@ public class RoutineRecommendation extends Recommendation {
 
     @Override
     public boolean onUnbind(Intent intent) {
-        Toast.makeText(this, "service stopped", Toast.LENGTH_SHORT).show();
-
         stopRecommendation();
         return super.onUnbind(intent);
     }
@@ -76,17 +71,17 @@ public class RoutineRecommendation extends Recommendation {
      */
     @Override
     public void recommend() {
-        Log.d("Rec", "recommend based on bsl");
-        mIdOffset = getMidOffset();
-
-        //switch between different recommendation methods
-        int rec = FIRST_REC;
-        long time = System.currentTimeMillis();
-
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(this);
-        boolean notify = preferences.getBoolean("pref_key_assistant", true);
-//        if(time-lastRecommendation>=INTERVAL && notify){
-        if (notify) {
+        boolean notify = preferences.getBoolean("pref_key_activity_rec", true);
+
+        if(notify) {
+            Log.d("Rec", "recommend based on bsl");
+            mIdOffset = getMidOffset();
+
+            //switch between different recommendation methods
+            int rec = FIRST_REC;
+            long time = System.currentTimeMillis();
+
             switch (rec) {
                 case DEFAUL_REC:
                     giveDefaultRecommendation();
@@ -95,8 +90,9 @@ public class RoutineRecommendation extends Recommendation {
                     giveBSbasedRecommendation();
                     break;
             }
+
+            lastRecommendation = time;
         }
-        lastRecommendation = time;
     }
 
     /**

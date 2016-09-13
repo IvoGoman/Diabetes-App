@@ -5,6 +5,7 @@ import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -52,14 +53,9 @@ public class HistoryFragment extends DailyRoutineFragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "history";
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
     private OnFragmentInteractionListener mListener;
-    private AppCompatActivity aca;
     private static ArrayList<DailyRoutineView> items_history = new ArrayList<>();
     private static LinearLayout linearLayout;
-    private static ScrollView scrollView;
     private DayHandler dayHandler;
     private static Date date;
 
@@ -95,10 +91,10 @@ public class HistoryFragment extends DailyRoutineFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            String mParam1 = getArguments().getString(ARG_PARAM1);
+            String mParam2 = getArguments().getString(ARG_PARAM2);
         }
-        aca = (AppCompatActivity) getActivity();
+        AppCompatActivity aca = (AppCompatActivity) getActivity();
         aca.getSupportActionBar().setTitle(R.string.menu_item_history);
         dayHandler = new DayHandler(this);
 
@@ -142,7 +138,7 @@ public class HistoryFragment extends DailyRoutineFragment {
         });
         //TODO: add history item at the point where a daily routine is completed
 
-        scrollView = (ScrollView) inflaterView.findViewById(R.id.history_scrollview);
+        ScrollView scrollView = (ScrollView) inflaterView.findViewById(R.id.history_scrollview);
         // Inflate the layout for this fragment
         return inflaterView;
     }
@@ -268,6 +264,7 @@ public class HistoryFragment extends DailyRoutineFragment {
          * creates a Dialog with a Date Picker with the currently displayed day pre-selected
          */
 
+        @NonNull
         @Override
         public Dialog onCreateDialog(Bundle savedInstanceState) {
             // Use the current date as the default date in the picker

@@ -20,6 +20,17 @@ import uni.mannheim.teamproject.diabetesplaner.R;
 public class TimeUtils {
 
     /**
+     * returns yesterdays' date
+     * @param today the date to which yesterday refers to
+     * @return
+     * @author Stefan 13.09.2016
+     */
+    public static Date getYesterdaysDate(Date today){
+        long millis = today.getTime();
+        return new Date(millis-24*60*60*1000);
+    }
+
+    /**
      * checks if the second date is a new day
      * @param date1
      * @param date2
@@ -251,7 +262,7 @@ public class TimeUtils {
      */
     public static String dateToTimeString(String dateValue) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date date = null;
+        Date date;
         String timeString ="";
         try {
             date = sdf.parse(dateValue);
@@ -337,7 +348,7 @@ public class TimeUtils {
      * @return String
      */
     public static String getTimeInUserFormat(Date date, Context context){
-        String time = "";
+        String time;
         if(DateFormat.is24HourFormat(context)){
             SimpleDateFormat sdf = new SimpleDateFormat("HH:mm", Locale.getDefault());
             time = sdf.format(date);
@@ -467,9 +478,27 @@ public class TimeUtils {
      */
 
     public static int isAM(long timestamp) {
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");
         Calendar calendar = TimeUtils.getCalendar(timestamp);
         int am_pm = calendar.get(Calendar.AM_PM);
         return am_pm;
+    }
+
+    /**
+     * converts minOfDay to a Date object, where the date is the specified date
+     * @param minOfDay
+     * @param date
+     * @return
+     */
+    public static Date minOfDayToDate(int minOfDay, Date date){
+        int min = minOfDay%60;
+        int hour = minOfDay/60;
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.MINUTE, min);
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return new Date(cal.getTimeInMillis());
     }
 }

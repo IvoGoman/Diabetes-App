@@ -21,11 +21,11 @@ public class ActivityItem {
     private int subactivityId;
     private Date starttime;
     private Date endtime;
-    private String meal;
-    private String imagePath;
-    private Date date;
-    private Integer intensity;
-    private Integer duration;
+    private String meal = null;
+    private String imagePath = null;
+    private Date date = null;
+    private Integer intensity = null;
+    private Integer duration = null;
 
     public static final Integer INTENSITY_HIGH = 3;
     public static final Integer INTENSITY_MEDIUM = 2;
@@ -64,8 +64,8 @@ public class ActivityItem {
         this.subactivityId = subactivityId;
         this.starttime = starttime;
         this.endtime = endtime;
-        this.meal = meal;
-        this.imagePath = imagePath;
+        this.meal = Util.getValidString(meal);
+        this.imagePath = Util.getValidString(imagePath);
     }
 
     public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime, String imagePath, String meal, Integer intensity) {
@@ -73,8 +73,8 @@ public class ActivityItem {
         this.subactivityId = subactivityId;
         this.starttime = starttime;
         this.endtime = endtime;
-        this.meal = meal;
-        this.imagePath = imagePath;
+        this.meal = Util.getValidString(meal);
+        this.imagePath = Util.getValidString(imagePath);
         this.intensity = intensity;
     }
 
@@ -92,8 +92,8 @@ public class ActivityItem {
         this.starttime = activityItem.getStarttime();
         this.endtime = activityItem.getEndtime();
         this.date = activityItem.getDate();
-        this.meal = activityItem.getMeal();
-        this.imagePath = activityItem.getImagePath();
+        this.meal = Util.getValidString(activityItem.getMeal());
+        this.imagePath = Util.getValidString(activityItem.getImagePath());
         this.date = activityItem.getDate();
         this.intensity = activityItem.getIntensity();
     }
@@ -283,5 +283,17 @@ public class ActivityItem {
 
     public void setDuration(Integer duration) {
         this.duration = duration;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        ActivityItem i = (ActivityItem)o;
+        if(this.activityId == i.activityId && this.subactivityId == i.subactivityId && this.starttime == i.starttime && this.endtime == i.endtime
+                && this.imagePath == i.imagePath && this.intensity == i.intensity && this.meal == i.meal){
+            return true;
+        }else {
+            return super.equals(o);
+        }
     }
 }

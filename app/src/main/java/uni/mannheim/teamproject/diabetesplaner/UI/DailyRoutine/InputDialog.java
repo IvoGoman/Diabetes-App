@@ -57,7 +57,7 @@ public class InputDialog extends DialogFragment{
     private Button startTimeButton;
     private Button endTimeButton;
     private String selectedItem;
-    private static String imagePath;
+    private static String imagePath = null;
 
     private SeekBar intensityBar;
     private TableRow intensityText;
@@ -140,12 +140,12 @@ public class InputDialog extends DialogFragment{
         final ImageButton mealInputCam = (ImageButton) v.findViewById(R.id.meal_input_cam);
         mealInputImage = (ImageView) v.findViewById(R.id.meal_image);
 
-        if(imagePath != null){
+        if(imagePath != null && !imagePath.equals("null")){
             displayImageFromPath(imagePath);
         }else{
             mealInputImage.setVisibility(View.GONE);
         }
-        if(meal != null){
+        if(meal != null && !meal.equals("null")){
             mealInputText.setText(meal);
         }
 
@@ -463,11 +463,11 @@ public class InputDialog extends DialogFragment{
     }
 
     public void setImagePath(String filepath){
-        imagePath = filepath;
+        imagePath = Util.getValidString(filepath);
     }
 
     public static String getImagePath(){
-        return imagePath;
+        return Util.getValidString(imagePath);
     }
 
     public Bitmap getImage(){
@@ -530,6 +530,7 @@ public class InputDialog extends DialogFragment{
 
     /**
      * creates a file and takes a photo
+     * @author Stefan
      */
     private void dispatchTakePictureIntent() {
         Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
@@ -541,7 +542,7 @@ public class InputDialog extends DialogFragment{
             if (photoFile != null) {
                 //make picture visible in gallery
                 galleryAddPic(photoFile.getPath());
-                imagePath = photoFile.getPath();
+                imagePath = Util.getValidString(photoFile.getPath());
 
                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, Uri.fromFile(photoFile));
                 getActivity().startActivityForResult(takePictureIntent, CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE);
@@ -552,6 +553,7 @@ public class InputDialog extends DialogFragment{
     /**
      * makes a picture visible in the gallery
      * @param mCurrentPhotoPath path of the picture taken
+     * @author Stefan
      */
     private void galleryAddPic(String mCurrentPhotoPath) {
         Intent mediaScanIntent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
@@ -564,6 +566,7 @@ public class InputDialog extends DialogFragment{
     /**
      * sets the intensity SeekBar and the intensity TextView to isVisible
      * @param isVisible true: visible, false: invisible
+     * @author Stefan
      */
     public void setIntensityVisible(boolean isVisible){
         if(isVisible){

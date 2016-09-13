@@ -148,9 +148,9 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
         this.activity = activityItem.getActivityId();
         this.subactivity = activityItem.getSubactivityId();
-        this.meal = activityItem.getMeal();
-        this.imagePath = activityItem.getImagePath();
-        if(this.imagePath != null && this.imagePath.length()>1) {
+        this.meal = Util.getValidString(activityItem.getMeal());
+        this.imagePath = Util.getValidString(activityItem.getImagePath());
+        if(this.imagePath != null && this.imagePath.length() > 1 && !this.imagePath.equals("null")) {
             this.mealImage = Util.getCompressedPic(imagePath);
         }
         this.date = activityItem.getDate();
@@ -159,13 +159,13 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
         init();
 
-        Log.d(TAG, "Activity: " + AppGlobal.getHandler().getActionById(AppGlobal.getHandler(),activityItem.getActivityId()));
-        Log.d(TAG, "Subactivity: " + activityItem.getSubactivityId());
-        Log.d(TAG, "Starttime: " + activityItem.getStarttimeAsString());
-        Log.d(TAG, "Endtime: " + activityItem.getEndtimeAsString());
-        Log.d(TAG, "Meal: " + activityItem.getMeal());
-        Log.d(TAG, "Image: " + activityItem.getImagePath());
-        Log.d(TAG, "Intensity: " + activityItem.getIntensity());
+//        Log.d(TAG, "Activity: " + AppGlobal.getHandler().getActionById(AppGlobal.getHandler(),activityItem.getActivityId()));
+//        Log.d(TAG, "Subactivity: " + activityItem.getSubactivityId());
+//        Log.d(TAG, "Starttime: " + activityItem.getStarttimeAsString());
+//        Log.d(TAG, "Endtime: " + activityItem.getEndtimeAsString());
+//        Log.d(TAG, "Meal: " + activityItem.getMeal());
+//        Log.d(TAG, "Image: " + activityItem.getImagePath());
+//        Log.d(TAG, "Intensity: " + activityItem.getIntensity());
     }
 
     /**
@@ -336,7 +336,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         xRight = width-2*textPadding-offsetL;
 
         //measure subactivity if it exists
-        if(!ActivityItem.getSubactivity(subactivity).equals("")) {
+        if(!ActivityItem.getSubactivity(subactivity).equals("") && subactivity > AppGlobal.getHandler().getNumberOfActivities()) {
             //initialize subactivity text
             actRectSub = new Rect(0, heightPrev + textPadding, xRight, 0);
             slsub = new StaticLayout(ActivityItem.getSubactivity(subactivity), textPaintSub, (int) actRectSub.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
@@ -348,8 +348,8 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
         //measure meal if it exists
         if(meal != null) {
-            if(!meal.equals("")) {
-                //initialize bloodsugar text
+            if(!meal.equals("") && !(meal.equals("null"))) {
+                //initialize meal text
                 actRectMeal = new Rect(0, heightPrev + textPadding, xRight, 0);
                 slMeal = new StaticLayout(getMeal(), textPaintSub, (int) actRectMeal.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
                 heightPrev = slMeal.getHeight();
@@ -379,7 +379,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             heightUpper += dest.height() + textPadding;
         }
 
-        Log.d(TAG, "Bloodsugar: " + bloodsugar);
+//        Log.d(TAG, "Bloodsugar: " + bloodsugar);
 
         //measure bloodsugar if it exists
         if(bloodsugar != null) {
@@ -500,14 +500,14 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         canvas.translate(actRect.left, actRect.top);
         sl.draw(canvas);
 
-        if(!ActivityItem.getSubactivity(subactivity).equals("")) {
+        if(!ActivityItem.getSubactivity(subactivity).equals("") && subactivity > AppGlobal.getHandler().getNumberOfActivities()) {
             //draw subactivity text
             canvas.translate(actRectSub.left, actRectSub.top);
             slsub.draw(canvas);
         }
 
         if(meal != null) {
-            if(!meal.equals("")) {
+            if(!meal.equals("") && !(meal.equals("null"))) {
                 //draw meal text
                 canvas.translate(actRectMeal.left, actRectMeal.top);
                 slMeal.draw(canvas);

@@ -25,7 +25,7 @@ package uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.metrics;
 public class StringSimilarity {
 
 	private StringSimilarity() {
-	};
+	}
 
 	private static short minimum(int a, int b, int c) {
 		return (short) Math.min(a, Math.min(b, c));
