@@ -493,6 +493,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
+    public void InsertInsulin(DataBaseHandler handler, Date date, Time time, int profile_id, double insulin_level, String insulin_unit) {
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        Timestamp timestamp = Timestamp.valueOf(date.toString() + " " + time.toString());
+        Log.d("Database", timestamp + "InsertInsulin");
+
+        db1.execSQL("insert into " + INSULIN_TABLE_NAME + "(profile_ID, insulin_value, timestamp, insulin_unit, insulin_kind) values(" + profile_id + ","
+                + insulin_level + " , '" + timestamp + "' , '" + insulin_unit + "' , 'insulin');");
+        db1.close();
+    }
+
 
     public void InsertBloodsugarEntryScreen(long timestamp, int profile_id, double bloodsugar_level, String measure_unit) {
         SQLiteDatabase db1 = this.getWritableDatabase();
@@ -503,14 +513,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db1.close();
     }
 
-    public void InsertInsulinEntryScreen(long timestamp, int profile_id, double insulin_level, String insulin_unit) {
-        SQLiteDatabase db1 = this.getWritableDatabase();
-        Log.d("Database", timestamp + "InsertInsulin");
-
-        db1.execSQL("insert into " + INSULIN_TABLE_NAME + "(profile_ID, insulin_value, timestamp, insulin_unit, insulin_kind) values(" + profile_id + ","
-                + insulin_level + " , '" + timestamp + "' , '" + insulin_unit + "' , 'insulin');");
-        db1.close();
-    }
 
 
 

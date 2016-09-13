@@ -112,6 +112,11 @@ public class MeasurementDialog extends MeasurementInputDialog {
                             java.sql.Date.valueOf(date_s.subSequence(6,9) + "-" + date_s.subSequence(3,4) + "-"+ date_s.subSequence(0,1)),
                             Time.valueOf(time_s + ":00"),
                             1, Double.parseDouble(measure_value), measure);
+
+                    database.InsertInsulin(database,
+                            java.sql.Date.valueOf(date_s.subSequence(6,9) + "-" + date_s.subSequence(3,4) + "-"+ date_s.subSequence(0,1)),
+                            Time.valueOf(time_s + ":00"),
+                            1, Double.parseDouble(insulin_value), insulin);
                     // database.InsertBloodsugarEntryScreen(database, TimeUtils.getTimeStampAsDateString(Calendar.getInstance().getTimeInMillis()), 1, Double.parseDouble(measure_value), measure);
 
                     //  database.InsertInsulinEntryScreen(database, TimeUtils.getTimeStampAsDateString(Calendar.getInstance().getTimeInMillis()), 1, Double.parseDouble(insulin_value), insulin);
