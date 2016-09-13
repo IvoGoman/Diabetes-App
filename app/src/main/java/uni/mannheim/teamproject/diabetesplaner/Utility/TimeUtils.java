@@ -20,6 +20,17 @@ import uni.mannheim.teamproject.diabetesplaner.R;
 public class TimeUtils {
 
     /**
+     * returns yesterdays' date
+     * @param today the date to which yesterday refers to
+     * @return
+     * @author Stefan 13.09.2016
+     */
+    public static Date getYesterdaysDate(Date today){
+        long millis = today.getTime();
+        return new Date(millis-24*60*60*1000);
+    }
+
+    /**
      * checks if the second date is a new day
      * @param date1
      * @param date2

@@ -26,6 +26,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 //import org.deckfour.xes.model.XLog;
@@ -585,4 +586,16 @@ public class Util {
             }
         }
     }
+
+    /**
+     * checks whether a day is complete or not. In a complete day there is an activity specified for every single minute.
+     * @param day ArrayList that represents one day
+     * @return true if day is complete, false otherwise
+     * @author Stefan 12.09.2016
+     */
+    public static boolean isDayComplete(ArrayList<ActivityItem> day){
+        //TODO
+        return false;
+    }
+
 }
