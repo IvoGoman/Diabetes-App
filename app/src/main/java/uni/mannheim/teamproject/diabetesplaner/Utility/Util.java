@@ -617,4 +617,24 @@ public class Util {
             return false;
         }
     }
+
+    /**
+     * returns the activity that is at the specified minute
+     * @param day list that contains a daily routine
+     * @param minute the  minute of interest
+     * @return
+     * @author Stefan 13.09.2016
+     */
+    public static ActivityItem getActivityAtMinute(ArrayList<ActivityItem> day, int minute){
+        for(int i=0; i<day.size(); i++){
+            ActivityItem item = day.get(i);
+            int start = TimeUtils.getMinutesOfDay(item.getStarttime().getTime());
+            int end = TimeUtils.getMinutesOfDay(item.getEndtime().getTime());
+
+            if(start <= minute && minute <= end){
+                return item;
+            }
+        }
+        return null;
+    }
 }

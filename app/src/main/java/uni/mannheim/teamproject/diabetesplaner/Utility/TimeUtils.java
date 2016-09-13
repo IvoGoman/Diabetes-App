@@ -482,4 +482,23 @@ public class TimeUtils {
         int am_pm = calendar.get(Calendar.AM_PM);
         return am_pm;
     }
+
+    /**
+     * converts minOfDay to a Date object, where the date is the specified date
+     * @param minOfDay
+     * @param date
+     * @return
+     */
+    public static Date minOfDayToDate(int minOfDay, Date date){
+        int min = minOfDay%60;
+        int hour = minOfDay/60;
+
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.set(Calendar.MINUTE, min);
+        cal.set(Calendar.HOUR_OF_DAY, hour);
+        cal.set(Calendar.SECOND, 0);
+        cal.set(Calendar.MILLISECOND, 0);
+        return new Date(cal.getTimeInMillis());
+    }
 }
