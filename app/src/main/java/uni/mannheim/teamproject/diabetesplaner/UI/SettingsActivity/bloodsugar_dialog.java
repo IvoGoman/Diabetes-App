@@ -17,6 +17,8 @@ import android.widget.Toast;
 
 import java.sql.Date;
 import java.sql.Time;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
@@ -102,17 +104,52 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                     if (measure_value.equals(bloodsugar_level.getText().toString().replace(".","-")) == false) {
                         measure_value = bloodsugar_level.getText().toString();
 
+
                         String date_s = btn_date.getText().toString();
                         String time_s = btn_time.getText().toString();
-                        database.InsertBloodsugar(database,
-                                Date.valueOf(date_s.subSequence(6,9) + "-" + date_s.subSequence(3,4) + "-"+ date_s.subSequence(0,1)),
-                                Time.valueOf(time_s + ":00"),
-                                1, Double.parseDouble(measure_value), measure);
-                        communicator.respond(null, measure_value, measure, 1);
-                        Toast.makeText(getActivity(), "Blood sugar level: " + measure_value + " "
-                                        + measure + " stored"
-                                , Toast.LENGTH_LONG).show();
-                        dismiss();
+
+                        //Set current Date and Time
+                        Calendar c = Calendar.getInstance();
+                        if(date_s.contentEquals("Date"))
+                        {
+                            date_s = new SimpleDateFormat("dd.MM.yyyy").format(c.getTime());
+                            btn_date.setText(date_s);
+
+                        }
+                        if (time_s.contentEquals("Time"))
+                        {
+                            time_s = new SimpleDateFormat("HH:MM").format(c.getTime());
+                            btn_time.setText(time_s);
+                        }
+
+                        //Check if entered value is to high or to low
+                        if(check_mg(convert_to_mg(Double.parseDouble(measure_value),measure)) == true) {
+                            database.InsertBloodsugar(database,
+                                    Date.valueOf(date_s.subSequence(6, 9) + "-" + date_s.subSequence(3, 4) + "-" + date_s.subSequence(0, 1)),
+                                    Time.valueOf(time_s + ":00"),
+                                    1, Double.parseDouble(measure_value), measure);
+                            communicator.respond(null, measure_value, measure, 1);
+                            Toast.makeText(getActivity(), "Blood sugar level: " + measure_value + " "
+                                            + measure + " stored"
+                                    , Toast.LENGTH_LONG).show();
+                            dismiss();
+                        }
+                        else {
+                            // if value is to high or to low, throw exception
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                                new AlertDialog.Builder(getContext())
+                                        .setTitle("Invalid Value")
+                                        .setMessage("Please check the entered blood_sugar level. The value might be to high or to low.")
+                                        .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+                                            public void onClick(DialogInterface dialog, int which) {
+
+                                            }
+                                        })
+                                        .setIcon(android.R.drawable.ic_dialog_alert)
+                                        .show();
+                                Log.d("bloodsugar_entry", "Value: " + measure_value + " was not valid!");
+                            }
+                        }
 
                     } else {
                         Log.d("bloodsugar_entry", "Nothing changed");
@@ -277,6 +314,48 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
            bs.measure_value = measures;
            bs.measure = measurement;
        }
+    }
+
+    /***
+     * Converts a given unit to mg
+     * @param value the value
+     * @param unit
+     * @return
+     */
+    private double convert_to_mg(double value, String unit)
+    {
+        switch (unit)
+        {
+            case "mg/dl":
+                return value;
+            case "mmol/l":
+                return Util.mmol_to_milligram(value);
+            case "%":
+                return Util.percentage_to_mg(value);
+
+        }
+        return 0.0;
+    }
+
+    /***
+     * checks the inserted value
+     * @param value
+     * @return
+     */
+    private boolean check_mg(double value)
+    {
+        if(value <= 0.0)
+        {
+            return false;
+        }
+        else if (value >= 500)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
     }
 
 
