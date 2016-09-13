@@ -43,8 +43,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public static final String MEASUREMENT_DELETE_TABLE =
             "DROP TABLE IF EXISTS " + MEASUREMENT_TABLE_NAME + ";";
 
-   //InsulinHistory
-   public static final String INSULIN_TABLE_NAME = "Insulin";
+    //InsulinHistory
+    public static final String INSULIN_TABLE_NAME = "Insulin";
     public static final String INSULIN_CREATE_TABLE = " CREATE TABLE IF NOT EXISTS " + INSULIN_TABLE_NAME +
             "(timestamp Double PRIMARY KEY, profile_ID INTEGER, insulin_value double, insulin_unit VARCHAR(8), insulin_kind VARCHAR(8));";
     public static final String INSULIN_SELECT =
@@ -141,70 +141,70 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {   //when the App is first installed
 //        try {
 
-            // Create Activity Table
-            db.execSQL(SUPER_ACTIVITIES_CREATE_TABLE);
-            Log.d("Database", "Temp Activity Table Created");
-            db.execSQL("insert into SuperActivities(Title) values('Schlafen'); ");
-            db.execSQL("insert into SuperActivities(Title) values('Essen/Trinken'); ");
-            db.execSQL("insert into SuperActivities(Title) values('Insulin'); ");
-            db.execSQL("insert into SuperActivities(Title) values('Exercise'); ");
-            db.execSQL("insert into SuperActivities(Title) values('Stress'); ");
-            db.execSQL("insert into SuperActivities(Title) values('Default'); ");
+        // Create Activity Table
+        db.execSQL(SUPER_ACTIVITIES_CREATE_TABLE);
+        Log.d("Database", "Temp Activity Table Created");
+        db.execSQL("insert into SuperActivities(Title) values('Schlafen'); ");
+        db.execSQL("insert into SuperActivities(Title) values('Essen/Trinken'); ");
+        db.execSQL("insert into SuperActivities(Title) values('Insulin'); ");
+        db.execSQL("insert into SuperActivities(Title) values('Exercise'); ");
+        db.execSQL("insert into SuperActivities(Title) values('Stress'); ");
+        db.execSQL("insert into SuperActivities(Title) values('Default'); ");
 
-            // Create Activity Table
-            db.execSQL(ACTIVITIES_CREATE_TABLE);
-            Log.d("Database", "Temp Activity Table Created");
-            ArrayList<String[]> activities = Util.readActivities("Activity.csv", context);
-
-
-            for(int i=0 ;i< activities.size(); i++){
-                db.execSQL("insert into Activities(Title, id_SuperActivity) values('" + activities.get(i)[1] + "','" + activities.get(i)[2] + "'); ");
-            }
+        // Create Activity Table
+        db.execSQL(ACTIVITIES_CREATE_TABLE);
+        Log.d("Database", "Temp Activity Table Created");
+        ArrayList<String[]> activities = Util.readActivities("Activity.csv", context);
 
 
-            // Create SubActivities Table
-            db.execSQL(SUB_ACTIVITIES_CREATE_TABLE);
-            Log.d("Database", "Sub Activities Table Created");
-            for(int i=0 ;i< activities.size(); i++){
-                db.execSQL("insert into SubActivities(Title, id_Activity) values('"+ activities.get(i)[1] +"','"+ activities.get(i)[0] +"'); ");
-            }
-
-            ArrayList<String[]> subActs = Util.readSubActivities("SubActivity.csv", context);
-            for(int i=0 ;i< subActs.size(); i++){
-                db.execSQL("insert into SubActivities(Title, id_Activity) values('"+ subActs.get(i)[2] +"','"+ subActs.get(i)[1] +"'); ");
-            }
+        for(int i=0 ;i< activities.size(); i++){
+            db.execSQL("insert into Activities(Title, id_SuperActivity) values('" + activities.get(i)[1] + "','" + activities.get(i)[2] + "'); ");
+        }
 
 
+        // Create SubActivities Table
+        db.execSQL(SUB_ACTIVITIES_CREATE_TABLE);
+        Log.d("Database", "Sub Activities Table Created");
+        for(int i=0 ;i< activities.size(); i++){
+            db.execSQL("insert into SubActivities(Title, id_Activity) values('"+ activities.get(i)[1] +"','"+ activities.get(i)[0] +"'); ");
+        }
 
-            // Create Location Table
-            db.execSQL(LOCATION_CREATE_TABLE);
-            Log.d("Database", "Location Table Created");
-            db.execSQL("insert into Location(Latitude, Longtitude, Title) values (-1,-1,'Other'); ");   //if the location is unknown
-
-
-            // Create Location1 Table
-            db.execSQL(LOCATION1_CREATE_TABLE);
-            Log.d("Database", "Location1 Table Created");
-            db.execSQL("insert into Location1(Latitude, Longtitude, TimeStamp) values (-1,-1,'2016-01-01 00:00'); ");   //if the location is unknown
-
-
-            //Create ActivityList Table
-            db.execSQL(ACTIVITYLIST_CREATE_TABLE);
-            Log.d("Database", "Routine Table Created");
+        ArrayList<String[]> subActs = Util.readSubActivities("SubActivity.csv", context);
+        for(int i=0 ;i< subActs.size(); i++){
+            db.execSQL("insert into SubActivities(Title, id_Activity) values('"+ subActs.get(i)[2] +"','"+ subActs.get(i)[1] +"'); ");
+        }
 
 
-            //Create BloodSugar Table
-            db.execSQL(MEASUREMENT_CREATE_TABLE);
-            Log.d("Database", "Measurement Table Created");
 
-            //Create Insulin Table
-            db.execSQL(INSULIN_CREATE_TABLE);
-            Log.d("Database", "Insulin Table Created");
+        // Create Location Table
+        db.execSQL(LOCATION_CREATE_TABLE);
+        Log.d("Database", "Location Table Created");
+        db.execSQL("insert into Location(Latitude, Longtitude, Title) values (-1,-1,'Other'); ");   //if the location is unknown
 
 
-            //Create Profile Table
-            db.execSQL(PROFILE_CREATE_TABLE);
-            Log.d("Database", "Profile Table Created");
+        // Create Location1 Table
+        db.execSQL(LOCATION1_CREATE_TABLE);
+        Log.d("Database", "Location1 Table Created");
+        db.execSQL("insert into Location1(Latitude, Longtitude, TimeStamp) values (-1,-1,'2016-01-01 00:00'); ");   //if the location is unknown
+
+
+        //Create ActivityList Table
+        db.execSQL(ACTIVITYLIST_CREATE_TABLE);
+        Log.d("Database", "Routine Table Created");
+
+
+        //Create BloodSugar Table
+        db.execSQL(MEASUREMENT_CREATE_TABLE);
+        Log.d("Database", "Measurement Table Created");
+
+        //Create Insulin Table
+        db.execSQL(INSULIN_CREATE_TABLE);
+        Log.d("Database", "Insulin Table Created");
+
+
+        //Create Profile Table
+        db.execSQL(PROFILE_CREATE_TABLE);
+        Log.d("Database", "Profile Table Created");
     }
 
     /**
@@ -250,7 +250,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db1 = this.getReadableDatabase();
         Cursor cursor = db1.rawQuery("select id from Activities where title= '"+ activity+ "'; ", null);
         if (cursor.moveToFirst()) {
-                return (cursor.getInt(0));
+            return (cursor.getInt(0));
         }
         return -1;
     }
@@ -361,7 +361,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Log.d("Database", "Database Upgraded, All Tables Dropped");
     }
 
-//    Insert Statements
+    //    Insert Statements
     public void insertLocation(DataBaseHandler handler, double lat, double longt, String title) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         db1.execSQL("insert into Location(Latitude, Longtitude, Title) values(" + lat + "," + longt + "," + "'" + title + "'" + "); ");
@@ -1125,7 +1125,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
-//      Handler Utility Methods
+    //      Handler Utility Methods
     public boolean CheckRoutineAdded(DataBaseHandler handler){
         String StartOfDay, EndOfDay;
         Calendar calendar = Calendar.getInstance();
@@ -1184,8 +1184,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 //                    }
                     ActivityItem PA = new ActivityItem(activityId,subactivityId,starttime,endtime,imagePath,meal,intensity);
                     Activities.add(PA);
-                    } catch (ParseException e) {
-                        e.printStackTrace();
+                } catch (ParseException e) {
+                    e.printStackTrace();
                 }
             }
             while (cursor.moveToNext());
