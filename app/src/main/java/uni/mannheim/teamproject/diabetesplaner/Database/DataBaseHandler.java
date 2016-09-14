@@ -1111,7 +1111,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + Start + "' and End >= '" + Start + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + cursor.getString(0) + "';");
+                db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + cursor.getString(cursor.getColumnIndex("id")) + "';");
             } while (cursor.moveToNext());
             db1.close();
             cursor.close();
@@ -1123,7 +1123,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + End + "' and End >= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                db1.execSQL("update ActivityList set Start = '" + PlusMinute(End) + "' where id = '" + cursor.getString(0) + "';");
+                db1.execSQL("update ActivityList set Start = '" + PlusMinute(End) + "' where id = '" + cursor.getString(cursor.getColumnIndex("id")) + "';");
             } while (cursor.moveToNext());
             db1.close();
             cursor.close();
@@ -1135,7 +1135,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start >= '" + Start + "' and End <= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                db1.execSQL("delete from ActivityList where id = '" + cursor.getString(0) + "';");
+                db1.execSQL("delete from ActivityList where id = '" + cursor.getString(cursor.getColumnIndex("id")) + "';");
             } while (cursor.moveToNext());
             cursor.close();
             db1.close();
@@ -1148,14 +1148,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select * from ActivityList where Start <= '" + Start + "' and End >= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                int idSubActivity = cursor.getInt(1);
-                String End1 = cursor.getString(4);
+                int idSubActivity = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
+                String End1 = cursor.getString(cursor.getColumnIndex("End"));
                 Date StartNew = TimeUtils.getDateFromString(End);
                 Date EndNew = TimeUtils.getDateFromString(End1);
 
                 ActivityItem activityItem = new ActivityItem(getActivityIdbySubActicityId(idSubActivity),idSubActivity,StartNew,EndNew);
-                String id = cursor.getString(0);
-                int idLocation = cursor.getInt(2);
+                String id = cursor.getString(cursor.getColumnIndex("id"));
                 db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + id + "';");
                 InsertActivity(activityItem);
             } while (cursor.moveToNext());
