@@ -95,6 +95,29 @@
             android:title="@string/pref_vacation_title"
             android:defaultValue="false"/>
 
+        <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+            android:key="pref_key_algos"
+            android:title="@string/algos"
+            android:summary="@string/algos_summary"
+            android:persistent="false">
+            <CheckBoxPreference
+                android:key="pref_key_dt"
+                android:title="@string/pref_key_dt"
+                android:defaultValue="true" />
+            <CheckBoxPreference
+                android:key="pref_key_gsp"
+                android:title="@string/pref_key_gsp"
+                android:defaultValue="true" />
+            <CheckBoxPreference
+                android:key="pref_key_fuzzy"
+                android:title="@string/pref_key_fuzzy"
+                android:defaultValue="true" />
+            <CheckBoxPreference
+                android:key="pref_key_heuristics"
+                android:title="@string/pref_key_heuristics"
+                android:defaultValue="true" />
+        </PreferenceScreen>
+
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_other"
