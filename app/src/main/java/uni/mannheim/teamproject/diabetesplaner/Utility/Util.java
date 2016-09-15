@@ -588,6 +588,34 @@ public class Util {
     }
 
     /**
+     * checks whether a day should be retrieved as training data or not.
+     * Checks if day is complete and if day is not the actual day (= day to predict)
+     * @param day ArrayList that represents one day
+     * @return true if day is complete, false otherwise
+     * @author Stefan 13.09.2016
+     */
+    public static boolean checkDay(ArrayList<ActivityItem> day){
+        boolean complete = isDayComplete(day);
+        boolean isToday = isToday(day);
+
+        return complete && !isToday;
+    }
+
+    /**
+     * checks if the day is today
+     * @param day
+     * @return
+     * @author Stefan 15.09.2016
+     */
+    public static boolean isToday(ArrayList<ActivityItem> day){
+        if(day.size()>0){
+            ActivityItem first = day.get(0);
+            TimeUtils.isSameDay(first.getStarttime(), new Date());
+        }
+        return true;
+    }
+
+    /**
      * checks whether a day is complete or not. In a complete day there is an activity specified for every single minute.
      * @param day ArrayList that represents one day
      * @return true if day is complete, false otherwise

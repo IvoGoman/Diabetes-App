@@ -153,8 +153,7 @@ public class DailyRoutineFragment extends Fragment {
         //get predicted routine
         linearLayout.removeAllViews();
         items.clear();
-        ArrayList<ActivityItem> listItems = new ArrayList<>();
-        listItems = drHandler.getDailyRoutine();
+        ArrayList<ActivityItem> listItems = drHandler.getDailyRoutine();
         Log.d(TAG, "list size after update: " +listItems.size());
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,

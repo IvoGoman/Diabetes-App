@@ -69,11 +69,8 @@ public class DailyRoutineHandler extends DayHandler{
             algorithms.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
         }
 
-        if(algorithms.size()>0) {
-            dailyRoutine = PredictionFramework.predict(PredictionFramework.retrieveTrainingData(mode), algorithms);
-        }else{
-            //TODO default prediction
-        }
+        dailyRoutine = PredictionFramework.predict(PredictionFramework.retrieveTrainingData(mode), algorithms);
+        Log.d("DailyRoutineFragment", "Size after predict " +dailyRoutine.get(0).getStarttime());
     }
 
 
@@ -144,8 +141,7 @@ public class DailyRoutineHandler extends DayHandler{
 
 
         }
-        catch(Exception e)
-        {
+        catch(Exception e){
             e.printStackTrace();
         }
     }
@@ -153,4 +149,5 @@ public class DailyRoutineHandler extends DayHandler{
     public void clearDailyRoutine(){
         dailyRoutine.clear();
     }
+
 }

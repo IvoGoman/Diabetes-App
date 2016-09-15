@@ -59,24 +59,32 @@ public class PredictionFramework {
      * @author Stefan 06.09.2016
      */
     public static ArrayList<ActivityItem> predict(ArrayList<ArrayList<ActivityItem>> train, ArrayList<Integer> algorithms) {
-        if(algorithms.size() == 1){
-            switch (algorithms.get(0)) {
-                case PREDICTION_DECISION_TREE:
-                    //TODO predict with decision tree
-                    return null;
-                case PREDICTION_GSP:
-                    return GSP_Prediction.makeGSPPrediction(train, 0.2f);
-                case PREDICTION_FUZZY_MINER:
-                    FuzzyModel model = new FuzzyModel(train, false);
-                    return model.makeFuzzyMinerPrediction();
-                case PREDICTION_HEURISTICS_MINER:
-                    //TODO predict with heuristics miner
-                    return null;
+        if(train.size()>0) {
+            if (algorithms.size() == 1) {
+                switch (algorithms.get(0)) {
+                    case PREDICTION_DECISION_TREE:
+                        //TODO predict with decision tree
+                        return null;
+                    case PREDICTION_GSP:
+                        return GSP_Prediction.makeGSPPrediction(train, 0.2f);
+                    case PREDICTION_FUZZY_MINER:
+                        FuzzyModel model = new FuzzyModel(train, false);
+                        return model.makeFuzzyMinerPrediction();
+                    case PREDICTION_HEURISTICS_MINER:
+                        //TODO predict with heuristics miner
+                        return null;
+                }
+            } else if (algorithms.size() > 1) {
+                return vote(algorithms, train);
             }
-        }else if(algorithms.size()>1){
-            return vote(algorithms, train);
         }
-        return null;
+        //default prediction (Sleeping from 0:00 to 23:59)
+        ArrayList<ActivityItem> defaultRoutine = new ArrayList<>();
+        Date start = TimeUtils.getDate(new Date(),0,0);
+        Date end = TimeUtils.getDate(new Date(),23,59);
+        ActivityItem item = new ActivityItem(1,1,start,end);
+        defaultRoutine.add(item);
+        return defaultRoutine;
     }
 
     /**
