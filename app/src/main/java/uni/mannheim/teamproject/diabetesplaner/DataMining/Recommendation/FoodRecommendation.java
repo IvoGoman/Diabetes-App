@@ -44,8 +44,9 @@ public class FoodRecommendation extends Recommendation {
     private ActivityItem previous;
     private boolean first = true;
 
-    public FoodRecommendation(String name) {
-        super(name);
+
+    public FoodRecommendation() {
+        super("FoodRecommendation");
     }
 
     @Override

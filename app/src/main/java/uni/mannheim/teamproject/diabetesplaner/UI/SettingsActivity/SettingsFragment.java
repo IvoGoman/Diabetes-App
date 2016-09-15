@@ -1,6 +1,7 @@
 package uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.content.Context;
@@ -12,11 +13,17 @@ import android.preference.EditTextPreference;
 import android.preference.ListPreference;
 import android.preference.Preference;
 import android.preference.PreferenceFragment;
+import android.preference.PreferenceScreen;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.NotificationCompat;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
@@ -45,6 +52,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private Intent accelerometerCollection;
     private Intent wifi;
     private Intent GPS;
+    private SettingsActivity parent;
+    private String page;
 
     @Override
     public void onAttach(Activity activity) {
@@ -55,9 +64,13 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         try {
             // Load the preferences from an XML resource
             addPreferencesFromResource(R.xml.preferences);
+
+            openPreferenceScreen(page);
+
             //List for the selection of the weight unit
             pref_weight_measurement = (ListPreference) findPreference("pref_weightOptions");
             //Edit field for the entry of the weight
@@ -115,9 +128,10 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 //            pref_name.setSummary(Test1);
             int id = database.getUserID(AppGlobal.getHandler());
             pref_name.setSummary(database.getUser(AppGlobal.getHandler(),id)[0] + " " + database.getUser(AppGlobal.getHandler(),id)[1] );
+
         }catch(Exception e)
         {
-            e.getMessage();
+            Log.e(TAG,e.getMessage());
         }
     }
 
@@ -432,5 +446,102 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         returnValue[0] = bloodsugar_measure_value;
         returnValue[1] = bloodsugar_measure;
         return returnValue;
+    }
+
+
+    public void setParent(SettingsActivity parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public boolean onPreferenceTreeClick(PreferenceScreen preferenceScreen, Preference    preference) {
+        super.onPreferenceTreeClick(preferenceScreen, preference);
+
+        // If the user has clicked on a preference screen, set up the action bar
+        if (preference instanceof PreferenceScreen) {
+            initializeActionBar((PreferenceScreen) preference);
+        }
+
+        return false;
+    }
+
+    /** Sets up the action bar for an {@link PreferenceScreen} */
+    public static void initializeActionBar(PreferenceScreen preferenceScreen) {
+        final Dialog dialog = preferenceScreen.getDialog();
+
+        if (dialog != null) {
+            // Inialize the action bar
+            dialog.getActionBar().setDisplayHomeAsUpEnabled(true);
+
+            // Apply custom home button area click listener to close the PreferenceScreen because PreferenceScreens are dialogs which swallow
+            // events instead of passing to the activity
+            // Related Issue: https://code.google.com/p/android/issues/detail?id=4611
+            View homeBtn = dialog.findViewById(android.R.id.home);
+
+            if (homeBtn != null) {
+                View.OnClickListener dismissDialogClickListener = new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        dialog.dismiss();
+                    }
+                };
+
+                // Prepare yourselves for some hacky programming
+                ViewParent homeBtnContainer = homeBtn.getParent();
+
+                // The home button is an ImageView inside a FrameLayout
+                if (homeBtnContainer instanceof FrameLayout) {
+                    ViewGroup containerParent = (ViewGroup) homeBtnContainer.getParent();
+
+                    if (containerParent instanceof LinearLayout) {
+                        // This view also contains the title text, set the whole view as clickable
+                        ((LinearLayout) containerParent).setOnClickListener(dismissDialogClickListener);
+                    } else {
+                        // Just set it on the home button
+                        ((FrameLayout) homeBtnContainer).setOnClickListener(dismissDialogClickListener);
+                    }
+                } else {
+                    // The 'If all else fails' default case
+                    homeBtn.setOnClickListener(dismissDialogClickListener);
+                }
+            }
+        }
+    }
+
+    /**
+     * sets the intent which started the activity
+     * @param activityIntent
+     * @author Stefan 15.09.2016
+     */
+    public void setActivityIntent(final Intent activityIntent) {
+        if (activityIntent != null) {
+            if (Intent.ACTION_VIEW.equals(activityIntent.getAction())) {
+
+                if (activityIntent.getExtras() != null) {
+                    page = activityIntent.getExtras().getString("page");
+                    if (!TextUtils.isEmpty(page)) {
+                        openPreferenceScreen(page);
+                    }
+                }
+            }
+        }
+    }
+
+    /**
+     * opens a PreferenceScreen (for nested screens)
+     * @param screenName
+     * @author Stefan 15.09.2016
+     */
+    public void openPreferenceScreen(final String screenName) {
+        final Preference pref = findPreference(screenName);
+        if (pref instanceof PreferenceScreen) {
+            final PreferenceScreen preferenceScreen = (PreferenceScreen) pref;
+            ((SettingsActivity) getActivity()).getSupportActionBar().setTitle(preferenceScreen.getTitle());
+            setPreferenceScreen((PreferenceScreen) pref);
+        }
+    }
+
+    public String getPage(){
+        return this.page;
     }
 }

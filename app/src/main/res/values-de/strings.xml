@@ -149,4 +149,6 @@
     <string name="pref_help_dialog_message"></string>
     <string name="pref_food_rec">Ernährungsempfehlungen</string>
     <string name="pref_rec">Empfehlungen</string>
+    <string name="algos">Verwendete Algorithmen</string>
+    <string name="algos_summary">Wähle einen oder mehrere Vorhersage Algorithmen</string>
 </resources>

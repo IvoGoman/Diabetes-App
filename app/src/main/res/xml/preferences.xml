@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
-<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:key="pref_screen"
+    android:title="@string/menu_item_settings">
+    <intent
+        android:action="android.intent.action.VIEW"
+        android:targetPackage="uni.mannheim.teamproject.diabetesplaner"
+        android:targetClass="uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.SettingsActivity" >
+        <extra android:name="page" android:value="pref_screen" />
+    </intent>
 
     <PreferenceCategory
         android:title="@string/pref_profile"
@@ -96,11 +104,16 @@
             android:title="@string/pref_vacation_title"
             android:defaultValue="false"/>
 
-        <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
-            android:key="pref_key_algos"
+        <PreferenceScreen
+            android:key="pref_key_algos_super"
             android:title="@string/algos"
-            android:summary="@string/algos_summary"
-            android:persistent="false">
+            android:summary="@string/algos_summary">
+            <intent
+                android:action="android.intent.action.VIEW"
+                android:targetPackage="uni.mannheim.teamproject.diabetesplaner"
+                android:targetClass="uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.SettingsActivity" >
+                <extra android:name="page" android:value="pref_key_algos_super" />
+            </intent>
             <CheckBoxPreference
                 android:key="pref_key_dt"
                 android:title="@string/pref_key_dt"

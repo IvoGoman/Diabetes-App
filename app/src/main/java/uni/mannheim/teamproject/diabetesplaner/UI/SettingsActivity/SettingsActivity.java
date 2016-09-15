@@ -27,14 +27,15 @@ public class SettingsActivity extends AppCompatActivity implements BloodsugarDia
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         // Display the settingsFragment as the content.
-        
         setFrag = new SettingsFragment();
-        setBloodsugar = new bloodsugar_dialog();
+        setFrag.setActivityIntent(getIntent());
         getFragmentManager().beginTransaction()
-                .replace(android.R.id.content, setFrag)
-                .commit();
+                .replace(android.R.id.content, setFrag).commit();
+
+        setBloodsugar = new bloodsugar_dialog();
 
         getSupportActionBar().setTitle(R.string.menu_item_settings);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
     }
 
     @Override
@@ -42,6 +43,18 @@ public class SettingsActivity extends AppCompatActivity implements BloodsugarDia
         switch (item.getItemId()) {
             // Respond to the action bar's Up/Home button
             case android.R.id.home:
+                if(setFrag.getPage() != null) {
+                    if (setFrag.getPage().equals("pref_key_algos_super")) {
+                        setFrag = new SettingsFragment();
+                        Intent i = new Intent();
+                        i.putExtra("page","pref_screen");
+                        setFrag.setActivityIntent(i);
+                        getFragmentManager().beginTransaction()
+                                .replace(android.R.id.content, setFrag).commit();
+                        getSupportActionBar().setTitle(R.string.menu_item_settings);
+                        return true;
+                    }
+                }
                 NavUtils.navigateUpFromSameTask(this);
                 return true;
         }
@@ -68,6 +81,6 @@ public class SettingsActivity extends AppCompatActivity implements BloodsugarDia
         {
             setBloodsugar.setbloodsugarOnCreate(bs,data,measure,ID);
         }
-
     }
+
 }
