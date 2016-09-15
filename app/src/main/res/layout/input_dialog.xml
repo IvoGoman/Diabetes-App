@@ -133,16 +133,29 @@
                 android:layout_height="wrap_content"
                 android:text="@string/starttime"
                 android:textSize="22dp"
+                android:layout_marginTop="15dp"
                 android:layout_column="0" />
 
-            <Button
+
+            <!-- edited by Naira, changing pickers into raised buttons -->
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                card_view:cardCornerRadius="2dp"
+                card_view:cardBackgroundColor="@color/colorPrimaryDark"
+                android:layout_margin="6dp"
+                card_view:cardElevation="6dp"
+                >
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:id="@+id/start_button"
-                android:background="@drawable/button_style"
-                style="@style/buttonStyle"
+                style="@style/ButtonFormat"
                 android:layout_column="1" />
+
+            </android.support.v7.widget.CardView>
 
         </TableRow>
 
@@ -157,16 +170,28 @@
                 android:layout_height="wrap_content"
                 android:text="@string/endtime"
                 android:textSize="22dp"
+                android:layout_marginTop="15dp"
                 android:layout_column="0" />
 
-            <Button
+            <!-- edited by Naira, changing pickers into raised buttons -->
+            <android.support.v7.widget.CardView
+                xmlns:card_view="http://schemas.android.com/apk/res-auto"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
+                card_view:cardCornerRadius="2dp"
+                card_view:cardBackgroundColor="@color/colorPrimaryDark"
+                android:layout_margin="6dp"
+                card_view:cardElevation="6dp"
+                >
+
+            <Button
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
                 android:id="@+id/end_button"
-                android:background="@drawable/button_style"
-                style="@style/buttonStyle"
+                style="@style/ButtonFormat"
                 android:layout_column="1" />
+
+            </android.support.v7.widget.CardView>
         </TableRow>
     </TableLayout>
     </LinearLayout>

@@ -42,4 +42,13 @@
         <item name="android:textStyle">bold</item>
     </style>
 
+    <style name="MyButton" parent="Theme.AppCompat.Light">
+        <item name="colorControlHighlight">@color/colorPrimaryDark</item>
+        <item name="colorButtonNormal">@color/colorPrimary</item>
+    </style>
+
+    <style name="ButtonFormat" parent="android:style/Widget.Material.Button">
+        <item name="android:background">@color/colorPrimaryDark</item>
+    </style>
+
 </resources>
