@@ -127,7 +127,14 @@ public class DailyRoutineFragment extends Fragment {
 //            items.add(drv);
 //        }
 
-//        drHandler.predictDailyRoutine(PredictionFramework.PREDICTION_GSP, PredictionFramework.EVERY_DAY);
+//        ArrayList<Integer> algos = new ArrayList<>();
+//        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
+//        algos.add(PredictionFramework.PREDICTION_GSP);
+//        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
+//        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
+//        drHandler.predictDailyRoutine(algos, PredictionFramework.EVERY_DAY);
+
+//        drHandler.predictDailyRoutine(PredictionFramework.EVERY_DAY, getContext());
         drHandler.predictDailyRoutine(this.date);
         DailyRoutineView.clearSelectedActivities();
         updateView();

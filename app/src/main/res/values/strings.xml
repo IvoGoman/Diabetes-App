@@ -188,5 +188,11 @@
     <string name="pref_activity_rec">Recommendations for Activities</string>
     <string name="Sonntag">Sunday</string>
     <string name="pref_rec">Recommendations</string>
+    <string name="pref_key_dt">Decision Tree</string>
+    <string name="pref_key_gsp">Generalized Sequential Patterns</string>
+    <string name="pref_key_fuzzy">Fuzzy Miner</string>
+    <string name="pref_key_heuristics">Heuristics Miner</string>
+    <string name="algos">Algorithms to use</string>
+    <string name="algos_summary">Choose one or more prediction algorithms</string>
 
 </resources>

@@ -54,30 +54,27 @@ public class PredictionFramework {
      * predicts a day
      *
      * @param train     an arrayList that contains the training data (the days to train on)
-     * @param algorithm the algorithm that should be chosen
+     * @param algorithms the algorithms that should be chosen
      * @return
      * @author Stefan 06.09.2016
      */
-    public static ArrayList<ActivityItem> predict(ArrayList<ArrayList<ActivityItem>> train, int algorithm) {
-        switch (algorithm) {
-            case PREDICTION_DECISION_TREE:
-                //TODO predict with decision tree
-                return null;
-            case PREDICTION_GSP:
-                return GSP_Prediction.makeGSPPrediction(train, 0.2f);
-            case PREDICTION_FUZZY_MINER:
-                FuzzyModel model = new FuzzyModel(train, false);
-                return model.makeFuzzyMinerPrediction();
-            case PREDICTION_HEURISTICS_MINER:
-                //TODO predict with heuristics miner
-                return null;
-            case VOTING:
-                ArrayList<Integer> algos = new ArrayList<>();
-                algos.add(PREDICTION_DECISION_TREE);
-                algos.add(PREDICTION_GSP);
-                algos.add(PREDICTION_FUZZY_MINER);
-                algos.add(PREDICTION_HEURISTICS_MINER);
-                return vote(algos, train);
+    public static ArrayList<ActivityItem> predict(ArrayList<ArrayList<ActivityItem>> train, ArrayList<Integer> algorithms) {
+        if(algorithms.size() == 1){
+            switch (algorithms.get(0)) {
+                case PREDICTION_DECISION_TREE:
+                    //TODO predict with decision tree
+                    return null;
+                case PREDICTION_GSP:
+                    return GSP_Prediction.makeGSPPrediction(train, 0.2f);
+                case PREDICTION_FUZZY_MINER:
+                    FuzzyModel model = new FuzzyModel(train, false);
+                    return model.makeFuzzyMinerPrediction();
+                case PREDICTION_HEURISTICS_MINER:
+                    //TODO predict with heuristics miner
+                    return null;
+            }
+        }else if(algorithms.size()>1){
+            return vote(algorithms, train);
         }
         return null;
     }
