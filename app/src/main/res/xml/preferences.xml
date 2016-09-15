@@ -24,6 +24,7 @@
         <ListPreference
             android:entries="@array/weightOptions"
             android:entryValues="@array/weightOptions"
+            android:defaultValue="1"
             android:key="pref_weightOptions"
             android:summary="@string/pref_weight_measurement_summary"
             android:title="@string/pref_weight_measurement" />
