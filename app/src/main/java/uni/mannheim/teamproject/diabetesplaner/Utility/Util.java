@@ -610,9 +610,9 @@ public class Util {
     public static boolean isToday(ArrayList<ActivityItem> day){
         if(day.size()>0){
             ActivityItem first = day.get(0);
-            TimeUtils.isSameDay(first.getStarttime(), new Date());
+            return TimeUtils.isSameDay(first.getStarttime(), new Date());
         }
-        return true;
+        return false;
     }
 
     /**
@@ -623,24 +623,28 @@ public class Util {
      */
     public static boolean isDayComplete(ArrayList<ActivityItem> day){
         if(day.size()>0) {
+            //check starttime of first
             if (TimeUtils.getMinutesOfDay(day.get(0).getStarttime().getTime()) != 0){
                 return false;
-            }else if(TimeUtils.getMinutesOfDay(day.get(day.size()-1).getEndtime().getTime()) != 1439){
-                return false;
-            }else{
-                int prevEnd = 0;
-                for(int i=0; i<day.size();i++){
-                    if(i==0){
-                        prevEnd = TimeUtils.getMinutesOfDay(day.get(i).getEndtime().getTime());
-                    }else{
-                        int currStart = TimeUtils.getMinutesOfDay(day.get(i).getStarttime().getTime());
-                        if(currStart != (prevEnd+1)){
-                            return false;
-                        }
-                    }
-                }
-                return true;
             }
+            //check endtime of last
+            if(TimeUtils.getMinutesOfDay(day.get(day.size()-1).getEndtime().getTime()) != 1439){
+                return false;
+            }
+
+            int prevEnd = 0;
+            for(int i=0; i<day.size();i++){
+                if(i==0){
+                    prevEnd = TimeUtils.getMinutesOfDay(day.get(i).getEndtime().getTime());
+                }else{
+                    int currStart = TimeUtils.getMinutesOfDay(day.get(i).getStarttime().getTime());
+                    if(currStart != (prevEnd+1)){
+                        return false;
+                    }
+                    prevEnd = TimeUtils.getMinutesOfDay(day.get(i).getEndtime().getTime());
+                }
+            }
+            return true;
         }else {
             return false;
         }

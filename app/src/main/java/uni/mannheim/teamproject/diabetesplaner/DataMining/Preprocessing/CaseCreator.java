@@ -382,5 +382,32 @@ public class CaseCreator {
 			}
 		}
 	}
+
+	/**
+	 * reduces the time of the previous activity by 1 if endtime of previous activity = starttime of next activity
+	 * @author Stefan 16.09.2016
+	 */
+	public void shiftSameBorderTime(){
+		int prevEnd = 0;
+		for(int i=1; i<list.size(); i++){
+			if(i==1){
+				prevEnd = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[endtimeIndex]));
+			}else {
+				int start = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[starttimeIndex]));
+				if(start == prevEnd){
+					list.get(i-1)[endtimeIndex] = String.valueOf(TimeUtils.addMinuteToTimestamp(Long.parseLong(list.get(i-1)[endtimeIndex]),-1));
+				}
+				prevEnd = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[endtimeIndex]));
+			}
+		}
+	}
+
+	public int getStarttimeIndex(){
+		return starttimeIndex;
+	}
+
+	public int getEndtimeIndex(){
+		return endtimeIndex;
+	}
 }
 

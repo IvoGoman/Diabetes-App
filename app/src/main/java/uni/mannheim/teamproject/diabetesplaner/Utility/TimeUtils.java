@@ -220,6 +220,19 @@ public class TimeUtils {
         return cal.getTime();
     }
 
+    /**
+     * adds minutes to a date
+     * @param timestamp
+     * @param minutes
+     * @return
+     * @author Stefan 16.09.2016
+     */
+    public static long addMinuteToTimestamp(long timestamp, int minutes){
+        final long ONE_MINUTE_IN_MILLIS=60000;//millisecs
+
+        return timestamp + (minutes * ONE_MINUTE_IN_MILLIS);
+    }
+
     public static Date setTime(String dateString, String starttime) {
         Date date = null;
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");

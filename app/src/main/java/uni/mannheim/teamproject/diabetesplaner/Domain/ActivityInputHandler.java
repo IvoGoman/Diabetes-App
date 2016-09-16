@@ -59,6 +59,8 @@ public class ActivityInputHandler {
         creator.createCases();
         //adds a column with the day of the week
         creator.addDayOfWeek();
+        //reduces the endtime of the previous activity by 1 if necessary
+        creator.shiftSameBorderTime();
         //merges two consecutive activities which are the same
         creator.mergeConsecutiveSameActivity(true);
         creator.removeFirstCase(true);
