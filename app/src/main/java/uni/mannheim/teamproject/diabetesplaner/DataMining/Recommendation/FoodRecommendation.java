@@ -37,6 +37,7 @@ public class FoodRecommendation extends Recommendation {
     private final int SPORT = db.getActivityID("Sport");
 
     private final int EXERCISE = db.getSuperActivityID(SPORT);
+    private final static String TAG = "FoodRecommendation";
 
     private int mIdOffset = 0;
     public static final int INTERVAL = 60 * 1000;
@@ -189,13 +190,22 @@ public class FoodRecommendation extends Recommendation {
      * @author Stefan 13.09.2016
      */
     public ActivityItem getLastActivity(){
-        int iCurr = getCurrentActivity();
-        ArrayList<ActivityItem> routine = DayHandler.getDailyRoutine();
-        if(iCurr > 0){
-            return routine.get(iCurr-1);
-        }else{
-            ArrayList<ActivityItem> yesterday = AppGlobal.getHandler().getActivities(AppGlobal.getHandler(), TimeUtils.getYesterdaysDate(TimeUtils.getCurrentDate()), "DAY");
-            return yesterday.get(yesterday.size()-1);
+        try {
+            int iCurr = getCurrentActivity();
+            ArrayList<ActivityItem> routine = DayHandler.getDailyRoutine();
+            if (iCurr > 0) {
+                return routine.get(iCurr - 1);
+            } else {
+                ArrayList<ActivityItem> yesterday = AppGlobal.getHandler().getActivities(AppGlobal.getHandler(), TimeUtils.getYesterdaysDate(TimeUtils.getCurrentDate()), "DAY");
+                if (yesterday.size() > 0) {
+                    return yesterday.get(yesterday.size() - 1);
+                }else{
+                    return null;
+                }
+            }
+        }catch(Exception e){
+            Log.e(TAG, e.toString());
+            return null;
         }
     }
 }

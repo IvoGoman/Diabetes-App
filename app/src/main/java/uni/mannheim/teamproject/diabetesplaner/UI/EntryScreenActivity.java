@@ -410,8 +410,7 @@ public class EntryScreenActivity extends AppCompatActivity
         }else if (id == R.id.nav_activity_measurement) {
             Toast.makeText(this, R.string.menu_item_activity, Toast.LENGTH_SHORT).show();
 
-//            ArrayList<ArrayList<ActivityItem>> list = AppGlobal.getHandler().getAllDays(PredictionFramework.EVERY_DAY);
-//            Log.d(TAG, "listsize: " + list.size());
+//             Log.d(TAG, "listsize: " + list.size());
 
             fragment = new ActivityFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
