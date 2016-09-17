@@ -7,7 +7,6 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.location.Location;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Handler;
@@ -129,7 +128,9 @@ public class Wifi extends BroadcastReceiver {
                 }
                 while (cursor.moveToNext());
             }
-
+           if (!cursor.isClosed()) {
+               cursor.close();
+           }
             //get all Activities
             ArrayList<String[]> eventlist  = AppGlobal.getHandler().getAllEvents(AppGlobal.getHandler());
             // für alle activities
