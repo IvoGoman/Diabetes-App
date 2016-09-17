@@ -486,7 +486,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void InsertBloodsugar(DataBaseHandler handler, Date date, Time time, int profile_id, double bloodsugar_level, String measure_unit) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         Timestamp timestamp = Timestamp.valueOf(date.toString() + " " + time.toString());
-        Log.d("Database", timestamp + "InsertBloodSugar");
+        Log.d("Database", timestamp + " InsertBloodSugar");
 
         db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
                 + bloodsugar_level + " , '" + timestamp + "' , '" + measure_unit + "' , 'bloodsugar');");
@@ -881,6 +881,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public String[] getLastBloodsugarMeasurement(DataBaseHandler handler, int profile_id){
         try {
+            profile_id = 1;
             SQLiteDatabase db1 = handler.getWritableDatabase();
             String[] result = new String[3];
             Cursor cursor = db1.rawQuery("SELECT measure_value,measure_unit,timestamp " +

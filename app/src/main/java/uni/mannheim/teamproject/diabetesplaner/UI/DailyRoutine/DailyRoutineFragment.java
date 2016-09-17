@@ -19,14 +19,17 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionFramework;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
+import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.HeuristicsMinerImplementation;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.DummyDataCreator;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
@@ -118,6 +121,7 @@ public class DailyRoutineFragment extends Fragment {
         textView.setText(TimeUtils.getDateAsString());
         this.date = TimeUtils.getCurrentDate();
 
+
         //create a DailyRoutineView for every list item, so for every activity in the daily routine
 //        for(int i=0; i<list2.size(); i++){
 //            DailyRoutineView drv = new DailyRoutineView(getActivity(),Integer.valueOf(list2.get(i)[0]),0,list2.get(i)[1], list2.get(i)[2]);
@@ -133,9 +137,11 @@ public class DailyRoutineFragment extends Fragment {
 //        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
 //        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
 //        drHandler.predictDailyRoutine(algos, PredictionFramework.EVERY_DAY);
-
-//        drHandler.predictDailyRoutine(PredictionFramework.EVERY_DAY, getContext());
-        drHandler.predictDailyRoutine(this.date);
+        //DummyDataCreator.populateDataBase();
+        //drHandler.predictDailyRoutine(PredictionFramework.EVERY_DAY, getContext());
+        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(),0);
+        ArrayList<ActivityItem> result = HeuristicsMinerImplementation.runHeuristicsMiner(items);
+        //drHandler.predictDailyRoutine(this.date);
         DailyRoutineView.clearSelectedActivities();
         updateView();
 

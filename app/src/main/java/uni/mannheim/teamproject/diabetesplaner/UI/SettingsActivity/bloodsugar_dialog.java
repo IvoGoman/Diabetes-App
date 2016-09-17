@@ -43,6 +43,8 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
 
     //the current selected measure
     private String measure;
+    private  String date_s;
+    private String time_s;
     //the current selected measure value
     private String measure_value;
     DataBaseHandler database;
@@ -91,6 +93,21 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
             }
         });
 
+        date_s = btn_date.getText().toString();
+        time_s = btn_time.getText().toString();
+        //Set current Date and Time
+        Calendar c = Calendar.getInstance();
+        if(date_s.contentEquals("Date"))
+        {
+            date_s = new SimpleDateFormat("dd.MM.yyyy").format(c.getTime());
+            btn_date.setText(date_s);
+
+        }
+        if (time_s.contentEquals("Time"))
+        {
+            time_s = new SimpleDateFormat("HH:MM:ss").format(c.getTime());
+            btn_time.setText(time_s);
+        }
 
         AlertDialog.Builder mybuilder = new AlertDialog.Builder(getActivity());
         mybuilder.setView(view);
@@ -104,29 +121,14 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                     if (measure_value.equals(bloodsugar_level.getText().toString().replace(".","-")) == false) {
                         measure_value = bloodsugar_level.getText().toString();
 
-
-                        String date_s = btn_date.getText().toString();
-                        String time_s = btn_time.getText().toString();
-
-                        //Set current Date and Time
-                        Calendar c = Calendar.getInstance();
-                        if(date_s.contentEquals("Date"))
-                        {
-                            date_s = new SimpleDateFormat("dd.MM.yyyy").format(c.getTime());
-                            btn_date.setText(date_s);
-
+                        if(btn_time.getText().toString().length() < 8) {
+                            time_s = btn_time.getText().toString()+ ":" + Calendar.getInstance().get(Calendar.SECOND);
                         }
-                        if (time_s.contentEquals("Time"))
-                        {
-                            time_s = new SimpleDateFormat("HH:MM").format(c.getTime());
-                            btn_time.setText(time_s);
-                        }
-
                         //Check if entered value is to high or to low
                         if(check_mg(convert_to_mg(Double.parseDouble(measure_value),measure)) == true) {
                             database.InsertBloodsugar(database,
-                                    Date.valueOf(date_s.subSequence(6, 9) + "-" + date_s.subSequence(3, 4) + "-" + date_s.subSequence(0, 1)),
-                                    Time.valueOf(time_s + ":00"),
+                                    Date.valueOf(date_s.subSequence(6, 10) + "-" + date_s.subSequence(3, 5) + "-" + date_s.subSequence(0, 2)),
+                                    Time.valueOf(time_s),
                                     1, Double.parseDouble(measure_value), measure);
                             communicator.respond(null, measure_value, measure, 1);
                             Toast.makeText(getActivity(), "Blood sugar level: " + measure_value + " "

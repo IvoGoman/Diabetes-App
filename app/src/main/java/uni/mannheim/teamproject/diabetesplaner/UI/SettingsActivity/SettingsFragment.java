@@ -81,6 +81,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             sharedPrefs = getPreferenceManager().getSharedPreferences();
 
 
+
             //Bloodsugar handling
             initialize_bloodsugar();
             initialize_weight();
@@ -120,6 +121,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                     return true;
                 }
             });
+
+            //check if data collection is already started
+            if(getDataCollection())
+            {
+                startServices();
+            }
 
             //Write User Data in the Summary Fields
 
@@ -282,6 +289,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
      */
     public void bloodsugar_change(bloodsugar_dialog bs, String data, String measure, int ID) {
         if (ID == 1) {
+            data = database.getLastBloodsugarMeasurement(AppGlobal.getHandler(),1)[0];
+            measure = database.getLastBloodsugarMeasurement(AppGlobal.getHandler(),1)[1];
             pref_bloodsugar.setSummary(data + " " + measure);
             bloodsugar_measure_value = data;
             bloodsugar_measure = measure;

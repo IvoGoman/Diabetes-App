@@ -36,7 +36,7 @@
             android:key="pref_weightOptions"
             android:summary="@string/pref_weight_measurement_summary"
             android:title="@string/pref_weight_measurement" />
-        //TODO: Saving for this point is missing
+
     </PreferenceCategory>
     <PreferenceCategory
         android:title="@string/pref_notification"

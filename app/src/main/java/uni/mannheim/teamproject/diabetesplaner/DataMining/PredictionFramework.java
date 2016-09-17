@@ -110,7 +110,7 @@ public class PredictionFramework {
                     FuzzyModel model = new FuzzyModel(train, false);
                     results.put(PREDICTION_FUZZY_MINER, model.makeFuzzyMinerPrediction());
                 case PREDICTION_HEURISTICS_MINER:
-                    return HeuristicsMinerImplementation.runHeuristicsMiner(train.get(0));
+                    results.put(PREDICTION_HEURISTICS_MINER,HeuristicsMinerImplementation.runHeuristicsMiner(train.get(0)));
 
             }
         }
