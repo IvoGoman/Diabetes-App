@@ -19,7 +19,6 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionFramework;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
@@ -29,7 +28,6 @@ import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.Heu
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
-import uni.mannheim.teamproject.diabetesplaner.Utility.DummyDataCreator;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
@@ -159,44 +157,109 @@ public class DailyRoutineFragment extends Fragment {
         //get predicted routine
         linearLayout.removeAllViews();
         items.clear();
+        //TODO --------- for testing ------------------------------------------
         ArrayList<ActivityItem> listItems = drHandler.getDailyRoutine();
+//        ArrayList<ActivityItem> listItems = new ArrayList<>();
+//
+//        String start1 = "17.09.2016 00:00:00";
+//        String end1 = "17.09.2016 09:00:00";
+//        String start2 = "17.09.2016 09:01:00";
+//        String end2 = "17.09.2016 14:45:00";
+//        String start3 = "17.09.2016 14:46:00";
+//        String end3 = "17.09.2016 17:01:00";
+//        String start4 = "17.09.2016 17:02:00";
+//        String end4 = "17.09.2016 23:59:00";
+//
+//        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+//        try {
+//
+//
+//            Date s1 = sdf.parse(start1);
+//            Date e1 = sdf.parse(end1);
+//            Date s2 = sdf.parse(start2);
+//            Date e2 = sdf.parse(end2);
+//            Date s3 = sdf.parse(start3);
+//            Date e3 = sdf.parse(end3);
+//            Date s4 = sdf.parse(start4);
+//            Date e4 = sdf.parse(end4);
+//
+//
+//            listItems.add(new ActivityItem(1,0,s1,e1));
+//            listItems.add(new ActivityItem(10,0,s2,e2));
+//            listItems.add(new ActivityItem(2,2,s3,e3));
+//            listItems.add(new ActivityItem(1,0,s4,e4));
+//        } catch (ParseException e) {
+//            e.printStackTrace();
+//        }
+
         Log.d(TAG, "list size after update: " +listItems.size());
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
 
         DataBaseHandler dbHandler = AppGlobal.getHandler();
-        ArrayList<MeasureItem> bsList = dbHandler.getMeasurementValues(dbHandler, TimeUtils.getCurrentDate(),"WEEK",MeasureItem.MEASURE_KIND_BLOODSUGAR);
+//        dbHandler.InsertBloodsugarEntryScreen(Calendar.getInstance().getTimeInMillis(),1,100,MeasureItem.UNIT_MG);
+//        dbHandler.InsertBloodsugarEntryScreen((new Date()).getTime()-(60*1000*150),1,90,MeasureItem.UNIT_MG);
+
+        ArrayList<MeasureItem> bsList = dbHandler.getMeasurementValues(dbHandler, TimeUtils.getCurrentDate(),"DAY",MeasureItem.MEASURE_KIND_BLOODSUGAR);
+        ArrayList<MeasureItem> insulinList = dbHandler.getMeasurementValues(dbHandler, TimeUtils.getCurrentDate(),"DAY",MeasureItem.MEASURE_KIND_INSULIN);
+
+//        bsList.add(new MeasureItem((new Date()).getTime(), 100, MeasureItem.UNIT_MG));
+//        insulinList.add(new MeasureItem((new Date()).getTime(), 100, MeasureItem.UNIT_MG));
+
         Log.d(TAG, "BS List size: " + bsList.size());
+        Log.d(TAG, "insulinList: " + bsList.size());
         for(int i=0; i<listItems.size(); i++){
             DailyRoutineView drv = new DailyRoutineView(getActivity(), listItems.get(i));
 
             //TODO getting the bloodsugar of current activity and set it
             String bloodsugar = "";
-            int numberOfMeasuresWithinOne = 0;
+            String insulin = "";
+            int numberOfMeasuresWithinOneBS = 0;
+            int numberOfMeasuresWithinOneINS = 0;
+
             for(int j=0; j<bsList.size(); j++){
                 MeasureItem bs = bsList.get(j);
                 //checks if time of the bloodsugar measurement is inbetween start and endtime of an activity
-                if (TimeUtils.isTimeInbetween(listItems.get(i).getStarttime(), listItems.get(i).getStarttime(), TimeUtils.getDate(bs.getTimestamp()))) {
+                if (TimeUtils.isTimeInbetween(listItems.get(i).getStarttime(), listItems.get(i).getEndtime(), TimeUtils.getDate(bs.getTimestamp()))) {
                     String name = getResources().getString(R.string.pref_blood_sugar);
                     String at = getResources().getString(R.string.at);
-                    if (numberOfMeasuresWithinOne == 0) {
+
+                    if (numberOfMeasuresWithinOneBS == 0) {
                         bloodsugar = name + " " + at + " " + TimeUtils.getTimeInUserFormat(bs.getTimestamp(), getContext()) + ": " + bs.getMeasure_value() + " " + bs.getMeasure_unit();
-                        numberOfMeasuresWithinOne = 1;
+                        numberOfMeasuresWithinOneBS = 1;
                     } else {
                         bloodsugar += "\n" + name + " " + at + " " + TimeUtils.getTimeInUserFormat(bs.getTimestamp(), getContext()) + ": " + bs.getMeasure_value() + " " + bs.getMeasure_unit();
                     }
                 }
             }
 
-            drv.setBloodsugar(bloodsugar);
+            drv.setBloodsugarText(bloodsugar);
+
+            for(int j=0; j<insulinList.size(); j++){
+                MeasureItem ins = insulinList.get(j);
+                //checks if time of the bloodsugar measurement is inbetween start and endtime of an activity
+                if (TimeUtils.isTimeInbetween(listItems.get(i).getStarttime(), listItems.get(i).getEndtime(), TimeUtils.getDate(ins.getTimestamp()))) {
+                    String name = getResources().getString(R.string.insulinInput);
+                    String at = getResources().getString(R.string.at);
+
+                    if (numberOfMeasuresWithinOneINS == 0) {
+                        insulin = name + " " + at + " " + TimeUtils.getTimeInUserFormat(ins.getTimestamp(), getContext()) + ": " + ins.getMeasure_value() + " " + ins.getMeasure_unit();
+                        numberOfMeasuresWithinOneINS = 1;
+                    } else {
+                        insulin += "\n" + name + " " + at + " " + TimeUtils.getTimeInUserFormat(ins.getTimestamp(), getContext()) + ": " + ins.getMeasure_value() + " " + ins.getMeasure_unit();
+                    }
+                }
+            }
+
+            drv.setInsulinText(insulin);
 
 
             //-----for testing--------------
 //            if(i==1) {
 //                drv.setSubactivity(4);
 //            }else if(i==1){
-//                drv.setBloodsugar("4.0");
+//                drv.setBloodsugarText("4.0");
 //               // drv.setSubactivity(5);
 //               // drv.setMeal("Kartoffeln mit Speck, Schweinshaxen und Salatbeilage");
 //            }

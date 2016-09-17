@@ -88,7 +88,7 @@
     <string name="mmol_l">mmol/l</string>
     <string name="meal">Mahlzeit</string>
     <string name="Description">Beschreibung</string>
-    <string name="insulin">Insulin Dosis</string>
+    <string name="insulinText">Insulin Dosis</string>
     <string name="bloodsugar_prompt">Bitte das aktuelle Blutzuckerlevel eintragen:</string>
     <string name="activity_limit">Eine Aktivität muss übrig bleiben</string>
     <string name="bloodSugar">Blutzucker</string>
@@ -136,7 +136,7 @@
     <string name="two">zwei</string>
     <string name="units">Einheiten</string>
     <string name="yoghurt">Naturjoghurt</string>
-    <string name="your_activity">Deine aktuelle Aktivität ist</string>
+    <string name="your_activity">Deine vorherige Aktivität war</string>
     <string name="banana">Banane</string>
     <string name="a">einen</string>
     <string name="a_eine">eine</string>
@@ -151,4 +151,5 @@
     <string name="pref_rec">Empfehlungen</string>
     <string name="algos">Verwendete Algorithmen</string>
     <string name="algos_summary">Wähle einen oder mehrere Vorhersage Algorithmen</string>
+    <string name="insulinInput">Insulin Eingabe</string>
 </resources>

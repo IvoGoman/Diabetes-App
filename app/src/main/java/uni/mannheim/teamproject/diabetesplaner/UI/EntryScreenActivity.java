@@ -87,7 +87,7 @@ public class EntryScreenActivity extends AppCompatActivity
     private GoogleApiClient client;
 
     //UI attributes
-    private Fragment fragment;
+    private static Fragment fragment;
     private MenuItem actualMenuItem;
     private MenuItem addMeasurements;
     private MenuItem editItem;
@@ -375,6 +375,28 @@ public class EntryScreenActivity extends AppCompatActivity
             }
         }
         return indexes;
+    }
+
+    /**
+     * updates the daily routine if the current visible Fragment is the DailyRoutineFragment
+     * @author Stefan 17.09.2016
+     */
+    public static void updateDailyRoutine(){
+        if(fragment instanceof DailyRoutineFragment){
+            ((DailyRoutineFragment)fragment).updateView();
+        }
+    }
+
+    /**
+     * returns the DailyRoutineFragment
+     * @return
+     * @author Stefan 17.09.2016
+     */
+    public static DailyRoutineFragment getDailyRoutineFragment(){
+        if(fragment instanceof DailyRoutineFragment){
+            return (DailyRoutineFragment)fragment;
+        }
+        return null;
     }
 
     /**

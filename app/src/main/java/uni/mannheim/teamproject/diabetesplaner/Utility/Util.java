@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 //import org.deckfour.xes.model.XLog;
@@ -72,13 +73,13 @@ public class Util {
      */
     public static double convertBSToMG(double value, String unit) {
         switch (unit) {
-            case "%":
+            case MeasureItem.UNIT_PERCENT:
                 return Util.percentage_to_mg(value);
 
-            case "mmol/l":
+            case MeasureItem.UNIT_MMOL:
                 return Util.mmol_to_milligram(value);
 
-            case "mg/dl":
+            case MeasureItem.UNIT_MG:
                 return value;
             default:
                 return 0;
