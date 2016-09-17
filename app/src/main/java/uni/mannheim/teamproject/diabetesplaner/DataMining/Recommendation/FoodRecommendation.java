@@ -1,8 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -39,31 +37,33 @@ public class FoodRecommendation extends Recommendation {
     private final int EXERCISE = db.getSuperActivityID(SPORT);
     private final static String TAG = "FoodRecommendation";
 
-    private int mIdOffset = 0;
+    private int mIdOffset = 100;
     public static final int INTERVAL = 60 * 1000;
 
     private ActivityItem previous;
     private boolean first = true;
+    private static boolean isPresent = false;
 
 
     public FoodRecommendation() {
         super("FoodRecommendation");
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-
         setInterval(INTERVAL);
-        startRecommendation();
-        return super.onBind(intent);
     }
 
-    @Override
-    public boolean onUnbind(Intent intent) {
-
-        stopRecommendation();
-        return super.onUnbind(intent);
-    }
+    //    @Override
+//    public IBinder onBind(Intent intent) {
+//
+//        setInterval(INTERVAL);
+//        startRecommendation();
+//        return super.onBind(intent);
+//    }
+//
+//    @Override
+//    public boolean onUnbind(Intent intent) {
+//
+//        stopRecommendation();
+//        return super.onUnbind(intent);
+//    }
 
     @Override
     public void recommend() {
@@ -73,7 +73,8 @@ public class FoodRecommendation extends Recommendation {
 
         if (notify) {
             Log.d("Rec", "recommend based on food");
-            mIdOffset = getMidOffset();
+//            mIdOffset = getMidOffset();
+            mIdOffset = Recommendation.FOOD_REC;
 
             ActivityItem item = getLastActivity();
             if(item != null) {

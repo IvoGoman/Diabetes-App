@@ -47,6 +47,18 @@ public abstract class Recommendation extends IntentService {
 
     }
 
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        startRecommendation();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopRecommendation();
+    }
+
     /**
      * Override in Subclass.
      * Should contain the process for a single recommendation

@@ -1,8 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -39,6 +37,7 @@ public class BSInputRecommendation extends Recommendation {
 
 //        createFakeBS();
         findClusters(5, eps);
+        setInterval(INTERVAL);
 
     }
 
@@ -84,21 +83,21 @@ public class BSInputRecommendation extends Recommendation {
         dbHandler.InsertBloodsugar(dbHandler, date, time, 1, 150, MeasureItem.MEASURE_KIND_BLOODSUGAR);
     }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-
-        setInterval(INTERVAL);
-        startRecommendation();
-
-        return super.onBind(intent);
-    }
-
-    @Override
-    public boolean onUnbind(Intent intent) {
-
-        stopRecommendation();
-        return super.onUnbind(intent);
-    }
+//    @Override
+//    public IBinder onBind(Intent intent) {
+//
+//        setInterval(INTERVAL);
+//        startRecommendation();
+//
+//        return super.onBind(intent);
+//    }
+//
+//    @Override
+//    public boolean onUnbind(Intent intent) {
+//
+//        stopRecommendation();
+//        return super.onUnbind(intent);
+//    }
 
     /**
      * recommends to input bloodsugar when its the time the user usually inputs the bloodsugar
@@ -111,7 +110,8 @@ public class BSInputRecommendation extends Recommendation {
         boolean notify = preferences.getBoolean("pref_key_bs_input", true);
 
         if(notify) {
-            mIdOffset = getMidOffset();
+//            mIdOffset = getMidOffset();
+            mIdOffset = Recommendation.BS_REC;
             //for testing
             for(int i=0;i<means.size(); i++){
                 int tmp = (int)((double)means.get(i));
