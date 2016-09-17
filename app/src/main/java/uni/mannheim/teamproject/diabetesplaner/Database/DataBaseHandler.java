@@ -422,7 +422,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Integer Intensity = Activ.getIntensity();
 
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        db1.execSQL("insert into ActivityList(id_SubActivity, id_Location, id_WIFI, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation + " , " + idWIFI +" ,' " + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
+        db1.execSQL("insert into ActivityList(id_SubActivity, id_Location, id_WIFI, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation + " , " + idWIFI +" ,'" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
         db1.close();
     }
 
