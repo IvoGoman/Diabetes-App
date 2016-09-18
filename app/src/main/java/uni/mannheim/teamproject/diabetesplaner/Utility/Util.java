@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
 //import org.deckfour.xes.model.XLog;
@@ -72,13 +73,13 @@ public class Util {
      */
     public static double convertBSToMG(double value, String unit) {
         switch (unit) {
-            case "%":
+            case MeasureItem.UNIT_PERCENT:
                 return Util.percentage_to_mg(value);
 
-            case "mmol/l":
+            case MeasureItem.UNIT_MMOL:
                 return Util.mmol_to_milligram(value);
 
-            case "mg/dl":
+            case MeasureItem.UNIT_MG:
                 return value;
             default:
                 return 0;
@@ -588,6 +589,34 @@ public class Util {
     }
 
     /**
+     * checks whether a day should be retrieved as training data or not.
+     * Checks if day is complete and if day is not the actual day (= day to predict)
+     * @param day ArrayList that represents one day
+     * @return true if day is complete, false otherwise
+     * @author Stefan 13.09.2016
+     */
+    public static boolean checkDay(ArrayList<ActivityItem> day){
+        boolean complete = isDayComplete(day);
+        boolean isToday = isToday(day);
+
+        return complete && !isToday;
+    }
+
+    /**
+     * checks if the day is today
+     * @param day
+     * @return
+     * @author Stefan 15.09.2016
+     */
+    public static boolean isToday(ArrayList<ActivityItem> day){
+        if(day.size()>0){
+            ActivityItem first = day.get(0);
+            return TimeUtils.isSameDay(first.getStarttime(), new Date());
+        }
+        return false;
+    }
+
+    /**
      * checks whether a day is complete or not. In a complete day there is an activity specified for every single minute.
      * @param day ArrayList that represents one day
      * @return true if day is complete, false otherwise
@@ -595,9 +624,12 @@ public class Util {
      */
     public static boolean isDayComplete(ArrayList<ActivityItem> day){
         if(day.size()>0) {
+            //check starttime of first
             if (TimeUtils.getMinutesOfDay(day.get(0).getStarttime().getTime()) != 0){
                 return false;
-            }else if(TimeUtils.getMinutesOfDay(day.get(day.size()-1).getEndtime().getTime()) != 1439){
+            }
+            //check endtime of last
+            if(TimeUtils.getMinutesOfDay(day.get(day.size()-1).getEndtime().getTime()) != 1439){
                 return false;
             }else{
                 int prevEnd = 0;

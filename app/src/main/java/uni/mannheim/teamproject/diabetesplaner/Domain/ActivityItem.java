@@ -25,7 +25,7 @@ public class ActivityItem {
     private String imagePath = null;
     private Date date = null;
     private Integer intensity = null;
-    private Integer duration = null;
+    private Double duration = null;
 
     public static final Integer INTENSITY_HIGH = 3;
     public static final Integer INTENSITY_MEDIUM = 2;
@@ -277,11 +277,11 @@ public class ActivityItem {
         return tmp;
     }
 
-    public Integer getDuration() {
+    public Double getDuration() {
         return duration;
     }
 
-    public void setDuration(Integer duration) {
+    public void setDuration(Double duration) {
         this.duration = duration;
     }
 

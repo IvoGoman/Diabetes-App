@@ -1,9 +1,7 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -40,22 +38,23 @@ public class ActivityRecommendation extends Recommendation {
      */
     public ActivityRecommendation() {
         super("RoutineRecommendationProcess");
-    }
-
-
-    @Override
-    public IBinder onBind(Intent intent) {
         setInterval(INTERVAL);
-        startRecommendation();
-
-        return super.onBind(intent);
     }
 
-    @Override
-    public boolean onUnbind(Intent intent) {
-        stopRecommendation();
-        return super.onUnbind(intent);
-    }
+
+//    @Override
+//    public IBinder onBind(Intent intent) {
+//        setInterval(INTERVAL);
+//        startRecommendation();
+//
+//        return super.onBind(intent);
+//    }
+//
+//    @Override
+//    public boolean onUnbind(Intent intent) {
+//        stopRecommendation();
+//        return super.onUnbind(intent);
+//    }
 
 //    if Blood Sugar Level = 100=<x<200 then Exercise  (81 / 0 / 0)
 //
@@ -76,7 +75,8 @@ public class ActivityRecommendation extends Recommendation {
 
         if(notify) {
             Log.d("Rec", "recommend based on bsl");
-            mIdOffset = getMidOffset();
+//            mIdOffset = getMidOffset();
+            mIdOffset = Recommendation.ACTIVITY_REC;
 
             //switch between different recommendation methods
             int rec = FIRST_REC;

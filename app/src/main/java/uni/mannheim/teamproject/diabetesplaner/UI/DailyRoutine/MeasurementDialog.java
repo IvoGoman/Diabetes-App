@@ -19,6 +19,7 @@ import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
@@ -66,7 +67,9 @@ public class MeasurementDialog extends MeasurementInputDialog {
         Date date = Calendar.getInstance(Locale.getDefault()).getTime();
         current_date = date;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:MM:ss");
         String dateString = dateFormat.format(date);
+        String timeString = timeFormat.format(date);
 
 
 
@@ -100,7 +103,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
         //Button for TimerPicker
         btn_time = (Button) view.findViewById(R.id.btn_time);
-        btn_time.setText(TimeUtils.getTimeInUserFormat(current_date, getActivity()));
+        btn_time.setText(timeString);
         btn_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -125,40 +128,48 @@ public class MeasurementDialog extends MeasurementInputDialog {
                     String date_s = btn_date.getText().toString();
                     String time_s = btn_time.getText().toString();
 
-                    database.InsertBloodsugar(database,
-                            java.sql.Date.valueOf(date_s.subSequence(6,9) + "-" + date_s.subSequence(3,4) + "-"+ date_s.subSequence(0,1)),
-                            Time.valueOf(time_s + ":00"),
-                            1, Double.parseDouble(measure_value), measure);
 
-                    database.InsertInsulin(database,
-                            java.sql.Date.valueOf(date_s.subSequence(6,9) + "-" + date_s.subSequence(3,4) + "-"+ date_s.subSequence(0,1)),
-                            Time.valueOf(time_s + ":00"),
-                            1, Double.parseDouble(insulin_value), insulin);
-                    // database.InsertBloodsugarEntryScreen(database, TimeUtils.getTimeStampAsDateString(Calendar.getInstance().getTimeInMillis()), 1, Double.parseDouble(measure_value), measure);
+                    if(measure_value.equals("")== true && insulin_value.equals("")== true){
+                        Toast.makeText(getActivity(), "No Measurements have been entered", Toast.LENGTH_LONG).show();
+                    }
 
-                    //  database.InsertInsulinEntryScreen(database, TimeUtils.getTimeStampAsDateString(Calendar.getInstance().getTimeInMillis()), 1, Double.parseDouble(insulin_value), insulin);
-//                    database.InsertInsulinEntryScreen(database,
-//                            java.sql.Date.valueOf(date_s.subSequence(6,9) + "-" + date_s.subSequence(3,4) + "-"+ date_s.subSequence(0,1)),
-//                            Time.valueOf(time_s + ":00"),
-//                            1, Double.parseDouble(insulin_value), insulin);
 
-                    Toast.makeText(getActivity(), "Measurements: " + measure_value + " " + measure + "," + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
-                    //starts the recommendations
+                        if (measure_value.equals("") == true){
+                            database.InsertInsulin(database,
+                                    java.sql.Date.valueOf(date_s.subSequence(6, 10) + "-" + date_s.subSequence(3, 5) + "-" + date_s.subSequence(0, 2)),
+                                    Time.valueOf(time_s),
+                                    1, Double.parseDouble(insulin_value), insulin);
+                            Toast.makeText(getActivity(), "No Blood sugar level entered; " + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
 
-                    dismiss();
-                    /* else {
-                        Log.d("bloodsugar_entry", "Nothing changed");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            new AlertDialog.Builder(getContext())
-                                    .setTitle("No Changes")
-                                    .setMessage("You did not change the blood_sugar level.")
-                                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-                                        }
-                                    })
-                                    .setIcon(android.R.drawable.ic_dialog_alert)
-                                    .show();
-                    }*/
+                        }else if(insulin_value.equals("") == true){
+                            database.InsertBloodsugar(database,
+                                    java.sql.Date.valueOf(date_s.subSequence(6, 10) + "-" + date_s.subSequence(3, 5) + "-" + date_s.subSequence(0, 2)),
+                                    Time.valueOf(time_s),
+                                    1, Double.parseDouble(measure_value), measure);
+                            Toast.makeText(getActivity(), "No Insulin Dosage entered; " + measure_value + " " + measure + " stored", Toast.LENGTH_LONG).show();
+                        }else if(check_mg(convert_to_mg(Double.parseDouble(measure_value),measure)) == true && check_Units(convert_to_Units(Double.parseDouble(insulin_value),insulin)) == true){
+                            database.InsertBloodsugar(database,
+                                    java.sql.Date.valueOf(date_s.subSequence(6, 10) + "-" + date_s.subSequence(3, 5) + "-" + date_s.subSequence(0, 2)),
+                                    Time.valueOf(time_s),
+                                    1, Double.parseDouble(measure_value), measure);
+
+                            database.InsertInsulin(database,
+                                    java.sql.Date.valueOf(date_s.subSequence(6, 10) + "-" + date_s.subSequence(3, 5) + "-" + date_s.subSequence(0, 2)),
+                                    Time.valueOf(time_s),
+                                    1, Double.parseDouble(insulin_value), insulin);
+                            Toast.makeText(getActivity(), "Measurements: " + measure_value + " " + measure + "," + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
+                            dismiss();
+                        }
+
+
+                        //starts the recommendations
+
+                        //   EntryScreenActivity.updateDailyRoutine();
+
+
+                    else{
+                        Toast.makeText(getActivity(), "Invalid Measurements", Toast.LENGTH_LONG).show();
+                    }
 
                 } catch (Exception e) {
                     Log.d("Rec", ""+e);
@@ -384,7 +395,75 @@ public class MeasurementDialog extends MeasurementInputDialog {
                 }
             }
             };*/
+    private double convert_to_mg(double value, String unit)
+    {
+        switch (unit)
+        {
+            case "mg/dl":
+                return value;
+            case "mmol/l":
+                return Util.mmol_to_milligram(value);
+            case "%":
+                return Util.percentage_to_mg(value);
 
+        }
+        return 0.0;
+    }
+
+    /***
+     * checks the inserted value
+     * @param value
+     * @return
+     */
+    private boolean check_mg(double value)
+    {
+        if(value <= 50)
+        {
+            return false;
+        }
+        else if (value >= 500)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
+
+    private double convert_to_Units(double value, String unit)
+    {
+        switch (unit)
+        {
+            case "Units":
+                return value;
+            case "mL/cc":
+                return Util.ml_to_Units(value);
+
+        }
+        return 0.0;
+    }
+
+    /***
+     * checks the inserted value
+     * @param value
+     * @return
+     */
+    private boolean check_Units(double value)
+    {
+        if(value <= 0.0)
+        {
+            return false;
+        }
+        else if (value >= 80)
+        {
+            return false;
+        }
+        else
+        {
+            return true;
+        }
+    }
 
 
 

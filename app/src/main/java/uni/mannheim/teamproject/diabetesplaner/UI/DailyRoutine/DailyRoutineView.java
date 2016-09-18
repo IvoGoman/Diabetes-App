@@ -48,7 +48,8 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private Date startDate;
     private Date endDate;
     private Date date;
-    private String bloodsugar;
+    private String bloodsugarText;
+    private String insulinText;
     private String meal;
     private int state;
     private boolean touched = false;
@@ -113,6 +114,8 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private static DailyRoutineView current;
     private Rect actRectBlood;
     private StaticLayout slBlood;
+    private Rect actRectInsulin;
+    private StaticLayout slInsulin;
     private Rect actRectMeal;
     private StaticLayout slMeal;
     private Bitmap mealImage;
@@ -379,18 +382,30 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             heightUpper += dest.height() + textPadding;
         }
 
-//        Log.d(TAG, "Bloodsugar: " + bloodsugar);
+//        Log.d(TAG, "Bloodsugar: " + bloodsugarText);
 
-        //measure bloodsugar if it exists
-        if(bloodsugar != null) {
-            if(!bloodsugar.equals("")) {
-                //initialize bloodsugar text
+        //measure bloodsugarText if it exists
+        if(bloodsugarText != null) {
+            if(!bloodsugarText.equals("")) {
+                //initialize bloodsugarText text
                 actRectBlood = new Rect(0, heightPrev + textPadding, xRight, 0);
-                slBlood = new StaticLayout(getBloodsugar(), textPaintSub, (int) actRectBlood.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
+                slBlood = new StaticLayout(getBloodsugarText(), textPaintSub, (int) actRectBlood.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
                 heightPrev = slBlood.getHeight();
 
-                //height + bloodsugar text field height
+                //height + bloodsugarText text field height
                 heightUpper += slBlood.getHeight() + textPadding;
+            }
+        }
+
+        if(insulinText != null) {
+            if(!insulinText.equals("")) {
+                //initialize insulinText text
+                actRectInsulin = new Rect(0, heightPrev + textPadding, xRight, 0);
+                slInsulin = new StaticLayout(getInsulinText(), textPaintSub, (int) actRectInsulin.width(), Layout.Alignment.ALIGN_NORMAL, 1, 1, false);
+                heightPrev = slInsulin.getHeight();
+
+                //height + insulinText text field height
+                heightUpper += slInsulin.getHeight() + textPadding;
             }
         }
 
@@ -518,11 +533,19 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             canvas.drawBitmap(mealImage, src, dest, null);
         }
 
-        if(bloodsugar != null) {
-            if(!bloodsugar.equals("")) {
-                //draw bloodsugar text
+        if(bloodsugarText != null) {
+            if(!bloodsugarText.equals("")) {
+                //draw bloodsugarText text
                 canvas.translate(actRectBlood.left, actRectBlood.top);
                 slBlood.draw(canvas);
+            }
+        }
+
+        if(insulinText != null) {
+            if(!insulinText.equals("")) {
+                //draw insulinText text
+                canvas.translate(actRectInsulin.left, actRectInsulin.top);
+                slInsulin.draw(canvas);
             }
         }
     }
@@ -884,21 +907,33 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     }
 
     /**
-     * returns the bloodsugarlevel as string
+     * returns the bloodsugarlevel as string ("Time: level unit")
      * @return
      */
-    public String getBloodsugar() {
-        //TODO getTimeMeasured + bloodsugarlevel + getMeasurementUnit()
-        return bloodsugar;
+    public String getBloodsugarText() {
+        return this.bloodsugarText;
     }
 
     /**
-     * set bloodsugar string
-     * @param bloodsugar
+     * returns the insulinText as string
+     * @return
      */
-    public void setBloodsugar(String bloodsugar){
-        this.bloodsugar = bloodsugar;
+    public String getInsulinText() {
+        return this.insulinText;
     }
+
+    /**
+     * set bloodsugarText string
+     * @param bloodsugarText
+     */
+    public void setBloodsugarText(String bloodsugarText){
+        this.bloodsugarText = bloodsugarText;
+    }
+
+    public void setInsulinText(String insulinText){
+        this.insulinText = insulinText;
+    }
+
 
     public void setSubactivity(int id){
         this.subactivity = id;

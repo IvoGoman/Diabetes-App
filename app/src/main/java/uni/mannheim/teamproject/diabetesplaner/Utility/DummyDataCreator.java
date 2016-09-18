@@ -14,7 +14,7 @@ public class DummyDataCreator {
     public static void populateDataBase(){
         //String logFile = new File("").getAbsolutePath();
         //String source = logFile + "/app/src/test/java/data/SDC_ActivityData.csv";
-        String source = "/data/data/uni.mannheim.teamproject.diabetesplaner/files/ActivityData.csv";
+        String source = "/data/data/uni.mannheim.teamproject.diabetesplaner/files/SDC_ActivityData.csv";
         ArrayList<String[]> eventList = Util.read(source);
 //        eventList.remove(0);
         DataBaseHandler dbHandler = AppGlobal.getHandler();

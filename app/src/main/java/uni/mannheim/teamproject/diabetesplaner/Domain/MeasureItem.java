@@ -9,6 +9,10 @@ public class MeasureItem {
     public static final String MEASURE_KIND_BLOODSUGAR = "bloodsugar";
     public static final String MEASURE_KIND_INSULIN = "insulin";
 
+    public static final String UNIT_PERCENT = "%";
+    public static final String UNIT_MMOL = "mmol/l";
+    public static final String UNIT_MG = "mg/dl";
+
     private Long timestamp;
     private double measure_value;
     private String measure_unit;

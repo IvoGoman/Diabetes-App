@@ -87,7 +87,7 @@ public class EntryScreenActivity extends AppCompatActivity
     private GoogleApiClient client;
 
     //UI attributes
-    private Fragment fragment;
+    private static Fragment fragment;
     private MenuItem actualMenuItem;
     private MenuItem addMeasurements;
     private MenuItem editItem;
@@ -151,9 +151,13 @@ public class EntryScreenActivity extends AppCompatActivity
             ft.commit();
 
             //starts and binds to recommendation service
-            startRec(Recommendation.ACTIVITY_REC);
-            startRec(Recommendation.BS_REC);
+//            startRec(Recommendation.ACTIVITY_REC);
+//            startRec(Recommendation.BS_REC);
 
+
+            startService(new Intent(this, ActivityRecommendation.class));
+            startService(new Intent(this, BSInputRecommendation.class));
+            startService(new Intent(this, FoodRecommendation.class));
 
             // ATTENTION: This was auto-generated to implement the App Indexing API.
             // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -374,6 +378,28 @@ public class EntryScreenActivity extends AppCompatActivity
     }
 
     /**
+     * updates the daily routine if the current visible Fragment is the DailyRoutineFragment
+     * @author Stefan 17.09.2016
+     */
+    public static void updateDailyRoutine(){
+        if(fragment instanceof DailyRoutineFragment){
+            ((DailyRoutineFragment)fragment).updateView();
+        }
+    }
+
+    /**
+     * returns the DailyRoutineFragment
+     * @return
+     * @author Stefan 17.09.2016
+     */
+    public static DailyRoutineFragment getDailyRoutineFragment(){
+        if(fragment instanceof DailyRoutineFragment){
+            return (DailyRoutineFragment)fragment;
+        }
+        return null;
+    }
+
+    /**
      * handles if a menu item in the navigation drawer was selected
      * @param item
      * @return
@@ -409,6 +435,8 @@ public class EntryScreenActivity extends AppCompatActivity
 
         }else if (id == R.id.nav_activity_measurement) {
             Toast.makeText(this, R.string.menu_item_activity, Toast.LENGTH_SHORT).show();
+
+//             Log.d(TAG, "listsize: " + list.size());
 
             fragment = new ActivityFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -454,6 +482,10 @@ public class EntryScreenActivity extends AppCompatActivity
     @Override
     public void onStart() {
         super.onStart();
+
+//        startRec(Recommendation.ACTIVITY_REC);
+//        startRec(Recommendation.BS_REC);
+//        startRec(Recommendation.FOOD_REC);
 
         System.out.println("in onStart");
         my_permissions();
@@ -519,21 +551,19 @@ public class EntryScreenActivity extends AppCompatActivity
      * @author Stefan
      */
     @Override
-    protected void onRestart() {
-        startRec(Recommendation.ACTIVITY_REC);
-        startRec(Recommendation.BS_REC);
-        startRec(Recommendation.FOOD_REC);
-        super.onRestart();
+    protected void onResume() {
+
+        super.onResume();
     }
 
     @Override
     public void onStop() {
-        super.onStop();
-
         //unbind the recommendation service
-        stopRec(Recommendation.ACTIVITY_REC);
-        stopRec(Recommendation.BS_REC);
-        stopRec(Recommendation.FOOD_REC);
+//        stopRec(Recommendation.ACTIVITY_REC);
+//        stopRec(Recommendation.BS_REC);
+//        stopRec(Recommendation.FOOD_REC);
+
+        super.onStop();
 
         // ATTENTION: This was auto-generated to implement the App Indexing API.
         // See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -549,6 +579,12 @@ public class EntryScreenActivity extends AppCompatActivity
         );
         AppIndex.AppIndexApi.end(client, viewAction);
         client.disconnect();
+    }
+
+    @Override
+    protected void onPause() {
+
+        super.onPause();
     }
 
     /**
@@ -601,9 +637,14 @@ public class EntryScreenActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        stopService(new Intent(this, ActivityRecommendation.class));
+        stopService(new Intent(this, BSInputRecommendation.class));
+        stopService(new Intent(this, FoodRecommendation.class));
+
         super.onDestroy();
         NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
         notificationManager.cancel(9999);
+
 
     }
 
@@ -672,21 +713,24 @@ public class EntryScreenActivity extends AppCompatActivity
     public void startRec(int recType) {
         switch (recType){
             case Recommendation.ACTIVITY_REC: {
-                Intent rec = new Intent(this, ActivityRecommendation.class);
-                bindService(rec, mServiceConnActivityRec, Context.BIND_AUTO_CREATE);
-                startService(rec);
+                if(!mBoundActivityRec) {
+                    bindService(new Intent(this, ActivityRecommendation.class), mServiceConnActivityRec, Context.BIND_AUTO_CREATE);
+                    mBoundActivityRec = true;
+                }
                 break;
             }
             case Recommendation.BS_REC: {
-                Intent rec = new Intent(this, BSInputRecommendation.class);
-                bindService(rec, mServiceConnBSRec, Context.BIND_AUTO_CREATE);
-                startService(rec);
+                if(!mBoundBSRec) {
+                    bindService(new Intent(this, BSInputRecommendation.class), mServiceConnBSRec, Context.BIND_AUTO_CREATE);
+                    mBoundBSRec = true;
+                }
                 break;
             }
             case Recommendation.FOOD_REC: {
-                Intent rec = new Intent(this, FoodRecommendation.class);
-                bindService(rec, mServiceConnFoodRec, Context.BIND_AUTO_CREATE);
-                startService(rec);
+                if(!mBoundFoodRec) {
+                    bindService(new Intent(this, FoodRecommendation.class), mServiceConnFoodRec, Context.BIND_AUTO_CREATE);
+                    mBoundFoodRec = true;
+                }
                 break;
             }
         }
@@ -700,7 +744,6 @@ public class EntryScreenActivity extends AppCompatActivity
     public void stopRec(int recType) {
         switch (recType) {
             case Recommendation.ACTIVITY_REC: {
-                stopService(new Intent(this, ActivityRecommendation.class));
                 // Unbind from the service
                 if (mBoundActivityRec) {
                     unbindService(mServiceConnActivityRec);
@@ -709,7 +752,6 @@ public class EntryScreenActivity extends AppCompatActivity
                 break;
             }
             case Recommendation.BS_REC: {
-                stopService(new Intent(this, BSInputRecommendation.class));
                 // Unbind from the service
                 if (mBoundBSRec) {
                     unbindService(mServiceConnBSRec);
@@ -718,7 +760,6 @@ public class EntryScreenActivity extends AppCompatActivity
                 break;
             }
             case Recommendation.FOOD_REC:{
-                stopService(new Intent(this, FoodRecommendation.class));
                 // Unbind from the service
                 if (mBoundFoodRec) {
                     unbindService(mServiceConnFoodRec);

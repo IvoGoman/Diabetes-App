@@ -1,6 +1,7 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
@@ -33,6 +34,7 @@ public class Main_ExecutionTutorial {
 		creator.addDayOfWeek();
 		Util.printList(list);
 		System.out.println("-------------------------------------------------");
+		creator.shiftSameBorderTime();
 		//merges two consecutive activities which are the same
 		creator.mergeConsecutiveSameActivity(true);
 		creator.removeFirstCase(true);
@@ -40,7 +42,11 @@ public class Main_ExecutionTutorial {
 
 		for(int i=0; i<creator.getList().size(); i++){
 			for(int j=0; j<creator.getList().get(i).length; j++){
-				System.out.println(creator.getList().get(i)[j]);
+				if(j == creator.getStarttimeIndex() || j == creator.getEndtimeIndex()) {
+					System.out.println(new Date(Long.parseLong(creator.getList().get(i)[j])));
+				}else {
+					System.out.println(creator.getList().get(i)[j]);
+				}
 			}
 			System.out.println();
 		}

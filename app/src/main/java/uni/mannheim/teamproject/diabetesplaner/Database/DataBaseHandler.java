@@ -232,16 +232,17 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public int getNumberOfActivities(){
         SQLiteDatabase db1 = this.getReadableDatabase();
+        int numberOfActivities = 0;
         Cursor cursor = db1.rawQuery("select count(*) from Activities; ", null);
 
         if (cursor.moveToFirst()) {
-            return Integer.parseInt(cursor.getString(0));
+            numberOfActivities = Integer.parseInt(cursor.getString(0));
         }
         // close cursor
         if (!cursor.isClosed()) {
             cursor.close();
         }
-        return 0;
+        return numberOfActivities;
     }
 
     public ArrayList<String> GetSubActivities(int idActivity)
@@ -265,12 +266,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     public int getActivityID(String activity)
     {
+        int activityID = -1;
         SQLiteDatabase db1 = this.getReadableDatabase();
-        Cursor cursor = db1.rawQuery("select id from Activities where title= '"+ activity+ "'; ", null);
+        Cursor cursor = db1.rawQuery("select id from Activities where title= '"+ activity + "'; ", null);
         if (cursor.moveToFirst()) {
-            return (cursor.getInt(0));
+            activityID = cursor.getInt(0);
         }
-        return -1;
+        return activityID;
     }
 
     public int getActivityIDbySubActicity(String subactivity)
@@ -422,7 +424,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Integer Intensity = Activ.getIntensity();
 
         SQLiteDatabase db1 = handler.getWritableDatabase();
-        db1.execSQL("insert into ActivityList(id_SubActivity, id_Location, id_WIFI, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation + " , " + idWIFI +" ,' " + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
+        db1.execSQL("insert into ActivityList(id_SubActivity, id_Location, id_WIFI, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation + " , " + idWIFI +" ,'" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
         db1.close();
     }
 
@@ -486,7 +488,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void InsertBloodsugar(DataBaseHandler handler, Date date, Time time, int profile_id, double bloodsugar_level, String measure_unit) {
         SQLiteDatabase db1 = handler.getWritableDatabase();
         Timestamp timestamp = Timestamp.valueOf(date.toString() + " " + time.toString());
-        Log.d("Database", timestamp + "InsertBloodSugar");
+        Log.d("Database", timestamp + " InsertBloodSugar");
 
         db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
                 + bloodsugar_level + " , '" + timestamp + "' , '" + measure_unit + "' , 'bloodsugar');");
@@ -602,10 +604,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     public int getSuperActivityID(int idActivity){
         SQLiteDatabase db = this.getReadableDatabase();
+        int superActivityID;
         //Return Super Activity of idActivity
         Cursor cursor = db.rawQuery("select * from SuperActivities where id = (select id_SuperActivity from Activities where id =" + idActivity +")", null);
         if (cursor.moveToFirst()){
-            return cursor.getInt(0);
+            superActivityID = cursor.getInt(0);
+            cursor.close();
+            return superActivityID;
         }
         cursor.close();
         return 6;
@@ -811,8 +816,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * Queries all available activities from the database.
-     * Filters by day of week
-     * 0==Sunday, 1==Monday, ..., 6==Saturday etc.
      * @param handler
      * @return ArrayList<ActivityItem> containing all activities of the weekday provided
      */
@@ -888,6 +891,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public String[] getLastBloodsugarMeasurement(DataBaseHandler handler, int profile_id){
         try {
+            profile_id = 1;
             SQLiteDatabase db1 = handler.getWritableDatabase();
             String[] result = new String[3];
             Cursor cursor = db1.rawQuery("SELECT measure_value,measure_unit,timestamp " +
@@ -1036,6 +1040,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db.rawQuery("select SubActivities.id_Activity,ActivityList.id_SubActivity, ActivityList.Meal, ActivityList.Intensity, ActivityList.ImagePath, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id where ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "' or ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "' order by ActivityList.Start;", null);
 
         ArrayList<ActivityItem> activityList = GetArrayFromCursor(cursor, date);
+        if(!cursor.isClosed()) cursor.close();
         return activityList;
     }
 
@@ -1343,15 +1348,18 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     public int getUserID(DataBaseHandler handler)
     {
+        int userID;
         SQLiteDatabase db1 = handler.getWritableDatabase();
         try {
             Cursor cursor = db1.rawQuery("SELECT MAX(id) from "+ PROFILE_TABLE_NAME +";",null);
             if (cursor.getCount() >= 1) {
                 cursor.moveToFirst();
-                return cursor.getInt(0);
+                userID = cursor.getInt(0);
             } else {
-                return cursor.getInt(0);
+                userID = cursor.getInt(0);
             }
+            cursor.close();
+            return userID;
         }catch(Exception e)
         {
             e.getMessage();
@@ -1361,7 +1369,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * returns a list with all relevant days from the database (training data).
-     * Only days that have a complete daily routine will be returned
+     * Only days that have a complete daily routine will be returned, the current day is excluded
      * @param mode specifies which days should be returned. <br/>
      *             Valid values are: <br/>
      *
@@ -1623,7 +1631,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                         if (startPrev != null) {
                             //if starttime of previous activity was on a different day
                             if (TimeUtils.isDifferentDay(startPrev, starttime)) {
-                                if(Util.isDayComplete(day)) {
+                                if(Util.checkDay(day)) {
                                     relevantDays.add(day);
                                 }
                                 day = new ArrayList<>();
@@ -1634,7 +1642,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
                         startPrev = starttime;
                     } while (cursor.moveToNext());
-                    if(Util.isDayComplete(day)) {
+                    if(Util.checkDay(day)) {
                         relevantDays.add(day);
                     }
                 }
@@ -1672,7 +1680,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
                                 if (startPrev != null) {
                                     if (TimeUtils.isDifferentDay(startPrev, starttime)) {
-                                        if(Util.isDayComplete(day)) {
+                                        if(Util.checkDay(day)) {
                                             relevantDays.add(day);
                                         }
                                         day = new ArrayList<>();
@@ -1685,7 +1693,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                             }
                         }
                     } while (cursor.moveToNext());
-                    if(Util.isDayComplete(day)) {
+                    if(Util.checkDay(day)) {
                         relevantDays.add(day);
                     }
                 }
@@ -1724,7 +1732,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
                                 if (startPrev != null) {
                                     if (TimeUtils.isDifferentDay(startPrev, starttime)) {
-                                        if(Util.isDayComplete(day)) {
+                                        if(Util.checkDay(day)) {
                                             relevantDays.add(day);
                                         }
                                         day = new ArrayList<>();
@@ -1737,7 +1745,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                             }
                         }
                     } while (cursor.moveToNext());
-                    if(Util.isDayComplete(day)) {
+                    if(Util.checkDay(day)) {
                         relevantDays.add(day);
                     }
                 }
@@ -1777,7 +1785,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
                                     if (startPrev != null) {
                                         if (TimeUtils.isDifferentDay(startPrev, starttime)) {
-                                            if(Util.isDayComplete(day)) {
+                                            if(Util.checkDay(day)) {
                                                 relevantDays.add(day);
                                             }
                                             day = new ArrayList<>();
@@ -1790,7 +1798,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                                 }
                             }
                         } while (cursor.moveToNext());
-                        if(Util.isDayComplete(day)) {
+                        if(Util.checkDay(day)) {
                             relevantDays.add(day);
                         }
 
@@ -1800,44 +1808,4 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         cursor.close();
         return relevantDays;
     }
-
 }
-
-//  TODO: Methods which will be deleted
-//    /*
-//    Naira: Inser ts a new measurements input
-//     */
-//    public void InsertMeasurements(DataBaseHandler handler, int bloodsugar_level, int insulin_dosage, String timestamp) {
-//        SQLiteDatabase db1 = handler.getWritableDatabase();
-//        //long tslong = System.currentTimeMillis() / 1000;
-//        db1.execSQL("insert into History_Bloodsugar(bloodsugar_level,insulin_dosage, timestamp) values("  + bloodsugar_level + " , " + insulin_dosage + " , '"+ timestamp + "' ); ");
-//        db1.close();
-//    }
-//
-//    public Cursor GetMeasurements(DataBaseHandler handler){
-//        SQLiteDatabase db1 = handler.getWritableDatabase();
-//        Cursor cursor = db1.rawQuery("select * from History_Bloodsugar", null);
-//        return cursor;
-//    }
-
-//
-//    public void InsertProfile(DataBaseHandler handler, int age, int dt, double abl) {
-//        SQLiteDatabase db1 = handler.getWritableDatabase();
-//        db1.execSQL("insert into Profile(age, diabetes_type, average_bloodsugar_level) values(" + age + "," + dt + "," + "'" + abl + "'" + "); ");
-//        db1.close();
-//    }
-//    /***
-//     * returns the ID of the current user
-//     * @param handler
-//     * @param name
-//     * @param surename
-//     * @return UserID
-//     */
-//    public String GetProfileId(DataBaseHandler handler,String name, String surename)
-//    {
-//        SQLiteDatabase db1 = handler.getWritableDatabase();
-//        Cursor cursor = db.rawQuery("select id from "+ PROFILE_TABLE_NAME+ ";",null);
-//        db1.close();
-//        return cursor.getString(1);
-//    }
-

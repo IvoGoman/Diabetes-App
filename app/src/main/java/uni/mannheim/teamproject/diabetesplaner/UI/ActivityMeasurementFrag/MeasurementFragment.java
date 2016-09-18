@@ -114,6 +114,9 @@ public class MeasurementFragment extends Fragment {
                         measurementList.add(MeasurementString);
                     } while (cursor.moveToNext());
                 }
+                if(!cursor.isClosed()){
+                    cursor.close();
+                }
 
                 lv = (AbsListView) inflaterView.findViewById(R.id.MListView);
                 adapter = new CustomListView(getActivity(), measurementList);

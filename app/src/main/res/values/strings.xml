@@ -136,7 +136,7 @@
     <string name="submit">Submit</string>
     <string name="image_failed">Failed to take an image.</string>
     <string name="Description">Description</string>
-    <string name="insulin">Insulin Dosage</string>
+    <string name="insulinText">Insulin Dosage</string>
     <string name="bloodsugar_prompt"> Enter current blood sugar level:</string>
     <string name="recommendation">Diabetes App recommends you...</string>
     <string name="action_settings">Settings</string>
@@ -157,10 +157,10 @@
 
     <!--Recommendations-->
     <string name="rec_bs_between_150_200">You should better do some exercise because your blood sugar level is high!</string>
-    <string name="rec_bs_above_200">You should take insulin because your blood sugar is way to high!</string>
+    <string name="rec_bs_above_200">You should take insulinText because your blood sugar is way to high!</string>
     <string name="rec_bs_blow_100">Your blood sugar is low, have a meal.</string>
 
-    <string name="your_activity">Your current activity is</string>
+    <string name="your_activity">Your previous activity was</string>
     <string name="recom_pre">Therefore we recommend to eat/drink</string>
     <string name="banana">banana</string>
     <string name="and">and</string>
@@ -194,5 +194,6 @@
     <string name="pref_key_heuristics">Heuristics Miner</string>
     <string name="algos">Algorithms to use</string>
     <string name="algos_summary">Choose one or more prediction algorithms</string>
+    <string name="insulinInput">Insulin input</string>
 
 </resources>

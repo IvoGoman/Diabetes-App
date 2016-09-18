@@ -35,12 +35,15 @@
             </intent-filter>
         </activity>
 
-        <service android:name=".DataMining.Recommendation.ActivityRecommendation" />
-
         <activity
             android:name=".UI.SettingsActivity.SettingsActivity"
             android:parentActivityName=".UI.EntryScreenActivity"
-            android:screenOrientation="portrait" />
+            android:screenOrientation="portrait">
+            <intent-filter android:label="Pref" >
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.PREFERENCE" />
+            </intent-filter>
+        </activity>
         <!--
              ATTENTION: This was auto-generated to add Google Play services to your project for
              App Indexing.  See https://g.co/AppIndexing/AndroidStudio for more information.
@@ -72,15 +75,20 @@
         <activity android:name=".MeasurementPop" android:theme="@style/AppTheme.CustomTheme" >
         </activity>
         -->
-        <activity android:name=".DailyRoutine.EditActivity" />
+        <!--<activity android:name=".DailyRoutine.EditActivity" />-->
 
         <service
             android:name=".DataMining.Recommendation.BSInputRecommendation"
             android:enabled="true"
             android:exported="true" />
         <service
-            android:name=".DataMining.Recommendation.Recommendation"
-            android:exported="false"/>
+            android:name=".DataMining.Recommendation.ActivityRecommendation"
+            android:enabled="true"
+            android:exported="true" />
+        <service
+            android:name=".DataMining.Recommendation.FoodRecommendation"
+            android:enabled="true"
+            android:exported="true" />
     </application>
 
 </manifest>

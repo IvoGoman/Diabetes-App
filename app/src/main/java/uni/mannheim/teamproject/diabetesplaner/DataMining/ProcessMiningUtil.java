@@ -3,6 +3,10 @@ package uni.mannheim.teamproject.diabetesplaner.DataMining;
 
 import android.support.v4.util.Pair;
 
+import java.lang.reflect.Array;
+import java.sql.Time;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -10,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TimeZone;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
@@ -332,5 +337,38 @@ public class ProcessMiningUtil {
             }
         }
         return items;
+    }
+
+    public static long getAverageStartTime(String ID, ArrayList<String[]> eventlist)
+    {
+        long allStartTimes = (long) 0.0;
+        long divide = (long) 0.0;
+        for(String[] item : eventlist)
+        {
+            if(item[1].contains(ID))
+            {
+                SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
+                String time = sdf.format(new Date());
+                Time t = Time.valueOf(time);
+                divide++;
+                allStartTimes = allStartTimes + (t.getTime());
+            }
+        }
+        return allStartTimes/divide;
+    }
+
+    public static long getAverageEndTime(String ID, ArrayList<String[]> eventlist)
+    {
+        long allEndTimes = (long) 0.0;
+        long divide = (long) 0.0;
+        for(String[] item : eventlist)
+        {
+            if(item[1].contains(ID))
+            {
+                divide++;
+                allEndTimes = allEndTimes + (Long.parseLong(item[3]));
+            }
+        }
+        return allEndTimes/divide;
     }
 }

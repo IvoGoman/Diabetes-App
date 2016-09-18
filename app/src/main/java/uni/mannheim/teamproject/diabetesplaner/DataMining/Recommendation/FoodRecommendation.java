@@ -1,8 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation;
 
-import android.content.Intent;
 import android.content.SharedPreferences;
-import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
@@ -37,31 +35,35 @@ public class FoodRecommendation extends Recommendation {
     private final int SPORT = db.getActivityID("Sport");
 
     private final int EXERCISE = db.getSuperActivityID(SPORT);
+    private final static String TAG = "FoodRecommendation";
 
-    private int mIdOffset = 0;
+    private int mIdOffset = 100;
     public static final int INTERVAL = 60 * 1000;
 
     private ActivityItem previous;
     private boolean first = true;
+    private static boolean isPresent = false;
 
-    public FoodRecommendation(String name) {
-        super(name);
-    }
 
-    @Override
-    public IBinder onBind(Intent intent) {
-
+    public FoodRecommendation() {
+        super("FoodRecommendation");
         setInterval(INTERVAL);
-        startRecommendation();
-        return super.onBind(intent);
     }
 
-    @Override
-    public boolean onUnbind(Intent intent) {
-
-        stopRecommendation();
-        return super.onUnbind(intent);
-    }
+    //    @Override
+//    public IBinder onBind(Intent intent) {
+//
+//        setInterval(INTERVAL);
+//        startRecommendation();
+//        return super.onBind(intent);
+//    }
+//
+//    @Override
+//    public boolean onUnbind(Intent intent) {
+//
+//        stopRecommendation();
+//        return super.onUnbind(intent);
+//    }
 
     @Override
     public void recommend() {
@@ -71,7 +73,8 @@ public class FoodRecommendation extends Recommendation {
 
         if (notify) {
             Log.d("Rec", "recommend based on food");
-            mIdOffset = getMidOffset();
+//            mIdOffset = getMidOffset();
+            mIdOffset = Recommendation.FOOD_REC;
 
             ActivityItem item = getLastActivity();
             if(item != null) {
@@ -188,13 +191,22 @@ public class FoodRecommendation extends Recommendation {
      * @author Stefan 13.09.2016
      */
     public ActivityItem getLastActivity(){
-        int iCurr = getCurrentActivity();
-        ArrayList<ActivityItem> routine = DayHandler.getDailyRoutine();
-        if(iCurr > 0){
-            return routine.get(iCurr-1);
-        }else{
-            ArrayList<ActivityItem> yesterday = AppGlobal.getHandler().getActivities(AppGlobal.getHandler(), TimeUtils.getYesterdaysDate(TimeUtils.getCurrentDate()), "DAY");
-            return yesterday.get(yesterday.size()-1);
+        try {
+            int iCurr = getCurrentActivity();
+            ArrayList<ActivityItem> routine = DayHandler.getDailyRoutine();
+            if (iCurr > 0) {
+                return routine.get(iCurr - 1);
+            } else {
+                ArrayList<ActivityItem> yesterday = AppGlobal.getHandler().getActivities(AppGlobal.getHandler(), TimeUtils.getYesterdaysDate(TimeUtils.getCurrentDate()), "DAY");
+                if (yesterday.size() > 0) {
+                    return yesterday.get(yesterday.size() - 1);
+                }else{
+                    return null;
+                }
+            }
+        }catch(Exception e){
+            Log.e(TAG, e.toString());
+            return null;
         }
     }
 }

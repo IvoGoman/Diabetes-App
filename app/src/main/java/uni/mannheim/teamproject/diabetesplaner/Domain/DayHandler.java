@@ -1,7 +1,5 @@
 package uni.mannheim.teamproject.diabetesplaner.Domain;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -33,6 +31,7 @@ public class DayHandler {
      * deletes an activity from the daily routine list
      *
      * @param indexes of activities to be deleted
+     * @author Stefan
      */
     public void delete(ArrayList<Integer> indexes) {
         //ic_delete
@@ -106,6 +105,7 @@ public class DayHandler {
      *
      * @param indexSelected in the list
      * @param activityItem
+     * @author Stefan
      */
     public void edit(int indexSelected, ActivityItem activityItem) {
         //TODO edit the daily routine
@@ -132,6 +132,7 @@ public class DayHandler {
      * TODO: synchronize with database
      *
      * @param activityItem
+     * @author Stefan
      */
     public void add(ActivityItem activityItem) {
 
@@ -259,29 +260,8 @@ public class DayHandler {
         return dailyRoutine;
     }
 
-    /**
-     * returns the daily routine as arraylist
-     *
-     * @return
-     */
-    public ArrayList<String[]> getDailyRoutineAsList() {
-        //TODO only hardcoded yet
-        ArrayList<String[]> list2 = new ArrayList<>();
-
-        for (int i = 0; i < dailyRoutine.size(); i++) {
-            ActivityItem it = dailyRoutine.get(i);
-            Log.d(TAG, it.getEndtimeAsString());
-            list2.add(new String[]{String.valueOf(it.getActivityId()), it.getStarttimeAsString(), it.getEndtimeAsString()});
-        }
-
-        return list2;
-    }
-
     public void clearDailyRoutine() {
         dailyRoutine.clear();
     }
 
-    public void setDailyRoutine(ArrayList<ActivityItem> dailyRoutine) {
-        this.dailyRoutine = dailyRoutine;
-    }
 }

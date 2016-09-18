@@ -123,6 +123,9 @@ public class GPS_Service extends Service implements LocationListener {
             }
             while (cursor.moveToNext());
         }
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
 
         //zeigt alle gespeicherten locations an == locationList
         //for (int i = 0; i<locationList.size();i++){
