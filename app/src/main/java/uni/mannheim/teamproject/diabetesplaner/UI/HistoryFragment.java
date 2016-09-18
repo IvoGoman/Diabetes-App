@@ -31,7 +31,6 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Random;
 
-import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyModel;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
@@ -123,24 +122,6 @@ public class HistoryFragment extends DailyRoutineFragment {
         Date date = calendar.getTime();
         dateString = df.format(date);
 
-        ArrayList<ArrayList<String>> result = new ArrayList<>();
-        ArrayList<String> tempResult;
-        ArrayList<ActivityItem> temp;
-        try {
-
-            for (int i = 0; i < 7; i++) {
-                FuzzyModel model = new FuzzyModel(i, false);
-                temp = model.makeFuzzyMinerPrediction();
-                tempResult = new ArrayList<>();
-                for (ActivityItem item : temp) {
-                    tempResult.add(item.getActivityId() + "," + item.getStarttimeAsString() + "," + item.getEndtimeAsString());
-                }
-                result.add(tempResult);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        result.size();
 
         dateView.setText(dateString);
         onDateSelected(linearLayout, params, date);
@@ -181,10 +162,8 @@ public class HistoryFragment extends DailyRoutineFragment {
         ArrayList<ActivityItem> listItems = new ArrayList<>();
         listItems = dayHandler.getDailyRoutine();
         Log.d(TAG, "list size after update: " + listItems.size());
-
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-
         for (int i = 0; i < listItems.size(); i++) {
             DailyRoutineView drv = new DailyRoutineView(getActivity(), listItems.get(i));
             linearLayout.addView(drv);
@@ -204,7 +183,6 @@ public class HistoryFragment extends DailyRoutineFragment {
     public void onDateSelected(LinearLayout linearLayout, LinearLayout.LayoutParams params, Date date) {
         linearLayout.removeAllViews();
         DailyRoutineView.clearSelectedActivities();
-        //TODO: Move Data creation to a Utility Class for unified creation over all classes
         Log.i(TAG, date.toString());
         ArrayList<ActivityItem> day = dayHandler.getDayRoutine(date);
         DailyRoutineView.clearSelectedActivities();
@@ -212,18 +190,15 @@ public class HistoryFragment extends DailyRoutineFragment {
         DailyRoutineView.setActionBarItems();
         setDate(date);
 
-//  ArrayList<String[]> day = generateRandomRoutine();
         if (day.size() > 0) {
             for (int i = 0; i < day.size(); i++) {
                 DailyRoutineView drv = new DailyRoutineView(getActivity(), day.get(i));
                 drv.setState(true);
                 linearLayout.addView(drv);
                 drv.setLayoutParams(params);
-                //drv.getLayoutParams().height = drv.getTotalHeight();
                 items_history.add(drv);
 
             }
-            //   DailyRoutineFragment.setItems(items_history);
         } else {
             TextView tv = new TextView(getContext());
             tv.setText(R.string.no_data);
@@ -289,7 +264,6 @@ public class HistoryFragment extends DailyRoutineFragment {
             // Use the current date as the default date in the picker
             TextView tv = (TextView) this.getActivity().findViewById(R.id.history_date_view);
             Log.i(TAG, "textview:" + tv.getText().toString());
-            //SimpleDateFormat simpleFormat = new SimpleDateFormat("dd.MM.yyyy",Locale.getDefault());
             DateFormat simpleFormat = DateFormat.getDateInstance();
             Date date = null;
             try {
@@ -332,9 +306,7 @@ public class HistoryFragment extends DailyRoutineFragment {
             LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
             TextView tv = (TextView) this.getActivity().findViewById(R.id.history_date_view);
             GregorianCalendar calendar = new GregorianCalendar(year, month, day);
-            //SimpleDateFormat simpleDate = new SimpleDateFormat();
             DateFormat simpleDate = DateFormat.getDateInstance();
-            //simpleDate.applyPattern("dd.MM.yyyy");
             DateFormat timeDAte = DateFormat.getTimeInstance();
             Log.i(TAG, timeDAte.format(calendar.getTime()));
             Calendar calendar2 = Calendar.getInstance(Locale.getDefault());
@@ -346,7 +318,6 @@ public class HistoryFragment extends DailyRoutineFragment {
             if (dateToday.after(dateSelected)) {
                 onDateSelected(oLL, params, dateSelected);
                 tv.setText(simpleDate.format(calendar.getTime()));
-
             } else {
                 Toast.makeText(getContext(), R.string.date_in_future, Toast.LENGTH_SHORT).show();
             }

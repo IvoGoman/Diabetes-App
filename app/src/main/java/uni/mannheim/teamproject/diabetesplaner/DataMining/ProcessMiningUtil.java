@@ -143,7 +143,7 @@ public class ProcessMiningUtil {
      * Returns the activity which was most often the first in each case
      *
      * @param cases Output of the CaseCreator
-     * @return  activity ID of the most frequent start activity
+     * @return activity ID of the most frequent start activity
      */
     public static int getMostFrequentStartActivity(ArrayList<String[]> cases) {
         HashMap<Integer, Integer> activityCount = new HashMap<>();
@@ -178,7 +178,7 @@ public class ProcessMiningUtil {
      * Returns the activity which was most often the first in each case
      *
      * @param cases Output of the CaseCreator
-     * @return  activity ID of the most frequent end activity
+     * @return activity ID of the most frequent end activity
      */
     public static int getMostFrequentEndActivity(ArrayList<String[]> cases) {
         HashMap<Integer, Integer> activityCount = new HashMap<>();
@@ -284,7 +284,6 @@ public class ProcessMiningUtil {
             int id = removeAMPMFlag(idDurationMap.get(i).first);
             item = new ActivityItem(id, 0, startEndDate[0], startEndDate[1], 0);
             result.add(item);
-//            dbHandler.InsertActivity(dbHandler, item);
             date = startEndDate[1];
         }
         return result;
@@ -313,12 +312,12 @@ public class ProcessMiningUtil {
      * @param id activity id with AM/PM flag
      * @return cleaned activity id
      */
-    public static int removeAMPMFlag(int id){
-    //            remove the am/pm-flag from the id
-    String tempId = String.valueOf(id);
-    id=Integer.parseInt(tempId.substring(0,tempId.length()-1));
+    public static int removeAMPMFlag(int id) {
+        //            remove the am/pm-flag from the id
+        String tempId = String.valueOf(id);
+        id = Integer.parseInt(tempId.substring(0, tempId.length() - 1));
         return id;
-}
+    }
 
     /**
      * Convert the list of activities grouped by days as one big list
@@ -326,24 +325,21 @@ public class ProcessMiningUtil {
      * @param train the training data provided by the Prediction Framework
      * @return training data format used by FuzzyMiner
      */
-    public static ArrayList<ActivityItem> convertDayToAllStructure(ArrayList<ArrayList<ActivityItem>> train){
+    public static ArrayList<ActivityItem> convertDayToAllStructure(ArrayList<ArrayList<ActivityItem>> train) {
         ArrayList<ActivityItem> items = new ArrayList<>();
-        for (ArrayList<ActivityItem> list: train) {
-            for (ActivityItem item: list) {
+        for (ArrayList<ActivityItem> list : train) {
+            for (ActivityItem item : list) {
                 items.add(item);
             }
         }
         return items;
     }
 
-    public static long getAverageStartTime(String ID, ArrayList<String[]> eventlist)
-    {
+    public static long getAverageStartTime(String ID, ArrayList<String[]> eventlist) {
         long allStartTimes = (long) 0.0;
         long divide = (long) 0.0;
-        for(String[] item : eventlist)
-        {
-            if(item[1].contains(ID))
-            {
+        for (String[] item : eventlist) {
+            if (item[1].contains(ID)) {
                 SimpleDateFormat sdf = new SimpleDateFormat("HH:mm:ss");
                 String time = sdf.format(new Date());
                 Time t = Time.valueOf(time);
@@ -351,21 +347,18 @@ public class ProcessMiningUtil {
                 allStartTimes = allStartTimes + (t.getTime());
             }
         }
-        return allStartTimes/divide;
+        return allStartTimes / divide;
     }
 
-    public static long getAverageEndTime(String ID, ArrayList<String[]> eventlist)
-    {
+    public static long getAverageEndTime(String ID, ArrayList<String[]> eventlist) {
         long allEndTimes = (long) 0.0;
         long divide = (long) 0.0;
-        for(String[] item : eventlist)
-        {
-            if(item[1].contains(ID))
-            {
+        for (String[] item : eventlist) {
+            if (item[1].contains(ID)) {
                 divide++;
                 allEndTimes = allEndTimes + (Long.parseLong(item[3]));
             }
         }
-        return allEndTimes/divide;
+        return allEndTimes / divide;
     }
 }

@@ -26,6 +26,7 @@ public class CustomXLog {
         this.cases = this.retrieveCases(this.eventList);
         this.createXLog(this.cases);
     }
+
     public ArrayList<String[]> getEventList() {
         return eventList;
     }
@@ -34,7 +35,7 @@ public class CustomXLog {
         return cases;
     }
 
-    public XLog getXLog(){
+    public XLog getXLog() {
         return this.xLog;
     }
 
@@ -45,7 +46,7 @@ public class CustomXLog {
         String caseHelper = eventList.get(1)[0];
         builder.addTrace(eventList.get(1)[0]);
 
-       this.createInitialEvent(builder,eventList.get(1));
+        this.createInitialEvent(builder, eventList.get(1));
 //		iterate through the event list with cases
 //        TODO:do not reduce the full amount of activities
         for (int i = 1; i < eventList.size(); i++) {
@@ -60,20 +61,21 @@ public class CustomXLog {
                 builder.addEvent(eventList.get(i)[2]);
                 builder.addAttribute("Activity", eventList.get(i)[2]);
                 builder.addAttribute("lifecycle:transition", "Complete");
-                builder.addAttribute(new XAttributeTimestampImpl("time:timestamp",new Date(Long.valueOf(eventList.get(i)[4]))));
+                builder.addAttribute(new XAttributeTimestampImpl("time:timestamp", new Date(Long.valueOf(eventList.get(i)[4]))));
             } else {
 //				Add a new Trace to the Builder [this happens for every case]
                 this.createEndEvent(builder, eventList.get(i));
                 builder.addTrace(eventList.get(i)[0]);
-                this.createInitialEvent(builder,eventList.get(i));
+                this.createInitialEvent(builder, eventList.get(i));
             }
             caseHelper = eventList.get(i)[0];
         }
 //		create the XLog Object
 
-        this.xLog =  builder.build();
+        this.xLog = builder.build();
     }
-    private void createInitialEvent(LogBuilder builder, String[] event){
+
+    private void createInitialEvent(LogBuilder builder, String[] event) {
         builder.addEvent("9990");
         builder.addAttribute("Activity", "Start");
         builder.addAttribute("lifecycle:transition", "Start");
@@ -81,10 +83,11 @@ public class CustomXLog {
         builder.addEvent("9990");
         builder.addAttribute("Activity", "Start");
         builder.addAttribute("lifecycle:transition", "Complete");
-        builder.addAttribute(new XAttributeTimestampImpl("time:timestamp",new Date(Long.valueOf(event[3]))));
+        builder.addAttribute(new XAttributeTimestampImpl("time:timestamp", new Date(Long.valueOf(event[3]))));
 
     }
-    private void createEndEvent(LogBuilder builder, String[] event){
+
+    private void createEndEvent(LogBuilder builder, String[] event) {
         builder.addEvent("9991");
         builder.addAttribute("Activity", "End");
         builder.addAttribute("lifecycle:transition", "Start");
@@ -92,12 +95,13 @@ public class CustomXLog {
         builder.addEvent("9991");
         builder.addAttribute("Activity", "End");
         builder.addAttribute("lifecycle:transition", "Complete");
-        builder.addAttribute(new XAttributeTimestampImpl("time:timestamp",new Date(Long.valueOf(event[3]))));
+        builder.addAttribute(new XAttributeTimestampImpl("time:timestamp", new Date(Long.valueOf(event[3]))));
 
     }
 
     /**
      * Create the cases from the ArrayList of ActivityItems queried
+     *
      * @param items ArrayList of Activity Items
      * @return returns the ActivityItems converted into String Arrays
      */
@@ -112,7 +116,7 @@ public class CustomXLog {
             id = String.valueOf(item.getActivityId());
             Long[] timestamps = TimeUtils.convertDateStringToTimestamp(new String[]{item.getStarttimeAsString(), item.getEndtimeAsString()});
             isAM = TimeUtils.isAM(timestamps[0] * 1000);
-            event = new String[]{AppGlobal.getHandler().getActionById(AppGlobal.getHandler(), item.getActivityId()), id+isAM, String.valueOf(timestamps[0] * 1000), String.valueOf(timestamps[1] * 1000)};
+            event = new String[]{AppGlobal.getHandler().getActionById(AppGlobal.getHandler(), item.getActivityId()), id + isAM, String.valueOf(timestamps[0] * 1000), String.valueOf(timestamps[1] * 1000)};
             eventList.add(event);
         }
         return eventList;

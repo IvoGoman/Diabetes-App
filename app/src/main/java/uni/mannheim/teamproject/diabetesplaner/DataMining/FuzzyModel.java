@@ -27,12 +27,12 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
  * Creates a Fuzzy Graph based on a XLog created from the Activities of the Database.
  * Allows to find the next Activity based on the current one.
  * The Daily Routine is either 1440 Minutes(100%) long or stops if the most frequent end activity is reached.
- *
  */
 public class FuzzyModel {
     private MutableFuzzyGraph fuzzyMinerModel;
     private List<Pair<Integer, Double>> idDurationMap;
     private boolean percentage;
+
     /**
      * Create a FuzzyModel based on the Activities of a certain Weekday
      *
@@ -42,7 +42,7 @@ public class FuzzyModel {
     public FuzzyModel(int day, boolean percentage) {
         this.percentage = percentage;
         ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(), day);
-        if(items.size()>0) {
+        if (items.size() > 0) {
             CustomXLog customXLog = new CustomXLog(items);
             XLog xLog = customXLog.getXLog();
             FuzzyMinerImpl fuzzyMiner = new FuzzyMinerImpl(xLog);
@@ -65,16 +65,15 @@ public class FuzzyModel {
                 e.printStackTrace();
             }
         }
-//        ArrayList<ActivityPrediction> activityPredictions = createPredictionDataStructure(durationMap);
-
     }
 
     /**
      * Alternative constructor to integrate with the Prediction Framework
-      * @param train data provided by Prediction Framework
+     *
+     * @param train      data provided by Prediction Framework
      * @param percentage Flag to choose if the durations should be handled as minutes or %
      */
-    public FuzzyModel(ArrayList<ArrayList<ActivityItem>> train, boolean percentage){
+    public FuzzyModel(ArrayList<ArrayList<ActivityItem>> train, boolean percentage) {
         ArrayList<ActivityItem> items = ProcessMiningUtil.convertDayToAllStructure(train);
         CustomXLog customXLog = new CustomXLog(items);
         XLog xLog = customXLog.getXLog();
@@ -94,13 +93,12 @@ public class FuzzyModel {
         int endID = ProcessMiningUtil.getMostFrequentEndActivity(cases);
         try {
             idDurationMap = createDailyRoutine(startID, endID, durationMap, percentage);
-        } catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public ArrayList<ActivityItem> makeFuzzyMinerPrediction(){
-
+    public ArrayList<ActivityItem> makeFuzzyMinerPrediction() {
         return ProcessMiningUtil.createActivities(idDurationMap, percentage);
     }
 
@@ -126,64 +124,60 @@ public class FuzzyModel {
         }
         int startID = ProcessMiningUtil.getMostFrequentStartActivity(cases);
         int endID = ProcessMiningUtil.getMostFrequentEndActivity(cases);
-        int currentId = startID,  tempId;
+        int currentId = startID, tempId;
         idDurationMap.add(new Pair<>(currentId, durationMap.get(currentId)));
         try {
             idDurationMap = createDailyRoutine(startID, endID, durationMap, percentage);
-        } catch(Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         idDurationMap.size();
-//        ProcessMiningUtil.createActivities(idDurationMap, percentage);
     }
 
     /**
-     *
-     * @param startID int which indicates the expected start activity
-     * @param endID int which indicates the expected end activity
+     * @param startID     int which indicates the expected start activity
+     * @param endID       int which indicates the expected end activity
      * @param durationMap map of int activity ids and corresponding average double durations
-     * @param percentage boolean flag indicating if the durations are precentual or absolute
+     * @param percentage  boolean flag indicating if the durations are precentual or absolute
      * @return Daily Routine as a List of Activity IDs and Corresponding Duration
      */
     private List<Pair<Integer, Double>> createDailyRoutine(int startID, int endID, Map<Integer, Double> durationMap, boolean percentage) {
-    List<Pair<Integer, Double>> idDurationMap = new ArrayList<>();
-    int currentID = startID;
-    int tempID;
-    int predecessorID = 0;
-    int prepredecessorID = 0;
-    int preprepredecessorID = 0;
-    idDurationMap.add(new Pair<>(currentID, durationMap.get(currentID)));
-    if(percentage)
-    {
-        while (!ProcessMiningUtil.isTotalPercentageReached(idDurationMap)) {
-            tempID = currentID;
-            if (currentID != endID) {
-                currentID = getNextActivity(currentID, tempID);
-            } else {
-                break;
-            }
-            idDurationMap.add(new Pair<>(currentID, durationMap.get(currentID)));
-        }
-    }
-    else
-    {
-        while (!ProcessMiningUtil.isTotalDurationReached(idDurationMap)) {
-//            currentId = getNextActivity(currentId, predecessorId);
+        List<Pair<Integer, Double>> idDurationMap = new ArrayList<>();
+        int currentID = startID;
+        int tempID;
+        int predecessorID = 0;
+        int prepredecessorID = 0;
+        int preprepredecessorID = 0;
+        idDurationMap.add(new Pair<>(currentID, durationMap.get(currentID)));
+        if (percentage) {
+            while (!ProcessMiningUtil.isTotalPercentageReached(idDurationMap)) {
                 tempID = currentID;
                 currentID = getNextActivity(currentID, predecessorID, prepredecessorID, preprepredecessorID);
                 preprepredecessorID = prepredecessorID;
                 prepredecessorID = predecessorID;
                 predecessorID = tempID;
-            if (currentID == 9991) {
-                idDurationMap.size();
-                break;
-            } else {
-            idDurationMap.add(new Pair<>(currentID, durationMap.get(currentID)));
+                if (currentID == 9991) {
+                    break;
+                } else {
+                    idDurationMap.add(new Pair<>(currentID, durationMap.get(currentID)));
+                }
+            }
+        } else {
+            while (!ProcessMiningUtil.isTotalDurationReached(idDurationMap)) {
+                tempID = currentID;
+                currentID = getNextActivity(currentID, predecessorID, prepredecessorID, preprepredecessorID);
+                preprepredecessorID = prepredecessorID;
+                prepredecessorID = predecessorID;
+                predecessorID = tempID;
+                if (currentID == 9991) {
+                    break;
+                } else {
+                    idDurationMap.add(new Pair<>(currentID, durationMap.get(currentID)));
+                }
             }
         }
+        return idDurationMap;
     }
-return idDurationMap;
-}
 
     /**
      * Return the most likely successor of the current activity based on the significance && correlation in the model
@@ -247,8 +241,9 @@ return idDurationMap;
      * Return the most likely successor of the current activity based on the significance && correlation in the model
      * Loops are forbidden as Activity A followed by Activity B followed by Activity A
      * Filtering 2-node loops
+     *
      * @param currentActivityId Activity ID of the current activity
-     * @param predecessorId Activity ID of the predecessing activity
+     * @param predecessorId     Activity ID of the predecessing activity
      * @return Activity ID of the most probable successor of the current activity
      */
     public int getNextActivity(int currentActivityId, int predecessorId) {
@@ -330,12 +325,12 @@ return idDurationMap;
             }
         }
 //            if edge significance, edge correlation and node significance are the same choose at random
-            if (tempSuccessors.size() > 1) {
-                int temp = (int) (tempSuccessors.size() * Math.random());
-                FMEdge resultEdge = (FMEdge) tempSuccessors.toArray()[temp];
-                target = (FMNode) resultEdge.getTarget();
-                successorID = Integer.parseInt(target.getElementName());
-            }
+        if (tempSuccessors.size() > 1) {
+            int temp = (int) (tempSuccessors.size() * Math.random());
+            FMEdge resultEdge = (FMEdge) tempSuccessors.toArray()[temp];
+            target = (FMNode) resultEdge.getTarget();
+            successorID = Integer.parseInt(target.getElementName());
+        }
         return successorID;
     }
 
@@ -343,9 +338,10 @@ return idDurationMap;
      * Return the most likely successor of the current activity based on the significance && correlation in the model
      * Loops are forbidden as Activity A followed by Activity B followed by Activity A
      * Filtering 2-node loops and 3-node loops
-     * @param currentActivityId  Activity ID of the current activity
-     * @param predecessorId Activity ID of the activity before the current
-     * @param prepredecessorID Activity ID of the activity two before the current
+     *
+     * @param currentActivityId   Activity ID of the current activity
+     * @param predecessorId       Activity ID of the activity before the current
+     * @param prepredecessorID    Activity ID of the activity two before the current
      * @param preprepredecessorID Activity ID of the activity three before the current
      * @return Activity ID of the next activity
      */
@@ -373,15 +369,15 @@ return idDurationMap;
         for (FMEdge edge : likelySuccessors) {
             target = (FMNode) edge.getTarget();
             targetID = Integer.parseInt(target.getElementName());
-            if(targetID != 9991) {
+            if (targetID != 9991) {
                 targetTargetID = getNextActivity(targetID, currentActivityId);
             } else targetTargetID = 9991;
-            if (targetID != predecessorId &&(currentActivityId != preprepredecessorID && targetID != prepredecessorID && targetTargetID != predecessorId )) {
+            if (targetID != predecessorId && (currentActivityId != preprepredecessorID && targetID != prepredecessorID && targetTargetID != predecessorId)) {
 //            check if target produces potential self loops
                 targets.clear();
                 targets.addAll(target.getGraph().getOutEdges(target));
 //            start of the activity? then get the outedges of the complete cycle
-                if (targets.size() == 1 ) {
+                if (targets.size() == 1) {
                     for (FMEdge<? extends FMNode, ? extends FMNode> targetEdge : targets) {
                         if (targetEdge.getTarget().getElementName().equals(target.getElementName()) && targetEdge.getTarget().getEventType().equals("Complete")) {
                             tempNode = targetEdge.getTarget();
@@ -443,20 +439,19 @@ return idDurationMap;
     }
 
     /**
-     *
      * @param durationMap Map of Activity IDs and corresponding Durations
      * @return Datastructure representing the fuzzy miner model
      */
 
-    private ArrayList<ActivityPrediction> createPredictionDataStructure(Map<Integer, Double> durationMap){
+    private ArrayList<ActivityPrediction> createPredictionDataStructure(Map<Integer, Double> durationMap) {
         ArrayList<ActivityPrediction> activityPredictions = new ArrayList<>();
         DataBaseHandler handler = AppGlobal.getHandler();
         String activityName;
         int activityID;
         HashMap<Integer, Double> successorProbabilityMap = new HashMap<>();
         ActivityPrediction activityPrediction;
-        for(FMNode node : fuzzyMinerModel.getNodes()){
-            if(!node.getElementName().equals("Start//Start") && node.getEventType().equals("Complete")) {
+        for (FMNode node : fuzzyMinerModel.getNodes()) {
+            if (!node.getElementName().equals("Start//Start") && node.getEventType().equals("Complete")) {
                 activityID = Integer.parseInt(node.getElementName());
                 activityName = handler.getActionById(handler, ProcessMiningUtil.removeAMPMFlag(activityID));
                 activityPrediction = new ActivityPrediction(activityID, 0, activityName);
@@ -469,7 +464,7 @@ return idDurationMap;
                 successorProbabilityMap = new HashMap<>();
             }
         }
-    return activityPredictions;
+        return activityPredictions;
 
     }
 }
