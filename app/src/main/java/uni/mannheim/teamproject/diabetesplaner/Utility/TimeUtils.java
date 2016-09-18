@@ -116,6 +116,23 @@ public class TimeUtils {
         return date;
     }
 
+    /**
+     *
+     * @param date_string date in string format dd.MM.yyyy
+     * @param time_string time in string format HH:mm:SS
+     * @return Date representing the date and time
+     */
+    public static Date convertDateAndTimeStringToDate(String date_string, String time_string){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        String dateTimeString = date_string + " " + time_string;
+        Date date = null;
+        try{
+            date = sdf.parse(dateTimeString);
+        } catch ( ParseException e){
+            e.printStackTrace();
+        }
+        return date;
+    }
 
     /**
      * @param timestamp as String
@@ -415,6 +432,24 @@ public class TimeUtils {
 
         Long[] timeWindowLong = {timestampStart.getTime() / 1000, timestampEnd.getTime() / 1000};
         return timeWindowLong;
+    }
+
+    /**
+     * @param date date to be parsed into long
+     * @return date array converted to long timestamp array
+     * @author Ivo 08.04.2016
+     * Convert a time window from a string array to a corresponding timestamp Long array
+     */
+    public static Long convertDateStringToTimestamp(Date date) {
+        Timestamp timestamp = null;
+        try {
+            timestamp = new java.sql.Timestamp(date.getTime());
+        } catch (Exception e) {//this generic but you can control another types of exception
+            e.printStackTrace();
+        }
+
+        Long timestampLong = timestamp.getTime() / 1000;
+        return timestampLong;
     }
 
     /**

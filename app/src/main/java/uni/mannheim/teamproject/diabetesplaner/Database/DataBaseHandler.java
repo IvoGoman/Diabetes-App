@@ -6,8 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,7 +35,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     //Bloodsugar History
     public static final String MEASUREMENT_TABLE_NAME = "Measurements";
     public static final String MEASUREMENT_CREATE_TABLE = " CREATE TABLE IF NOT EXISTS " + MEASUREMENT_TABLE_NAME +
-            "(timestamp Double PRIMARY KEY, profile_ID INTEGER, measure_value double, measure_unit VARCHAR(8), measure_kind VARCHAR(8));";
+            "(timestamp long PRIMARY KEY, profile_ID INTEGER, measure_value double, measure_unit VARCHAR(8), measure_kind VARCHAR(10));";
     public static final String MEASUREMENT_SELECT =
             "SELECT * FROM " + MEASUREMENT_TABLE_NAME + ";";
     public static final String MEASUREMENT_DELETE_TABLE =
@@ -491,69 +489,20 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    /***
-     * Insert a new bloodsugar level
-     * @param handler
-     * @param profile_id
-     * @param bloodsugar_level
-     * @param measure_unit
+    /**
+     * Method to store either bloodsugar or insulin to the database
+     * This depends on the values provided
+     *
+     * @param item Measureitem containing the necessary values to insert the measurement into the db
+     * @param profile_id Profile ID of the User
      */
-    public void InsertBloodsugar(DataBaseHandler handler, Date date, Time time, int profile_id, double bloodsugar_level, String measure_unit) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
-        Timestamp timestamp = Timestamp.valueOf(date.toString() + " " + time.toString());
-        Log.d("Database", timestamp + " InsertBloodSugar");
-
-        db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
-                + bloodsugar_level + " , '" + timestamp + "' , '" + measure_unit + "' , 'bloodsugar');");
-        db1.close();
+    public void insertMeasurement(MeasureItem item, int profile_id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, timestamp, measure_value, measure_unit, measure_kind) values(" + profile_id + ","
+                 + item.getTimestamp() +" , '" + item.getMeasure_value()+ "' , '" + item.getMeasure_unit() + "' ,'"+ item.getMeasure_kind()+"');");
+        db.close();
     }
 
-    public void InsertInsulin(DataBaseHandler handler, Date date, Time time, int profile_id, double insulin_level, String insulin_unit) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
-        Timestamp timestamp = Timestamp.valueOf(date.toString() + " " + time.toString());
-        Log.d("Database", timestamp + "InsertInsulin");
-
-        db1.execSQL("insert into " + INSULIN_TABLE_NAME + "(profile_ID, insulin_value, timestamp, insulin_unit, insulin_kind) values(" + profile_id + ","
-                + insulin_level + " , '" + timestamp + "' , '" + insulin_unit + "' , 'insulin');");
-        db1.close();
-    }
-
-
-    public void InsertBloodsugarEntryScreen(long timestamp, int profile_id, double bloodsugar_level, String measure_unit) {
-        SQLiteDatabase db1 = this.getWritableDatabase();
-        Log.d("Database", timestamp + "InsertBloodSugar");
-
-        db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
-                + bloodsugar_level + " , '" + timestamp + "' , '" + measure_unit + "' , 'bloodsugar');");
-        db1.close();
-    }
-
-
-
-
-
-    /***
-     * Insert a new insulin level
-     * @param handler
-     * @param profile_id
-     * @param insulin
-     * @param measure_unit
-     */
-    public void InsertInsulin(DataBaseHandler handler, int profile_id, double insulin, String measure_unit) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
-        long tslong = System.currentTimeMillis() / 1000;
-        db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
-                + insulin + " , '" + tslong + "' , '" +measure_unit+"' , 'insulin');");
-        db1.close();
-    }
-
-  /*  public void InsertInsulin(int profile_id, double insulin, String measure_unit,long tslong) {
-        SQLiteDatabase db1 = this.getWritableDatabase();
-        //long tslong = System.currentTimeMillis() / 1000;
-        db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
-                + insulin + " , '" + tslong + "' , '" +measure_unit+"' , 'insulin');");
-        db1.close();
-    }*/
 
     /***
      * Insert a new weight measurement

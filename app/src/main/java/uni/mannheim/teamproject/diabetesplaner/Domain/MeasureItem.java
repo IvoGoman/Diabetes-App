@@ -17,10 +17,20 @@ public class MeasureItem {
     private double measure_value;
     private String measure_unit;
 
-    public MeasureItem(Long timestamp, double measure_value, String measure_unit){
-        this.timestamp=timestamp;
-        this.measure_value=measure_value;
-        this.measure_unit=measure_unit;
+
+    private String measure_kind;
+
+    public MeasureItem(Long timestamp, double measure_value, String measure_unit, String measure_kind) {
+        this.timestamp = timestamp;
+        this.measure_value = measure_value;
+        this.measure_unit = measure_unit;
+        this.measure_kind = measure_kind;
+    }
+
+    public MeasureItem(Long timestamp, double measure_value, String measure_unit) {
+        this.timestamp = timestamp;
+        this.measure_value = measure_value;
+        this.measure_unit = measure_unit;
     }
 
     public Long getTimestamp() {
@@ -47,26 +57,33 @@ public class MeasureItem {
         this.measure_unit = measure_unit;
     }
 
+    public String getMeasure_kind() {
+        return this.measure_kind;
+    }
+
     /**
      * returns the blood sugar level in mmol
+     *
      * @return
      * @author Stefan 08.09.2016
      */
-    public double getMeasureValueInMol(){
+    public double getMeasureValueInMol() {
         return Util.convertBSToMol(measure_value, measure_unit);
     }
 
     /**
      * returns the blood sugar level in mg/dl
+     *
      * @return
      * @author Stefan 08.09.2016
      */
-    public double getMeasureValueInMG(){
+    public double getMeasureValueInMG() {
         return Util.convertBSToMG(measure_value, measure_unit);
     }
 
     /**
      * compares two MeasureItems
+     *
      * @param o
      * @return
      * @author Stefan 08.09.2016
