@@ -53,12 +53,16 @@ public class HistoryFragment extends DailyRoutineFragment {
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
     private static final String TAG = "history";
-    private OnFragmentInteractionListener mListener;
     private static ArrayList<DailyRoutineView> items_history = new ArrayList<>();
     private static LinearLayout linearLayout;
-    private DayHandler dayHandler;
     private static Date date;
+    private OnFragmentInteractionListener mListener;
+    private DayHandler dayHandler;
 
+
+    public HistoryFragment() {
+        // Required empty public constructor
+    }
 
     /**
      * Use this factory method to create a new instance of
@@ -78,14 +82,13 @@ public class HistoryFragment extends DailyRoutineFragment {
         return fragment;
     }
 
-    public HistoryFragment() {
-        // Required empty public constructor
+    public static ArrayList<DailyRoutineView> getItems() {
+        return items_history;
     }
 
     public void setDate(Date date) {
         HistoryFragment.date = date;
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -119,12 +122,25 @@ public class HistoryFragment extends DailyRoutineFragment {
         calendar.add(Calendar.DAY_OF_MONTH, -1);
         Date date = calendar.getTime();
         dateString = df.format(date);
-       String dataDirectory= getContext().getApplicationInfo().dataDir;
+
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        ArrayList<String> tempResult;
+        ArrayList<ActivityItem> temp;
         try {
-            FuzzyModel model = new FuzzyModel(0,false);
+
+            for (int i = 0; i < 7; i++) {
+                FuzzyModel model = new FuzzyModel(i, false);
+                temp = model.makeFuzzyMinerPrediction();
+                tempResult = new ArrayList<>();
+                for (ActivityItem item : temp) {
+                    tempResult.add(item.getActivityId() + "," + item.getStarttimeAsString() + "," + item.getEndtimeAsString());
+                }
+                result.add(tempResult);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        result.size();
 
         dateView.setText(dateString);
         onDateSelected(linearLayout, params, date);
@@ -136,8 +152,6 @@ public class HistoryFragment extends DailyRoutineFragment {
                 datePickerFragment.show(fragmentManager, "datePicker");
             }
         });
-        //TODO: add history item at the point where a daily routine is completed
-
         ScrollView scrollView = (ScrollView) inflaterView.findViewById(R.id.history_scrollview);
         // Inflate the layout for this fragment
         return inflaterView;
@@ -149,32 +163,37 @@ public class HistoryFragment extends DailyRoutineFragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-    public static ArrayList<DailyRoutineView> getItems(){return items_history;}
-    public ArrayList<DailyRoutineView> getActivityList(){
-        return items_history;}
+
+    public ArrayList<DailyRoutineView> getActivityList() {
+        return items_history;
+    }
+
     @Override
-    public DayHandler getDrHandler(){
+    public DayHandler getDrHandler() {
         return dayHandler;
     }
+
     @Override
-    public void updateView(){
+    public void updateView() {
         //get predicted routine
         linearLayout.removeAllViews();
         items_history.clear();
         ArrayList<ActivityItem> listItems = new ArrayList<>();
         listItems = dayHandler.getDailyRoutine();
-        Log.d(TAG, "list size after update: " +listItems.size());
+        Log.d(TAG, "list size after update: " + listItems.size());
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
 
-        for(int i=0; i<listItems.size(); i++){
+        for (int i = 0; i < listItems.size(); i++) {
             DailyRoutineView drv = new DailyRoutineView(getActivity(), listItems.get(i));
             linearLayout.addView(drv);
             drv.setState(false);
             drv.setLayoutParams(params);
             items_history.add(drv);
-        }}
+        }
+    }
+
     /**
      * every time a date is chosen with the date picker this method is called to create the
      * new activity list
@@ -288,7 +307,7 @@ public class HistoryFragment extends DailyRoutineFragment {
             // Create a new instance of DatePickerDialog and return it
             //Edit by Naira, Changing date picker color
             //return new DatePickerDialog(getActivity(), this, year, month, day);
-            return new DatePickerDialog(getActivity(), R.style.picker, this,year,month,day);
+            return new DatePickerDialog(getActivity(), R.style.picker, this, year, month, day);
 
         }
 
