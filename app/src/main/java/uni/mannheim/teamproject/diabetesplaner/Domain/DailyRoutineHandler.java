@@ -40,7 +40,7 @@ public class DailyRoutineHandler extends DayHandler{
      * @param mode     EVERY_DAY, WEEKDAYS, WEEKENDS, MONDAY, ... , SUNDAY
      * @author Stefan 06.09.2016
      */
-    public void predictDailyRoutine(ArrayList<Integer> algorithms, int mode){
+    public void predictDailyRoutine(ArrayList<Integer> algorithms, int mode) throws Exception {
         dailyRoutine = PredictionFramework.predict(PredictionFramework.retrieveTrainingData(mode), algorithms);
     }
 
@@ -69,7 +69,11 @@ public class DailyRoutineHandler extends DayHandler{
             algorithms.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
         }
 
-        dailyRoutine = PredictionFramework.predict(PredictionFramework.retrieveTrainingData(mode), algorithms);
+        try {
+            dailyRoutine = PredictionFramework.predict(PredictionFramework.retrieveTrainingData(mode), algorithms);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Log.d("DailyRoutineFragment", "Size after predict " +dailyRoutine.get(0).getStarttime());
     }
 
@@ -86,10 +90,9 @@ public class DailyRoutineHandler extends DayHandler{
         Prediction prediction1 = new Prediction();
         try{
             if (AppGlobal.getHandler()!=null){
-                //handler = AppGlobal.getHandler()
                 if (!AppGlobal.getHandler().CheckRoutineAdded(AppGlobal.getHandler())){
-                    prediction = prediction1.GetRoutineAsPA();
-                    AppGlobal.getHandler().InsertNewRoutine(AppGlobal.getHandler(), prediction);
+                    prediction = prediction1.GetRoutineAsPAforInserting();
+                    AppGlobal.getHandler().InsertNewRoutine(prediction);
                     dailyRoutine.clear();
                     String dateString = null;
                     for (int i = 0; i < prediction.size(); i++) {
@@ -115,8 +118,8 @@ public class DailyRoutineHandler extends DayHandler{
             else{
                 AppGlobal.getHandler().onCreate(AppGlobal.getHandler().db);
                 if (!AppGlobal.getHandler().CheckRoutineAdded(AppGlobal.getHandler())){
-                    prediction = prediction1.GetRoutineAsPA();
-                    AppGlobal.getHandler().InsertNewRoutine(AppGlobal.getHandler(), prediction);
+                    prediction = prediction1.GetRoutineAsPAforInserting();
+                    AppGlobal.getHandler().InsertNewRoutine(prediction);
                     dailyRoutine.clear();
                     String dateString = null;
                     for (int i = 0; i < prediction.size(); i++) {

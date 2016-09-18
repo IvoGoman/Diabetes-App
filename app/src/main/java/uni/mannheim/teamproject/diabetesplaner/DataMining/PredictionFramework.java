@@ -58,13 +58,13 @@ public class PredictionFramework {
      * @return
      * @author Stefan 06.09.2016
      */
-    public static ArrayList<ActivityItem> predict(ArrayList<ArrayList<ActivityItem>> train, ArrayList<Integer> algorithms) {
+    public static ArrayList<ActivityItem> predict(ArrayList<ArrayList<ActivityItem>> train, ArrayList<Integer> algorithms) throws Exception {
         if(train.size()>0) {
             if (algorithms.size() == 1) {
                 switch (algorithms.get(0)) {
                     case PREDICTION_DECISION_TREE:
                         //TODO predict with decision tree
-                        return null;
+                        return Prediction.GetRoutineAsAI();
                     case PREDICTION_GSP:
                         return GSP_Prediction.makeGSPPrediction(train, 0.2f);
                     case PREDICTION_FUZZY_MINER:

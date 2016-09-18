@@ -9,8 +9,11 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.Locale;
 
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import weka.classifiers.trees.J48;
 import weka.core.Attribute;
@@ -269,8 +272,7 @@ public class Prediction {
 
     */
 
-
-    public static Instances getInstances() throws ParseException {
+    public static FastVector getActivities(){
         FastVector Activities = new FastVector();
 
         Cursor cursor2 = AppGlobal.getHandler().getAllRoutine();
@@ -284,7 +286,23 @@ public class Prediction {
             }
             while (cursor2.moveToNext());
         }
+        cursor2.close();
+        return Activities;
+    }
 
+    public static int getSubactivityID(String ActivitySubActivity){
+        String Activity = ActivitySubActivity.substring(0,ActivitySubActivity.indexOf("|"));
+        String SubActivity = ActivitySubActivity.substring(ActivitySubActivity.indexOf("|")+1,ActivitySubActivity.length());
+
+        HashMap<String,Integer> subActivities = AppGlobal.getHandler().getAllSubactivities(AppGlobal.getHandler().getActivityID(Activity));
+        int subActivity = subActivities.get(SubActivity);
+        return subActivity;
+    }
+
+
+    public static Instances getInstances() throws ParseException {
+
+        FastVector Activities = getActivities();
         Attribute Activity = new Attribute("Activity", Activities);
         Attribute Activity1 = new Attribute("Activity1", Activities);
         Attribute Time = new Attribute("Time");
@@ -296,13 +314,14 @@ public class Prediction {
         attinfo.addElement(Activity);
         attinfo.addElement(Activity1);
 
-        int p = cursor2.getCount();
         Instances inst = new Instances("output", attinfo, 1);
         Instance newInstance = new Instance(4);
         newInstance.setDataset(inst);
 
-        ActivityBefore1 = "Schlafen|Schlafen";
+        ActivityBefore1 = String.valueOf(Activities.elementAt(0));
 
+        Cursor cursor2 = AppGlobal.getHandler().getAllRoutine();
+        int p = cursor2.getCount();
         //////////////////////////////////////////////
         if (cursor2.moveToFirst()) {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
@@ -451,6 +470,44 @@ public class Prediction {
             }
         }
         return PA1;
+    }
+
+    public static ArrayList<ActivityItem> GetRoutineAsAI() throws Exception {
+        ArrayList<ActivityItem> result= new ArrayList<>();
+        ArrayList<PeriodAction> PA = GetRoutineAsPA();
+        for (PeriodAction pa: PA){
+            int activitySubactivityId = pa.GetAction();
+            FastVector Activities = getActivities();
+            String activitySubactivity = Activities.elementAt(activitySubactivityId).toString();
+            int subActivityId = getSubactivityID(activitySubactivity);
+            int activityId = AppGlobal.getHandler().getActivityIdbySubActicityId(subActivityId);
+            String startTimeS = pa.GetStart();
+            String endTimeS = pa.GetEnd();
+            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+            Date startTime = format.parse(startTimeS);
+            Date endTime = format.parse(endTimeS);
+            ActivityItem aI = new ActivityItem(activityId,subActivityId,startTime,endTime);
+            result.add(aI);
+        }
+        return result;
+    }
+
+    public static ArrayList<PeriodAction> GetRoutineAsPAforInserting() throws Exception {
+        ArrayList<PeriodAction> result= new ArrayList<>();
+        ArrayList<PeriodAction> PA = GetRoutineAsPA();
+        for (PeriodAction pa: PA){
+            int activitySubactivityId = pa.GetAction();
+            FastVector Activities = getActivities();
+            String activitySubactivity = Activities.elementAt(activitySubactivityId).toString();
+            int subActivityId = getSubactivityID(activitySubactivity);
+            int activityId = AppGlobal.getHandler().getActivityIdbySubActicityId(subActivityId);
+            PeriodAction PAforInserting = new PeriodAction();
+            PAforInserting.Action= subActivityId;
+            PAforInserting.Start = pa.GetStart();
+            PAforInserting.End = pa.GetEnd();
+            result.add(PAforInserting);
+        }
+        return result;
     }
 
 /*

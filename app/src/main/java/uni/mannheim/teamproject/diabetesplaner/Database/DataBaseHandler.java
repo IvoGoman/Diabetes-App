@@ -337,14 +337,27 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
 
-    public ArrayList<String> getAllSubactivities()
-    {
+    public HashMap<String,Integer> getAllSubactivities(int activityId) {
         SQLiteDatabase db1 = this.getReadableDatabase();
-        ArrayList<String> result = new ArrayList<>();
-        Cursor cursor = db1.rawQuery("select title from SubActivities; ", null);
+        HashMap<String,Integer> result = new HashMap<>();
+        Cursor cursor = db1.rawQuery("select id,title from SubActivities where id_Activity=" + String.valueOf(activityId), null);
         if (cursor.moveToFirst()) {
             do {
-                result.add(cursor.getString(0));
+                result.put(cursor.getString(cursor.getColumnIndex("Title")).replace(" ",""),cursor.getInt(cursor.getColumnIndex("id")));
+            } while (cursor.moveToNext());
+
+        }
+        cursor.close();
+        return result;
+    }
+
+    public ArrayList<String> getAllSubactivities() {
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        ArrayList<String> result = new ArrayList<>();
+        Cursor cursor = db1.rawQuery("select title from SubActivities;", null);
+        if (cursor.moveToFirst()) {
+            do {
+                result.add(cursor.getString(cursor.getColumnIndex("title")));
             } while (cursor.moveToNext());
 
         }
@@ -627,16 +640,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return "Default";
     }
 
-    public void InsertNewRoutine(DataBaseHandler handler, ArrayList<Prediction.PeriodAction> prediction) {
+    public void InsertNewRoutine(ArrayList<Prediction.PeriodAction> prediction) {
         int idActivity;
         int idLocation;
         int idWIFI;
         String Start;
         String End;
 
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+        SQLiteDatabase db1 = this.getWritableDatabase();
         for(int i=0;i<prediction.size();i++){
-            idActivity =prediction.get(i).Action+1;
+            idActivity =prediction.get(i).Action;
             idLocation = 1;
             idWIFI = 1;
             String StartOfDay, EndOfDay;
