@@ -605,6 +605,7 @@ public class Util {
                     if(i==0){
                         prevEnd = TimeUtils.getMinutesOfDay(day.get(i).getEndtime().getTime());
                     }else{
+                        prevEnd = TimeUtils.getMinutesOfDay(day.get(i-1).getEndtime().getTime());
                         int currStart = TimeUtils.getMinutesOfDay(day.get(i).getStarttime().getTime());
                         if(currStart != (prevEnd+1)){
                             return false;

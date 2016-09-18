@@ -47,7 +47,7 @@ public class PredictionFramework {
      */
     public static ArrayList<ArrayList<ActivityItem>> retrieveTrainingData(int mode) {
         DataBaseHandler dbHandler = AppGlobal.getHandler();
-        return dbHandler.getAllDays(mode);
+        return dbHandler.getAllDays1(mode);
     }
 
     /**

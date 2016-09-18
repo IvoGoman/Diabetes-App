@@ -91,7 +91,7 @@ public class DailyRoutineHandler extends DayHandler{
             if (AppGlobal.getHandler()!=null){
                 //handler = AppGlobal.getHandler()
                 if (!AppGlobal.getHandler().CheckRoutineAdded(AppGlobal.getHandler())){
-                    prediction = prediction1.GetRoutine1();
+                    prediction = prediction1.GetRoutineAsPA();
                     AppGlobal.getHandler().InsertNewRoutine(AppGlobal.getHandler(), prediction);
                     dailyRoutine.clear();
                     String dateString = null;
@@ -118,7 +118,7 @@ public class DailyRoutineHandler extends DayHandler{
             else{
                 AppGlobal.getHandler().onCreate(AppGlobal.getHandler().db);
                 if (!AppGlobal.getHandler().CheckRoutineAdded(AppGlobal.getHandler())){
-                    prediction = prediction1.GetRoutine1();
+                    prediction = prediction1.GetRoutineAsPA();
                     AppGlobal.getHandler().InsertNewRoutine(AppGlobal.getHandler(), prediction);
                     dailyRoutine.clear();
                     String dateString = null;
