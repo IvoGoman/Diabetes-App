@@ -25,6 +25,7 @@ import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
@@ -390,9 +391,17 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             System.out.println("accelerom intent");
         }
 
+
+
+        //adjsted by Naira, class to be called is WifiActiveService instead of Wifi
         wifi = new Intent();
-        wifi.setClass(getActivity().getApplicationContext(), Wifi.class);
+        wifi.setClass(getActivity().getApplicationContext(), Wifi.WifiActiveService.class);
         getActivity().startService(wifi);
+        Toast.makeText(getActivity(), "Wifi data collection started", Toast.LENGTH_LONG).show();
+
+
+
+
 
         GPS = new Intent();
         GPS.setClass(getActivity().getApplicationContext(), GPS_Service.class);

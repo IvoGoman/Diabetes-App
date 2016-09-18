@@ -13,6 +13,7 @@ import android.os.Handler;
 import android.os.IBinder;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -77,16 +78,25 @@ public class Wifi extends BroadcastReceiver {
 
                   //
 
-                    if (Log.isLoggable(TAG, Log.VERBOSE)) {
+                 //   if (Log.isLoggable(TAG, Log.VERBOSE)) {
                         Log.v(TAG, "The SSID & MAC are " + ssid + " " + mac);
-                    }
+                  //  }
                     // could be removed just created to make sure it is working properly
-                    createNotification(ssid, mac);
-                    stopSelf();
-                    makePredictionWifi(ssid);
+                   // createNotification(ssid, mac);
+
+                    //stopSelf();
+                   // makePredictionWifi(ssid);
                 }
-            }, 5000);
+            }, 3000);
             return START_NOT_STICKY;
+        }
+
+        @Override
+        public void onDestroy(){
+            //stopSelf();
+            super.onDestroy();
+            Toast.makeText(getApplicationContext(), "Wifi data collection stopped", Toast.LENGTH_LONG).show();
+            Log.v("wifi", "wifi stopped");
         }
 
         @Override
@@ -98,7 +108,7 @@ public class Wifi extends BroadcastReceiver {
          * Creates a notification displaying the SSID & MAC addr
          * however could be removed later
          */
-        private void createNotification(String ssid, String mac) {
+        public void createNotification(String ssid, String mac) {
             Notification n = new NotificationCompat.Builder(this)
                     .setContentTitle("WifiReceiver Connection")
                     .setContentText("Connected to " + ssid)

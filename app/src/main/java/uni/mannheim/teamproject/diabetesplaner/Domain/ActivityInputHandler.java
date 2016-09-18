@@ -50,7 +50,8 @@ public class ActivityInputHandler {
      * @param filepath path where the file is located
      * @author edited 09.09.2016 by Stefan
      */
-    private static void readCSV(String filepath){
+    public static void readCSV(String filepath){
+
         DataBaseHandler dbHandler = AppGlobal.getHandler();
         ArrayList<String[]> eventList = Util.read(filepath);
 
@@ -95,6 +96,7 @@ public class ActivityInputHandler {
 //            }
 
             ActivityItem item;
+            long lastitemEnd=0;
             int subId = 0;
 
             eventList = creator.getList();
@@ -106,8 +108,14 @@ public class ActivityInputHandler {
                     subId = 0;
                     e.printStackTrace();
                 }
-                item = new ActivityItem(Integer.parseInt(event[2]), subId, TimeUtils.getDate(event[4]),TimeUtils.getDate(event[5]));
-                dbHandler.InsertActivityFromCSV(dbHandler,item);
+                    if (lastitemEnd!=0) {
+                        item = new ActivityItem(Integer.parseInt(event[2]), subId, TimeUtils.getDate(String.valueOf(lastitemEnd + 60000)), TimeUtils.getDate(event[5]));
+                        dbHandler.InsertActivityFromCSV(dbHandler,item);
+                    }else{
+                        item = new ActivityItem(Integer.parseInt(event[2]), subId, TimeUtils.getDate(event[4]), TimeUtils.getDate(event[5]));
+                        dbHandler.InsertActivityFromCSV(dbHandler,item);
+                    }
+                lastitemEnd = Long.valueOf(event[5]);
             }
 
             //Old version

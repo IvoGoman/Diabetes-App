@@ -631,21 +631,21 @@ public class Util {
             //check endtime of last
             if(TimeUtils.getMinutesOfDay(day.get(day.size()-1).getEndtime().getTime()) != 1439){
                 return false;
-            }
-
-            int prevEnd = 0;
-            for(int i=0; i<day.size();i++){
-                if(i==0){
-                    prevEnd = TimeUtils.getMinutesOfDay(day.get(i).getEndtime().getTime());
-                }else{
-                    int currStart = TimeUtils.getMinutesOfDay(day.get(i).getStarttime().getTime());
-                    if(currStart != (prevEnd+1)){
-                        return false;
+            }else{
+                int prevEnd = 0;
+                for(int i=0; i<day.size();i++){
+                    if(i==0){
+                        prevEnd = TimeUtils.getMinutesOfDay(day.get(i).getEndtime().getTime());
+                    }else{
+                        prevEnd = TimeUtils.getMinutesOfDay(day.get(i-1).getEndtime().getTime());
+                        int currStart = TimeUtils.getMinutesOfDay(day.get(i).getStarttime().getTime());
+                        if(currStart != (prevEnd+1)){
+                            return false;
+                        }
                     }
-                    prevEnd = TimeUtils.getMinutesOfDay(day.get(i).getEndtime().getTime());
                 }
+                return true;
             }
-            return true;
         }else {
             return false;
         }

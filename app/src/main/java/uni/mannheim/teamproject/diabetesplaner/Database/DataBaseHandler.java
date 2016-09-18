@@ -337,14 +337,27 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
 
-    public ArrayList<String> getAllSubactivities()
-    {
+    public HashMap<String,Integer> getAllSubactivities(int activityId) {
         SQLiteDatabase db1 = this.getReadableDatabase();
-        ArrayList<String> result = new ArrayList<>();
-        Cursor cursor = db1.rawQuery("select title from SubActivities; ", null);
+        HashMap<String,Integer> result = new HashMap<>();
+        Cursor cursor = db1.rawQuery("select id,title from SubActivities where id_Activity=" + String.valueOf(activityId), null);
         if (cursor.moveToFirst()) {
             do {
-                result.add(cursor.getString(0));
+                result.put(cursor.getString(cursor.getColumnIndex("Title")).replace(" ",""),cursor.getInt(cursor.getColumnIndex("id")));
+            } while (cursor.moveToNext());
+
+        }
+        cursor.close();
+        return result;
+    }
+
+    public ArrayList<String> getAllSubactivities() {
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        ArrayList<String> result = new ArrayList<>();
+        Cursor cursor = db1.rawQuery("select title from SubActivities;", null);
+        if (cursor.moveToFirst()) {
+            do {
+                result.add(cursor.getString(cursor.getColumnIndex("title")));
             } while (cursor.moveToNext());
 
         }
@@ -627,16 +640,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return "Default";
     }
 
-    public void InsertNewRoutine(DataBaseHandler handler, ArrayList<Prediction.PeriodAction> prediction) {
+    public void InsertNewRoutine(ArrayList<Prediction.PeriodAction> prediction) {
         int idActivity;
         int idLocation;
         int idWIFI;
         String Start;
         String End;
 
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+        SQLiteDatabase db1 = this.getWritableDatabase();
         for(int i=0;i<prediction.size();i++){
-            idActivity =prediction.get(i).Action+1;
+            idActivity =prediction.get(i).Action;
             idLocation = 1;
             idWIFI = 1;
             String StartOfDay, EndOfDay;
@@ -735,7 +748,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public Cursor getAllActions(DataBaseHandler helper) {
         SQLiteDatabase db = helper.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
-        Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
+        Cursor cursor = db.rawQuery("select title from " + ACTIVITIES_TABLE_NAME, null);
+        return cursor;
+    }
+
+    public Cursor getAllActionsPr() {
+        SQLiteDatabase db = this.getWritableDatabase();
+        //Create a Cursor that contains all records from the locations table
+        Cursor cursor = db.rawQuery("select distinct SubActivities.title from ActivityList inner join SubActivities on SubActivities.id=ActivityList.id_SubActivity", null);
         return cursor;
     }
 
@@ -784,7 +804,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     public Cursor getAllRoutine() {
         SQLiteDatabase db = this.getReadableDatabase();
-        Cursor cursor = db.rawQuery("select ActivityList.id, SubActivities.title, Location.Title , WIFI.Title, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id inner join Location on ActivityList.id_Location = Location.id inner join WIFI on ActivityList.id_WIFI = WIFI.id", null);
+        Cursor cursor = db.rawQuery("select ActivityList.id, Activities.title as Activity, SubActivities.title as SubActivity,  ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id inner join Activities on Subactivities.id_Activity = Activities.id", null);
         return cursor;
     }
 
@@ -1069,7 +1089,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         //String S = "select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.Start > '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "'";
 
         SQLiteDatabase db = handler.getReadableDatabase();
-        String Query = "select SubActivities.id as id_SubActivity, Activities.id as id_Activity, ActivityList.Meal, ActivityList.ImagePath,ActivityList.Intensity, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id inner join Activities on Subactivities.id_Activity = Activities.id where (ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "') or (ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "');";
+        String Query = "select SubActivities.id as id_SubActivity, Activities.id as id_Activity, ActivityList.Meal, ActivityList.ImagePath,ActivityList.Intensity, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id inner join Activities on Subactivities.id_Activity = Activities.id where (ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "') or (ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "') order by ActivityList.Start;";
         Cursor cursor = db.rawQuery(Query, null);
         //(ActivityList.End > '2016-01-01 00:00' and ActivityList.Start < '2016-01-01 23:59') or (ActivityList.Start < '2016-01-01 23:59' and ActivityList.Start > '2016-01-01 00:00')
         return GetArrayFromCursor(cursor, Date);
@@ -1373,6 +1393,221 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return ArrayList contains an arraylist with ActivityItems for every single day <br/>
      * @author Stefan 06.09.2016
      */
+    public ArrayList<ArrayList<ActivityItem>> getAllDays1(int mode) {
+        String query = "SELECT * FROM ActivityList INNER JOIN  SubActivities ON ActivityList.id_SubActivity = SubActivities.id";
+
+        SQLiteDatabase db = this.getWritableDatabase();
+        Cursor cursor = db.rawQuery(query, null);
+
+        ArrayList<ArrayList<ActivityItem>> relevantDays = new ArrayList<>();
+        switch (mode) {
+            case PredictionFramework.EVERY_DAY: {
+
+                Date startPrev = null;
+
+                ArrayList<ActivityItem> day = new ArrayList<>();
+                ActivityItem item;
+                if (cursor.moveToFirst()) {
+                    do {
+                        int activityId = cursor.getInt(cursor.getColumnIndex("id_Activity"));
+                        int subactivityId = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
+                        String meal = cursor.getString(cursor.getColumnIndex("Meal"));
+                        String imagePath = cursor.getString(cursor.getColumnIndex("ImagePath"));
+                        int intensity = cursor.getInt(cursor.getColumnIndex("Intensity"));
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                        Date starttime = null;
+                        Date endtime = null;
+                        try {
+                            starttime = format.parse(cursor.getString(cursor.getColumnIndex("Start")));
+                            endtime = format.parse(cursor.getString(cursor.getColumnIndex("End")));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        //if startPrev is initialized (not initialized in first run)
+                        if (startPrev != null) {
+                            //if starttime of previous activity was on a different day
+                            if (TimeUtils.isDifferentDay(startPrev, starttime)) {
+                                if(Util.isDayComplete(day)&& day.size()>3) {
+                                    relevantDays.add(day);
+                                }
+                                day = new ArrayList<>();
+                            }
+                        }
+                        item = new ActivityItem(activityId, subactivityId, starttime, endtime, imagePath, meal, intensity);
+                        day.add(item);
+                        if(Util.isDayComplete(day) && day.size()>3) {
+                            relevantDays.add(day);
+                        }
+                        startPrev = starttime;
+                    } while (cursor.moveToNext());
+
+                }
+                break;
+            }
+            case PredictionFramework.WEEKDAYS: {
+                Date startPrev = null;
+
+                ArrayList<ActivityItem> day = new ArrayList<>();
+                ActivityItem item;
+                if (cursor.moveToFirst()) {
+                    do {
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                        Date starttime = null;
+                        Date endtime = null;
+                        try {
+                            starttime = format.parse(cursor.getString(cursor.getColumnIndex("Start")));
+                            endtime = format.parse(cursor.getString(cursor.getColumnIndex("End")));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+                        if(starttime != null) {
+                            //get the day of week from starttime
+                            Calendar cal1 = Calendar.getInstance();
+                            cal1.setTime(starttime);
+                            int dayOfWeek = cal1.get(Calendar.DAY_OF_WEEK);
+
+                            if (dayOfWeek == Calendar.MONDAY || dayOfWeek == Calendar.TUESDAY || dayOfWeek == Calendar.WEDNESDAY || dayOfWeek == Calendar.THURSDAY || dayOfWeek == Calendar.FRIDAY) {
+                                //get the rest of the parameters
+                                int activityId = cursor.getInt(cursor.getColumnIndex("id_Activity"));
+                                int subactivityId = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
+                                String meal = cursor.getString(cursor.getColumnIndex("Meal"));
+                                String imagePath = cursor.getString(cursor.getColumnIndex("ImagePath"));
+                                int intensity = cursor.getInt(cursor.getColumnIndex("Intensity"));
+
+                                if (startPrev != null) {
+                                    if (TimeUtils.isDifferentDay(startPrev, starttime)) {
+                                        if(Util.isDayComplete(day)) {
+                                            relevantDays.add(day);
+                                        }
+                                        day = new ArrayList<>();
+                                    }
+                                }
+                                item = new ActivityItem(activityId, subactivityId, starttime, endtime, imagePath, meal, intensity);
+                                day.add(item);
+
+                                startPrev = starttime;
+                            }
+                        }
+                    } while (cursor.moveToNext());
+                    if(Util.isDayComplete(day)) {
+                        relevantDays.add(day);
+                    }
+                }
+                break;
+            }
+            case PredictionFramework.WEEKENDS: {
+                Date startPrev = null;
+
+                ArrayList<ActivityItem> day = new ArrayList<>();
+                ActivityItem item;
+                if (cursor.moveToFirst()) {
+                    do {
+                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                        Date starttime = null;
+                        Date endtime = null;
+                        try {
+                            starttime = format.parse(cursor.getString(cursor.getColumnIndex("Start")));
+                            endtime = format.parse(cursor.getString(cursor.getColumnIndex("End")));
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                        if (starttime != null) {
+                            //get the day of week from starttime
+                            Calendar cal1 = Calendar.getInstance();
+                            cal1.setTime(starttime);
+                            int dayOfWeek = cal1.get(Calendar.DAY_OF_WEEK);
+
+                            if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
+                                //get the rest of the parameters
+                                int activityId = cursor.getInt(cursor.getColumnIndex("id_Activity"));
+                                int subactivityId = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
+                                String meal = cursor.getString(cursor.getColumnIndex("Meal"));
+                                String imagePath = cursor.getString(cursor.getColumnIndex("ImagePath"));
+                                int intensity = cursor.getInt(cursor.getColumnIndex("Intensity"));
+
+                                if (startPrev != null) {
+                                    if (TimeUtils.isDifferentDay(startPrev, starttime)) {
+                                        if(Util.isDayComplete(day)) {
+                                            relevantDays.add(day);
+                                        }
+                                        day = new ArrayList<>();
+                                    }
+                                }
+                                item = new ActivityItem(activityId, subactivityId, starttime, endtime, imagePath, meal, intensity);
+                                day.add(item);
+
+                                startPrev = starttime;
+                            }
+                        }
+                        if(Util.isDayComplete(day)) {
+                            relevantDays.add(day);
+                        }
+                    } while (cursor.moveToNext());
+
+
+                }
+                break;
+            }
+            default:
+                //single day
+                if (mode >= Calendar.SUNDAY && mode <= Calendar.SATURDAY) {
+                    Date startPrev = null;
+
+                    ArrayList<ActivityItem> day = new ArrayList<>();
+                    ActivityItem item;
+                    if (cursor.moveToFirst()) {
+                        do {
+                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+                            Date starttime = null;
+                            Date endtime = null;
+                            try {
+                                starttime = format.parse(cursor.getString(cursor.getColumnIndex("Start")));
+                                endtime = format.parse(cursor.getString(cursor.getColumnIndex("End")));
+                            } catch (ParseException e) {
+                                e.printStackTrace();
+                            }
+                            //get the day of week from starttime
+                            if (starttime != null) {
+                                Calendar cal1 = Calendar.getInstance();
+                                cal1.setTime(starttime);
+                                int dayOfWeek = cal1.get(Calendar.DAY_OF_WEEK);
+
+                                if (dayOfWeek == mode) {
+                                    //get the rest of the parameters
+                                    int activityId = cursor.getInt(cursor.getColumnIndex("id_Activity"));
+                                    int subactivityId = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
+                                    String meal = cursor.getString(cursor.getColumnIndex("Meal"));
+                                    String imagePath = cursor.getString(cursor.getColumnIndex("ImagePath"));
+                                    int intensity = cursor.getInt(cursor.getColumnIndex("Intensity"));
+
+                                    if (startPrev != null) {
+                                        if (TimeUtils.isDifferentDay(startPrev, starttime)) {
+                                            if(Util.isDayComplete(day)) {
+                                                relevantDays.add(day);
+                                            }
+                                            day = new ArrayList<>();
+                                        }
+                                    }
+                                    item = new ActivityItem(activityId, subactivityId, starttime, endtime, imagePath, meal, intensity);
+                                    day.add(item);
+
+                                    startPrev = starttime;
+                                }
+                            }
+                        } while (cursor.moveToNext());
+                        if(Util.isDayComplete(day)) {
+                            relevantDays.add(day);
+                        }
+
+                    }
+                }
+        }
+        cursor.close();
+        return relevantDays;
+    }
+
     public ArrayList<ArrayList<ActivityItem>> getAllDays(int mode) {
         String query = "SELECT al.*, s.id_Activity FROM " + ACTIVITYLIST_TABLE_NAME + " al " +
                 "INNER JOIN " + SUB_ACTIVITIES_TABLE_NAME + " s " + "ON al.id_SubActivity = s.id";

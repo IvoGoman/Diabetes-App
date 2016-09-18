@@ -139,7 +139,7 @@ public class DailyRoutineFragment extends Fragment {
         //drHandler.predictDailyRoutine(PredictionFramework.EVERY_DAY, getContext());
         ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(),0);
         ArrayList<ActivityItem> result = HeuristicsMinerImplementation.runHeuristicsMiner(items);
-        //drHandler.predictDailyRoutine(this.date);
+        drHandler.predictDailyRoutine(this.date);
         DailyRoutineView.clearSelectedActivities();
         updateView();
 
