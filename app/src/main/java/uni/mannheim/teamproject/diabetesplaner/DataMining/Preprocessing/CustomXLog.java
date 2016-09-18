@@ -63,8 +63,9 @@ public class CustomXLog {
                 builder.addAttribute(new XAttributeTimestampImpl("time:timestamp",new Date(Long.valueOf(eventList.get(i)[4]))));
             } else {
 //				Add a new Trace to the Builder [this happens for every case]
+                this.createEndEvent(builder, eventList.get(i));
                 builder.addTrace(eventList.get(i)[0]);
-            this.createInitialEvent(builder,eventList.get(i));
+                this.createInitialEvent(builder,eventList.get(i));
             }
             caseHelper = eventList.get(i)[0];
         }
@@ -73,12 +74,23 @@ public class CustomXLog {
         this.xLog =  builder.build();
     }
     private void createInitialEvent(LogBuilder builder, String[] event){
-        builder.addEvent("Start//Start");
+        builder.addEvent("9990");
         builder.addAttribute("Activity", "Start");
         builder.addAttribute("lifecycle:transition", "Start");
         builder.addAttribute(new XAttributeTimestampImpl("time:timestamp", new Date(Long.valueOf(event[3]))));
-        builder.addEvent("Start//Start");
+        builder.addEvent("9990");
         builder.addAttribute("Activity", "Start");
+        builder.addAttribute("lifecycle:transition", "Complete");
+        builder.addAttribute(new XAttributeTimestampImpl("time:timestamp",new Date(Long.valueOf(event[3]))));
+
+    }
+    private void createEndEvent(LogBuilder builder, String[] event){
+        builder.addEvent("9991");
+        builder.addAttribute("Activity", "End");
+        builder.addAttribute("lifecycle:transition", "Start");
+        builder.addAttribute(new XAttributeTimestampImpl("time:timestamp", new Date(Long.valueOf(event[3]))));
+        builder.addEvent("9991");
+        builder.addAttribute("Activity", "End");
         builder.addAttribute("lifecycle:transition", "Complete");
         builder.addAttribute(new XAttributeTimestampImpl("time:timestamp",new Date(Long.valueOf(event[3]))));
 
