@@ -1,12 +1,16 @@
 package uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag;
 
 
+import android.Manifest;
+import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -46,6 +50,8 @@ public class ActivityFragment extends Fragment  {
     private String mParam2;
 
     private AppCompatActivity aca;
+
+    private static final int MY_PERMISSIONS_READ_Storage = 0;
 
     /**
      * Use this factory method to create a new instance of
@@ -118,7 +124,25 @@ public class ActivityFragment extends Fragment  {
             @Override
             public void onClick(View v)
             {
-                 new FileChooser(getActivity()).setFileListener(new FileChooser.FileSelectedListener() {
+
+                if (ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.READ_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED
+                        || ContextCompat.checkSelfPermission(getActivity(),
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                        != PackageManager.PERMISSION_GRANTED) {
+
+                    // No explanation needed, we can request the permission.
+                    Log.d("filechooser permission", "No permission");
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                        Log.d("filechooser permission", "Request permission");
+                        requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                                MY_PERMISSIONS_READ_Storage);
+                    }
+                }
+                else {
+                    Log.d("filechooser permission", "has permission");
+                    new FileChooser(getActivity()).setFileListener(new FileChooser.FileSelectedListener() {
                     @Override
                     public void fileSelected(final File file) {
                         String fileString = (String) file.toString();
@@ -134,13 +158,59 @@ public class ActivityFragment extends Fragment  {
                         }
                     }
                     }).showDialog();
+                }
 
             }
             });
 
+
         return inflaterView;
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        Log.d("filechooser permission", "onRequestPermissionResult");
+        switch (requestCode) {
+            case MY_PERMISSIONS_READ_Storage: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("filechooser permission", "permission granted");
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+
+                    new FileChooser(getActivity()).setFileListener(new FileChooser.FileSelectedListener() {
+                        @Override
+                        public void fileSelected(final File file) {
+                            String fileString = (String) file.toString();
+                            String[] fileStringSplit = fileString.split("/");
+                            String requiredSplitPart = fileStringSplit[fileStringSplit.length-1];
+                            if ((ActivityInputHndlr.isFileFormatValid(fileString))== true){
+                                FileList.add(requiredSplitPart);
+                                Toast.makeText(getActivity(), "Chosen File:" + requiredSplitPart , Toast.LENGTH_LONG).show();
+                                ActivityInputHndlr.loadIntoDatabase(fileString);
+                                ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
+                            }else{
+                                Toast.makeText(getActivity(), "File is not in the correct format", Toast.LENGTH_LONG).show();
+                            }
+                        }
+                    }).showDialog();
+
+
+                } else {
+                    Log.d("filechooser permission", "permission denied");
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
 
 
 
