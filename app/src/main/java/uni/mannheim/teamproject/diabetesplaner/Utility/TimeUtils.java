@@ -419,6 +419,27 @@ public class TimeUtils {
      * Convert a time window from a string array to a corresponding timestamp Long array
      */
     public static Long[] convertDateStringToTimestamp(String[] timeWindow) {
+        long timestampStart = 1, timestampEnd = 1;
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date parsedStart = dateFormat.parse(timeWindow[0]);
+            Date parsedEnd = dateFormat.parse(timeWindow[1]);
+            timestampStart =    parsedStart.getTime();
+            timestampEnd =  parsedEnd.getTime();
+        } catch (Exception e) {//this generic but you can control another types of exception
+            e.printStackTrace();
+        }
+
+        Long[] timeWindowLong = {timestampStart, timestampEnd};
+        return timeWindowLong;
+    }
+    /**
+     * @param timeWindow array containing dates as string values
+     * @return date array converted to sql timestamp array
+     * @author Ivo 08.04.2016
+     * Convert a time window from a string array to a corresponding timestamp Long array
+     */
+    public static Long[] convertDateStringToTimestampSQL(String[] timeWindow) {
         Timestamp timestampStart = null, timestampEnd = null;
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
