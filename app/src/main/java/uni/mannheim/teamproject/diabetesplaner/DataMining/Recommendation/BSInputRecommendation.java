@@ -55,7 +55,7 @@ public class BSInputRecommendation extends Recommendation {
             int sec = (int)(Math.random()*60);
 
             Time time = new Time(hour, min, sec);
-            long timestamp = TimeUtils.convertDateStringToTimestamp(TimeUtils.convertDateAndTimeStringToDate(String.valueOf(date),String.valueOf(time)));
+            long timestamp =TimeUtils.convertDateAndTimeStringToDate(String.valueOf(date),String.valueOf(time)).getTime();
             MeasureItem item = new MeasureItem(timestamp, 150,"mg/dl",MeasureItem.MEASURE_KIND_BLOODSUGAR);
             dbHandler.insertMeasurement(item,1);
         }
@@ -70,7 +70,7 @@ public class BSInputRecommendation extends Recommendation {
 
             Time time = new Time(hour, min, sec);
 
-            long timestamp = TimeUtils.convertDateStringToTimestamp(TimeUtils.convertDateAndTimeStringToDate(String.valueOf(date),String.valueOf(time)));
+            long timestamp = TimeUtils.convertDateAndTimeStringToDate(String.valueOf(date),String.valueOf(time)).getTime();
             MeasureItem item = new MeasureItem(timestamp, 150,"mg/dl",MeasureItem.MEASURE_KIND_BLOODSUGAR);
             dbHandler.insertMeasurement(item,1);
         }

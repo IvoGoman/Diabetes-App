@@ -118,7 +118,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //if value is changed, then store value and change display
-                long timestamp = TimeUtils.convertDateStringToTimestamp(TimeUtils.convertDateAndTimeStringToDate(date_s,time_s));
+                long timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s,time_s).getTime();
                 try {
                     if (measure_value.equals(bloodsugar_level.getText().toString().replace(".","-")) == false) {
                         measure_value = bloodsugar_level.getText().toString();

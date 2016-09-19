@@ -127,7 +127,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
                     insulin_value = addInsulin.getText().toString();
                     String date_s = btn_date.getText().toString();
                     String time_s = btn_time.getText().toString();
-                    timestamp = TimeUtils.convertDateStringToTimestamp(TimeUtils.convertDateAndTimeStringToDate(date_s,time_s));
+                    timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s,time_s).getTime();
 
                     if(measure_value.equals("")== true && insulin_value.equals("")== true){
                         Toast.makeText(getActivity(), "No Measurements have been entered", Toast.LENGTH_LONG).show();
