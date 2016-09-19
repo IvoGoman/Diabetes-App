@@ -51,8 +51,17 @@ public class GSP_Prediction {
 		//normalize times to fit a day
 		float ratio = 1440f/(float)sum;
 
+		ArrayList<Float> mods = new ArrayList<>();
+//		ArrayList<Float> floatTimes = new ArrayList<>();
 		for(int i=0; i<times.size(); i++){
-			times.set(i, (long) ((times.get(i)/1000/60)*ratio));
+			times.set(i, (long)((times.get(i)/1000/60)*ratio));
+			mods.add(((times.get(i)/1000/60)*ratio)%1);
+		}
+
+		while(GSP_Util.sumUp(times) != 1440){
+			int maxIndex = GSP_Util.findMax(mods);
+			times.set(maxIndex, times.get(maxIndex)+1);
+			mods.set(maxIndex, 0f);
 		}
 
 		//create the actual daily routine where an activity is represented as an ActivityItem

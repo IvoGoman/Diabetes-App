@@ -145,4 +145,24 @@ public class GSP_Util {
 
 		return sum;
 	}
+
+	public static int sumUp(ArrayList<Long> list){
+		int sum = 0;
+		for(int i=0 ;i<list.size(); i++){
+			sum += list.get(i);
+		}
+		return sum;
+	}
+
+	public static int findMax(ArrayList<Float> list){
+		float max = Float.MIN_VALUE;
+		int index = 0;
+		for(int i=0 ;i<list.size(); i++){
+			if(max<list.get(i)){
+				max = list.get(i);
+				index = i;
+			}
+		}
+		return index;
+	}
 }
