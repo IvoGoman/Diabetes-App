@@ -64,8 +64,8 @@ public class ActivityInputHandler {
         creator.shiftSameBorderTime();
         //merges two consecutive activities which are the same
         creator.mergeConsecutiveSameActivity(true);
-        creator.removeFirstCase(true);
-        creator.removeLastCase();
+//        creator.removeFirstCase(true);
+//        creator.removeLastCase();
 
         //retrieves the preprocessed list
         eventList = creator.getList();
