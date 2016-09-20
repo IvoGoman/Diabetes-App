@@ -42,6 +42,7 @@ public class GSP {
 	 * applies the GSP algorithm
 	 * @param minsup
 	 * @return
+	 * @author Stefan
 	 */
 	public HashMap<Sequence, Float> findFrequentPatterns(float minsup){
 		HashMap<Sequence, Float> freqPat = new HashMap<>();
@@ -93,6 +94,7 @@ public class GSP {
 	 * returns a HashMap<Item,Support> with all frequent one sequences
 	 * @param minsup
 	 * @return
+	 * @author Stefan
 	 */
 	public void findFrequentOneSequences(float minsup){
 		for(int i=0; i<cases.size(); i++){

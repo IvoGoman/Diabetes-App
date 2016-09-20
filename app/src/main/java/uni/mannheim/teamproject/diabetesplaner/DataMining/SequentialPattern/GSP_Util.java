@@ -146,6 +146,12 @@ public class GSP_Util {
 		return sum;
 	}
 
+	/**
+	 * sums up a list
+	 * @param list
+	 * @return
+	 * @author Stefan
+     */
 	public static int sumUp(ArrayList<Long> list){
 		int sum = 0;
 		for(int i=0 ;i<list.size(); i++){
@@ -154,6 +160,12 @@ public class GSP_Util {
 		return sum;
 	}
 
+	/**
+	 * finds maximum value in a list
+	 * @param list
+	 * @return
+	 * @author Stefan
+     */
 	public static int findMax(ArrayList<Float> list){
 		float max = Float.MIN_VALUE;
 		int index = 0;

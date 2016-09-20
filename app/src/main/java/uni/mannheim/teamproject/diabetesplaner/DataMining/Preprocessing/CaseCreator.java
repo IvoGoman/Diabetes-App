@@ -7,7 +7,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
- * Created by Stefan
+ * @author Stefan
  */
 public class CaseCreator {
 
@@ -18,6 +18,7 @@ public class CaseCreator {
 	/**
 	 * Constructor
 	 * @param list CSV file as ArrayList<String[]>
+	 * @author Stefan
 	 */
 	public CaseCreator(ArrayList<String[]> list){
 		this.list = list;
@@ -26,6 +27,7 @@ public class CaseCreator {
 	/**
 	 * inits the indexes of start and endtime
 	 * @param array first line of csv file
+	 * @author Stefan
 	 */
 	private void initStartAndEndtimeIndex(String[]array){
 		for (int j = 0; j < array.length; j++) {
@@ -40,9 +42,9 @@ public class CaseCreator {
 
 	/**
 	 * creates the cases and splits an activity going over two days
-	 * TODO bug: does not work from last to first day of two years
 	 * does not handle logging mistakes like an activity that goes accidental over many days
-	 * or a break of some days!
+	 * or a break of some days
+	 * @author Stefan
 	 */
 	public void createCases() {
 		ArrayList<String[]> list2 = new ArrayList<String[]>();
@@ -124,6 +126,7 @@ public class CaseCreator {
 	 * Thursday = 5
 	 * Friday = 6
 	 * Saturday = 7
+	 * @author Stefan
 	 */
 	public void addDayOfWeek(){
 		initStartAndEndtimeIndex(list.get(0));
@@ -144,6 +147,7 @@ public class CaseCreator {
 	/**
 	 * prints a single activity log entry
 	 * @param activity
+	 * @author Stefan
 	 */
 	private void printActivity(String[] activity){
 		for(int j=0; j<activity.length; j++){
@@ -172,6 +176,7 @@ public class CaseCreator {
 	 * @param starttimeIndex
 	 * @param endtimeIndex
 	 * @return last activity of day edited
+	 * @author Stefan
 	 */
 	private String[] editEndOfDay(String[] lastActivityPreviousDay, Calendar calPrev, int starttimeIndex, int endtimeIndex){
 		//change endtime of last activity of day
@@ -190,6 +195,7 @@ public class CaseCreator {
 	 * @param starttimeIndex
 	 * @param endtimeIndex
 	 * @return first activity of the day
+	 * @author Stefan
 	 */
 	private String[] editBeginOfDay(String[] lastActiviyPreviousDay, Calendar calActual, int starttimeIndex, int endtimeIndex){
 		//copy last activity and let it start at 00:00
@@ -212,6 +218,7 @@ public class CaseCreator {
 	 * inserts caseID into a single event log entry
 	 * @param activity
 	 * @param caseID
+	 * @author Stefan
 	 */
 	private String[] insertCase(String[] activity, int caseID, boolean initial){
 //		TODO: Remove setting boolean to false and withCase to "CaseID" when solution is found
@@ -235,6 +242,7 @@ public class CaseCreator {
 	 * It splits the activity into days and creates a unique case id for every day.
 	 * @param source Path to an activity log in csv format
 	 * @return ArrayList that contains the activity list divided into cases
+	 * @author Stefan
 	 */
 	public ArrayList<String[]> getActivityListWithCases(String source){
 		ArrayList<String[]> list = Util.read(source);
@@ -247,6 +255,7 @@ public class CaseCreator {
 	 * Also another column is created and filled with the day of the weak
 	 * @param source Path to an activity log in csv format
 	 * @param target Path for saving the resulting csv file
+	 * @author Stefan
 	 */
 	public void saveActivityWithCases(String source, String target){
 		ArrayList<String[]> list = Util.read(source);
@@ -270,10 +279,11 @@ public class CaseCreator {
 	}
 
 	/**
-	 * 	 * Merges two activities following each other that have the same activity and subactivity into one activity
+	 * Merges two activities following each other that have the same activity and subactivity into one activity
 	 * should be.
 	 * Has to be applied after case creation !!
 	 * @param withSubactivity if true the subactivity is taken into account for comparison
+	 * @author Stefan
      */
 	public void mergeConsecutiveSameActivity(boolean withSubactivity){
 		String prevActivity = "";
@@ -339,7 +349,7 @@ public class CaseCreator {
 	/**
 	 * removes the day with the least caseID (first day in log)
 	 * Assumes that it is not complete
-	 * @param update if ture updates all case ids so the log starts with caseID one
+	 * @param update if true updates all case ids so the log starts with caseID one
 	 * @author Stefan 07.07.2016
 	 */
 	public void removeFirstCase(boolean update){
