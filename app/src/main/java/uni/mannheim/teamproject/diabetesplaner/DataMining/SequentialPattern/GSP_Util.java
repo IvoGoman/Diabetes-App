@@ -122,7 +122,7 @@ public class GSP_Util {
 				String amPm = sdf.format(date);
 
 				String key;
-				if (amPm.equals("AM")) {
+				if (amPm.equals("AM") || amPm.equals("vorm.")) {
 					key = item.getActivityId() + "_" + item.getSubactivityId() + "_AM";
 				} else {
 					key = item.getActivityId() + "_" + item.getSubactivityId() + "_PM";

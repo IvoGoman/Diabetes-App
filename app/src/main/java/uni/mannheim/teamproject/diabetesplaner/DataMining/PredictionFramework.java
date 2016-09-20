@@ -50,7 +50,7 @@ public class PredictionFramework {
      */
     public static ArrayList<ArrayList<ActivityItem>> retrieveTrainingData(int mode) {
         DataBaseHandler dbHandler = AppGlobal.getHandler();
-        return dbHandler.getAllDays1(mode);
+        return dbHandler.getAllDays(mode);
     }
 
     /**

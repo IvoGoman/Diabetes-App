@@ -43,10 +43,10 @@ public class DailyRoutineHandler extends DayHandler{
     public void predictDailyRoutine(ArrayList<Integer> algorithms, int mode) throws Exception {
         dailyRoutine.clear();
         dailyRoutine = PredictionFramework.predict(PredictionFramework.retrieveTrainingData(mode), algorithms);
-        Log.d(TAG, "predicted daily routine: ");
-        for(int i=0; i<dailyRoutine.size();i++){
-            Log.d(TAG, dailyRoutine.get(i).print());
-        }
+//        Log.d(TAG, "predicted daily routine: ");
+//        for(int i=0; i<dailyRoutine.size();i++){
+//            Log.d(TAG, dailyRoutine.get(i).print());
+//        }
         AppGlobal.getHandler().insertNewRoutine(dailyRoutine);
     }
 

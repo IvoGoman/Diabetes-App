@@ -19,6 +19,7 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionFramework;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
@@ -141,24 +142,24 @@ public class DailyRoutineFragment extends Fragment {
 //            items.add(drv);
 //        }
 
-//        ArrayList<Integer> algos = new ArrayList<>();
+        ArrayList<Integer> algos = new ArrayList<>();
 //        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
-//        algos.add(PredictionFramework.PREDICTION_GSP);
+        algos.add(PredictionFramework.PREDICTION_GSP);
 //        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
 //        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
-//        try {
-//            drHandler.predictDailyRoutine(algos, PredictionFramework.EVERY_DAY);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            Log.e(TAG +".onCreateView()", e.getLocalizedMessage());
-//        }
+        try {
+            drHandler.predictDailyRoutine(algos, PredictionFramework.EVERY_DAY);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG +".onCreateView()", e.getLocalizedMessage());
+        }
         //DummyDataCreator.populateDataBase();
         //drHandler.predictDailyRoutine(PredictionFramework.EVERY_DAY, getContext());
 
 //        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(),0);
 //        ArrayList<ActivityItem> result = HeuristicsMinerImplementation.runHeuristicsMiner(items);
 
-        drHandler.predictDailyRoutine(this.date);
+//        drHandler.predictDailyRoutine(this.date);
 
         DailyRoutineView.clearSelectedActivities();
         updateView();

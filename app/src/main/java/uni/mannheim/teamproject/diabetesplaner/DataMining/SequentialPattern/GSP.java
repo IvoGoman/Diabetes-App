@@ -109,7 +109,7 @@ public class GSP {
 				String item;
 
 				//starttime is in the morning or eventing
-				if(amPm.equals("AM")){
+				if(amPm.equals("AM") || amPm.equals("vorm.")){
 					item = cases.get(i).get(j).getActivityId() + "_" + cases.get(i).get(j).getSubactivityId() + "_" + "AM";
 				}else{
 					item = cases.get(i).get(j).getActivityId() + "_" + cases.get(i).get(j).getSubactivityId() + "_" + "PM";

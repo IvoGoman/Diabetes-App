@@ -21,7 +21,7 @@ public class Main_ExecutionTutorial {
 		//------------------replace with your filepaths-------------------------------------------------------
 		String source = "C:\\Users\\Stefan\\Documents\\Uni Mannheim\\Master\\Team Project\\Stefan_Data_27.07.16\\SDC_ActivityData.csv";
 		String dest = "C:\\Users\\Stefan\\Documents\\Uni Mannheim\\Master\\Team Project\\Stefan_Data_27.07.16\\ActivityData_Cases.csv";
-		String destTestData = "C:\\Users\\Stefan\\Documents\\Uni Mannheim\\Master\\Team Project\\activityDataTestData2.csv";
+		String destTestData = "C:\\Users\\Stefan\\Documents\\Uni Mannheim\\Master\\Team Project\\Stefan_Data_27.07.16\\test.csv";
 
 
 		//reads the csv from the source path
