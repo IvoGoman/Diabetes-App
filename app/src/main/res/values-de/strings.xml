@@ -124,7 +124,8 @@
     <string name="apples">Äpfel</string>
     <string name="b_potatoes">gekochte Kartoffeln</string>
     <string name="diet_soda">Diätwasser</string>
-    <string name="enter_insulin_dosage"></string>
+    <string name="enter_insulin_dosage">Insulinwert eingeben</string>
+    <string name="input_measurements">Messwerte eingeben</string>
     <string name="kale">Kohl - gekocht</string>
     <string name="m_date">Datum</string>
     <string name="m_time">Zeit</string>

@@ -69,6 +69,7 @@
     <string name="ADD">ADD</string>
     <string name="add_dialog_title">Add activity</string>
     <string name="edit_dialog_title">Edit activity</string>
+    <string name="input_measurements">Input Measurements</string>
 
     <string name="reset">Reset</string>
     <string name="cancel">Cancel</string>

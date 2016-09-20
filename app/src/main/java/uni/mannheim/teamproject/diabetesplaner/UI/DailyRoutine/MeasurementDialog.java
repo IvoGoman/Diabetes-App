@@ -57,7 +57,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Input Measurements");
+        builder.setTitle(R.string.input_measurements);
 
         View view = getLayout();
 
