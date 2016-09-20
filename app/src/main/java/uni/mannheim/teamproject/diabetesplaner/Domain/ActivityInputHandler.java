@@ -64,6 +64,8 @@ public class ActivityInputHandler {
         creator.shiftSameBorderTime();
         //merges two consecutive activities which are the same
         creator.mergeConsecutiveSameActivity(true);
+        //first case of the complete list is csv header (causes type conversation errors if not removed)
+        creator.removeFirstCase(true);
 //        creator.removeFirstCase(true);
 //        creator.removeLastCase();
 

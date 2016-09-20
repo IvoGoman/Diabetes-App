@@ -7,7 +7,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
- * Created by Stefan
+ * @author Stefan
  */
 public class CaseCreator {
 
@@ -339,7 +339,7 @@ public class CaseCreator {
 	/**
 	 * removes the day with the least caseID (first day in log)
 	 * Assumes that it is not complete
-	 * @param update if ture updates all case ids so the log starts with caseID one
+	 * @param update if true updates all case ids so the log starts with caseID one
 	 * @author Stefan 07.07.2016
 	 */
 	public void removeFirstCase(boolean update){

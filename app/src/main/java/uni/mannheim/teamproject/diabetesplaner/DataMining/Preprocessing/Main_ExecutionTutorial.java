@@ -37,8 +37,10 @@ public class Main_ExecutionTutorial {
 		creator.shiftSameBorderTime();
 		//merges two consecutive activities which are the same
 		creator.mergeConsecutiveSameActivity(true);
+		//first case of the complete list is csv header (causes type conversation errors if not removed)
 		creator.removeFirstCase(true);
-		creator.removeLastCase();
+//		creator.removeFirstCase(true);
+//		creator.removeLastCase();
 
 		for(int i=0; i<creator.getList().size(); i++){
 			for(int j=0; j<creator.getList().get(i).length; j++){
