@@ -39,13 +39,16 @@ public class Main_ExecutionTutorial {
 		creator.addDayOfWeek();
 		Util.printList(list);
 		System.out.println("-------------------------------------------------");
+		//first case of the complete list is csv header (causes type conversation errors if not removed)
+		creator.removeFirstCase(true);
 		creator.shiftSameBorderTime();
 		//merges two consecutive activities which are the same
 		creator.mergeConsecutiveSameActivity(true);
-		//first case of the complete list is csv header (causes type conversation errors if not removed)
+		//removes activities where endtime is before starttime
+		creator.removeActivitiesWithEndBeforeStarttime();
+
 		creator.removeFirstCase(true);
-//		creator.removeFirstCase(true);
-//		creator.removeLastCase();
+		creator.removeLastCase();
 
 		for(int i=0; i<creator.getList().size(); i++){
 			for(int j=0; j<creator.getList().get(i).length; j++){

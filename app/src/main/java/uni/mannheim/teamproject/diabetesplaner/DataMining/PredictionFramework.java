@@ -89,7 +89,7 @@ public class PredictionFramework {
 
         ArrayList<ActivityItem> defaultRoutine = new ArrayList<>();
 
-        if(AppGlobal.getHandler().CheckRoutineAdded(AppGlobal.getHandler())) {
+        if(!AppGlobal.getHandler().CheckRoutineAdded(AppGlobal.getHandler())) {
             //default prediction (Sleeping from 0:00 to 23:59)
             Date start = TimeUtils.getDate(new Date(), 0, 0);
             Date end = TimeUtils.getDate(new Date(), 23, 59);

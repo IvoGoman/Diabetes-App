@@ -62,14 +62,17 @@ public class ActivityInputHandler {
         creator.createCases();
         //adds a column with the day of the week
         creator.addDayOfWeek();
-        //reduces the endtime of the previous activity by 1 if necessary
+        //first case of the complete list is csv header (causes type conversation errors if not removed)
+        creator.removeFirstCase(true);
         creator.shiftSameBorderTime();
         //merges two consecutive activities which are the same
         creator.mergeConsecutiveSameActivity(true);
-        //first case of the complete list is csv header (causes type conversation errors if not removed)
+        //removes activities where endtime is before starttime
+        creator.removeActivitiesWithEndBeforeStarttime();
+
+        //removes first and last case since they are incomplete and would skrew the prediction
         creator.removeFirstCase(true);
-//        creator.removeFirstCase(true);
-//        creator.removeLastCase();
+        creator.removeLastCase();
 
         //retrieves the preprocessed list
         eventList = creator.getList();

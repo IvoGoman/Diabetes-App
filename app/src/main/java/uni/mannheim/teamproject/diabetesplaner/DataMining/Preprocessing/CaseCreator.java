@@ -1,4 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -292,7 +294,7 @@ public class CaseCreator {
 
 		ArrayList<Boolean> sameAsBefore = new ArrayList<>();
 		//find duplicates
-		for(int i=0; i<list.size();i++){
+		for(int i=1; i<list.size();i++){
 			//initialize filed in arraylist
 			sameAsBefore.add(false);
 			//first activity cannot be a duplicate
@@ -399,15 +401,37 @@ public class CaseCreator {
 	 */
 	public void shiftSameBorderTime(){
 		int prevEnd = 0;
-		for(int i=1; i<list.size(); i++){
-			if(i==1){
-				prevEnd = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[endtimeIndex]));
-			}else {
-				int start = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[starttimeIndex]));
-				if(start == prevEnd){
-					list.get(i-1)[endtimeIndex] = String.valueOf(TimeUtils.addMinuteToTimestamp(Long.parseLong(list.get(i-1)[endtimeIndex]),-1));
+		for(int i=0; i<list.size(); i++){
+			try {
+				if (i == 0) {
+					prevEnd = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[endtimeIndex]));
+				} else {
+					int start = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[starttimeIndex]));
+					if (start == prevEnd) {
+						list.get(i - 1)[endtimeIndex] = String.valueOf(TimeUtils.addMinuteToTimestamp(Long.parseLong(list.get(i - 1)[endtimeIndex]), -1));
+					}
+					prevEnd = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[endtimeIndex]));
 				}
-				prevEnd = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[endtimeIndex]));
+			}catch(Exception e){
+				Log.e("CaseCreator", "shiftSameBorderTime():" + e.getLocalizedMessage());
+				continue;
+			}
+		}
+	}
+
+	/**
+	 * removes an activity in case its end time is before its start time
+	 * @author Stefan 20.09.2016
+	 */
+	public void removeActivitiesWithEndBeforeStarttime(){
+		for(int i=0; i<list.size(); i++){
+			Date start = new Date(Long.parseLong(list.get(i)[starttimeIndex]));
+			Date end = new Date(Long.parseLong(list.get(i)[endtimeIndex]));
+			String startString = TimeUtils.dateToTimeString(start);
+			String endString = TimeUtils.dateToTimeString(end);
+			if(end.before(start) || end.equals(start) || startString.equals(endString)){
+				list.remove(i);
+				i--;
 			}
 		}
 	}
