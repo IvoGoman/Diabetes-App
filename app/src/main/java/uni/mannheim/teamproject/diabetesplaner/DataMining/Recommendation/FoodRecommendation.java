@@ -65,6 +65,10 @@ public class FoodRecommendation extends Recommendation {
 //        return super.onUnbind(intent);
 //    }
 
+    /**
+     * performs the actual recommendation
+     * @author Stefan
+     */
     @Override
     public void recommend() {
         //check if notifications are switched on

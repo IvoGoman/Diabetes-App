@@ -93,6 +93,7 @@ public class InputDialog extends DialogFragment{
     /**
      * creates the layout and returns the view object that contains it
      * @return
+     * @author Stefan
      */
     public View getLayout(){
         LayoutInflater inflater = (LayoutInflater) getActivity().getLayoutInflater();
@@ -312,6 +313,7 @@ public class InputDialog extends DialogFragment{
     /**
      * checks if time is valid
      * @return
+     * @author Stefan
      */
     public boolean isTimeValid() {
         return startDate.before(endDate);
@@ -329,9 +331,9 @@ public class InputDialog extends DialogFragment{
 //    }
 
     /**
-     * @author Stefan 30.03.2016
      * sets the initial date
      * @param date
+     * @author Stefan 30.03.2016
      */
     public void setDate(Date date){
         this.startDate = date;
@@ -339,20 +341,10 @@ public class InputDialog extends DialogFragment{
         this.date = date;
     }
 
-//    /**
-//     * Ivo Gosemann
-//     * gets the date of the activity
-//     *
-//     * @return date
-//     */
-//    public String getDate() {
-//        return date;
-//    }
-
-
     /**
      * set the activity of the input dialog
      * @param activity activity id
+     * @author Stefan
      */
     public void setActivity(int activity){
         this.activity = activity-1;
@@ -395,6 +387,11 @@ public class InputDialog extends DialogFragment{
         return startTimeButton;
     }
 
+    /**
+     * sets the properties of the input dialog
+     * @param activityItem
+     * @author Stefan
+     */
     public void setActivityItem(ActivityItem activityItem) {
         this.activityItem = activityItem;
         setActivity(activityItem.getActivityId());
@@ -412,6 +409,11 @@ public class InputDialog extends DialogFragment{
         this.intensity = intensity;
     }
 
+    /**
+     * returns intensity, if intensity == null it returns -1
+     * @return
+     * @author Stefan
+     */
     public int getIntensity(){
         if (this.intensity == null )
         {
@@ -453,6 +455,7 @@ public class InputDialog extends DialogFragment{
     /**
      * displays the image form a path, sets the ImageView of the meal visible and the imagesource
      * @param imagePath path of image
+     * @author Stefan
      */
     public static void displayImageFromPath(String imagePath){
         InputDialog.imagePath = imagePath;
@@ -477,6 +480,7 @@ public class InputDialog extends DialogFragment{
     /**
      * sets the meal and replaces linebreaks with a space
      * @return
+     * @author Stefan
      */
     public String getMeal(){
         String text = String.valueOf(mealInputText.getText());
@@ -495,6 +499,7 @@ public class InputDialog extends DialogFragment{
     /**
      * sets startDate and the corresponding start time button
      * @param startDate
+     * @author Stefan
      */
     public void setStartDate(Date startDate) {
         if(startTimeButton != null) {
@@ -515,6 +520,7 @@ public class InputDialog extends DialogFragment{
     /**
      * sets endDate and the corresponding end time button
      * @param endDate
+     * @author Stefan
      */
     public void setEndDate(Date endDate) {
         if(endTimeButton != null){
@@ -581,6 +587,7 @@ public class InputDialog extends DialogFragment{
     /**
      * sets the intensity text with respect to the seek bar value
      * @param value
+     * @author Stefan
      */
     public void setIntensityText(int value){
         switch (value){

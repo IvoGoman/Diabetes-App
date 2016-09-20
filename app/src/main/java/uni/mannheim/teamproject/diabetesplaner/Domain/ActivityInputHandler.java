@@ -18,6 +18,7 @@ public class ActivityInputHandler {
      * Reads an input file that contains an activity log and
      * adds it to the database
      * @param filepath path where the file is located
+     * @author Stefan
      */
     public static void loadIntoDatabase(String filepath){
 
@@ -36,6 +37,7 @@ public class ActivityInputHandler {
      * checks if the filepaths contains a file with a valid file format
      * @param filepath location of a file
      * @return true: valid /false: not valid
+     * @author Stefan
      */
     public static boolean isFileFormatValid(String filepath){
         if(filepath.matches(".*\\.csv") || filepath.matches(".*\\.sqlite")){

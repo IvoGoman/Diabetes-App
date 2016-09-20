@@ -10,6 +10,11 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
  */
 public class Main_ExecutionTutorial {
 
+	/**
+	 * execute to test how the loading csv files works. Can run independent from the app.
+	 * @param args
+	 * @author Stefan
+     */
 	public static void main(String[] args) {
 
 		//initialize source and destination paths

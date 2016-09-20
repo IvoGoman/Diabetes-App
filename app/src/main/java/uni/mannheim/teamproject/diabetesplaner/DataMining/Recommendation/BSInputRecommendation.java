@@ -42,7 +42,8 @@ public class BSInputRecommendation extends Recommendation {
     }
 
     /**
-     * creates fake bloodsugar values
+     * creates fake bloodsugar values for testing
+     * @author Stefan
      */
     public void createFakeBS(){
 
@@ -181,6 +182,7 @@ public class BSInputRecommendation extends Recommendation {
      * returns the mean of every cluster in a list
      * @param cs list with clusters
      * @return ArrayList with the means
+     * @author Stefan
      */
     public ArrayList<Double> getClusterMeans(List<Cluster<DoublePoint>> cs){
         ArrayList<Double> means = new ArrayList<>();

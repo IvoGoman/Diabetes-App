@@ -91,6 +91,11 @@ public class DailyRoutineFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /**
+     * Sets the action bar and initializes the DailyRoutineHandler
+     * @param savedInstanceState
+     * @author Stefan
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +111,14 @@ public class DailyRoutineFragment extends Fragment {
 
     }
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     * @author Stefan
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -151,7 +164,8 @@ public class DailyRoutineFragment extends Fragment {
     }
 
     /**
-     * updates View
+     * updates the View that displays the daily routine
+     * @author Stefan
      */
     public void updateView(){
         //get predicted routine
@@ -320,6 +334,7 @@ public class DailyRoutineFragment extends Fragment {
      * returns the px value for dp
      * @param dp
      * @return
+     * @author Stefan
      */
     public int getpx(int dp){
         return (int)(dp*getResources().getDisplayMetrics().density);
@@ -329,6 +344,7 @@ public class DailyRoutineFragment extends Fragment {
      * return the dp value for px
      * @param px
      * @return
+     * @author Stefan
      */
     public int getdp(int px){
         return (int)(px/getResources().getDisplayMetrics().density);
@@ -337,6 +353,7 @@ public class DailyRoutineFragment extends Fragment {
     /**
      * returns parent activity
      * @return parant activity
+     * @author Stefan
      */
     public AppCompatActivity getParentActivity(){
         return aca;
@@ -345,6 +362,7 @@ public class DailyRoutineFragment extends Fragment {
     /**
      * returns the list with all activity views of the dailyroutine
      * @return DailyRoutineView
+     * @author Stefan
      */
     public ArrayList<DailyRoutineView> getActivityList(){
         return items;
@@ -353,6 +371,7 @@ public class DailyRoutineFragment extends Fragment {
     /**
      * returns the layout
      * @return LinearLayout
+     * @author Stefan
      */
     public static LinearLayout getLinearLayout(){
         return linearLayout;
@@ -361,6 +380,7 @@ public class DailyRoutineFragment extends Fragment {
     /**
      * sets the ic_delete icon in the action bar visible true/false
      * @param isVisible visible/invisible
+     * @author Stefan
      */
     public static void setDeleteIconVisible(boolean isVisible){
         MenuItem deleteItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.delete_icon_action_bar);
@@ -370,6 +390,7 @@ public class DailyRoutineFragment extends Fragment {
     /**
      * sets visibility of add item in the action bar
      * @param isVisible visible/invisible
+     * @author Stefan
      */
     public static void setAddItemVisible(boolean isVisible){
         MenuItem addItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.add_icon_action_bar_routine);
@@ -379,6 +400,7 @@ public class DailyRoutineFragment extends Fragment {
     /**
      * sets the edit icon in the action bar visible
      * @param isVisible visible/invisible
+     * @author Stefan
      */
     public static void setEditIconVisible(boolean isVisible){
         MenuItem editItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.edit_icon_action_bar_routine);
@@ -428,6 +450,7 @@ public class DailyRoutineFragment extends Fragment {
     /**
      * returns the scrollview
      * @return
+     * @author Stefan
      */
     public static ScrollView getScrollView(){
         return scrollView;

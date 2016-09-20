@@ -11,7 +11,9 @@ import android.view.MenuItem;
 
 import uni.mannheim.teamproject.diabetesplaner.R;
 
-
+/**
+ * @author Stefan
+ */
 public class SettingsActivity extends AppCompatActivity implements BloodsugarDialog_and_Settings {
 
     public static final String TAG = SettingsActivity.class.getSimpleName();

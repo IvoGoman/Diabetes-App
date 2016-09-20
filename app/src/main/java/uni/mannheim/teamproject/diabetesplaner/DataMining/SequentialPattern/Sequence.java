@@ -97,20 +97,11 @@ public class Sequence extends ArrayList{
 		}
 		return s;
 	}
-
-//    for (int from = 0; from < str.length(); from++) {
-//    for (int to = from + 1; to <= str.length(); to++) {
-//    	if(from < to){
-//    		if(!(from == 0 && to == str.length())){
-//    			System.out.println(str.substring(from, to));
-//    		}
-//    	}
-//    }
-//}
 	
 	/**
 	 * creates all subsequences 
 	 * @return
+	 * @author Stefan
 	 */
 	public ArrayList<Sequence> buildAllSubsequences() {
 		ArrayList<Sequence> allSeqs = new ArrayList<>();
@@ -132,6 +123,7 @@ public class Sequence extends ArrayList{
 	 * generates the powerset
 	 * @param originalSet
 	 * @return
+	 * @author Stefan
 	 */
 	public static <T> Set<Set<T>> powerSet(Set<T> originalSet) {
 	    Set<Set<T>> sets = new HashSet<Set<T>>();
