@@ -89,7 +89,10 @@
     <string name="meal">Mahlzeit</string>
     <string name="Description">Beschreibung</string>
     <string name="insulinText">Insulin Dosis</string>
-    <string name="bloodsugar_prompt">Bitte das aktuelle Blutzuckerlevel eintragen:</string>
+    <string name="bloodsugar_prompt">Blutzuckerwert eintragen</string>
+    <string name="bloodsugar_date">Datum eingeben:</string>
+    <string name="bloodsugar_time">Zeitpunkt eingeben:</string>
+    <string name="hint_measurement">Blutzuckerwert eingeben</string>
     <string name="activity_limit">Eine Aktivität muss übrig bleiben</string>
     <string name="bloodSugar">Blutzucker</string>
     <string name="gl">Glukoselevel</string>
@@ -102,6 +105,7 @@
     <string name="pref_predModel">Vorhersagen</string>
     <string name="insulinTextField">Einheit/mL</string>
     <string name="submit">Absenden</string>
+    <string name="submit2">Eintragen</string>
     <string name="intensity">Intensität</string>
     <string name="high">hoch</string>
     <string name="low">niedrig</string>
@@ -120,7 +124,8 @@
     <string name="apples">Äpfel</string>
     <string name="b_potatoes">gekochte Kartoffeln</string>
     <string name="diet_soda">Diätwasser</string>
-    <string name="enter_insulin_dosage"></string>
+    <string name="enter_insulin_dosage">Insulinwert eingeben</string>
+    <string name="input_measurements">Messwerte eingeben</string>
     <string name="kale">Kohl - gekocht</string>
     <string name="m_date">Datum</string>
     <string name="m_time">Zeit</string>

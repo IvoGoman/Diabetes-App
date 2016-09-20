@@ -6,38 +6,37 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:padding="24dp"
     android:weightSum="1">
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/activity"
-        android:layout_marginLeft="16dp"
-        android:layout_marginTop="16dp"
-        android:textSize="22dp"/>
+        android:textAppearance="?android:attr/textAppearanceMedium" />
     <Spinner
         android:id="@+id/add_dialog_spinner"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"/>
+        android:layout_height="wrap_content" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="12dp" />
 
     <TextView
         android:id="@+id/tv_subactivity"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="@string/subactivity"
-        android:layout_marginLeft="16dp"
-        android:textSize="22dp"/>
+        android:textAppearance="?android:attr/textAppearanceMedium" />
     <Spinner
         android:id="@+id/add_dialog_spinner_sub"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"/>
+        android:layout_height="wrap_content" />
 
     <TableLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp">
+        android:layout_height="wrap_content">
 
         <TableRow
             android:layout_width="match_parent"
@@ -47,14 +46,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/meal"
-                android:textSize="22dp"
                 android:layout_gravity="center"
-                android:layout_column="0"/>
+                android:layout_column="0"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
             <ImageButton
                 android:id="@+id/meal_input_cam"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
                 android:layout_column="1"
                 android:src="@android:drawable/ic_menu_camera" />
         </TableRow>
@@ -64,17 +62,13 @@
         android:id="@+id/meal_input"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp"
         android:hint="@string/Description"
-        android:textSize="22dp" />
+        android:textAppearance="?android:attr/textAppearanceMedium" />
 
     <ImageView
         android:id="@+id/meal_image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:layout_marginRight="16dp" />
+        android:layout_height="wrap_content" />
 
     <TableLayout
         android:layout_width="match_parent"
@@ -91,20 +85,20 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="22dp"
                 android:text="@string/intensity"
                 android:gravity="left"
                 android:layout_weight="1"
-                android:layout_column="0"/>
+                android:layout_column="0"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
             <TextView
                 android:id="@+id/intensity_value"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:textSize="20dp"
                 android:text="@string/low"
                 android:layout_weight="1"
                 android:gravity="right"
-                android:layout_column="1"/>
+                android:layout_column="1"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
         </TableRow>
     </TableLayout>
 
@@ -112,87 +106,89 @@
         android:id="@+id/intensity_bar"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:progress="0"
         android:secondaryProgress="0" />
 
 
-    <TableLayout
+    <Space
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_weight="0.16"
-        android:layout_marginLeft="16dp">
+        android:layout_height="4dp" />
 
-        <!-- edited by Naira, adjusting button formats -->
-        <TableRow
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp">
+
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:gravity="center_vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/starttime"
-                android:textSize="22dp"
-                android:layout_marginTop="15dp"
-                android:layout_column="0" />
+                android:layout_column="0"
+                android:gravity="center_vertical"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </RelativeLayout>
 
-
-            <!-- edited by Naira, changing pickers into raised buttons -->
-            <android.support.v7.widget.CardView
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                card_view:cardCornerRadius="2dp"
-                card_view:cardBackgroundColor="@color/colorPrimaryDark"
-                android:layout_margin="6dp"
-                card_view:cardElevation="6dp"
-                >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6">
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/start_button"
-                style="@style/ButtonFormat"
-                android:layout_column="1" />
+                style="?android:attr/buttonStyleSmall"
+                android:layout_column="1"
+                android:textColor="@color/colorAccent" />
+        </RelativeLayout>
 
-            </android.support.v7.widget.CardView>
+    </LinearLayout>
 
-        </TableRow>
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="4dp" />
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:layout_weight="0.4">
 
-
-        <TableRow
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_weight="0.4"
+            android:gravity="center_vertical">
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="@string/endtime"
-                android:textSize="22dp"
-                android:layout_marginTop="15dp"
-                android:layout_column="0" />
+                android:layout_column="0"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </RelativeLayout>
 
-            <!-- edited by Naira, changing pickers into raised buttons -->
-            <android.support.v7.widget.CardView
-                xmlns:card_view="http://schemas.android.com/apk/res-auto"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                card_view:cardCornerRadius="2dp"
-                card_view:cardBackgroundColor="@color/colorPrimaryDark"
-                android:layout_margin="6dp"
-                card_view:cardElevation="6dp"
-                >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="0.6">
 
             <Button
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:id="@+id/end_button"
-                style="@style/ButtonFormat"
-                android:layout_column="1" />
+                style="?android:attr/buttonStyleSmall"
+                android:layout_column="1"
+                android:textColor="@color/colorAccent" />
+        </RelativeLayout>
 
-            </android.support.v7.widget.CardView>
-        </TableRow>
-    </TableLayout>
     </LinearLayout>
+
+</LinearLayout>
 </ScrollView>
