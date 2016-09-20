@@ -12,8 +12,7 @@
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="@string/bloodsugar_prompt"
-        android:id="@+id/tv_bloodsugar"
-        android:gravity="center_horizontal" />
+        android:id="@+id/tv_bloodsugar" />
 
     <Space
         android:layout_width="match_parent"
