@@ -114,7 +114,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         AlertDialog.Builder mybuilder = new AlertDialog.Builder(getActivity());
         mybuilder.setView(view);
 
-        mybuilder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+        mybuilder.setPositiveButton(R.string.submit2, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //if value is changed, then store value and change display
@@ -176,7 +176,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
 
         });
 
-        mybuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        mybuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dismiss();
