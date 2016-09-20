@@ -41,7 +41,13 @@ public class DailyRoutineHandler extends DayHandler{
      * @author Stefan 06.09.2016
      */
     public void predictDailyRoutine(ArrayList<Integer> algorithms, int mode) throws Exception {
+        dailyRoutine.clear();
         dailyRoutine = PredictionFramework.predict(PredictionFramework.retrieveTrainingData(mode), algorithms);
+        Log.d(TAG, "predicted daily routine: ");
+        for(int i=0; i<dailyRoutine.size();i++){
+            Log.d(TAG, dailyRoutine.get(i).print());
+        }
+        AppGlobal.getHandler().insertNewRoutine(dailyRoutine);
     }
 
     /**
@@ -75,6 +81,7 @@ public class DailyRoutineHandler extends DayHandler{
             e.printStackTrace();
         }
         Log.d("DailyRoutineFragment", "Size after predict " +dailyRoutine.get(0).getStarttime());
+        AppGlobal.getHandler().insertNewRoutine(dailyRoutine);
     }
 
 

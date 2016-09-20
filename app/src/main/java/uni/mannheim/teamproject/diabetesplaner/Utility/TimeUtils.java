@@ -186,6 +186,18 @@ public class TimeUtils {
     }
 
     /**
+     * returns the date in yyyy-MM-dd format
+     * @param date
+     * @return
+     * @author Stefan
+     */
+    public static String dateToDateString(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String dateString = sdf.format(date);
+        return dateString;
+    }
+
+    /**
      * converts a string time to a date time
      *
      * @param time a String time in format HH:mm

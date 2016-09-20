@@ -23,7 +23,6 @@ public class ActivityItem {
     private Date endtime;
     private String meal = null;
     private String imagePath = null;
-    private Date date = null;
     private Integer intensity = null;
     private Double duration = null;
 
@@ -49,14 +48,6 @@ public class ActivityItem {
     public ActivityItem(int activityId, int subactivityId) {
         this.activityId = activityId;
         this.subactivityId = subactivityId;
-    }
-
-    public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime, Date date) {
-        this.activityId = activityId;
-        this.subactivityId = subactivityId;
-        this.starttime = starttime;
-        this.endtime = endtime;
-        this.date = date;
     }
 
     public ActivityItem(int activityId, int subactivityId, Date starttime, Date endtime, String imagePath, String meal) {
@@ -91,10 +82,8 @@ public class ActivityItem {
         this.subactivityId = activityItem.getSubactivityId();
         this.starttime = activityItem.getStarttime();
         this.endtime = activityItem.getEndtime();
-        this.date = activityItem.getDate();
         this.meal = Util.getValidString(activityItem.getMeal());
         this.imagePath = Util.getValidString(activityItem.getImagePath());
-        this.date = activityItem.getDate();
         this.intensity = activityItem.getIntensity();
     }
 
@@ -113,16 +102,6 @@ public class ActivityItem {
         this.endtime = TimeUtils.getTime(endtime);
     }
 
-    /*
-        public ActivityItem(int activityId, int subactivityId, String starttime, String endtime, String imagePath, String meal){
-            this.activityId = activityId;
-            this.subactivityId = subactivityId;
-            this.starttime = starttime;
-            this.endtime = endtime;
-            this.meal = meal;
-            this.imagePath = imagePath;
-        }
-    */
     public int getActivityId() {
         return activityId;
     }
@@ -136,7 +115,7 @@ public class ActivityItem {
     }
 
     /**
-     * returns starttime in HH:mm format
+     * returns starttime in yyyy-MM-dd HH:mm format
      *
      * @return
      */
@@ -145,7 +124,7 @@ public class ActivityItem {
     }
 
     /**
-     * returns endtime in HH:mm format
+     * returns endtime in yyyy-MM-dd HH:mm format
      *
      * @return
      */
@@ -155,10 +134,6 @@ public class ActivityItem {
 
     public Date getEndtime() {
         return endtime;
-    }
-
-    public Date getDate() {
-        return date;
     }
 
     public void setStarttime(Date date) {

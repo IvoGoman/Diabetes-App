@@ -1,5 +1,7 @@
 package uni.mannheim.teamproject.diabetesplaner.Domain;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -78,12 +80,16 @@ public class DayHandler {
         //TODO combine with backend, adapt the daily routine
     }
 
+    /**
+     * updates the daily routine
+     * @author Stefan
+     */
     public void update() {
         DailyRoutineView.clearSelectedActivities();
         DailyRoutineView.setSelectable(false);
         DailyRoutineView.setActionBarItems();
-        this.clearDailyRoutine();
-        this.getDayRoutine(date);
+        clearDailyRoutine();
+        getDayRoutine(date);
         /*for (int i = 1; i < dailyRoutine.size(); i++) {
             if (dailyRoutine.get(i-1).getActivityId()==dailyRoutine.get(i).getActivityId()){
                 ActivityItem Act = dailyRoutine.get(i-1);

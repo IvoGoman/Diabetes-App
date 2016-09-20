@@ -1,5 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining;
 
+import android.util.Log;
 import android.util.Pair;
 
 import java.util.ArrayList;
@@ -21,6 +22,8 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
  * Created by Stefan on 06.09.2016.
  */
 public class PredictionFramework {
+    private static final String TAG = "PredictionFramework";
+
     public static final int PREDICTION_DECISION_TREE = 0;
     public static final int PREDICTION_GSP = 1;
     public static final int PREDICTION_FUZZY_MINER = 2;
@@ -58,32 +61,41 @@ public class PredictionFramework {
      * @return
      * @author Stefan 06.09.2016
      */
-    public static ArrayList<ActivityItem> predict(ArrayList<ArrayList<ActivityItem>> train, ArrayList<Integer> algorithms) throws Exception {
+    public static ArrayList<ActivityItem> predict(ArrayList<ArrayList<ActivityItem>> train, ArrayList<Integer> algorithms){
         if(train.size()>0) {
             if (algorithms.size() == 1) {
                 switch (algorithms.get(0)) {
                     case PREDICTION_DECISION_TREE:
-                        //TODO predict with decision tree
-                        return Prediction.GetRoutineAsAI();
+                        try {
+                            return Prediction.GetRoutineAsAI();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e(TAG, e.toString());
+                        }
+                        return null;
                     case PREDICTION_GSP:
                         return GSP_Prediction.makeGSPPrediction(train, 0.2f);
                     case PREDICTION_FUZZY_MINER:
                         FuzzyModel model = new FuzzyModel(train, false);
                         return model.makeFuzzyMinerPrediction();
                     case PREDICTION_HEURISTICS_MINER:
-                        //TODO predict with heuristics miner
+//                        return HeuristicsMinerImplementation.runHeuristicsMiner(train);
                         return null;
                 }
             } else if (algorithms.size() > 1) {
                 return vote(algorithms, train);
             }
         }
-        //default prediction (Sleeping from 0:00 to 23:59)
+
         ArrayList<ActivityItem> defaultRoutine = new ArrayList<>();
-        Date start = TimeUtils.getDate(new Date(),0,0);
-        Date end = TimeUtils.getDate(new Date(),23,59);
-        ActivityItem item = new ActivityItem(1,1,start,end);
-        defaultRoutine.add(item);
+
+        if(AppGlobal.getHandler().CheckRoutineAdded(AppGlobal.getHandler())) {
+            //default prediction (Sleeping from 0:00 to 23:59)
+            Date start = TimeUtils.getDate(new Date(), 0, 0);
+            Date end = TimeUtils.getDate(new Date(), 23, 59);
+            ActivityItem item = new ActivityItem(1, 1, start, end);
+            defaultRoutine.add(item);
+        }
         return defaultRoutine;
     }
 
@@ -102,7 +114,12 @@ public class PredictionFramework {
             int algo = algos.get(i);
             switch (algo) {
                 case PREDICTION_DECISION_TREE:
-                    //TODO predict with decision tree
+                    try {
+                        results.put(PREDICTION_DECISION_TREE, Prediction.GetRoutineAsAI());
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, e.toString());
+                    }
                     break;
                 case PREDICTION_GSP:
                     results.put(PREDICTION_GSP, GSP_Prediction.makeGSPPrediction(train, 0.2f));

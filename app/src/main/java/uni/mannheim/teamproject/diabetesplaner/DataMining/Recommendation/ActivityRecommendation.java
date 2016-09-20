@@ -24,9 +24,6 @@ public class ActivityRecommendation extends Recommendation {
     //    private final static int INTERVAL = 1000 * 60 * 5; //5 minutes
     private final static int INTERVAL = 1000 * 10; //10 sec
 
-    private final static int DEFAUL_REC = 0;
-    private final static int FIRST_REC = 1;
-
     Handler mHandler = new Handler();
     private long lastRecommendation = 0;
     private int mIdOffset = 0;
@@ -72,18 +69,9 @@ public class ActivityRecommendation extends Recommendation {
 //            mIdOffset = getMidOffset();
             mIdOffset = Recommendation.ACTIVITY_REC;
 
-            //switch between different recommendation methods
-            int rec = FIRST_REC;
             long time = System.currentTimeMillis();
 
-            switch (rec) {
-                case DEFAUL_REC:
-                    giveDefaultRecommendation();
-                    break;
-                case FIRST_REC:
-                    giveBSbasedRecommendation();
-                    break;
-            }
+            giveBSbasedRecommendation();
 
             lastRecommendation = time;
         }
@@ -152,36 +140,6 @@ public class ActivityRecommendation extends Recommendation {
         }
     }
 
-    /**
-     * gives default recommendation
-     *
-     * @author Stefan 30.04.2016
-     */
-    public void giveDefaultRecommendation() {
-        ActivityItem current = getCurrentActivity();
-
-        if (checkSleeptime()) {
-            sendNotification("You should better go to bed.", mIdOffset);
-        } else if (isStressed()) {
-            sendNotification("It seems that you are stressed. Better take some insuline.", mIdOffset);
-        } else {
-            if (checkInsulin()) {
-                sendNotification("Doing a low intense exercise would be good for you", mIdOffset);
-            } else {
-                sendNotification("You should better do some exercise.", mIdOffset);
-            }
-        }
-
-        if (isExercise(current)) {
-
-        }
-        if (isLowIntenseExercise(current)) {
-            if (checkSleeptime()) {
-
-            }
-        }
-    }
-
     public boolean isExercise(ActivityItem curr) {
         return false;
     }
@@ -243,12 +201,6 @@ public class ActivityRecommendation extends Recommendation {
                 return true;
             }
         }
-        return false;
-    }
-
-    public boolean checkInsulin() {
-        //TODO retrieve latest value
-        DataBaseHandler dbHandler = AppGlobal.getHandler();
         return false;
     }
 

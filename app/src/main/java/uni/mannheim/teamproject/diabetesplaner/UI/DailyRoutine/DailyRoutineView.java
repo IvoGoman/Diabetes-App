@@ -47,7 +47,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private int subactivity;
     private Date startDate;
     private Date endDate;
-    private Date date;
     private String bloodsugarText;
     private String insulinText;
     private String meal;
@@ -162,7 +161,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         if(this.imagePath != null && this.imagePath.length() > 1 && !this.imagePath.equals("null")) {
             this.mealImage = Util.getCompressedPic(imagePath);
         }
-        this.date = activityItem.getDate();
         this.startDate = activityItem.getStarttime();
         this.endDate = activityItem.getEndtime();
 

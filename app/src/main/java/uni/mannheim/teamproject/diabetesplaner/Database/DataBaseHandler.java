@@ -589,6 +589,34 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return "Default";
     }
 
+    /**
+     * removes a single day from the database
+     * @param day day to remove
+     * @author Stefan 20.09.2016
+     */
+    public void deleteDay(Date day){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Date next = TimeUtils.addMinuteFromDate(day, 1440);
+        db.execSQL("delete from ActivityList where Start >= '"+TimeUtils.dateToDateString(day)+"' and Start < '" + TimeUtils.dateToDateString(next) + "' ;");
+
+    }
+
+    /**
+     * inserts a predicted day into the database
+     * @param prediction arrayList with activities
+     * @author Stefan 20.09.2016
+     */
+    public void insertNewRoutine(ArrayList<ActivityItem> prediction){
+        if(prediction.size()>0) {
+            deleteDay(prediction.get(0).getStarttime());
+
+            for(int i=0; i<prediction.size(); i++){
+                InsertActivity(prediction.get(i));
+            }
+        }
+
+    }
+
     public void InsertNewRoutine(ArrayList<Prediction.PeriodAction> prediction) {
         int idActivity;
         int idLocation;
@@ -681,10 +709,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param helper
      * @param id
      * @return
+     * @author Stefan
      */
     public String getActionById(DataBaseHandler helper, int id) {
         SQLiteDatabase db = helper.getWritableDatabase();
-        //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select title from " + ACTIVITIES_TABLE_NAME + " where id=" + id, null);
         String name = "";
         if(cursor.moveToFirst()){

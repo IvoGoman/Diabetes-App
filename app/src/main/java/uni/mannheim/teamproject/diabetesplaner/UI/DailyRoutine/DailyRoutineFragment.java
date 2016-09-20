@@ -24,7 +24,6 @@ import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
-import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.HeuristicsMinerImplementation;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -147,12 +146,20 @@ public class DailyRoutineFragment extends Fragment {
 //        algos.add(PredictionFramework.PREDICTION_GSP);
 //        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
 //        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
-//        drHandler.predictDailyRoutine(algos, PredictionFramework.EVERY_DAY);
+//        try {
+//            drHandler.predictDailyRoutine(algos, PredictionFramework.EVERY_DAY);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            Log.e(TAG +".onCreateView()", e.getLocalizedMessage());
+//        }
         //DummyDataCreator.populateDataBase();
         //drHandler.predictDailyRoutine(PredictionFramework.EVERY_DAY, getContext());
-        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(),0);
-        ArrayList<ActivityItem> result = HeuristicsMinerImplementation.runHeuristicsMiner(items);
+
+//        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(),0);
+//        ArrayList<ActivityItem> result = HeuristicsMinerImplementation.runHeuristicsMiner(items);
+
         drHandler.predictDailyRoutine(this.date);
+
         DailyRoutineView.clearSelectedActivities();
         updateView();
 
@@ -172,7 +179,7 @@ public class DailyRoutineFragment extends Fragment {
         linearLayout.removeAllViews();
         items.clear();
         //TODO --------- for testing ------------------------------------------
-        ArrayList<ActivityItem> listItems = drHandler.getDailyRoutine();
+        ArrayList<ActivityItem> listItems = drHandler.getDayRoutine(new Date());
 //        ArrayList<ActivityItem> listItems = new ArrayList<>();
 //
 //        String start1 = "17.09.2016 00:00:00";

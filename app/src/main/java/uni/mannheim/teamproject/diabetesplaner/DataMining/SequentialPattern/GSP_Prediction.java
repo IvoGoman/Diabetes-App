@@ -49,13 +49,13 @@ public class GSP_Prediction {
 		}
 
 		//normalize times to fit a day
-		float ratio = 1440f/(float)sum;
+		float ratio = 1440f/(float)(sum/1000/60);
 
 		ArrayList<Float> mods = new ArrayList<>();
 //		ArrayList<Float> floatTimes = new ArrayList<>();
 		for(int i=0; i<times.size(); i++){
-			times.set(i, (long)((times.get(i)/1000/60)*ratio));
-			mods.add(((times.get(i)/1000/60)*ratio)%1);
+			times.set(i, (long)((float)(times.get(i)/1000/60)*ratio));
+			mods.add(((float)(times.get(i)/1000/60)*ratio)%1);
 		}
 
 		while(GSP_Util.sumUp(times) != 1440){
@@ -79,7 +79,7 @@ public class GSP_Prediction {
 			int duration = times.get(i) != null ? times.get(i).intValue() : 0;
 
 			Date starttime = TimeUtils.getDate(TimeUtils.minutesOfDayToTimestamp(minOfDay));
-			Date endtime = TimeUtils.getDate(TimeUtils.minutesOfDayToTimestamp(duration-1));
+			Date endtime = TimeUtils.getDate(TimeUtils.minutesOfDayToTimestamp(minOfDay+duration-1));
 			minOfDay += duration;
 
 			ActivityItem item = new ActivityItem(activityId, subactivityId, starttime, endtime);
