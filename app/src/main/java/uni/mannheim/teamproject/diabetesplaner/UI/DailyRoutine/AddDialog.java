@@ -38,7 +38,7 @@ public class AddDialog extends InputDialog {
                         subactivity = getSelectedActivity();
                     }
                     ActivityItem activityItem = new ActivityItem(getSelectedActivity(), subactivity, getStartDate(), getEndDate(), getImagePath(), getMeal(), getIntensity());
-                    AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), activityItem);
+                    AppGlobal.getHandler().ReplaceActivity(activityItem);
 
                     getDrHandler().update();
 

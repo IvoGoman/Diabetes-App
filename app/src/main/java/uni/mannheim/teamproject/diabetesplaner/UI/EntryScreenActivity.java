@@ -135,10 +135,10 @@ public class EntryScreenActivity extends AppCompatActivity
                     //Change of Username
                     TextView textView = (TextView) navigationView.findViewById(R.id.username);
                     DataBaseHandler database = AppGlobal.getHandler();
-                    if (database.getUser(AppGlobal.getHandler(),database.getUserID(AppGlobal.getHandler()))!=null)
+                    if (database.getUser(database.getUserID())!=null)
                     {
-                        textView.setText(database.getUser(AppGlobal.getHandler(), database.getUserID(AppGlobal.getHandler()))[0] + " " +
-                                database.getUser(AppGlobal.getHandler(), database.getUserID(AppGlobal.getHandler()))[1]);
+                        textView.setText(database.getUser(database.getUserID())[0] + " " +
+                                database.getUser(database.getUserID())[1]);
                     }
                 }
             });
@@ -275,7 +275,7 @@ public class EntryScreenActivity extends AppCompatActivity
                         for (int i = 0; i < selected.size(); i++) {
                             String start = TimeUtils.dateToDateTimeString(drHandler.getDailyRoutine().get(selected.get(i)).getStarttime());
                             String end = TimeUtils.dateToDateTimeString(drHandler.getDailyRoutine().get(selected.get(i)).getEndtime());
-                            AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(), start, end);
+                            AppGlobal.getHandler().DeleteActivity(start, end);
                         }
                         drHandler.update();
 

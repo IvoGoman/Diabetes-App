@@ -376,9 +376,6 @@ public class Prediction {
 
     public static ArrayList<TimeAction> GetRoutineAsTimeAction(Instances inst) throws Exception {
 
-        //String filePath = "/data/data/uni.mannheim.teamproject.diabetesplaner/SDC_ActivityData-2.csv";
-        //ActivityInputHandler.readCSV(filePath);
-
         if (PA1.isEmpty() == false) {
             PA1.clear();
         }

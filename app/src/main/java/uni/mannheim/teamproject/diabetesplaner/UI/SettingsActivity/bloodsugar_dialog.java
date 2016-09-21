@@ -129,7 +129,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                         //Check if entered value is to high or to low
                         if(check_mg(convert_to_mg(Double.parseDouble(measure_value),measure)) == true) {
                            MeasureItem measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value),measure, MeasureItem.MEASURE_KIND_BLOODSUGAR);
-                            database.insertMeasurement(measureItem, database.getUserID(database));
+                            database.insertMeasurement(measureItem, database.getUserID());
 
                             communicator.respond(null, measure_value, measure, 1);
                             Toast.makeText(getActivity(), "Blood sugar level: " + measure_value + " "
@@ -198,9 +198,9 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
      */
     private void initialize_measure()
     {
-        if(database.getLastBloodsugarMeasurement(AppGlobal.getHandler(),1) != null) {
-            bloodsugar_level.setText(database.getLastBloodsugarMeasurement(AppGlobal.getHandler(), 1)[0].toString());
-            measure = database.getLastBloodsugarMeasurement(AppGlobal.getHandler(), 1)[1].toString();
+        if(database.getLastBloodsugarMeasurement(1) != null) {
+            bloodsugar_level.setText(database.getLastBloodsugarMeasurement(1)[0].toString());
+            measure = database.getLastBloodsugarMeasurement(1)[1].toString();
         }
         if (measure.equals("")) {
             measure = "mg/dl";

@@ -133,7 +133,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
                     if (measure_value.equals("") == true) {
                         measureItem = new MeasureItem(timestamp, Double.parseDouble(insulin_value), insulin, MeasureItem.MEASURE_KIND_INSULIN);
-                        database.insertMeasurement(measureItem, database.getUserID(database));
+                        database.insertMeasurement(measureItem, database.getUserID());
 
                         EntryScreenActivity.updateDailyRoutine();
 
@@ -141,17 +141,17 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
                     } else if (insulin_value.equals("") == true) {
                         measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value), measure, MeasureItem.MEASURE_KIND_BLOODSUGAR);
-                        database.insertMeasurement(measureItem, database.getUserID(database));
+                        database.insertMeasurement(measureItem, database.getUserID());
 
                         EntryScreenActivity.updateDailyRoutine();
 
                         Toast.makeText(getActivity(), "No Insulin Dosage entered; " + measure_value + " " + measure + " stored", Toast.LENGTH_LONG).show();
                     } else if (check_mg(convert_to_mg(Double.parseDouble(measure_value), measure)) == true && check_Units(convert_to_Units(Double.parseDouble(insulin_value), insulin)) == true) {
                         measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value), measure, MeasureItem.MEASURE_KIND_BLOODSUGAR);
-                        database.insertMeasurement(measureItem, database.getUserID(database));
+                        database.insertMeasurement(measureItem, database.getUserID());
 
                         measureItem = new MeasureItem(timestamp, Double.parseDouble(insulin_value), insulin, MeasureItem.MEASURE_KIND_INSULIN);
-                        database.insertMeasurement(measureItem, database.getUserID(database));
+                        database.insertMeasurement(measureItem, database.getUserID());
 
                         EntryScreenActivity.updateDailyRoutine();
 
@@ -190,9 +190,9 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
     private void initialize_measure() {
 
-        if (database.getLastBloodsugarMeasurement(AppGlobal.getHandler(), 1) != null) {
-            addBloodSugar.setText(database.getLastBloodsugarMeasurement(AppGlobal.getHandler(), 1)[0].toString());
-            measure = database.getLastBloodsugarMeasurement(AppGlobal.getHandler(), 1)[1].toString();
+        if (database.getLastBloodsugarMeasurement(1) != null) {
+            addBloodSugar.setText(database.getLastBloodsugarMeasurement(1)[0].toString());
+            measure = database.getLastBloodsugarMeasurement(1)[1].toString();
         }
 
         if (measure.equals("")) {
@@ -227,9 +227,9 @@ public class MeasurementDialog extends MeasurementInputDialog {
                 mmol.setChecked(false);
                 break;
         }
-        if (database.getLastInsulinMeasurement(AppGlobal.getHandler(), 1) != null) {
-            addInsulin.setText(database.getLastInsulinMeasurement(AppGlobal.getHandler(), 1)[0].toString());
-            insulin = database.getLastInsulinMeasurement(AppGlobal.getHandler(), 1)[1].toString();
+        if (database.getLastInsulinMeasurement(1) != null) {
+            addInsulin.setText(database.getLastInsulinMeasurement(1)[0].toString());
+            insulin = database.getLastInsulinMeasurement(1)[1].toString();
         }
 
         if (insulin.equals("")) {

@@ -134,8 +134,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             pref_name = (EditTextPreference) findPreference("pref_key_name");
 //            String Test1 = sharedPrefs.getString("pref_key_name", "Vorname, Name");
 //            pref_name.setSummary(Test1);
-            int id = database.getUserID(AppGlobal.getHandler());
-            pref_name.setSummary(database.getUser(AppGlobal.getHandler(),id)[0] + " " + database.getUser(AppGlobal.getHandler(),id)[1] );
+            int id = database.getUserID();
+            pref_name.setSummary(database.getUser(id)[0] + " " + database.getUser(id)[1] );
 
         }catch(Exception e)
         {
@@ -217,19 +217,19 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 name.setText(nameDialog.getText().toString().split(" ")[0] +" " +nameDialog.getText().toString().split(" ")[1]);
 
                 Log.d(TAG, String.valueOf(R.string.username));
-                database.InsertProfile(database, nameDialog.getText().toString().split(" ")[0],
+                database.InsertProfile(nameDialog.getText().toString().split(" ")[0],
                         nameDialog.getText().toString().split(" ")[1], 20);
                 editTextPref.setSummary(nameDialog.getText());
             } else if (editTextPref.getKey().equals("pref_key_weight")) {
 
                 if (pref_weight_measurement.getEntry().equals("Kilogramm")) {
                     editTextPref.setSummary(nameDialog.getText() + " kg");
-                    database.InsertWeight(database, 1, Double.parseDouble(nameDialog.getText().toString()), "kg");
+                    database.InsertWeight(1, Double.parseDouble(nameDialog.getText().toString()), "kg");
                 }
 
                 if (pref_weight_measurement.getEntry().equals("Pound")) {
                     editTextPref.setSummary(nameDialog.getText() + " lbs");
-                    database.InsertWeight(database, 1, Double.parseDouble(nameDialog.getText().toString()), "lbs");
+                    database.InsertWeight(1, Double.parseDouble(nameDialog.getText().toString()), "lbs");
                 }
             }
         }
@@ -290,8 +290,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
      */
     public void bloodsugar_change(bloodsugar_dialog bs, String data, String measure, int ID) {
         if (ID == 1) {
-            data = database.getLastBloodsugarMeasurement(AppGlobal.getHandler(),1)[0];
-            measure = database.getLastBloodsugarMeasurement(AppGlobal.getHandler(),1)[1];
+            data = database.getLastBloodsugarMeasurement(1)[0];
+            measure = database.getLastBloodsugarMeasurement(1)[1];
             pref_bloodsugar.setSummary(data + " " + measure);
             bloodsugar_measure_value = data;
             bloodsugar_measure = measure;
@@ -324,13 +324,13 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         {
 
         }
-        if(database.GetLastWeight(AppGlobal.getHandler(),database.getUserID(AppGlobal.getHandler())) != null) {
-            pref_weight.setSummary(database.GetLastWeight(AppGlobal.getHandler(), 1)[0] + " " + database.GetLastWeight(AppGlobal.getHandler(), 1)[1]);
+        if(database.GetLastWeight(database.getUserID()) != null) {
+            pref_weight.setSummary(database.GetLastWeight(1)[0] + " " + database.GetLastWeight(1)[1]);
             pref_weight.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
                 @Override
                 public boolean onPreferenceChange(Preference preference, Object newValue) {
                     try {
-                        database.InsertWeight(AppGlobal.getHandler(), 1, Double.parseDouble(pref_weight.getText()), pref_weight_measurement.getValue());
+                        database.InsertWeight(1, Double.parseDouble(pref_weight.getText()), pref_weight_measurement.getValue());
                         pref_weight.setSummary(pref_weight.getText() + " " + pref_weight_measurement.getValue());
                         return true;
                     } catch (Exception e) {
@@ -351,9 +351,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
      */
     private void initialize_bloodsugar()
     {
-        if(database.getLastBloodsugarMeasurement(database,1) != null) {
-            bloodsugar_measure = database.getLastBloodsugarMeasurement(database,1)[1];
-            bloodsugar_measure_value = database.getLastBloodsugarMeasurement(database,1)[0];
+        if(database.getLastBloodsugarMeasurement(1) != null) {
+            bloodsugar_measure = database.getLastBloodsugarMeasurement(1)[1];
+            bloodsugar_measure_value = database.getLastBloodsugarMeasurement(1)[0];
         }
         else
         {

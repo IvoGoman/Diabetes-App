@@ -145,7 +145,6 @@ public class Evaluation {
             train1.add(train.instance(i));
         }
         ArrayList<Prediction.TimeAction> Pred = Prediction.GetRoutineAsTimeAction(train1);
-
         for (int i=0;i<train1.numInstances();i++){
             int minute = (int)train.instance(i).value(0);
             double action = (int)train.instance(i).value(3);
@@ -233,38 +232,6 @@ public class Evaluation {
 
 
     static float AccuracyGsp(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> gsp){
-        int acc=0;
-        int count=0;
-        HashMap<Integer,Integer> gspRes = new HashMap<>();
-        HashMap<Integer,Integer> realRes = new HashMap<>();
-
-        for (ActivityItem gsp1:gsp){
-            HashMap<Integer,Integer> hashGsp = activityItemToHashMap(gsp1);
-            for (Integer key: hashGsp.keySet()){
-                gspRes.put(key,hashGsp.get(key));
-            }
-        }
-
-        for (ArrayList<ActivityItem> day: train){
-            for (ActivityItem activityItem: day){
-                HashMap<Integer,Integer> hashReal = activityItemToHashMap(activityItem);
-                for (Integer key: hashReal.keySet()){
-                    realRes.put(key,hashReal.get(key));
-                }
-            }
-            for (Integer key: realRes.keySet()){
-                count++;
-                if (realRes.get(key)==gspRes.get(key)){
-                    acc++;
-                }
-            }
-        }
-
-        return (float)acc/count;
-    }
-
-
-    static float AccuracyTree(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> gsp){
         int acc=0;
         int count=0;
         HashMap<Integer,Integer> gspRes = new HashMap<>();

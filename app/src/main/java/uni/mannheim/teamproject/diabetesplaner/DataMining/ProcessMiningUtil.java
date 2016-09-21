@@ -111,7 +111,7 @@ public class ProcessMiningUtil {
      */
     public static int getMostFrequentStartActivity() {
         DataBaseHandler dbHandler = AppGlobal.getHandler();
-        ArrayList<ActivityItem> activities = dbHandler.getAllActivities(dbHandler);
+        ArrayList<ActivityItem> activities = dbHandler.getAllActivities();
         HashMap<Integer, Integer> activityCount = new HashMap<>();
         int currentCount;
         for (ActivityItem item : activities) {

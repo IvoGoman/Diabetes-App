@@ -100,7 +100,7 @@ public class RingChartFragment extends ChartFragment {
         DataBaseHandler handler = AppGlobal.getHandler();
         Date date = TimeUtils.getCurrentDate();
 //        ArrayList<ActivityItem> activityItems = handler.GetDay(handler,date);
-        ArrayList<ActivityItem> activityItems = handler.getActivities(handler, date, timeFrame);
+        ArrayList<ActivityItem> activityItems = handler.getActivities(date, timeFrame);
         ArrayList<String> labels = new ArrayList<>();
         ArrayList<Entry> pieValues = new ArrayList<>();
         HashMap<String, Integer> valueMap = new HashMap<>();
@@ -109,7 +109,7 @@ public class RingChartFragment extends ChartFragment {
         ActivityItem item = null;
         for (int i = 0; i < activityItems.size(); i++) {
             item = activityItems.get(i);
-            label = handler.getActionById(handler, item.getActivityId());
+            label = handler.getActionById(item.getActivityId());
             if (!valueMap.containsKey(label)) {
                 value = TimeUtils.getDuration(item.getStarttime(), item.getEndtime());
                 valueMap.put(label, value);

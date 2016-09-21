@@ -167,7 +167,7 @@ public class FoodRecommendation extends Recommendation {
      * @author Stefan 12.09.2016
      */
     public String getIntroString(int id) {
-        return getResources().getString(R.string.your_activity) + " " + db.getActionById(db, id) + ". ";
+        return getResources().getString(R.string.your_activity) + " " + db.getActionById(id) + ". ";
     }
 
     /**
@@ -201,7 +201,7 @@ public class FoodRecommendation extends Recommendation {
             if (iCurr > 0) {
                 return routine.get(iCurr - 1);
             } else {
-                ArrayList<ActivityItem> yesterday = AppGlobal.getHandler().getActivities(AppGlobal.getHandler(), TimeUtils.getYesterdaysDate(TimeUtils.getCurrentDate()), "DAY");
+                ArrayList<ActivityItem> yesterday = AppGlobal.getHandler().getActivities(TimeUtils.getYesterdaysDate(TimeUtils.getCurrentDate()), "DAY");
                 if (yesterday.size() > 0) {
                     return yesterday.get(yesterday.size() - 1);
                 }else{

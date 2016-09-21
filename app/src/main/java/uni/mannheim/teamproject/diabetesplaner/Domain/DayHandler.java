@@ -1,7 +1,5 @@
 package uni.mannheim.teamproject.diabetesplaner.Domain;
 
-import android.util.Log;
-
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -70,8 +68,8 @@ public class DayHandler {
                 String Start = dailyRoutine.get(i-1).getStarttimeAsString();
                 Date End = dailyRoutine.get(i-1).getEndtime();
                 Act.setEndtime(End);
-                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
-                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
+                AppGlobal.getHandler().DeleteActivity(dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
+                AppGlobal.getHandler().DeleteActivity(dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
                 AppGlobal.getHandler().InsertActivity(Act);
             }
         }
@@ -126,8 +124,8 @@ public class DayHandler {
                 String Start = dailyRoutine.get(i-1).getStarttimeAsString();
                 Date End = dailyRoutine.get(i-1).getEndtime();
                 Act.setEndtime(End);
-                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
-                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
+                AppGlobal.getHandler().DeleteActivity(dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
+                AppGlobal.getHandler().DeleteActivity(dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
                 AppGlobal.getHandler().InsertActivity(Act);
             }
         }
@@ -223,8 +221,8 @@ public class DayHandler {
                 String Start = dailyRoutine.get(i-1).getStarttimeAsString();
                 Date End = dailyRoutine.get(i-1).getEndtime();
                 Act.setEndtime(End);
-                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
-                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
+                AppGlobal.getHandler().DeleteActivity(dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
+                AppGlobal.getHandler().DeleteActivity(dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
                 AppGlobal.getHandler().InsertActivity(Act);
             }
         }
@@ -262,7 +260,7 @@ public class DayHandler {
     public ArrayList<ActivityItem> getDayRoutine(Date date) {
         DataBaseHandler handler = AppGlobal.getHandler();
         this.date = date;
-        dailyRoutine = handler.GetDay(handler, date);
+        dailyRoutine = handler.GetDay(date);
         return dailyRoutine;
     }
 

@@ -127,9 +127,9 @@ public class BSInputRecommendation extends Recommendation {
             Date date = new Date();
             long timestamp = date.getTime();
             int currMinOfDay = TimeUtils.getMinutesOfDay(timestamp);
-            dbHandler.getLastBloodsugarMeasurement(dbHandler, 1);
+            dbHandler.getLastBloodsugarMeasurement(1);
 
-            MeasureItem mi = dbHandler.getMostRecentMeasurmentValue(dbHandler, MeasureItem.MEASURE_KIND_BLOODSUGAR);
+            MeasureItem mi = dbHandler.getMostRecentMeasurmentValue(MeasureItem.MEASURE_KIND_BLOODSUGAR);
 
 
             if (means != null) {
@@ -218,7 +218,7 @@ public class BSInputRecommendation extends Recommendation {
      * @author Stefan 09.07.2016
      */
     private ArrayList<DoublePoint> getBloodsugarMeasurments(){
-        ArrayList<MeasureItem> mms = dbHandler.getAllMeasurementValues(dbHandler, "bloodsugar");
+        ArrayList<MeasureItem> mms = dbHandler.getAllMeasurementValues("bloodsugar");
         ArrayList<DoublePoint> tmpList = new ArrayList<>();
         for(int i=0; i<mms.size(); i++){
             double[] arr = new double[2];

@@ -11,7 +11,6 @@ import org.deckfour.xes.model.XLog;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -27,7 +26,6 @@ import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plu
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plugins.heuristicsnet.miner.heuristics.miner.HeuristicsMiner;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plugins.heuristicsnet.miner.heuristics.miner.settings.HeuristicsMinerSettings;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
-import uni.mannheim.teamproject.diabetesplaner.Utility.DummyDataCreator;
 
 /**
  * Created by Jan on 17.05.16.
@@ -56,7 +54,7 @@ public class HeuristicsMinerImplementation {
 
             //DummyDataCreator.populateDataBase();
             //ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivities(AppGlobal.getHandler());
-            ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(),0);
+            ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(0);
             CustomXLog customXLog = new CustomXLog(items);
             XLog log = customXLog.getXLog();
             ArrayList<String[]> cases = customXLog.getCases();

@@ -107,7 +107,7 @@ public class MeasurementFragment extends Fragment {
                 // Button Done = (Button) dialog.findViewById(R.id.button);
                 dialog.setTitle("Input Measurements");
                 measurementList.clear();
-                Cursor cursor = AppGlobal.getHandler().getAllMeasurements(AppGlobal.getHandler(), 1);
+                Cursor cursor = AppGlobal.getHandler().getAllMeasurements(1);
                 if (cursor.moveToFirst()) {
                     do {
                         String MeasurementString = cursor.getString(1) + " " + cursor.getString(2) + "," + " " + cursor.getString(2) + " units";

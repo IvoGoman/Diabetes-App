@@ -223,8 +223,8 @@ public class DailyRoutineFragment extends Fragment {
 //        dbHandler.InsertBloodsugarEntryScreen(Calendar.getInstance().getTimeInMillis(),1,100,MeasureItem.UNIT_MG);
 //        dbHandler.InsertBloodsugarEntryScreen((new Date()).getTime()-(60*1000*150),1,90,MeasureItem.UNIT_MG);
 
-        ArrayList<MeasureItem> bsList = dbHandler.getMeasurementValues(dbHandler, TimeUtils.getCurrentDate(),"DAY",MeasureItem.MEASURE_KIND_BLOODSUGAR);
-        ArrayList<MeasureItem> insulinList = dbHandler.getMeasurementValues(dbHandler, TimeUtils.getCurrentDate(),"DAY",MeasureItem.MEASURE_KIND_INSULIN);
+        ArrayList<MeasureItem> bsList = dbHandler.getMeasurementValues(TimeUtils.getCurrentDate(),"DAY",MeasureItem.MEASURE_KIND_BLOODSUGAR);
+        ArrayList<MeasureItem> insulinList = dbHandler.getMeasurementValues(TimeUtils.getCurrentDate(),"DAY",MeasureItem.MEASURE_KIND_INSULIN);
 
 //        bsList.add(new MeasureItem((new Date()).getTime(), 100, MeasureItem.UNIT_MG));
 //        insulinList.add(new MeasureItem((new Date()).getTime(), 100, MeasureItem.UNIT_MG));

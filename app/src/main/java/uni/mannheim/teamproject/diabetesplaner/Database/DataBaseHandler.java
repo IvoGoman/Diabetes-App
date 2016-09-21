@@ -394,14 +394,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     //    Insert Statements
-    public void insertLocation(DataBaseHandler handler, double lat, double longt, String title) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+    public void insertLocation(double lat, double longt, String title) {
+        SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("insert into Location(Latitude, Longtitude, Title) values(" + lat + "," + longt + "," + "'" + title + "'" + "); ");
         db1.close();
     }
 
-    public void insertWIFI(DataBaseHandler handler, String ssid, String title) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+    public void insertWIFI(String ssid, String title) {
+        SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("insert into WIFI(ssid, Title) values(" + ssid + "," + "'" + title + "'" + "); ");
         db1.close();
     }
@@ -409,11 +409,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     /**
      * Inserts an actitvity item from a CSV file
      * Difference to other function: idActivity = #activities + Activ.subactivityId (to get the right offset)
-     * @param handler
      * @param Activ
      * @author Stefan 09.09.2016
      */
-    public void InsertActivityFromCSV(DataBaseHandler handler, ActivityItem Activ) {
+    public void InsertActivityFromCSV(ActivityItem Activ) {
         String ImagePath = Activ.getImagePath();
         int idActivity;
         if(GetSubActivities(Activ.getActivityId()).size() > 0){
@@ -434,7 +433,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
         Integer Intensity = Activ.getIntensity();
 
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+        SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("insert into ActivityList(id_SubActivity, id_Location, id_WIFI, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation + " , " + idWIFI +" ,'" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
         db1.close();
     }
@@ -469,16 +468,16 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
 
-    public void InsertActivity(DataBaseHandler handler, int idActivity, int idLocation, int idWIFI,String Start, String End) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+    public void InsertActivity(int idActivity, int idLocation, int idWIFI, String Start, String End) {
+        SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI Start, End) values(" + idActivity + "," + idLocation+ "," + idWIFI + " , '" + Start + "','" + End + "' ); ");
         db1.close();
     }
 
-    public void InsertProfile(DataBaseHandler handler, String name, String surename, int age)
+    public void InsertProfile(String name, String surename, int age)
     {
         try {
-            SQLiteDatabase db1 = handler.getWritableDatabase();
+            SQLiteDatabase db1 = this.getWritableDatabase();
             long tslong = System.currentTimeMillis() / 1000;
             db1.execSQL("insert into " + PROFILE_TABLE_NAME + "(name, lastname, age, timestamp)" +
                     " values('" + name + "' , '" + surename + "' , '" + age + "' , '" + tslong + "' );");
@@ -506,13 +505,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /***
      * Insert a new weight measurement
-     * @param handler
      * @param profile_id
      * @param weight
      * @param measure_unit
      */
-    public void InsertWeight(DataBaseHandler handler, int profile_id, double weight, String measure_unit) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+    public void InsertWeight(int profile_id, double weight, String measure_unit) {
+        SQLiteDatabase db1 = this.getWritableDatabase();
         long tslong = System.currentTimeMillis() / 1000;
         db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
                 + weight + " , '" + tslong + "' , '" +measure_unit+"' , 'weight');");
@@ -521,14 +519,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /***
      * Returns the last weight measurement
-     * @param handler
      * @param profile_id
      * @return
      */
-    public String[] GetLastWeight(DataBaseHandler handler, int profile_id)
+    public String[] GetLastWeight(int profile_id)
     {
         try {
-            SQLiteDatabase db1 = handler.getWritableDatabase();
+            SQLiteDatabase db1 = this.getWritableDatabase();
             String[] result = new String[2];
             Cursor cursor = db1.rawQuery("SELECT measure_value,measure_unit " +
                     "FROM " + MEASUREMENT_TABLE_NAME + " " +
@@ -551,17 +548,17 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
 
     }
-    public void ReplaceActivity(DataBaseHandler handler,  ActivityItem Activ){
+    public void ReplaceActivity(ActivityItem Activ){
         String Start = Activ.getStarttimeAsString();
         String End = Activ.getEndtimeAsString();
-        findActionbyStartEndTime(handler, Start, End);
-        findActionbyStartEndTime2(handler, Start, End);
-        findActionbyStartTime(handler, Start);
-        findActionbyEndTime(handler, End);
+        findActionbyStartEndTime(Start, End);
+        findActionbyStartEndTime2(Start, End);
+        findActionbyStartTime(Start);
+        findActionbyEndTime(End);
 
 
         InsertActivity(Activ);
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+        SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("delete from ActivityList where Start>=End");
         db1.close();
     }
@@ -691,15 +688,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
 
-    public Cursor getAllLocations(DataBaseHandler helper) {
-        SQLiteDatabase db = helper.getWritableDatabase();
+    public Cursor getAllLocations() {
+        SQLiteDatabase db = this.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select * from " + LOCATION_TABLE_NAME, null);
         return cursor;
     }
 
-    public Cursor getAllWIFIs(DataBaseHandler helper) {
-        SQLiteDatabase db = helper.getWritableDatabase();
+    public Cursor getAllWIFIs() {
+        SQLiteDatabase db = this.getWritableDatabase();
         //Create a Cursor that contains all records from the WIFI table
         Cursor cursor = db.rawQuery("select * from " + WIFI_TABLE_NAME, null);
         return cursor;
@@ -708,13 +705,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * returns an activity name by id
-     * @param helper
      * @param id
      * @return
      * @author Stefan
      */
-    public String getActionById(DataBaseHandler helper, int id) {
-        SQLiteDatabase db = helper.getWritableDatabase();
+    public String getActionById(int id) {
+        SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("select title from " + ACTIVITIES_TABLE_NAME + " where id=" + id, null);
         String name = "";
         if(cursor.moveToFirst()){
@@ -724,8 +720,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return name;
     }
 
-    public Cursor getAllActions(DataBaseHandler helper) {
-        SQLiteDatabase db = helper.getWritableDatabase();
+    public Cursor getAllActions() {
+        SQLiteDatabase db = this.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select title from " + ACTIVITIES_TABLE_NAME, null);
         return cursor;
@@ -740,11 +736,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * Returns a ArrayList containing all Acitivity IDs
-     * @param helper
      * @return
      */
-    public Map<Integer,String> getAllActionIDsAndTitle(DataBaseHandler helper) {
-        SQLiteDatabase db = helper.getWritableDatabase();
+    public Map<Integer,String> getAllActionIDsAndTitle() {
+        SQLiteDatabase db = this.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
         Map<Integer,String> idMap = new HashMap<Integer,String>();
@@ -759,11 +754,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     /**
      * 27.06.2016 Stefan
      * returns all activities as a list
-     * @param helper
      * @return
      */
-    public ArrayList<String> getAllActionsAsList(DataBaseHandler helper) {
-        SQLiteDatabase db = helper.getWritableDatabase();
+    public ArrayList<String> getAllActionsAsList() {
+        SQLiteDatabase db = this.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
         ArrayList<String> actionsList = new ArrayList<>();
@@ -789,11 +783,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * Queries all available activities from the database
-     * @param handler
      * @return
      */
-    public ArrayList<String[]> getAllEvents(DataBaseHandler handler){
-        SQLiteDatabase db = handler.getReadableDatabase();
+    public ArrayList<String[]> getAllEvents(){
+        SQLiteDatabase db = this.getReadableDatabase();
         ArrayList<String[]> eventList = new ArrayList<String[]>();
         Cursor cursor = db.rawQuery("select ActivityList.id, SubActivities.title, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id", null);
         if(cursor.moveToFirst()){
@@ -808,11 +801,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * Queries all available activities from the database.
-     * @param handler
      * @return ArrayList<ActivityItem> containing all activities of the weekday provided
      */
-    public ArrayList<ActivityItem> getAllActivities(DataBaseHandler handler){
-        SQLiteDatabase db = handler.getReadableDatabase();
+    public ArrayList<ActivityItem> getAllActivities(){
+        SQLiteDatabase db = this.getReadableDatabase();
         ActivityItem activity = null;
         ArrayList<ActivityItem> activityList = new ArrayList<ActivityItem>();
         Cursor cursor = db.rawQuery("select ActivityList.id_SubActivity, SubActivities.title, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id order by ActivityList.Start ASC", null);
@@ -831,12 +823,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * Queries all available activities from the database.
      * Filters by day of week
      * 0==Sunday, 1==Monday, ..., 6==Saturday etc.
-     * @param handler
      * @param day integer corresponding to the weekday
      * @return ArrayList<ActivityItem> containing all activities of the weekday provided
      */
-    public ArrayList<ActivityItem> getAllActivitiesByWeekday(DataBaseHandler handler, int day){
-        SQLiteDatabase db = handler.getReadableDatabase();
+    public ArrayList<ActivityItem> getAllActivitiesByWeekday(int day){
+        SQLiteDatabase db = this.getReadableDatabase();
         ActivityItem activity = null;
         ArrayList<ActivityItem> activityList = new ArrayList<ActivityItem>();
         Cursor cursor = db.rawQuery("select ActivityList.id_SubActivity, SubActivities.title, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id  where strftime('%w', ActivityList.Start)='"+day+"' order by ActivityList.Start ASC", null);
@@ -851,12 +842,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
     /**
      * returns the last measurement of blood sugar and insulin of the selected user
-     * @param handler
      * @return
      */
-    public Cursor getAllMeasurements(DataBaseHandler handler, int profile_id) {
+    public Cursor getAllMeasurements(int profile_id) {
         try {
-            SQLiteDatabase db1 = handler.getWritableDatabase();
+            SQLiteDatabase db1 = this.getWritableDatabase();
             String[] result = new String[2];
             Cursor cursor = db1.rawQuery("SELECT timestamp,measure_value,measure_unit " +
                     "FROM " + MEASUREMENT_TABLE_NAME + " " +
@@ -877,14 +867,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * returns the last measurement of the selected user
-     * @param handler
      * @return String[value, unit, timestamp]
      * Changed 08.09.2016 by Stefan
      */
-    public String[] getLastBloodsugarMeasurement(DataBaseHandler handler, int profile_id){
+    public String[] getLastBloodsugarMeasurement(int profile_id){
         try {
             profile_id = 1;
-            SQLiteDatabase db1 = handler.getWritableDatabase();
+            SQLiteDatabase db1 = this.getWritableDatabase();
             String[] result = new String[3];
             Cursor cursor = db1.rawQuery("SELECT measure_value,measure_unit,timestamp " +
                     "FROM " + MEASUREMENT_TABLE_NAME + " " +
@@ -912,12 +901,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /***
      * returns the last insulin of the selected user
-     * @param handler
      * @return
      */
-    public String[] getLastInsulinMeasurement(DataBaseHandler handler, int profile_id){
+    public String[] getLastInsulinMeasurement(int profile_id){
         try {
-            SQLiteDatabase db1 = handler.getWritableDatabase();
+            SQLiteDatabase db1 = this.getWritableDatabase();
             String[] result = new String[2];
             Cursor cursor = db1.rawQuery("SELECT insulin_value,insulin_unit " +
                     "FROM " + INSULIN_TABLE_NAME + " " +
@@ -945,15 +933,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @author Ivo Gosemann 18.03.2016
      * Method to retrieve all Values as MeasureItems for a given measurekind and timeframe
      *
-     * @param handler database handler instance
      * @param date date for which the values should be retrieved
      * @param window "DAY","WEEK" or "MONTH" are acceptable values. Counting backwards from date the
      *               values for that timeframe are returned
      * @param measure_kind "insulin" or "bloodsugar"
      * @return ArrayList containing all the MeasureItems for a time window
      */
-    public ArrayList<MeasureItem> getMeasurementValues(DataBaseHandler handler, Date date, String window, String measure_kind){
-        SQLiteDatabase db = handler.getReadableDatabase();
+    public ArrayList<MeasureItem> getMeasurementValues(Date date, String window, String measure_kind){
+        SQLiteDatabase db = this.getReadableDatabase();
         Long[] windowStartEnd = TimeUtils.convertDateStringToTimestamp(getWindowStartEnd(date,window));
         Cursor cursor = db.rawQuery("select measure_value, measure_unit, timestamp from  " + MEASUREMENT_TABLE_NAME + " "  +
                 "where timestamp>='"+windowStartEnd[0]+"' and timestamp <'"+windowStartEnd[1]+"'" +
@@ -973,13 +960,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * Retrieve all measurements of a certain measure kind
-     * @param handler database handler instance
      * @param measure_kind "insulin" or "bloodsugar"
      * @return ArrayList containing all measurements as MeasureItems
      * @author Stefan 09.07.2016
      */
-    public ArrayList<MeasureItem> getAllMeasurementValues(DataBaseHandler handler, String measure_kind){
-        SQLiteDatabase db = handler.getReadableDatabase();
+    public ArrayList<MeasureItem> getAllMeasurementValues(String measure_kind){
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("select measure_value, measure_unit, timestamp from  " + MEASUREMENT_TABLE_NAME + " "  +
                 "where measure_kind = '"+measure_kind+"';",null);
         ArrayList<MeasureItem> measureList = new ArrayList<>();
@@ -997,13 +983,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * returns most recent bloodsugar measurment
-     * @param handler database handler instance
      * @param measure_kind "insulin" or "bloodsugar"
      * @return the most recentMeasureItem
      * @author Stefan 09.07.2016
      */
-    public MeasureItem getMostRecentMeasurmentValue(DataBaseHandler handler, String measure_kind){
-        SQLiteDatabase db = handler.getReadableDatabase();
+    public MeasureItem getMostRecentMeasurmentValue(String measure_kind){
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("select measure_value, measure_unit, MAX(timestamp) from  " + MEASUREMENT_TABLE_NAME + " "  +
                 "where measure_kind = '"+measure_kind+"' ;",null);
         MeasureItem measureItem = null;
@@ -1018,16 +1003,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     /**
      * @author Ivo Gosemann 08.04.2016
      * TODO: Merge with GetDay
-     * @param handler instance of the DB Handler
      * @param date current date of the day
      * @param window String value to indicate the time window ["DAY","WEEK","MONTH"]
      * @return ArrayList of all ActivityItems in the timeframe
      */
-    public ArrayList<ActivityItem> getActivities(DataBaseHandler handler, Date date, String window){
+    public ArrayList<ActivityItem> getActivities(Date date, String window){
 //        calculate the timeframe for the given date and window values
         String[] timeWindow = getWindowStartEnd(date,window);
         String StartOfDay = timeWindow[0],EndOfDay = timeWindow[1];
-        SQLiteDatabase db = handler.getReadableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
         String S = "select SubActivities.id, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id where (ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "') or (ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "');";
         Cursor cursor = db.rawQuery("select SubActivities.id_Activity,ActivityList.id_SubActivity, ActivityList.Meal, ActivityList.Intensity, ActivityList.ImagePath, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id where ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "' or ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "' order by ActivityList.Start;", null);
 
@@ -1038,12 +1022,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * Returns all Activities with the given Activity ID
-     * @param handler
      * @param activityID
      * @return
      */
-    public ArrayList<ActivityItem> getActivitiesById(DataBaseHandler handler, int activityID){
-        SQLiteDatabase db = handler.getReadableDatabase();
+    public ArrayList<ActivityItem> getActivitiesById(int activityID){
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.id_Activity ="+activityID+";", null);
         ArrayList<ActivityItem> activityItems = new ArrayList<>();
         if(cursor.moveToFirst()){
@@ -1055,7 +1038,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return activityItems;
     }
 
-    public ArrayList<ActivityItem> GetDay(DataBaseHandler handler, Date Date) {
+    public ArrayList<ActivityItem> GetDay(Date Date) {
         String StartOfDay, EndOfDay;
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(Date);
@@ -1067,7 +1050,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         //String S = "select Activities.id, ActivityList.Start, ActivityList.End from ActivityList inner join Activities on ActivityList.id_Activity = Activities.id where ActivityList.Start > '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "'";
 
-        SQLiteDatabase db = handler.getReadableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
         String Query = "select SubActivities.id as id_SubActivity, Activities.id as id_Activity, ActivityList.Meal, ActivityList.ImagePath,ActivityList.Intensity, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id inner join Activities on Subactivities.id_Activity = Activities.id where (ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "') or (ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "') order by ActivityList.Start;";
         Cursor cursor = db.rawQuery(Query, null);
         //(ActivityList.End > '2016-01-01 00:00' and ActivityList.Start < '2016-01-01 23:59') or (ActivityList.Start < '2016-01-01 23:59' and ActivityList.Start > '2016-01-01 00:00')
@@ -1082,10 +1065,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
 //    Delete Statements
 
-    public void DeleteActivity(DataBaseHandler handler, ActivityItem Activ) {
+    public void DeleteActivity(ActivityItem Activ) {
         String Start = Activ.getStarttimeAsString();
         String End = Activ.getEndtimeAsString();
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+        SQLiteDatabase db1 = this.getWritableDatabase();
         if (AppGlobal.getEditFlag()) {
             db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
         }
@@ -1096,8 +1079,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         db1.close();
     }
-    public void DeleteActivity(DataBaseHandler handler, String Start, String End) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+    public void DeleteActivity(String Start, String End) {
+        SQLiteDatabase db1 = this.getWritableDatabase();
 
         if (AppGlobal.getEditFlag()) {
             db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
@@ -1110,8 +1093,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
 
-    private void findActionbyStartTime(DataBaseHandler handler, String Start) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+    private void findActionbyStartTime(String Start) {
+        SQLiteDatabase db1 = this.getWritableDatabase();
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + Start + "' and End >= '" + Start + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
@@ -1122,8 +1105,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    private void findActionbyEndTime(DataBaseHandler handler, String End) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+    private void findActionbyEndTime(String End) {
+        SQLiteDatabase db1 = this.getWritableDatabase();
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + End + "' and End >= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
@@ -1134,8 +1117,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    private void findActionbyStartEndTime(DataBaseHandler handler, String Start, String End) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+    private void findActionbyStartEndTime(String Start, String End) {
+        SQLiteDatabase db1 = this.getWritableDatabase();
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start >= '" + Start + "' and End <= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
@@ -1147,8 +1130,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
 
-    private void findActionbyStartEndTime2(DataBaseHandler handler, String Start, String End) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+    private void findActionbyStartEndTime2(String Start, String End) {
+        SQLiteDatabase db1 = this.getWritableDatabase();
         Cursor cursor = db1.rawQuery("select * from ActivityList where Start <= '" + Start + "' and End >= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
@@ -1169,7 +1152,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     //      Handler Utility Methods
-    public boolean CheckRoutineAdded(DataBaseHandler handler){
+    public boolean CheckRoutineAdded(){
         String StartOfDay, EndOfDay;
         Calendar calendar = Calendar.getInstance();
         int Year = calendar.get(Calendar.YEAR);
@@ -1177,7 +1160,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
         StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
         EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
-        SQLiteDatabase db = handler.getReadableDatabase();
+        SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("select * from ActivityList where Start>= '" + StartOfDay + "' and End<= '" + EndOfDay + "'", null);
         if (cursor.getCount() < 1)
         {
@@ -1314,9 +1297,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
 
-    public String[] getUser(DataBaseHandler handler, int id)
+    public String[] getUser(int id)
     {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+        SQLiteDatabase db1 = this.getWritableDatabase();
         try {
 
             String[] result = new String[2];
@@ -1339,10 +1322,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    public int getUserID(DataBaseHandler handler)
+    public int getUserID()
     {
         int userID;
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+        SQLiteDatabase db1 = this.getWritableDatabase();
         try {
             Cursor cursor = db1.rawQuery("SELECT MAX(id) from "+ PROFILE_TABLE_NAME +";",null);
             if (cursor.getCount() >= 1) {

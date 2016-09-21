@@ -90,7 +90,7 @@ public class GPS_Service extends Service implements LocationListener {
         lng = (double) (current_location.getLongitude());
 
         Date current_date = new Date();
-        AppGlobal.getHandler().insertLocation(AppGlobal.getHandler(),lat, lng, TimeUtils.dateToDateTimeString(current_date));
+        AppGlobal.getHandler().insertLocation(lat, lng, TimeUtils.dateToDateTimeString(current_date));
 
 
         System.out.println("Activities that never occure in that location: " + makePrediction(current_location));
@@ -114,7 +114,7 @@ public class GPS_Service extends Service implements LocationListener {
 
 
 
-        Cursor cursor = AppGlobal.getHandler().getAllLocations(AppGlobal.getHandler());
+        Cursor cursor = AppGlobal.getHandler().getAllLocations();
 
         if (cursor.moveToFirst()) {
             do {
@@ -153,7 +153,7 @@ public class GPS_Service extends Service implements LocationListener {
        System.out.println("Test4 , Anzahl nearLocations: " + near_locationList.size());
 
         //get all Activities
-        ArrayList<String[]> eventlist  = AppGlobal.getHandler().getAllEvents(AppGlobal.getHandler());
+        ArrayList<String[]> eventlist  = AppGlobal.getHandler().getAllEvents();
        System.out.println("Test4 , Anzahl Activities: " + eventlist.size());
 
         // für alle activities

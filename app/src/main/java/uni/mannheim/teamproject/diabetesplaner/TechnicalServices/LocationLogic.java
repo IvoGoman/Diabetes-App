@@ -109,7 +109,7 @@ public class LocationLogic {
         // check if location already exists
 
         // download all stored location names first
-        Cursor cursor = helper.getAllLocations(helper);
+        Cursor cursor = helper.getAllLocations();
         if (cursor.moveToFirst()) {
             do {
                 Log.d("LOCATION entry", cursor.getString(0));
@@ -126,7 +126,7 @@ public class LocationLogic {
 
         if (!nameExists) {
             // add location to database
-            helper.insertLocation(helper, lat, lon, tittle);
+            helper.insertLocation(lat, lon, tittle);
             return true;
         }
         return false;
@@ -141,7 +141,7 @@ public class LocationLogic {
         double tempLat, tempLon;
         // get timestamps of similar locations
         // download all locations first
-        Cursor cursor = helper.getAllLocations(helper);
+        Cursor cursor = helper.getAllLocations();
         // in a loop, compute distance of current locations and locations in the database
         if (cursor.moveToFirst()) {
             do {

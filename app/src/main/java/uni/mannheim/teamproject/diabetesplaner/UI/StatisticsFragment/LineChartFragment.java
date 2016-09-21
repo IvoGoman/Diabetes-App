@@ -88,7 +88,7 @@ public class LineChartFragment extends ChartFragment {
         DataBaseHandler handler = AppGlobal.getHandler();
         Date date = TimeUtils.getCurrentDate();
 
-        ArrayList<MeasureItem> insulinList = AppGlobal.getHandler().getMeasurementValues(AppGlobal.getHandler(), date, "DAY", "insulin");
+        ArrayList<MeasureItem> insulinList = AppGlobal.getHandler().getMeasurementValues(date, "DAY", "insulin");
         // creating the x-Axes Values
         ArrayList<String> labels = new ArrayList<>();
         String dateValue = "";
@@ -110,7 +110,7 @@ public class LineChartFragment extends ChartFragment {
 
         //creating the values for the line chart
         ArrayList<Entry> lineValues2 = new ArrayList<>();
-        ArrayList<MeasureItem> sugarList = AppGlobal.getHandler().getMeasurementValues(AppGlobal.getHandler(), date, "DAY", "bloodsugar");
+        ArrayList<MeasureItem> sugarList = AppGlobal.getHandler().getMeasurementValues(date, "DAY", "bloodsugar");
         ArrayList<String> labelsBloodsugar = new ArrayList<>();
         dateValue = "";
 

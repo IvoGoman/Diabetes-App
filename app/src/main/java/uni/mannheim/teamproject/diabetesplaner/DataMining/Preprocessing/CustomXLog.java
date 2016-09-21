@@ -116,7 +116,7 @@ public class CustomXLog {
             id = String.valueOf(item.getActivityId());
             Long[] timestamps = TimeUtils.convertDateStringToTimestamp(new String[]{item.getStarttimeAsString(), item.getEndtimeAsString()});
             isAM = TimeUtils.isAM(timestamps[0] * 1000);
-            event = new String[]{AppGlobal.getHandler().getActionById(AppGlobal.getHandler(), item.getActivityId()), id + isAM, String.valueOf(timestamps[0] * 1000), String.valueOf(timestamps[1] * 1000)};
+            event = new String[]{AppGlobal.getHandler().getActionById(item.getActivityId()), id + isAM, String.valueOf(timestamps[0] * 1000), String.valueOf(timestamps[1] * 1000)};
             eventList.add(event);
         }
         return eventList;

@@ -41,7 +41,7 @@ public class FuzzyModel {
      */
     public FuzzyModel(int day, boolean percentage) {
         this.percentage = percentage;
-        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(), day);
+        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(day);
         if (items.size() > 0) {
             CustomXLog customXLog = new CustomXLog(items);
             XLog xLog = customXLog.getXLog();
@@ -108,7 +108,7 @@ public class FuzzyModel {
      * @throws Exception
      */
     public FuzzyModel(boolean percentage) {
-        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivities(AppGlobal.getHandler());
+        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivities();
         CustomXLog customXLog = new CustomXLog(items);
         XLog xLog = customXLog.getXLog();
         FuzzyMinerImpl fuzzyMiner = new FuzzyMinerImpl(xLog);
@@ -453,7 +453,7 @@ public class FuzzyModel {
         for (FMNode node : fuzzyMinerModel.getNodes()) {
             if (!node.getElementName().equals("Start//Start") && node.getEventType().equals("Complete")) {
                 activityID = Integer.parseInt(node.getElementName());
-                activityName = handler.getActionById(handler, ProcessMiningUtil.removeAMPMFlag(activityID));
+                activityName = handler.getActionById(ProcessMiningUtil.removeAMPMFlag(activityID));
                 activityPrediction = new ActivityPrediction(activityID, 0, activityName);
                 for (FMEdge<? extends FMNode, ? extends FMNode> edge : node.getGraph().getOutEdges(node)) {
                     successorProbabilityMap.put(Integer.valueOf(edge.getTarget().getElementName()), edge.getSignificance());

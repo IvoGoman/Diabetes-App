@@ -198,7 +198,7 @@ public class InputDialog extends DialogFragment{
         Spinner spinner = (Spinner) v.findViewById(R.id.add_dialog_spinner);
 
         final DataBaseHandler dbHandler = AppGlobal.getHandler();
-        ArrayList<String> actionsList = dbHandler.getAllActionsAsList(dbHandler);
+        ArrayList<String> actionsList = dbHandler.getAllActionsAsList();
 
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_spinner_item, Util.toArray(actionsList));

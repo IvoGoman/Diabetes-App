@@ -129,7 +129,7 @@ public class Wifi extends BroadcastReceiver {
 
 
             ////////////////////////
-            Cursor cursor = AppGlobal.getHandler().getAllWIFIs(AppGlobal.getHandler());
+            Cursor cursor = AppGlobal.getHandler().getAllWIFIs();
 /////////////////////////////////////////////////////////////////////////////////////////////
             if (cursor.moveToFirst()) {
                 do {
@@ -142,7 +142,7 @@ public class Wifi extends BroadcastReceiver {
                cursor.close();
            }
             //get all Activities
-            ArrayList<String[]> eventlist  = AppGlobal.getHandler().getAllEvents(AppGlobal.getHandler());
+            ArrayList<String[]> eventlist  = AppGlobal.getHandler().getAllEvents();
             // für alle activities
             for(int i = 0; i < eventlist.size(); i++){ //geh durch alle activities
                 //activity laden

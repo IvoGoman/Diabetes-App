@@ -91,7 +91,7 @@ public class ActivityRecommendation extends Recommendation {
         }else{
             Log.d("Rec", "bs = null");
         }
-        MeasureItem insulin = dbHandler.getMostRecentMeasurmentValue(dbHandler, MeasureItem.MEASURE_KIND_INSULIN);
+        MeasureItem insulin = dbHandler.getMostRecentMeasurmentValue(MeasureItem.MEASURE_KIND_INSULIN);
 
         //there is no measurment within the specified time interval
         if (bs == null) {
@@ -249,7 +249,7 @@ public class ActivityRecommendation extends Recommendation {
      */
     public MeasureItem getLastBloodsugarlevel(int minSinceMM) {
         DataBaseHandler dbHandler = AppGlobal.getHandler();
-        MeasureItem bs = dbHandler.getMostRecentMeasurmentValue(dbHandler, MeasureItem.MEASURE_KIND_BLOODSUGAR);
+        MeasureItem bs = dbHandler.getMostRecentMeasurmentValue(MeasureItem.MEASURE_KIND_BLOODSUGAR);
         if (bs == null) {
             return null;
         }else {

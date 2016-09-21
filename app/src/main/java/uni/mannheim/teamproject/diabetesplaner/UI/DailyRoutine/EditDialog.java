@@ -47,8 +47,8 @@ public class EditDialog extends InputDialog {
                     Log.d("EditDialog", newDateEnd);
 //                    String newDateStart = Util.combineDateAndTime(getDrHandler().getDate(), activityItem.getStarttime());
 //                    String newDateEnd = Util.combineDateAndTime(getDrHandler().getDate(), activityItem.getEndtime());
-                    AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(), dateStart, dateEnd);
-                    AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), item);
+                    AppGlobal.getHandler().DeleteActivity(dateStart, dateEnd);
+                    AppGlobal.getHandler().ReplaceActivity(item);
                     getDrHandler().update();
                 }
                 // FIRE ZE MISSILES!

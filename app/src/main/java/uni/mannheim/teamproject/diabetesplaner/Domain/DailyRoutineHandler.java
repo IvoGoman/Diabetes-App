@@ -97,7 +97,7 @@ public class DailyRoutineHandler extends DayHandler{
         Prediction prediction1 = new Prediction();
         try{
             if (AppGlobal.getHandler()!=null){
-                if (!AppGlobal.getHandler().CheckRoutineAdded(AppGlobal.getHandler())){
+                if (!AppGlobal.getHandler().CheckRoutineAdded()){
                     prediction = prediction1.GetRoutineAsPAforInserting();
                     AppGlobal.getHandler().InsertNewRoutine(prediction);
                     dailyRoutine.clear();
@@ -111,7 +111,7 @@ public class DailyRoutineHandler extends DayHandler{
                 else{
                     Calendar calendar = Calendar.getInstance();
                     //Date date = calendar.getTime();
-                    ArrayList<ActivityItem> Day1 = AppGlobal.getHandler().GetDay(AppGlobal.getHandler(),date);
+                    ArrayList<ActivityItem> Day1 = AppGlobal.getHandler().GetDay(date);
                     dailyRoutine.clear();
                     String dateString = null;
                     for (int i = 0; i < Day1.size(); i++) {
@@ -124,7 +124,7 @@ public class DailyRoutineHandler extends DayHandler{
             }
             else{
                 AppGlobal.getHandler().onCreate(AppGlobal.getHandler().db);
-                if (!AppGlobal.getHandler().CheckRoutineAdded(AppGlobal.getHandler())){
+                if (!AppGlobal.getHandler().CheckRoutineAdded()){
                     prediction = prediction1.GetRoutineAsPAforInserting();
                     AppGlobal.getHandler().InsertNewRoutine(prediction);
                     dailyRoutine.clear();
@@ -138,7 +138,7 @@ public class DailyRoutineHandler extends DayHandler{
                 else{
                     Calendar calendar = Calendar.getInstance();
                     //Date date = calendar.getTime();
-                    ArrayList<ActivityItem> Day1 = AppGlobal.getHandler().GetDay(AppGlobal.getHandler(),date);
+                    ArrayList<ActivityItem> Day1 = AppGlobal.getHandler().GetDay(date);
                     dailyRoutine.clear();
                     String dateString = null;
                     for (int i = 0; i < Day1.size(); i++) {

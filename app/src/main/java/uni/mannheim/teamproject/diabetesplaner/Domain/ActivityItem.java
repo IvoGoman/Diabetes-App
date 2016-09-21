@@ -160,7 +160,7 @@ public class ActivityItem {
      */
     public static String getActivityString(int id) {
         DataBaseHandler dbHandler = AppGlobal.getHandler();
-        return dbHandler.getActionById(dbHandler, id);
+        return dbHandler.getActionById(id);
     }
 
     /**
