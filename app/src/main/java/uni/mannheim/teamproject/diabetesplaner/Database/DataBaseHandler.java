@@ -559,8 +559,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         findActionbyStartTime(handler, Start);
         findActionbyEndTime(handler, End);
 
-        SQLiteDatabase db1 = handler.getWritableDatabase();
+
         InsertActivity(Activ);
+        SQLiteDatabase db1 = handler.getWritableDatabase();
+        db1.execSQL("delete from ActivityList where Start>=End");
         db1.close();
     }
 
@@ -1089,7 +1091,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
         else{
             db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
-            db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI, Start, End) values(15,1,'"+Start+"','"+End+"');");
+            db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI, Start, End) values(16,1,1,'"+Start+"','"+End+"');");
         }
 
         db1.close();
@@ -1102,7 +1104,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
         else{
             db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
-            db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI, Start, End) values(15,1,1,'"+Start+"','"+End+"');");
+            db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI, Start, End) values(16,1,1,'"+Start+"','"+End+"');");
         }
         db1.close();
     }
@@ -1158,6 +1160,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 ActivityItem activityItem = new ActivityItem(getActivityIdbySubActicityId(idSubActivity),idSubActivity,StartNew,EndNew);
                 String id = cursor.getString(cursor.getColumnIndex("id"));
                 db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + id + "';");
+
                 InsertActivity(activityItem);
             } while (cursor.moveToNext());
             db1.close();

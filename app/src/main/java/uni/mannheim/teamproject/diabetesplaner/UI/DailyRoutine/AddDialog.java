@@ -33,7 +33,11 @@ public class AddDialog extends InputDialog {
                     InvalidTimeDialog itd = new InvalidTimeDialog();
                     itd.show(getFragmentManager(),"invalidTime");
                 }else {
-                    ActivityItem activityItem = new ActivityItem(getSelectedActivity(), getSelectedSubActivity(), getStartDate(), getEndDate(), getImagePath(), getMeal(), getIntensity());
+                    int subactivity = getSelectedSubActivity();
+                    if (subactivity==0){
+                        subactivity = getSelectedActivity();
+                    }
+                    ActivityItem activityItem = new ActivityItem(getSelectedActivity(), subactivity, getStartDate(), getEndDate(), getImagePath(), getMeal(), getIntensity());
                     AppGlobal.getHandler().ReplaceActivity(AppGlobal.getHandler(), activityItem);
 
                     getDrHandler().update();
