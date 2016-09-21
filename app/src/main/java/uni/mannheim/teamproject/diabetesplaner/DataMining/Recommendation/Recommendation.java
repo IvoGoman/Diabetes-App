@@ -34,7 +34,11 @@ public abstract class Recommendation extends IntentService {
     private String name;
 
 
-
+    /**
+     * Constructor. Initializes midOffset for identification of notifications
+     * @param name
+     * @author Stefan
+     */
     public Recommendation(String name) {
         super(name);
         this.name = name;
@@ -62,6 +66,7 @@ public abstract class Recommendation extends IntentService {
     /**
      * Override in Subclass.
      * Should contain the process for a single recommendation
+     * @author Stefan
      */
     public abstract void recommend();
 
@@ -141,6 +146,7 @@ public abstract class Recommendation extends IntentService {
     /**
      * Class used for the client Binder.  Because we know this service always
      * runs in the same process as its clients, we don't need to deal with IPC.
+     * @author Stefan
      */
     public class RecBinder extends Binder {
         public Recommendation getService() {

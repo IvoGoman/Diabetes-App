@@ -116,6 +116,23 @@ public class TimeUtils {
         return date;
     }
 
+    /**
+     *
+     * @param date_string date in string format dd.MM.yyyy
+     * @param time_string time in string format HH:mm:SS
+     * @return Date representing the date and time
+     */
+    public static Date convertDateAndTimeStringToDate(String date_string, String time_string){
+        SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy HH:mm:ss");
+        String dateTimeString = date_string + " " + time_string;
+        Date date = null;
+        try{
+            date = sdf.parse(dateTimeString);
+        } catch ( ParseException e){
+            e.printStackTrace();
+        }
+        return date;
+    }
 
     /**
      * @param timestamp as String
@@ -164,6 +181,30 @@ public class TimeUtils {
 
     public static String dateToDateTimeString(Date date) {
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+        String dateString = sdf.format(date);
+        return dateString;
+    }
+
+    /**
+     * returns the date in yyyy-MM-dd format
+     * @param date
+     * @return
+     * @author Stefan
+     */
+    public static String dateToDateString(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        String dateString = sdf.format(date);
+        return dateString;
+    }
+
+    /**
+     * returns the date in HH:mm format
+     * @param date
+     * @return
+     * @author Stefan
+     */
+    public static String dateToTimeString(Date date){
+        SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
         String dateString = sdf.format(date);
         return dateString;
     }
@@ -402,6 +443,27 @@ public class TimeUtils {
      * Convert a time window from a string array to a corresponding timestamp Long array
      */
     public static Long[] convertDateStringToTimestamp(String[] timeWindow) {
+        long timestampStart = 1, timestampEnd = 1;
+        try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+            Date parsedStart = dateFormat.parse(timeWindow[0]);
+            Date parsedEnd = dateFormat.parse(timeWindow[1]);
+            timestampStart =    parsedStart.getTime();
+            timestampEnd =  parsedEnd.getTime();
+        } catch (Exception e) {//this generic but you can control another types of exception
+            e.printStackTrace();
+        }
+
+        Long[] timeWindowLong = {timestampStart, timestampEnd};
+        return timeWindowLong;
+    }
+    /**
+     * @param timeWindow array containing dates as string values
+     * @return date array converted to sql timestamp array
+     * @author Ivo 08.04.2016
+     * Convert a time window from a string array to a corresponding timestamp Long array
+     */
+    public static Long[] convertDateStringToTimestampSQL(String[] timeWindow) {
         Timestamp timestampStart = null, timestampEnd = null;
         try {
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
@@ -415,6 +477,24 @@ public class TimeUtils {
 
         Long[] timeWindowLong = {timestampStart.getTime() / 1000, timestampEnd.getTime() / 1000};
         return timeWindowLong;
+    }
+
+    /**
+     * @param date date to be parsed into long
+     * @return date array converted to long timestamp array
+     * @author Ivo 08.04.2016
+     * Convert a time window from a string array to a corresponding timestamp Long array
+     */
+    public static Long convertDateStringToTimestamp(Date date) {
+        Timestamp timestamp = null;
+        try {
+            timestamp = new java.sql.Timestamp(date.getTime());
+        } catch (Exception e) {//this generic but you can control another types of exception
+            e.printStackTrace();
+        }
+
+        Long timestampLong = timestamp.getTime() / 1000;
+        return timestampLong;
     }
 
     /**

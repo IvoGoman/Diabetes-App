@@ -6,8 +6,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
-import java.sql.Time;
-import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -37,7 +35,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     //Bloodsugar History
     public static final String MEASUREMENT_TABLE_NAME = "Measurements";
     public static final String MEASUREMENT_CREATE_TABLE = " CREATE TABLE IF NOT EXISTS " + MEASUREMENT_TABLE_NAME +
-            "(timestamp Double PRIMARY KEY, profile_ID INTEGER, measure_value double, measure_unit VARCHAR(8), measure_kind VARCHAR(8));";
+            "(timestamp long PRIMARY KEY, profile_ID INTEGER, measure_value double, measure_unit VARCHAR(8), measure_kind VARCHAR(10));";
     public static final String MEASUREMENT_SELECT =
             "SELECT * FROM " + MEASUREMENT_TABLE_NAME + ";";
     public static final String MEASUREMENT_DELETE_TABLE =
@@ -491,69 +489,20 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    /***
-     * Insert a new bloodsugar level
-     * @param handler
-     * @param profile_id
-     * @param bloodsugar_level
-     * @param measure_unit
+    /**
+     * Method to store either bloodsugar or insulin to the database
+     * This depends on the values provided
+     *
+     * @param item Measureitem containing the necessary values to insert the measurement into the db
+     * @param profile_id Profile ID of the User
      */
-    public void InsertBloodsugar(DataBaseHandler handler, Date date, Time time, int profile_id, double bloodsugar_level, String measure_unit) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
-        Timestamp timestamp = Timestamp.valueOf(date.toString() + " " + time.toString());
-        Log.d("Database", timestamp + " InsertBloodSugar");
-
-        db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
-                + bloodsugar_level + " , '" + timestamp + "' , '" + measure_unit + "' , 'bloodsugar');");
-        db1.close();
+    public void insertMeasurement(MeasureItem item, int profile_id){
+        SQLiteDatabase db = this.getWritableDatabase();
+        db.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, timestamp, measure_value, measure_unit, measure_kind) values(" + profile_id + ","
+                 + item.getTimestamp() +" , '" + item.getMeasure_value()+ "' , '" + item.getMeasure_unit() + "' ,'"+ item.getMeasure_kind()+"');");
+        db.close();
     }
 
-    public void InsertInsulin(DataBaseHandler handler, Date date, Time time, int profile_id, double insulin_level, String insulin_unit) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
-        Timestamp timestamp = Timestamp.valueOf(date.toString() + " " + time.toString());
-        Log.d("Database", timestamp + "InsertInsulin");
-
-        db1.execSQL("insert into " + INSULIN_TABLE_NAME + "(profile_ID, insulin_value, timestamp, insulin_unit, insulin_kind) values(" + profile_id + ","
-                + insulin_level + " , '" + timestamp + "' , '" + insulin_unit + "' , 'insulin');");
-        db1.close();
-    }
-
-
-    public void InsertBloodsugarEntryScreen(long timestamp, int profile_id, double bloodsugar_level, String measure_unit) {
-        SQLiteDatabase db1 = this.getWritableDatabase();
-        Log.d("Database", timestamp + "InsertBloodSugar");
-
-        db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
-                + bloodsugar_level + " , '" + timestamp + "' , '" + measure_unit + "' , 'bloodsugar');");
-        db1.close();
-    }
-
-
-
-
-
-    /***
-     * Insert a new insulin level
-     * @param handler
-     * @param profile_id
-     * @param insulin
-     * @param measure_unit
-     */
-    public void InsertInsulin(DataBaseHandler handler, int profile_id, double insulin, String measure_unit) {
-        SQLiteDatabase db1 = handler.getWritableDatabase();
-        long tslong = System.currentTimeMillis() / 1000;
-        db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
-                + insulin + " , '" + tslong + "' , '" +measure_unit+"' , 'insulin');");
-        db1.close();
-    }
-
-  /*  public void InsertInsulin(int profile_id, double insulin, String measure_unit,long tslong) {
-        SQLiteDatabase db1 = this.getWritableDatabase();
-        //long tslong = System.currentTimeMillis() / 1000;
-        db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
-                + insulin + " , '" + tslong + "' , '" +measure_unit+"' , 'insulin');");
-        db1.close();
-    }*/
 
     /***
      * Insert a new weight measurement
@@ -638,6 +587,34 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
         cursor.close();
         return "Default";
+    }
+
+    /**
+     * removes a single day from the database
+     * @param day day to remove
+     * @author Stefan 20.09.2016
+     */
+    public void deleteDay(Date day){
+        SQLiteDatabase db = this.getReadableDatabase();
+        Date next = TimeUtils.addMinuteFromDate(day, 1440);
+        db.execSQL("delete from ActivityList where Start >= '"+TimeUtils.dateToDateString(day)+"' and Start < '" + TimeUtils.dateToDateString(next) + "' ;");
+
+    }
+
+    /**
+     * inserts a predicted day into the database
+     * @param prediction arrayList with activities
+     * @author Stefan 20.09.2016
+     */
+    public void insertNewRoutine(ArrayList<ActivityItem> prediction){
+        if(prediction.size()>0) {
+            deleteDay(prediction.get(0).getStarttime());
+
+            for(int i=0; i<prediction.size(); i++){
+                InsertActivity(prediction.get(i));
+            }
+        }
+
     }
 
     public void InsertNewRoutine(ArrayList<Prediction.PeriodAction> prediction) {
@@ -732,10 +709,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param helper
      * @param id
      * @return
+     * @author Stefan
      */
     public String getActionById(DataBaseHandler helper, int id) {
         SQLiteDatabase db = helper.getWritableDatabase();
-        //Create a Cursor that contains all records from the locations table
         Cursor cursor = db.rawQuery("select title from " + ACTIVITIES_TABLE_NAME + " where id=" + id, null);
         String name = "";
         if(cursor.moveToFirst()){
@@ -1393,221 +1370,6 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @return ArrayList contains an arraylist with ActivityItems for every single day <br/>
      * @author Stefan 06.09.2016
      */
-    public ArrayList<ArrayList<ActivityItem>> getAllDays1(int mode) {
-        String query = "SELECT * FROM ActivityList INNER JOIN  SubActivities ON ActivityList.id_SubActivity = SubActivities.id";
-
-        SQLiteDatabase db = this.getWritableDatabase();
-        Cursor cursor = db.rawQuery(query, null);
-
-        ArrayList<ArrayList<ActivityItem>> relevantDays = new ArrayList<>();
-        switch (mode) {
-            case PredictionFramework.EVERY_DAY: {
-
-                Date startPrev = null;
-
-                ArrayList<ActivityItem> day = new ArrayList<>();
-                ActivityItem item;
-                if (cursor.moveToFirst()) {
-                    do {
-                        int activityId = cursor.getInt(cursor.getColumnIndex("id_Activity"));
-                        int subactivityId = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
-                        String meal = cursor.getString(cursor.getColumnIndex("Meal"));
-                        String imagePath = cursor.getString(cursor.getColumnIndex("ImagePath"));
-                        int intensity = cursor.getInt(cursor.getColumnIndex("Intensity"));
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-                        Date starttime = null;
-                        Date endtime = null;
-                        try {
-                            starttime = format.parse(cursor.getString(cursor.getColumnIndex("Start")));
-                            endtime = format.parse(cursor.getString(cursor.getColumnIndex("End")));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-
-                        //if startPrev is initialized (not initialized in first run)
-                        if (startPrev != null) {
-                            //if starttime of previous activity was on a different day
-                            if (TimeUtils.isDifferentDay(startPrev, starttime)) {
-                                if(Util.isDayComplete(day)&& day.size()>3) {
-                                    relevantDays.add(day);
-                                }
-                                day = new ArrayList<>();
-                            }
-                        }
-                        item = new ActivityItem(activityId, subactivityId, starttime, endtime, imagePath, meal, intensity);
-                        day.add(item);
-                        if(Util.isDayComplete(day) && day.size()>3) {
-                            relevantDays.add(day);
-                        }
-                        startPrev = starttime;
-                    } while (cursor.moveToNext());
-
-                }
-                break;
-            }
-            case PredictionFramework.WEEKDAYS: {
-                Date startPrev = null;
-
-                ArrayList<ActivityItem> day = new ArrayList<>();
-                ActivityItem item;
-                if (cursor.moveToFirst()) {
-                    do {
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-                        Date starttime = null;
-                        Date endtime = null;
-                        try {
-                            starttime = format.parse(cursor.getString(cursor.getColumnIndex("Start")));
-                            endtime = format.parse(cursor.getString(cursor.getColumnIndex("End")));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-                        if(starttime != null) {
-                            //get the day of week from starttime
-                            Calendar cal1 = Calendar.getInstance();
-                            cal1.setTime(starttime);
-                            int dayOfWeek = cal1.get(Calendar.DAY_OF_WEEK);
-
-                            if (dayOfWeek == Calendar.MONDAY || dayOfWeek == Calendar.TUESDAY || dayOfWeek == Calendar.WEDNESDAY || dayOfWeek == Calendar.THURSDAY || dayOfWeek == Calendar.FRIDAY) {
-                                //get the rest of the parameters
-                                int activityId = cursor.getInt(cursor.getColumnIndex("id_Activity"));
-                                int subactivityId = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
-                                String meal = cursor.getString(cursor.getColumnIndex("Meal"));
-                                String imagePath = cursor.getString(cursor.getColumnIndex("ImagePath"));
-                                int intensity = cursor.getInt(cursor.getColumnIndex("Intensity"));
-
-                                if (startPrev != null) {
-                                    if (TimeUtils.isDifferentDay(startPrev, starttime)) {
-                                        if(Util.isDayComplete(day)) {
-                                            relevantDays.add(day);
-                                        }
-                                        day = new ArrayList<>();
-                                    }
-                                }
-                                item = new ActivityItem(activityId, subactivityId, starttime, endtime, imagePath, meal, intensity);
-                                day.add(item);
-
-                                startPrev = starttime;
-                            }
-                        }
-                    } while (cursor.moveToNext());
-                    if(Util.isDayComplete(day)) {
-                        relevantDays.add(day);
-                    }
-                }
-                break;
-            }
-            case PredictionFramework.WEEKENDS: {
-                Date startPrev = null;
-
-                ArrayList<ActivityItem> day = new ArrayList<>();
-                ActivityItem item;
-                if (cursor.moveToFirst()) {
-                    do {
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-                        Date starttime = null;
-                        Date endtime = null;
-                        try {
-                            starttime = format.parse(cursor.getString(cursor.getColumnIndex("Start")));
-                            endtime = format.parse(cursor.getString(cursor.getColumnIndex("End")));
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-
-                        if (starttime != null) {
-                            //get the day of week from starttime
-                            Calendar cal1 = Calendar.getInstance();
-                            cal1.setTime(starttime);
-                            int dayOfWeek = cal1.get(Calendar.DAY_OF_WEEK);
-
-                            if (dayOfWeek == Calendar.SATURDAY || dayOfWeek == Calendar.SUNDAY) {
-                                //get the rest of the parameters
-                                int activityId = cursor.getInt(cursor.getColumnIndex("id_Activity"));
-                                int subactivityId = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
-                                String meal = cursor.getString(cursor.getColumnIndex("Meal"));
-                                String imagePath = cursor.getString(cursor.getColumnIndex("ImagePath"));
-                                int intensity = cursor.getInt(cursor.getColumnIndex("Intensity"));
-
-                                if (startPrev != null) {
-                                    if (TimeUtils.isDifferentDay(startPrev, starttime)) {
-                                        if(Util.isDayComplete(day)) {
-                                            relevantDays.add(day);
-                                        }
-                                        day = new ArrayList<>();
-                                    }
-                                }
-                                item = new ActivityItem(activityId, subactivityId, starttime, endtime, imagePath, meal, intensity);
-                                day.add(item);
-
-                                startPrev = starttime;
-                            }
-                        }
-                        if(Util.isDayComplete(day)) {
-                            relevantDays.add(day);
-                        }
-                    } while (cursor.moveToNext());
-
-
-                }
-                break;
-            }
-            default:
-                //single day
-                if (mode >= Calendar.SUNDAY && mode <= Calendar.SATURDAY) {
-                    Date startPrev = null;
-
-                    ArrayList<ActivityItem> day = new ArrayList<>();
-                    ActivityItem item;
-                    if (cursor.moveToFirst()) {
-                        do {
-                            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-                            Date starttime = null;
-                            Date endtime = null;
-                            try {
-                                starttime = format.parse(cursor.getString(cursor.getColumnIndex("Start")));
-                                endtime = format.parse(cursor.getString(cursor.getColumnIndex("End")));
-                            } catch (ParseException e) {
-                                e.printStackTrace();
-                            }
-                            //get the day of week from starttime
-                            if (starttime != null) {
-                                Calendar cal1 = Calendar.getInstance();
-                                cal1.setTime(starttime);
-                                int dayOfWeek = cal1.get(Calendar.DAY_OF_WEEK);
-
-                                if (dayOfWeek == mode) {
-                                    //get the rest of the parameters
-                                    int activityId = cursor.getInt(cursor.getColumnIndex("id_Activity"));
-                                    int subactivityId = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
-                                    String meal = cursor.getString(cursor.getColumnIndex("Meal"));
-                                    String imagePath = cursor.getString(cursor.getColumnIndex("ImagePath"));
-                                    int intensity = cursor.getInt(cursor.getColumnIndex("Intensity"));
-
-                                    if (startPrev != null) {
-                                        if (TimeUtils.isDifferentDay(startPrev, starttime)) {
-                                            if(Util.isDayComplete(day)) {
-                                                relevantDays.add(day);
-                                            }
-                                            day = new ArrayList<>();
-                                        }
-                                    }
-                                    item = new ActivityItem(activityId, subactivityId, starttime, endtime, imagePath, meal, intensity);
-                                    day.add(item);
-
-                                    startPrev = starttime;
-                                }
-                            }
-                        } while (cursor.moveToNext());
-                        if(Util.isDayComplete(day)) {
-                            relevantDays.add(day);
-                        }
-
-                    }
-                }
-        }
-        cursor.close();
-        return relevantDays;
-    }
-
     public ArrayList<ArrayList<ActivityItem>> getAllDays(int mode) {
         String query = "SELECT al.*, s.id_Activity FROM " + ACTIVITYLIST_TABLE_NAME + " al " +
                 "INNER JOIN " + SUB_ACTIVITIES_TABLE_NAME + " s " + "ON al.id_SubActivity = s.id";
@@ -1659,7 +1421,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                         relevantDays.add(day);
                     }
                 }
-                break;
+                cursor.close();
+                return relevantDays;
             }
             case PredictionFramework.WEEKDAYS: {
                 Date startPrev = null;
@@ -1710,7 +1473,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                         relevantDays.add(day);
                     }
                 }
-                break;
+                cursor.close();
+                return relevantDays;
             }
             case PredictionFramework.WEEKENDS: {
                 Date startPrev = null;
@@ -1762,9 +1526,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                         relevantDays.add(day);
                     }
                 }
-                break;
+                cursor.close();
+                return relevantDays;
             }
-            default:
+            default: {
                 //single day
                 if (mode >= Calendar.SUNDAY && mode <= Calendar.SATURDAY) {
                     Date startPrev = null;
@@ -1798,7 +1563,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
                                     if (startPrev != null) {
                                         if (TimeUtils.isDifferentDay(startPrev, starttime)) {
-                                            if(Util.checkDay(day)) {
+                                            if (Util.checkDay(day)) {
                                                 relevantDays.add(day);
                                             }
                                             day = new ArrayList<>();
@@ -1811,12 +1576,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                                 }
                             }
                         } while (cursor.moveToNext());
-                        if(Util.checkDay(day)) {
+                        if (Util.checkDay(day)) {
                             relevantDays.add(day);
                         }
 
                     }
                 }
+            }
         }
         cursor.close();
         return relevantDays;

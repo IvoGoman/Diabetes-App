@@ -1,4 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing;
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -7,7 +9,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
- * Created by Stefan
+ * @author Stefan
  */
 public class CaseCreator {
 
@@ -18,6 +20,7 @@ public class CaseCreator {
 	/**
 	 * Constructor
 	 * @param list CSV file as ArrayList<String[]>
+	 * @author Stefan
 	 */
 	public CaseCreator(ArrayList<String[]> list){
 		this.list = list;
@@ -26,6 +29,7 @@ public class CaseCreator {
 	/**
 	 * inits the indexes of start and endtime
 	 * @param array first line of csv file
+	 * @author Stefan
 	 */
 	private void initStartAndEndtimeIndex(String[]array){
 		for (int j = 0; j < array.length; j++) {
@@ -40,9 +44,9 @@ public class CaseCreator {
 
 	/**
 	 * creates the cases and splits an activity going over two days
-	 * TODO bug: does not work from last to first day of two years
 	 * does not handle logging mistakes like an activity that goes accidental over many days
-	 * or a break of some days!
+	 * or a break of some days
+	 * @author Stefan
 	 */
 	public void createCases() {
 		ArrayList<String[]> list2 = new ArrayList<String[]>();
@@ -124,6 +128,7 @@ public class CaseCreator {
 	 * Thursday = 5
 	 * Friday = 6
 	 * Saturday = 7
+	 * @author Stefan
 	 */
 	public void addDayOfWeek(){
 		initStartAndEndtimeIndex(list.get(0));
@@ -144,6 +149,7 @@ public class CaseCreator {
 	/**
 	 * prints a single activity log entry
 	 * @param activity
+	 * @author Stefan
 	 */
 	private void printActivity(String[] activity){
 		for(int j=0; j<activity.length; j++){
@@ -172,6 +178,7 @@ public class CaseCreator {
 	 * @param starttimeIndex
 	 * @param endtimeIndex
 	 * @return last activity of day edited
+	 * @author Stefan
 	 */
 	private String[] editEndOfDay(String[] lastActivityPreviousDay, Calendar calPrev, int starttimeIndex, int endtimeIndex){
 		//change endtime of last activity of day
@@ -190,6 +197,7 @@ public class CaseCreator {
 	 * @param starttimeIndex
 	 * @param endtimeIndex
 	 * @return first activity of the day
+	 * @author Stefan
 	 */
 	private String[] editBeginOfDay(String[] lastActiviyPreviousDay, Calendar calActual, int starttimeIndex, int endtimeIndex){
 		//copy last activity and let it start at 00:00
@@ -212,6 +220,7 @@ public class CaseCreator {
 	 * inserts caseID into a single event log entry
 	 * @param activity
 	 * @param caseID
+	 * @author Stefan
 	 */
 	private String[] insertCase(String[] activity, int caseID, boolean initial){
 //		TODO: Remove setting boolean to false and withCase to "CaseID" when solution is found
@@ -235,6 +244,7 @@ public class CaseCreator {
 	 * It splits the activity into days and creates a unique case id for every day.
 	 * @param source Path to an activity log in csv format
 	 * @return ArrayList that contains the activity list divided into cases
+	 * @author Stefan
 	 */
 	public ArrayList<String[]> getActivityListWithCases(String source){
 		ArrayList<String[]> list = Util.read(source);
@@ -247,6 +257,7 @@ public class CaseCreator {
 	 * Also another column is created and filled with the day of the weak
 	 * @param source Path to an activity log in csv format
 	 * @param target Path for saving the resulting csv file
+	 * @author Stefan
 	 */
 	public void saveActivityWithCases(String source, String target){
 		ArrayList<String[]> list = Util.read(source);
@@ -270,10 +281,11 @@ public class CaseCreator {
 	}
 
 	/**
-	 * 	 * Merges two activities following each other that have the same activity and subactivity into one activity
+	 * Merges two activities following each other that have the same activity and subactivity into one activity
 	 * should be.
 	 * Has to be applied after case creation !!
 	 * @param withSubactivity if true the subactivity is taken into account for comparison
+	 * @author Stefan
      */
 	public void mergeConsecutiveSameActivity(boolean withSubactivity){
 		String prevActivity = "";
@@ -296,7 +308,7 @@ public class CaseCreator {
 			else if(list.get(i)[0].equals(prevCaseID)){
 				//subactivity is taken into acocunt
 				if (prevActivity.equals(list.get(i)[2]) && prevSubactivity.equals(list.get(i)[3]) && withSubactivity) {
-					sameAsBefore.add(true);
+					sameAsBefore.set(i,true);
 
 					prevCaseID = list.get(i)[0];
 					prevActivity = list.get(i)[2];
@@ -323,7 +335,7 @@ public class CaseCreator {
 		}
 		ArrayList<String[]> resultList = new ArrayList<>();
 		//merge duplicates
-		for(int i=sameAsBefore.size()-1; i>=0; i--){
+		for(int i=0; i<sameAsBefore.size(); i++){
 			if(sameAsBefore.get(i)){
 				String[] actual = list.get(i);
 				String[] prev = list.get(i-1);
@@ -332,6 +344,8 @@ public class CaseCreator {
 				list.get(i-1)[endtimeIndex] = list.get(i)[endtimeIndex];
 				//remove previous from list
 				list.remove(i);
+				sameAsBefore.remove(i);
+				i--;
 			}
 		}
 	}
@@ -339,7 +353,7 @@ public class CaseCreator {
 	/**
 	 * removes the day with the least caseID (first day in log)
 	 * Assumes that it is not complete
-	 * @param update if ture updates all case ids so the log starts with caseID one
+	 * @param update if true updates all case ids so the log starts with caseID one
 	 * @author Stefan 07.07.2016
 	 */
 	public void removeFirstCase(boolean update){
@@ -389,15 +403,37 @@ public class CaseCreator {
 	 */
 	public void shiftSameBorderTime(){
 		int prevEnd = 0;
-		for(int i=1; i<list.size(); i++){
-			if(i==1){
-				prevEnd = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[endtimeIndex]));
-			}else {
-				int start = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[starttimeIndex]));
-				if(start == prevEnd){
-					list.get(i-1)[endtimeIndex] = String.valueOf(TimeUtils.addMinuteToTimestamp(Long.parseLong(list.get(i-1)[endtimeIndex]),-1));
+		for(int i=0; i<list.size(); i++){
+			try {
+				if (i == 0) {
+					prevEnd = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[endtimeIndex]));
+				} else {
+					int start = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[starttimeIndex]));
+					if (start == prevEnd) {
+						list.get(i - 1)[endtimeIndex] = String.valueOf(TimeUtils.addMinuteToTimestamp(Long.parseLong(list.get(i - 1)[endtimeIndex]), -1));
+					}
+					prevEnd = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[endtimeIndex]));
 				}
-				prevEnd = TimeUtils.getMinutesOfDay(Long.parseLong(list.get(i)[endtimeIndex]));
+			}catch(Exception e){
+				Log.e("CaseCreator", "shiftSameBorderTime():" + e.getLocalizedMessage());
+				continue;
+			}
+		}
+	}
+
+	/**
+	 * removes an activity in case its end time is before its start time
+	 * @author Stefan 20.09.2016
+	 */
+	public void removeActivitiesWithEndBeforeStarttime(){
+		for(int i=0; i<list.size(); i++){
+			Date start = new Date(Long.parseLong(list.get(i)[starttimeIndex]));
+			Date end = new Date(Long.parseLong(list.get(i)[endtimeIndex]));
+			String startString = TimeUtils.dateToTimeString(start);
+			String endString = TimeUtils.dateToTimeString(end);
+			if(end.before(start) || end.equals(start) || startString.equals(endString)){
+				list.remove(i);
+				i--;
 			}
 		}
 	}

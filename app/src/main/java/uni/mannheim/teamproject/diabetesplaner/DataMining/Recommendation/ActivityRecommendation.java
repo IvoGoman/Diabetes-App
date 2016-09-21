@@ -24,9 +24,6 @@ public class ActivityRecommendation extends Recommendation {
     //    private final static int INTERVAL = 1000 * 60 * 5; //5 minutes
     private final static int INTERVAL = 1000 * 10; //10 sec
 
-    private final static int DEFAUL_REC = 0;
-    private final static int FIRST_REC = 1;
-
     Handler mHandler = new Handler();
     private long lastRecommendation = 0;
     private int mIdOffset = 0;
@@ -56,12 +53,6 @@ public class ActivityRecommendation extends Recommendation {
 //        return super.onUnbind(intent);
 //    }
 
-//    if Blood Sugar Level = 100=<x<200 then Exercise  (81 / 0 / 0)
-//
-//    if Blood Sugar Level = >=200 then insulin  (0 / 59 / 0)
-//
-//    else Eat  (0 / 0 / 19)
-
     /**
      * Launches recommendation process.
      * Recommendation not started if the last recommendation was within a specified interval
@@ -78,18 +69,9 @@ public class ActivityRecommendation extends Recommendation {
 //            mIdOffset = getMidOffset();
             mIdOffset = Recommendation.ACTIVITY_REC;
 
-            //switch between different recommendation methods
-            int rec = FIRST_REC;
             long time = System.currentTimeMillis();
 
-            switch (rec) {
-                case DEFAUL_REC:
-                    giveDefaultRecommendation();
-                    break;
-                case FIRST_REC:
-                    giveBSbasedRecommendation();
-                    break;
-            }
+            giveBSbasedRecommendation();
 
             lastRecommendation = time;
         }
@@ -158,36 +140,6 @@ public class ActivityRecommendation extends Recommendation {
         }
     }
 
-    /**
-     * gives default recommendation
-     *
-     * @author Stefan 30.04.2016
-     */
-    public void giveDefaultRecommendation() {
-        ActivityItem current = getCurrentActivity();
-
-        if (checkSleeptime()) {
-            sendNotification("You should better go to bed.", mIdOffset);
-        } else if (isStressed()) {
-            sendNotification("It seems that you are stressed. Better take some insuline.", mIdOffset);
-        } else {
-            if (checkInsulin()) {
-                sendNotification("Doing a low intense exercise would be good for you", mIdOffset);
-            } else {
-                sendNotification("You should better do some exercise.", mIdOffset);
-            }
-        }
-
-        if (isExercise(current)) {
-
-        }
-        if (isLowIntenseExercise(current)) {
-            if (checkSleeptime()) {
-
-            }
-        }
-    }
-
     public boolean isExercise(ActivityItem curr) {
         return false;
     }
@@ -252,11 +204,6 @@ public class ActivityRecommendation extends Recommendation {
         return false;
     }
 
-    public boolean checkInsulin() {
-        DataBaseHandler dbHandler = AppGlobal.getHandler();
-        return false;
-    }
-
     /**
      * @return
      * @author Stefan 30.04.2016
@@ -312,54 +259,7 @@ public class ActivityRecommendation extends Recommendation {
             if ((curr - bs_timestamp) / (60 * 1000) <= minSinceMM) {
                 return bs;
             }
-//            return bs;
         }
         return null;
     }
-
-    /**
-     * @author Stefan 03.07.2016
-     * returns the most recent bloodsugar level in mmol within the specified time interval
-     * return 0 if no measurement was found
-     * @param hoursSinceMM time period in hours before the actual to time in
-     *                      that the measurement should be to be taken into account
-     * @return
-     */
-//    public double getLastBloodsugarlevel(int hoursSinceMM){
-//        Date curr = TimeUtils.getCurrentDate();
-//
-//        DataBaseHandler dbHandler = AppGlobal.getHandler();
-//        ArrayList<MeasureItem> mms = dbHandler.getMeasurementValues(dbHandler, curr, "DAY", MeasureItem.MEASURE_KIND_BLOODSUGAR);
-//
-//        MeasureItem last = null;
-//        long timediff = Long.MAX_VALUE;
-//
-//        //find recent measurement
-//        for(int i=0; i<mms.size(); i++){
-//            //compares actual time with time from measurement
-//            long tmpDiff = curr.getTime()-mms.get(i).getTimestamp();
-//            if(tmpDiff <timediff){
-//                last = mms.get(i);
-//                timediff = tmpDiff;
-//            }
-//        }
-//
-//        long timeSinceMM = TimeUnit.MILLISECONDS.toMinutes(timediff);
-//
-//        if(timeSinceMM <hoursSinceMM && last!= null){
-//            double value = last.getMeasure_value();
-//            switch (last.getMeasure_unit()) {
-//                case "%":
-//                    return Util.miligram_to_mol(Util.percentage_to_mg(value));
-//
-//                case "mmol/l":
-//                    return value;
-//
-//                case "mg/dl":
-//                    return Util.miligram_to_mol(value);
-//            }
-//        }
-//        return 0;
-//    }
-
 }

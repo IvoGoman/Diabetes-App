@@ -18,8 +18,8 @@ import java.util.Date;
 import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
+import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
-import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
@@ -37,10 +37,10 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
     private String measure;
     private String measure_value;
-
+    private Long timestamp;
     private String insulin;
     private String insulin_value;
-
+    private MeasureItem measureItem;
 
     DataBaseHandler database;
 
@@ -57,7 +57,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle("Input Measurements");
+        builder.setTitle(R.string.input_measurements);
 
         View view = getLayout();
 
@@ -127,7 +127,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
                     insulin_value = addInsulin.getText().toString();
                     String date_s = btn_date.getText().toString();
                     String time_s = btn_time.getText().toString();
-
+                    timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s,time_s).getTime();
 
                     if(measure_value.equals("")== true && insulin_value.equals("")== true){
                         Toast.makeText(getActivity(), "No Measurements have been entered", Toast.LENGTH_LONG).show();
@@ -135,28 +135,23 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
 
                         if (measure_value.equals("") == true){
-                            database.InsertInsulin(database,
-                                    java.sql.Date.valueOf(date_s.subSequence(6, 10) + "-" + date_s.subSequence(3, 5) + "-" + date_s.subSequence(0, 2)),
-                                    Time.valueOf(time_s),
-                                    1, Double.parseDouble(insulin_value), insulin);
+                            measureItem = new MeasureItem(timestamp, Double.parseDouble(insulin_value),insulin,MeasureItem.MEASURE_KIND_INSULIN);
+                            database.insertMeasurement(measureItem, database.getUserID(database));
+
                             Toast.makeText(getActivity(), "No Blood sugar level entered; " + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
 
                         }else if(insulin_value.equals("") == true){
-                            database.InsertBloodsugar(database,
-                                    java.sql.Date.valueOf(date_s.subSequence(6, 10) + "-" + date_s.subSequence(3, 5) + "-" + date_s.subSequence(0, 2)),
-                                    Time.valueOf(time_s),
-                                    1, Double.parseDouble(measure_value), measure);
+                            measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value),measure, MeasureItem.MEASURE_KIND_BLOODSUGAR);
+                            database.insertMeasurement(measureItem, database.getUserID(database));
+
                             Toast.makeText(getActivity(), "No Insulin Dosage entered; " + measure_value + " " + measure + " stored", Toast.LENGTH_LONG).show();
                         }else if(check_mg(convert_to_mg(Double.parseDouble(measure_value),measure)) == true && check_Units(convert_to_Units(Double.parseDouble(insulin_value),insulin)) == true){
-                            database.InsertBloodsugar(database,
-                                    java.sql.Date.valueOf(date_s.subSequence(6, 10) + "-" + date_s.subSequence(3, 5) + "-" + date_s.subSequence(0, 2)),
-                                    Time.valueOf(time_s),
-                                    1, Double.parseDouble(measure_value), measure);
+                            measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value),measure,MeasureItem.MEASURE_KIND_BLOODSUGAR);
+                            database.insertMeasurement(measureItem, database.getUserID(database));
 
-                            database.InsertInsulin(database,
-                                    java.sql.Date.valueOf(date_s.subSequence(6, 10) + "-" + date_s.subSequence(3, 5) + "-" + date_s.subSequence(0, 2)),
-                                    Time.valueOf(time_s),
-                                    1, Double.parseDouble(insulin_value), insulin);
+                            measureItem = new MeasureItem(timestamp, Double.parseDouble(insulin_value),insulin,MeasureItem.MEASURE_KIND_INSULIN);
+                            database.insertMeasurement(measureItem, database.getUserID(database));
+
                             Toast.makeText(getActivity(), "Measurements: " + measure_value + " " + measure + "," + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
                             dismiss();
                         }

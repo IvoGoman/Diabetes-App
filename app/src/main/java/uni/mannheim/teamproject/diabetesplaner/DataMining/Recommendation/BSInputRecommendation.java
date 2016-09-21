@@ -42,7 +42,8 @@ public class BSInputRecommendation extends Recommendation {
     }
 
     /**
-     * creates fake bloodsugar values
+     * creates fake bloodsugar values for testing
+     * @author Stefan
      */
     public void createFakeBS(){
 
@@ -55,8 +56,9 @@ public class BSInputRecommendation extends Recommendation {
             int sec = (int)(Math.random()*60);
 
             Time time = new Time(hour, min, sec);
-
-            dbHandler.InsertBloodsugar(dbHandler, date, time, 1, 150, MeasureItem.MEASURE_KIND_BLOODSUGAR);
+            long timestamp =TimeUtils.convertDateAndTimeStringToDate(String.valueOf(date),String.valueOf(time)).getTime();
+            MeasureItem item = new MeasureItem(timestamp, 150,"mg/dl",MeasureItem.MEASURE_KIND_BLOODSUGAR);
+            dbHandler.insertMeasurement(item,1);
         }
 
         for(int i=0; i<6; i++) {
@@ -69,7 +71,9 @@ public class BSInputRecommendation extends Recommendation {
 
             Time time = new Time(hour, min, sec);
 
-            dbHandler.InsertBloodsugar(dbHandler, date, time, 1, 150, MeasureItem.MEASURE_KIND_BLOODSUGAR);
+            long timestamp = TimeUtils.convertDateAndTimeStringToDate(String.valueOf(date),String.valueOf(time)).getTime();
+            MeasureItem item = new MeasureItem(timestamp, 150,"mg/dl",MeasureItem.MEASURE_KIND_BLOODSUGAR);
+            dbHandler.insertMeasurement(item,1);
         }
 
         java.sql.Date date = java.sql.Date.valueOf("2016-07-11");
@@ -79,8 +83,9 @@ public class BSInputRecommendation extends Recommendation {
         int sec = 3;
 
         Time time = new Time(hour, min, sec);
-
-        dbHandler.InsertBloodsugar(dbHandler, date, time, 1, 150, MeasureItem.MEASURE_KIND_BLOODSUGAR);
+        long timestamp = TimeUtils.convertDateStringToTimestamp(TimeUtils.convertDateAndTimeStringToDate(String.valueOf(date),String.valueOf(time)));
+        MeasureItem item = new MeasureItem(timestamp, 150,"mg/dl",MeasureItem.MEASURE_KIND_BLOODSUGAR);
+        dbHandler.insertMeasurement(item,1);
     }
 
 //    @Override
@@ -177,6 +182,7 @@ public class BSInputRecommendation extends Recommendation {
      * returns the mean of every cluster in a list
      * @param cs list with clusters
      * @return ArrayList with the means
+     * @author Stefan
      */
     public ArrayList<Double> getClusterMeans(List<Cluster<DoublePoint>> cs){
         ArrayList<Double> means = new ArrayList<>();

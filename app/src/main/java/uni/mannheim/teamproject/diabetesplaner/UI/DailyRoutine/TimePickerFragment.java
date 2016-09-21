@@ -38,7 +38,6 @@ public class TimePickerFragment extends DialogFragment{
 
         // Create a new instance of TimePickerFragment and return it
         // Edit by Naira, Changing Time picker color
-        //  return new TimePickerFragment(getActivity(), this, hour, minute, DateFormat.is24HourFormat(getActivity()));
         return new android.app.TimePickerDialog(getActivity(), R.style.picker, new android.app.TimePickerDialog.OnTimeSetListener() {
             @Override
             public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -46,10 +45,8 @@ public class TimePickerFragment extends DialogFragment{
                 //if this is the dialog for the starttime
                 if(isStart){
                     dialog.setStartDate(date);
-                    //dialog.setStarttime(Util.timeToString(date));
                 }else{
                     dialog.setEndDate(date);
-                    //dialog.setEndtime(Util.timeToString(date));
                 }
             }
         },hour,minute,DateFormat.is24HourFormat(getActivity()));
@@ -71,27 +68,10 @@ public class TimePickerFragment extends DialogFragment{
         this.hour = hour;
     }
 
-//    /**
-//     * takes time in format mm:HH and sets it to initial time of the TimePicker
-//     * @param time
-//     */
-//    public void setTime(String time){
-//        String[] tmp = time.split(":");
-//        //set hour
-//        setHour(Integer.valueOf(tmp[0]));
-//
-//        //handle 0 in front
-//        if (tmp[1].charAt(0) == '0') {
-//            setMinute(Integer.valueOf(String.valueOf(tmp[1].charAt(1))));
-//        }else {
-//            setMinute(Integer.valueOf(tmp[1]));
-//        }
-//    }
-
     /**
-     * @author Stefan 30.03.2016
      * Sets the minute and hour of the TimePicker from a date object
      * @param date
+     * @author Stefan 30.03.2016
      */
     public void setTime(Date date){
         this.date = date;

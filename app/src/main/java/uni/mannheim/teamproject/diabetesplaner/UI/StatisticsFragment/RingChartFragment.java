@@ -25,9 +25,8 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
  * Created by Stefan on 11.01.2016.
- *
  */
-public class RingChartFragment extends ChartFragment{
+public class RingChartFragment extends ChartFragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -92,82 +91,67 @@ public class RingChartFragment extends ChartFragment{
     }
 
     /**
-     * @author Ivo Gosemann 08.04.2016
-     * Method to retrieve the Chart Data from the DB and process it into a PieData object
      * @param timeFrame the time window of interest
      * @return PieData to be displayed in the Chart
+     * @author Ivo Gosemann 08.04.2016
+     * Method to retrieve the Chart Data from the DB and process it into a PieData object
      */
-    public PieData getData (String timeFrame){
+    public PieData getData(String timeFrame) {
         DataBaseHandler handler = AppGlobal.getHandler();
         Date date = TimeUtils.getCurrentDate();
 //        ArrayList<ActivityItem> activityItems = handler.GetDay(handler,date);
-        ArrayList<ActivityItem> activityItems = handler.getActivities(handler,date,timeFrame);
+        ArrayList<ActivityItem> activityItems = handler.getActivities(handler, date, timeFrame);
         ArrayList<String> labels = new ArrayList<>();
         ArrayList<Entry> pieValues = new ArrayList<>();
-        HashMap<String,Integer> valueMap = new HashMap<>();
-        if(!activityItems.isEmpty()){
-            String label = "";
-            int value = 0;
-            ActivityItem item = null;
-            for (int i=0;i<activityItems.size();i++){
-                item = activityItems.get(i);
-                label = handler.getActionById(handler,item.getActivityId());
-                if(!valueMap.containsKey(label)){
-                    value =  TimeUtils.getDuration(item.getStarttime(),item.getEndtime());
-                    valueMap.put(label,value);
-                }else{
-                    value = valueMap.get(label);
-                    value += TimeUtils.getDuration(item.getStarttime(),item.getEndtime());
-                    valueMap.put(label,value);
-                }
+        HashMap<String, Integer> valueMap = new HashMap<>();
+        String label = "";
+        int value = 0;
+        ActivityItem item = null;
+        for (int i = 0; i < activityItems.size(); i++) {
+            item = activityItems.get(i);
+            label = handler.getActionById(handler, item.getActivityId());
+            if (!valueMap.containsKey(label)) {
+                value = TimeUtils.getDuration(item.getStarttime(), item.getEndtime());
+                valueMap.put(label, value);
+            } else {
+                value = valueMap.get(label);
+                value += TimeUtils.getDuration(item.getStarttime(), item.getEndtime());
+                valueMap.put(label, value);
             }
-            int j = 0;
-            for(String entryKey :valueMap.keySet()){
+        }
+        int j = 0;
+        for (String entryKey : valueMap.keySet()) {
 
-                labels.add(entryKey);
-                float duration = (float) valueMap.get(entryKey);
-                pieValues.add(new Entry(duration,j));
-                j++;
-            }
-        } else {
-            labels.add("Running");
-            labels.add("Sleeping");
-            labels.add("Working");
-            labels.add("Eating");
-            labels.add("Relaxing");
-
-
-            pieValues.add(new Entry(1f, 0));
-            pieValues.add(new Entry(8f, 1));
-            pieValues.add(new Entry(8f, 2));
-            pieValues.add(new Entry(3f, 3));
-            pieValues.add(new Entry(4f, 4));
+            labels.add(entryKey);
+            float duration = (float) valueMap.get(entryKey);
+            pieValues.add(new Entry(duration, j));
+            j++;
         }
         PieDataSet pieDataSet = new PieDataSet(pieValues, getResources().getString(R.string.activity));
 
         ArrayList<Integer> colors = new ArrayList<>();
 
 //      Color bad
-        pieDataSet.addColor(Color.rgb(239,83,80));
+        pieDataSet.addColor(Color.rgb(239, 83, 80));
 //      Color potential bad
-        pieDataSet.addColor(Color.rgb(255,202,40));
+        pieDataSet.addColor(Color.rgb(255, 202, 40));
 //      Color good
-        pieDataSet.addColor(Color.rgb(178,255,89));
+        pieDataSet.addColor(Color.rgb(178, 255, 89));
 //      Color no influence
-        pieDataSet.addColor(Color.rgb(77,208,255));
+        pieDataSet.addColor(Color.rgb(77, 208, 255));
 
 
         return new PieData(labels, pieDataSet);
     }
 
     /**
+     * @param timeFrame
      * @author Ivo Gosemann 08.04.2016
      * Method which updates the Chart based on the timeframe provided
-     * @param timeFrame
      */
     @Override
-    public void updateChart(String timeFrame){
-        PieChart chart = (PieChart)this.getView().findViewById(R.id.activitypiechart);
+    public void updateChart(String timeFrame) {
+        PieChart chart = (PieChart) this.getView().findViewById(R.id.activitypiechart);
         PieData pieData = this.getData(timeFrame);
         chart.setData(pieData);
         chart.invalidate();

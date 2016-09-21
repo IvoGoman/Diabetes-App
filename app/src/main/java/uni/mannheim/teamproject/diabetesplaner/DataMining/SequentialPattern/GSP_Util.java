@@ -122,7 +122,7 @@ public class GSP_Util {
 				String amPm = sdf.format(date);
 
 				String key;
-				if (amPm.equals("AM")) {
+				if (amPm.equals("AM") || amPm.equals("vorm.")) {
 					key = item.getActivityId() + "_" + item.getSubactivityId() + "_AM";
 				} else {
 					key = item.getActivityId() + "_" + item.getSubactivityId() + "_PM";
@@ -144,5 +144,37 @@ public class GSP_Util {
 		}
 
 		return sum;
+	}
+
+	/**
+	 * sums up a list
+	 * @param list
+	 * @return
+	 * @author Stefan
+     */
+	public static int sumUp(ArrayList<Long> list){
+		int sum = 0;
+		for(int i=0 ;i<list.size(); i++){
+			sum += list.get(i);
+		}
+		return sum;
+	}
+
+	/**
+	 * finds maximum value in a list
+	 * @param list
+	 * @return
+	 * @author Stefan
+     */
+	public static int findMax(ArrayList<Float> list){
+		float max = Float.MIN_VALUE;
+		int index = 0;
+		for(int i=0 ;i<list.size(); i++){
+			if(max<list.get(i)){
+				max = list.get(i);
+				index = i;
+			}
+		}
+		return index;
 	}
 }

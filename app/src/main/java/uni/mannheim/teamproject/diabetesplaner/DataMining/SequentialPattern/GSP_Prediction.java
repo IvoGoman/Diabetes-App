@@ -1,8 +1,11 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
@@ -25,58 +28,80 @@ public class GSP_Prediction {
 	 * @author Stefan 06.09.2016
      */
 	public static ArrayList<ActivityItem> makeGSPPrediction(ArrayList<ArrayList<ActivityItem>> train, float minsup){
-		GSP gsp = new GSP(train);
-		HashMap<Sequence, Float> result = gsp.findFrequentPatterns(minsup);
-
-		//get most frequent start and end activities
-		String mostFreqStart = GSP_Prediction.findMostFreqStartActivity(gsp.getCompleteSeqs());
-		String mostFreqEnd = GSP_Prediction.findMostFreqEndActivity(gsp.getCompleteSeqs());
-
-		//create a path from start of a day to the end of the day
-		ArrayList<String> drList = GSP_Prediction.createDailyRoutine(mostFreqStart, mostFreqEnd, result);
-		Sequence dailyRoutine = new Sequence(drList);
-
-		HashMap<String, Long> avgTimes = GSP_Util.getAvgTime(train);
-
-		//create list with the average times for each activity
-		//sum up times
-		Long sum = 0l;
-		ArrayList<Long> times = new ArrayList<>();
-		for(int i = 0; i<drList.size(); i++){
-			Long avgTime = avgTimes.get(drList.get(i));
-			times.add(avgTime);
-			sum += avgTime;
-		}
-
-		//normalize times to fit a day
-		float ratio = 1440f/(float)sum;
-
-		for(int i=0; i<times.size(); i++){
-			times.set(i, (long) ((times.get(i)/1000/60)*ratio));
-		}
-
-		//create the actual daily routine where an activity is represented as an ActivityItem
 		ArrayList<ActivityItem> aiRoutine = new ArrayList<>();
-		int minOfDay = 0;
-		for(int i=0; i<drList.size(); i++){
-			String[] params = drList.get(i).split("_");
-			Integer activityId = Integer.parseInt(params[0]);
-			Integer subactivityId = null;
-			try {
-				subactivityId = Integer.parseInt(params[1]);
-			}catch(NumberFormatException e){
-				subactivityId = null;
+
+		try {
+			GSP gsp = new GSP(train);
+			HashMap<Sequence, Float> result = gsp.findFrequentPatterns(minsup);
+
+			//get most frequent start and end activities
+			String mostFreqStart = GSP_Prediction.findMostFreqStartActivity(gsp.getCompleteSeqs());
+			String mostFreqEnd = GSP_Prediction.findMostFreqEndActivity(gsp.getCompleteSeqs());
+
+			//create a path from start of a day to the end of the day
+			ArrayList<String> drList = GSP_Prediction.createDailyRoutine(mostFreqStart, mostFreqEnd, result);
+			Sequence dailyRoutine = new Sequence(drList);
+
+			HashMap<String, Long> avgTimes = GSP_Util.getAvgTime(train);
+
+			for (Map.Entry<String, Long> entry :avgTimes.entrySet()) {
+				String key = entry.getKey();
+				Long value = entry.getValue();
+				Log.d("GSP", key + ": " + value);
 			}
-			int duration = times.get(i) != null ? times.get(i).intValue() : 0;
 
-			Date starttime = TimeUtils.getDate(TimeUtils.minutesOfDayToTimestamp(minOfDay));
-			Date endtime = TimeUtils.getDate(TimeUtils.minutesOfDayToTimestamp(duration-1));
-			minOfDay += duration;
+			//create list with the average times for each activity
+			//sum up times
+			int sum = 0;
+			ArrayList<Long> times = new ArrayList<>();
+			for (int i = 0; i < drList.size(); i++) {
+				Long avgTime = avgTimes.get(drList.get(i));
+				times.add(avgTime);
+				sum += (int)(avgTime/1000/60);
+			}
 
-			ActivityItem item = new ActivityItem(activityId, subactivityId, starttime, endtime);
-			aiRoutine.add(item);
+			//normalize times to fit a day
+			float ratio = 1440f / (float) (sum);
+
+			ArrayList<Float> mods = new ArrayList<>();
+//		ArrayList<Float> floatTimes = new ArrayList<>();
+			for (int i = 0; i < times.size(); i++) {
+				times.set(i, (long) ((times.get(i) / 1000 / 60) * ratio));
+				mods.add(((float) (times.get(i) / 1000 / 60) * ratio) % 1);
+			}
+
+			while (GSP_Util.sumUp(times) != 1440) {
+				int maxIndex = GSP_Util.findMax(mods);
+				times.set(maxIndex, times.get(maxIndex) + 1);
+				mods.set(maxIndex, 0f);
+			}
+
+			//create the actual daily routine where an activity is represented as an ActivityItem
+			int minOfDay = 0;
+			for (int i = 0; i < drList.size(); i++) {
+				String[] params = drList.get(i).split("_");
+				Integer activityId = Integer.parseInt(params[0]);
+				Integer subactivityId = null;
+				try {
+					subactivityId = Integer.parseInt(params[1]);
+				} catch (NumberFormatException e) {
+					subactivityId = null;
+				}
+				int duration = times.get(i) != null ? times.get(i).intValue() : 0;
+
+				Date starttime = TimeUtils.getDate(TimeUtils.minutesOfDayToTimestamp(minOfDay));
+				Date endtime = TimeUtils.getDate(TimeUtils.minutesOfDayToTimestamp(minOfDay + duration - 1));
+				minOfDay += duration;
+
+				ActivityItem item = new ActivityItem(activityId, subactivityId, starttime, endtime);
+				aiRoutine.add(item);
+			}
+
+		}catch(Exception e){
+			e.printStackTrace();
+			Log.e("GSP_Prediction", "makeGSPPrediction(): " + e.getLocalizedMessage());
+			throw e;
 		}
-
 		return aiRoutine;
 	}
 

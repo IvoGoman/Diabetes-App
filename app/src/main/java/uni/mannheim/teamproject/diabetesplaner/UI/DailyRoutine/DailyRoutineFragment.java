@@ -19,12 +19,12 @@ import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionFramework;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
-import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.HeuristicsMinerImplementation;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -91,6 +91,11 @@ public class DailyRoutineFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /**
+     * Sets the action bar and initializes the DailyRoutineHandler
+     * @param savedInstanceState
+     * @author Stefan
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -106,6 +111,14 @@ public class DailyRoutineFragment extends Fragment {
 
     }
 
+    /**
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     * @author Stefan
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -129,17 +142,25 @@ public class DailyRoutineFragment extends Fragment {
 //            items.add(drv);
 //        }
 
-//        ArrayList<Integer> algos = new ArrayList<>();
+        ArrayList<Integer> algos = new ArrayList<>();
 //        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
-//        algos.add(PredictionFramework.PREDICTION_GSP);
+        algos.add(PredictionFramework.PREDICTION_GSP);
 //        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
 //        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
-//        drHandler.predictDailyRoutine(algos, PredictionFramework.EVERY_DAY);
+        try {
+            drHandler.predictDailyRoutine(algos, PredictionFramework.EVERY_DAY);
+        } catch (Exception e) {
+            e.printStackTrace();
+            Log.e(TAG +".onCreateView()", e.getLocalizedMessage());
+        }
         //DummyDataCreator.populateDataBase();
         //drHandler.predictDailyRoutine(PredictionFramework.EVERY_DAY, getContext());
-        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(),0);
-        ArrayList<ActivityItem> result = HeuristicsMinerImplementation.runHeuristicsMiner(items);
-        drHandler.predictDailyRoutine(this.date);
+
+//        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(),0);
+//        ArrayList<ActivityItem> result = HeuristicsMinerImplementation.runHeuristicsMiner(items);
+
+//        drHandler.predictDailyRoutine(this.date);
+
         DailyRoutineView.clearSelectedActivities();
         updateView();
 
@@ -151,14 +172,15 @@ public class DailyRoutineFragment extends Fragment {
     }
 
     /**
-     * updates View
+     * updates the View that displays the daily routine
+     * @author Stefan
      */
     public void updateView(){
         //get predicted routine
         linearLayout.removeAllViews();
         items.clear();
         //TODO --------- for testing ------------------------------------------
-        ArrayList<ActivityItem> listItems = drHandler.getDailyRoutine();
+        ArrayList<ActivityItem> listItems = drHandler.getDayRoutine(new Date());
 //        ArrayList<ActivityItem> listItems = new ArrayList<>();
 //
 //        String start1 = "17.09.2016 00:00:00";
@@ -320,6 +342,7 @@ public class DailyRoutineFragment extends Fragment {
      * returns the px value for dp
      * @param dp
      * @return
+     * @author Stefan
      */
     public int getpx(int dp){
         return (int)(dp*getResources().getDisplayMetrics().density);
@@ -329,6 +352,7 @@ public class DailyRoutineFragment extends Fragment {
      * return the dp value for px
      * @param px
      * @return
+     * @author Stefan
      */
     public int getdp(int px){
         return (int)(px/getResources().getDisplayMetrics().density);
@@ -337,6 +361,7 @@ public class DailyRoutineFragment extends Fragment {
     /**
      * returns parent activity
      * @return parant activity
+     * @author Stefan
      */
     public AppCompatActivity getParentActivity(){
         return aca;
@@ -345,6 +370,7 @@ public class DailyRoutineFragment extends Fragment {
     /**
      * returns the list with all activity views of the dailyroutine
      * @return DailyRoutineView
+     * @author Stefan
      */
     public ArrayList<DailyRoutineView> getActivityList(){
         return items;
@@ -353,6 +379,7 @@ public class DailyRoutineFragment extends Fragment {
     /**
      * returns the layout
      * @return LinearLayout
+     * @author Stefan
      */
     public static LinearLayout getLinearLayout(){
         return linearLayout;
@@ -361,6 +388,7 @@ public class DailyRoutineFragment extends Fragment {
     /**
      * sets the ic_delete icon in the action bar visible true/false
      * @param isVisible visible/invisible
+     * @author Stefan
      */
     public static void setDeleteIconVisible(boolean isVisible){
         MenuItem deleteItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.delete_icon_action_bar);
@@ -370,6 +398,7 @@ public class DailyRoutineFragment extends Fragment {
     /**
      * sets visibility of add item in the action bar
      * @param isVisible visible/invisible
+     * @author Stefan
      */
     public static void setAddItemVisible(boolean isVisible){
         MenuItem addItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.add_icon_action_bar_routine);
@@ -379,6 +408,7 @@ public class DailyRoutineFragment extends Fragment {
     /**
      * sets the edit icon in the action bar visible
      * @param isVisible visible/invisible
+     * @author Stefan
      */
     public static void setEditIconVisible(boolean isVisible){
         MenuItem editItem = EntryScreenActivity.getOptionsMenu().findItem(R.id.edit_icon_action_bar_routine);
@@ -428,6 +458,7 @@ public class DailyRoutineFragment extends Fragment {
     /**
      * returns the scrollview
      * @return
+     * @author Stefan
      */
     public static ScrollView getScrollView(){
         return scrollView;

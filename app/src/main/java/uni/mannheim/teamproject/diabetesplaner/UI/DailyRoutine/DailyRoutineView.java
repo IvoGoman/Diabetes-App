@@ -47,7 +47,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     private int subactivity;
     private Date startDate;
     private Date endDate;
-    private Date date;
     private String bloodsugarText;
     private String insulinText;
     private String meal;
@@ -134,6 +133,12 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         initPaints();
     }
 
+    /**
+     * initializes the activityItem representation and its attributes
+     * @param context
+     * @param activityItem
+     * @author Stefan
+     */
     public DailyRoutineView(Context context, ActivityItem activityItem){
         super(context);
         this.context = context;
@@ -156,7 +161,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         if(this.imagePath != null && this.imagePath.length() > 1 && !this.imagePath.equals("null")) {
             this.mealImage = Util.getCompressedPic(imagePath);
         }
-        this.date = activityItem.getDate();
         this.startDate = activityItem.getStarttime();
         this.endDate = activityItem.getEndtime();
 
@@ -173,6 +177,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     /**
      * inits additional combonents
+     * @author Stefan
      */
     public void init(){
         this.startInMinOfDay = getMinutesOfDay(startDate);
@@ -192,6 +197,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     /**
      * inits special Colors
+     * @author Stefan
      */
     public void initColors() {
         innerColor = ContextCompat.getColor(this.getContext(), ColorUtils.getColor(activity, activityItem));
@@ -209,6 +215,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     /**
      * inits all Paints
+     * @author Stefan
      */
     public void initPaints() {
         borderPaint.setColor(textColor);
@@ -249,6 +256,13 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         highlightPaint.setStyle(Paint.Style.FILL);
     }
 
+    /**
+     * measures the width and height before the actual view is drawn to determine the place the components claim
+     * because the sizes depend on each other
+     * @param widthMeasureSpec
+     * @param heightMeasureSpec
+     * @author Stefan
+     */
     @Override
     protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 
@@ -292,7 +306,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
             //Can't be bigger than...
             width = Math.min(desiredWidth, widthSize);
 
-            //ERROR here
         }
         else {
             //Be whatever you want
@@ -315,7 +328,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
         initComponents(width, height);
 
-        //MUST CALL THIS
         setMeasuredDimension(width, height);
     }
 
@@ -323,6 +335,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * creates the text fields and measures the height of the StaticLayouts
      * @param width
      * @return height of the View
+     * @author Stefan
      */
     private int getDesiredHeight(int width){
         //width Duration: ... + padding to right border
@@ -414,6 +427,13 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         return heightUpper + marginTop + heightLower;
     }
 
+    /**
+     * initializes the actual geometrical components that will be drawn
+     * with the measures determined in onMeasure
+     * @param width
+     * @param height
+     * @author Stefan
+     */
     private void initComponents(int width, int height){
         //upper rectangle
         front = new Rect(0 + offsetL, 0, width, heightUpper);
@@ -458,7 +478,11 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         hl.close();
     }
 
-    //TODO: initialize all objects only once maybe in the constructor
+    /**
+     * draw the components to canvas
+     * @param canvas
+     * @author Stefan
+     */
     @Override
     public void onDraw(Canvas canvas) {
 
@@ -563,6 +587,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * takes start and endtime as String in HH:mm format and returns the duration
      *
      * @return duration
+     * @author Stefan
      */
     public String getDuration() {
         int start = startInMinOfDay;
@@ -577,6 +602,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      *
      * @param duration duration in minutes
      * @return duration
+     * @author Stefan
      */
     public String getDurationAsString(int duration) {
         int min = duration % 60;
@@ -594,6 +620,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      *
      * @param dp dp value
      * @return px
+     * @author Stefan
      */
     public int getpx(int dp) {
         return (int) (dp * getResources().getDisplayMetrics().density);
@@ -604,6 +631,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      *
      * @param px px vlaue
      * @return dp
+     * @author Stefan
      */
     public int getdp(int px) {
         return (int) (px / getResources().getDisplayMetrics().density);
@@ -613,6 +641,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * returns the position of the dot
      *
      * @return point
+     * @author Stefan
      */
     public Point getDot() {
         return new Point(getLeft(), dotOffset);
@@ -622,6 +651,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * returns the total height of a activity item
      *
      * @return total height
+     * @author Stefan
      */
     public int getTotalHeight() {
         return (int) (heightLower + heightUpper + marginTop);
@@ -630,6 +660,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     /**
      * checks if actual time is inbetween
      * @return if this is the actual activity
+     * @author Stefan
      */
     private boolean isRunning() {
         Date date = new Date();
@@ -649,6 +680,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      *
      * @param date
      * @return isFinished
+     * @author Stefan
      */
     public boolean isFinished(Date date) {
         int time = getMinutesOfDay(date);
@@ -664,6 +696,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      *
      * @param date
      * @return isRemaining
+     * @author Stefan
      */
     public boolean isRemaining(Date date) {
         int time = getMinutesOfDay(date);
@@ -681,6 +714,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * 3: is finished
      *
      * @param isArchieved true if daily routine is archieved
+     * @author Stefan
      */
     public void setState(boolean isArchieved) {
         Date date = new Date();
@@ -706,6 +740,8 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      *
      * @param time a time
      * @return minutes of the day
+     *
+     * @author Stefan
      */
     public int getMinutesOfDay(Date time) {
         Calendar calendar = Calendar.getInstance();
@@ -716,6 +752,12 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         return hour*60+min;
     }
 
+    /**
+     * handles the onClick event, sets the ActionBar items according to the selection
+     * @param v
+     * @return
+     * @author Stefan
+     */
     @Override
     public boolean onLongClick(View v) {
         //makes the items selectable
@@ -735,6 +777,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      *
      * @param context context
      * @param millis  milliseconds to vibrate
+     * @author Stefan
      */
     private void vibrate(Context context, int millis) {
         Vibrator vibr = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
@@ -747,6 +790,13 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     }
 
+    /**
+     * handles on touch event for interaction with daily routine
+     * @param v
+     * @param event
+     * @return
+     * @author Stefan
+     */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
         //Log.d(TAG, String.valueOf("on touch " + selectable));
@@ -787,10 +837,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
         return false;
     }
 
-    public void setTouched(boolean isTouched){
-        touched = isTouched;
-    }
-
     /**
      * sets the add, edit and remove icons in the action bar
      * depending on the selected activities
@@ -823,6 +869,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     /**
      * return if items are selectable
      * @return isSelectable
+     * @author Stefan
      */
     public static boolean isSelectable(){
         return selectable;
@@ -831,6 +878,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     /**
      * sets items to isSelectable
      * @param isSelectable isSelectable
+     * @author Stefan
      */
     public static void setSelectable(boolean isSelectable){
         selectable = isSelectable;
@@ -840,6 +888,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     /**
      * true if this item is selected
      * @return boolean
+     * @author Stefan
      */
     public boolean isSelected(){
         return isSelected;
@@ -849,6 +898,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * Sets an item to be selected or not.
      * ActionBar items and the list selectedActivities
      * @param isSelected
+     * @author Stefan
      */
     public void setSelected(boolean isSelected) {
         Log.d(TAG,"deselected: " + ActivityItem.getActivityString(activity));
@@ -876,6 +926,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
     /**
      * deselects all items
+     * @author Stefan
      */
     public static void deselectAll(){
 
@@ -889,6 +940,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     /**
      * getter for the isSelected activity list
      * @return list with isSelected activities
+     * @author Stefan
      */
     public static ArrayList<DailyRoutineView> getSelectedActivities(){
         return selectedActivities;
@@ -951,6 +1003,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * returns height of StaticLayout component
      * @param sl
      * @return 0 if sl ==null else height of sl
+     * @author Stefan
      */
     public int getHeightComp(StaticLayout sl){
         if(sl == null){

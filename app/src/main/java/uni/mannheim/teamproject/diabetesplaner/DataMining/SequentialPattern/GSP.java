@@ -42,6 +42,7 @@ public class GSP {
 	 * applies the GSP algorithm
 	 * @param minsup
 	 * @return
+	 * @author Stefan
 	 */
 	public HashMap<Sequence, Float> findFrequentPatterns(float minsup){
 		HashMap<Sequence, Float> freqPat = new HashMap<>();
@@ -93,6 +94,7 @@ public class GSP {
 	 * returns a HashMap<Item,Support> with all frequent one sequences
 	 * @param minsup
 	 * @return
+	 * @author Stefan
 	 */
 	public void findFrequentOneSequences(float minsup){
 		for(int i=0; i<cases.size(); i++){
@@ -107,7 +109,7 @@ public class GSP {
 				String item;
 
 				//starttime is in the morning or eventing
-				if(amPm.equals("AM")){
+				if(amPm.equals("AM") || amPm.equals("vorm.")){
 					item = cases.get(i).get(j).getActivityId() + "_" + cases.get(i).get(j).getSubactivityId() + "_" + "AM";
 				}else{
 					item = cases.get(i).get(j).getActivityId() + "_" + cases.get(i).get(j).getSubactivityId() + "_" + "PM";

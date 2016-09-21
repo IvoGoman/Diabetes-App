@@ -21,8 +21,10 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
+import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
@@ -112,11 +114,11 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         AlertDialog.Builder mybuilder = new AlertDialog.Builder(getActivity());
         mybuilder.setView(view);
 
-        mybuilder.setPositiveButton("Submit", new DialogInterface.OnClickListener() {
+        mybuilder.setPositiveButton(R.string.submit2, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //if value is changed, then store value and change display
-
+                long timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s,time_s).getTime();
                 try {
                     if (measure_value.equals(bloodsugar_level.getText().toString().replace(".","-")) == false) {
                         measure_value = bloodsugar_level.getText().toString();
@@ -126,10 +128,9 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                         }
                         //Check if entered value is to high or to low
                         if(check_mg(convert_to_mg(Double.parseDouble(measure_value),measure)) == true) {
-                            database.InsertBloodsugar(database,
-                                    Date.valueOf(date_s.subSequence(6, 10) + "-" + date_s.subSequence(3, 5) + "-" + date_s.subSequence(0, 2)),
-                                    Time.valueOf(time_s),
-                                    1, Double.parseDouble(measure_value), measure);
+                           MeasureItem measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value),measure, MeasureItem.MEASURE_KIND_BLOODSUGAR);
+                            database.insertMeasurement(measureItem, database.getUserID(database));
+
                             communicator.respond(null, measure_value, measure, 1);
                             Toast.makeText(getActivity(), "Blood sugar level: " + measure_value + " "
                                             + measure + " stored"
@@ -175,7 +176,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
 
         });
 
-        mybuilder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+        mybuilder.setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dismiss();

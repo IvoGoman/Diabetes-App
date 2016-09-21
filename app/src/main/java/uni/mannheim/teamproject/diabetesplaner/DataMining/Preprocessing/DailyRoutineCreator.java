@@ -15,6 +15,7 @@ public class DailyRoutineCreator {
 	/**
 	 * Constructor
 	 * @param list: predicted daily routine in minutes of the day
+	 * @author Stefan
 	 */
 	public DailyRoutineCreator(ArrayList<String[]> list){
 		this.list = list;
@@ -26,6 +27,7 @@ public class DailyRoutineCreator {
 	 * finds the index of the label in the list 
 	 * @param attributeName
 	 * @return
+	 * @author Stefan
 	 */
 	private Integer getLabelIndex(String attributeName){
 		int index = 0;
@@ -41,6 +43,7 @@ public class DailyRoutineCreator {
 	 * finds index of the time in minutes in the list
 	 * @param attributeName
 	 * @return
+	 * @author Stefan
 	 */
 	private Integer getMinuteIndex(String attributeName){
 		int index = 0;
@@ -56,6 +59,7 @@ public class DailyRoutineCreator {
 	/**
 	 * creates a list where every activity gets a time interval
 	 * @return ArrayList<String[]>
+	 * @author Stefan
 	 */
 	public ArrayList<String[]> getDailyRoutine(){
 		ArrayList<ArrayList<String>> tmp = new ArrayList<ArrayList<String>>();
@@ -97,6 +101,7 @@ public class DailyRoutineCreator {
 	 * converts a string with minutes of a day (0-1439) to a HH:mm string
 	 * @param minutesOfDay
 	 * @return String
+	 * @author Stefan
 	 */
 	private String convertToHHmm(String minutesOfDay){
 		int minOfDay = (int)Float.parseFloat(minutesOfDay);

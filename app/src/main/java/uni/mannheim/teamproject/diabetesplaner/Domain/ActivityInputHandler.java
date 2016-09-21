@@ -18,6 +18,7 @@ public class ActivityInputHandler {
      * Reads an input file that contains an activity log and
      * adds it to the database
      * @param filepath path where the file is located
+     * @author Stefan
      */
     public static void loadIntoDatabase(String filepath){
 
@@ -36,6 +37,7 @@ public class ActivityInputHandler {
      * checks if the filepaths contains a file with a valid file format
      * @param filepath location of a file
      * @return true: valid /false: not valid
+     * @author Stefan
      */
     public static boolean isFileFormatValid(String filepath){
         if(filepath.matches(".*\\.csv") || filepath.matches(".*\\.sqlite")){
@@ -60,10 +62,15 @@ public class ActivityInputHandler {
         creator.createCases();
         //adds a column with the day of the week
         creator.addDayOfWeek();
-        //reduces the endtime of the previous activity by 1 if necessary
+        //first case of the complete list is csv header (causes type conversation errors if not removed)
+        creator.removeFirstCase(true);
         creator.shiftSameBorderTime();
         //merges two consecutive activities which are the same
         creator.mergeConsecutiveSameActivity(true);
+        //removes activities where endtime is before starttime
+        creator.removeActivitiesWithEndBeforeStarttime();
+
+        //removes first and last case since they are incomplete and would skrew the prediction
         creator.removeFirstCase(true);
         creator.removeLastCase();
 
