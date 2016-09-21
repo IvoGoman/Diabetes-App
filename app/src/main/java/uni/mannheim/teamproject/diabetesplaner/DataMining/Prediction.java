@@ -319,7 +319,7 @@ public class Prediction {
         Instance newInstance = new Instance(4);
         newInstance.setDataset(inst);
 
-        ActivityBefore1 = String.valueOf(Activities.elementAt(0));
+        ActivityBefore1 = "Schlafen|Schlafen";
 
         Cursor cursor2 = AppGlobal.getHandler().getAllRoutine();
         int p = cursor2.getCount();
@@ -359,6 +359,8 @@ public class Prediction {
                         inst.add(newInstance);
                         inst.add(newInstance);
                         inst.add(newInstance);
+                        inst.add(newInstance);
+                        inst.add(newInstance);
                     }
 
                     CurDate.setTime(CurDate.getTime() + 1 * 60 * 1000);
@@ -389,7 +391,7 @@ public class Prediction {
 
         ArrayList<TimeAction> TimeAction1 = new ArrayList<TimeAction>();
         int Duration = 1;
-        double lastactionpr = 0.0;
+        double lastactionpr = inst.firstInstance().value(3);
         for (int i = 0; i < 1440; i += 1) {
             //Instance inst1 = new Instance(2);
             newInstance.setValue(0, i);

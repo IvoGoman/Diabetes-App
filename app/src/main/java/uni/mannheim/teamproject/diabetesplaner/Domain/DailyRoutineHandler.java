@@ -42,6 +42,8 @@ public class DailyRoutineHandler extends DayHandler{
      */
     public void predictDailyRoutine(ArrayList<Integer> algorithms, int mode) throws Exception {
         dailyRoutine.clear();
+        String filePath = "/data/data/uni.mannheim.teamproject.diabetesplaner/SDC_ActivityData-2.csv"; //to be deleted
+        ActivityInputHandler.readCSV(filePath); //to be deleted
         dailyRoutine = PredictionFramework.predict(PredictionFramework.retrieveTrainingData(mode), algorithms);
 //        Log.d(TAG, "predicted daily routine: ");
 //        for(int i=0; i<dailyRoutine.size();i++){
@@ -96,6 +98,7 @@ public class DailyRoutineHandler extends DayHandler{
         Context context = AppGlobal.getcontext();
         Prediction prediction1 = new Prediction();
         try{
+            AppGlobal.getHandler().deleteDay(TimeUtils.getDateFromString("2016-09-21"));
             if (AppGlobal.getHandler()!=null){
                 if (!AppGlobal.getHandler().CheckRoutineAdded()){
                     prediction = prediction1.GetRoutineAsPAforInserting();

@@ -143,8 +143,8 @@ public class DailyRoutineFragment extends Fragment {
 //        }
 
         ArrayList<Integer> algos = new ArrayList<>();
-//        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
-        algos.add(PredictionFramework.PREDICTION_GSP);
+        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
+//        algos.add(PredictionFramework.PREDICTION_GSP);
 //        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
 //        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
         try {
