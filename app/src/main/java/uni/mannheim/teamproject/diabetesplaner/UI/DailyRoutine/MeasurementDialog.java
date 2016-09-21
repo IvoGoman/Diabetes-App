@@ -11,7 +11,6 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -20,6 +19,7 @@ import java.util.Locale;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
@@ -72,7 +72,6 @@ public class MeasurementDialog extends MeasurementInputDialog {
         String timeString = timeFormat.format(date);
 
 
-
         addBloodSugar = (EditText) view.findViewById(R.id.edit_measure_value_entryscreen);
         addInsulin = (EditText) view.findViewById(R.id.edit_insulin_value);
         database = AppGlobal.getHandler();
@@ -115,8 +114,6 @@ public class MeasurementDialog extends MeasurementInputDialog {
         });
 
 
-
-
         builder.setPositiveButton(R.string.ADD, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //add measurements
@@ -127,47 +124,45 @@ public class MeasurementDialog extends MeasurementInputDialog {
                     insulin_value = addInsulin.getText().toString();
                     String date_s = btn_date.getText().toString();
                     String time_s = btn_time.getText().toString();
-                    timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s,time_s).getTime();
+                    timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s, time_s).getTime();
 
-                    if(measure_value.equals("")== true && insulin_value.equals("")== true){
+                    if (measure_value.equals("") == true && insulin_value.equals("") == true) {
                         Toast.makeText(getActivity(), "No Measurements have been entered", Toast.LENGTH_LONG).show();
                     }
 
 
-                        if (measure_value.equals("") == true){
-                            measureItem = new MeasureItem(timestamp, Double.parseDouble(insulin_value),insulin,MeasureItem.MEASURE_KIND_INSULIN);
-                            database.insertMeasurement(measureItem, database.getUserID(database));
+                    if (measure_value.equals("") == true) {
+                        measureItem = new MeasureItem(timestamp, Double.parseDouble(insulin_value), insulin, MeasureItem.MEASURE_KIND_INSULIN);
+                        database.insertMeasurement(measureItem, database.getUserID(database));
 
-                            Toast.makeText(getActivity(), "No Blood sugar level entered; " + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
+                        EntryScreenActivity.updateDailyRoutine();
 
-                        }else if(insulin_value.equals("") == true){
-                            measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value),measure, MeasureItem.MEASURE_KIND_BLOODSUGAR);
-                            database.insertMeasurement(measureItem, database.getUserID(database));
+                        Toast.makeText(getActivity(), "No Blood sugar level entered; " + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
 
-                            Toast.makeText(getActivity(), "No Insulin Dosage entered; " + measure_value + " " + measure + " stored", Toast.LENGTH_LONG).show();
-                        }else if(check_mg(convert_to_mg(Double.parseDouble(measure_value),measure)) == true && check_Units(convert_to_Units(Double.parseDouble(insulin_value),insulin)) == true){
-                            measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value),measure,MeasureItem.MEASURE_KIND_BLOODSUGAR);
-                            database.insertMeasurement(measureItem, database.getUserID(database));
+                    } else if (insulin_value.equals("") == true) {
+                        measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value), measure, MeasureItem.MEASURE_KIND_BLOODSUGAR);
+                        database.insertMeasurement(measureItem, database.getUserID(database));
 
-                            measureItem = new MeasureItem(timestamp, Double.parseDouble(insulin_value),insulin,MeasureItem.MEASURE_KIND_INSULIN);
-                            database.insertMeasurement(measureItem, database.getUserID(database));
+                        EntryScreenActivity.updateDailyRoutine();
 
-                            Toast.makeText(getActivity(), "Measurements: " + measure_value + " " + measure + "," + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
-                            dismiss();
-                        }
+                        Toast.makeText(getActivity(), "No Insulin Dosage entered; " + measure_value + " " + measure + " stored", Toast.LENGTH_LONG).show();
+                    } else if (check_mg(convert_to_mg(Double.parseDouble(measure_value), measure)) == true && check_Units(convert_to_Units(Double.parseDouble(insulin_value), insulin)) == true) {
+                        measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value), measure, MeasureItem.MEASURE_KIND_BLOODSUGAR);
+                        database.insertMeasurement(measureItem, database.getUserID(database));
 
+                        measureItem = new MeasureItem(timestamp, Double.parseDouble(insulin_value), insulin, MeasureItem.MEASURE_KIND_INSULIN);
+                        database.insertMeasurement(measureItem, database.getUserID(database));
 
-                        //starts the recommendations
+                        EntryScreenActivity.updateDailyRoutine();
 
-                        //   EntryScreenActivity.updateDailyRoutine();
-
-
-                    else{
+                        Toast.makeText(getActivity(), "Measurements: " + measure_value + " " + measure + "," + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
+                        dismiss();
+                    } else {
                         Toast.makeText(getActivity(), "Invalid Measurements", Toast.LENGTH_LONG).show();
                     }
 
                 } catch (Exception e) {
-                    Log.d("Rec", ""+e);
+                    Log.d("Rec", "" + e);
                     e.getMessage();
                 }
             }
@@ -232,7 +227,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
                 mmol.setChecked(false);
                 break;
         }
-        if(database.getLastInsulinMeasurement(AppGlobal.getHandler(),1) != null) {
+        if (database.getLastInsulinMeasurement(AppGlobal.getHandler(), 1) != null) {
             addInsulin.setText(database.getLastInsulinMeasurement(AppGlobal.getHandler(), 1)[0].toString());
             insulin = database.getLastInsulinMeasurement(AppGlobal.getHandler(), 1)[1].toString();
         }
@@ -390,10 +385,8 @@ public class MeasurementDialog extends MeasurementInputDialog {
                 }
             }
             };*/
-    private double convert_to_mg(double value, String unit)
-    {
-        switch (unit)
-        {
+    private double convert_to_mg(double value, String unit) {
+        switch (unit) {
             case "mg/dl":
                 return value;
             case "mmol/l":
@@ -407,29 +400,22 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
     /***
      * checks the inserted value
+     *
      * @param value
      * @return
      */
-    private boolean check_mg(double value)
-    {
-        if(value <= 50)
-        {
+    private boolean check_mg(double value) {
+        if (value <= 50) {
             return false;
-        }
-        else if (value >= 500)
-        {
+        } else if (value >= 500) {
             return false;
-        }
-        else
-        {
+        } else {
             return true;
         }
     }
 
-    private double convert_to_Units(double value, String unit)
-    {
-        switch (unit)
-        {
+    private double convert_to_Units(double value, String unit) {
+        switch (unit) {
             case "Units":
                 return value;
             case "mL/cc":
@@ -441,26 +427,19 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
     /***
      * checks the inserted value
+     *
      * @param value
      * @return
      */
-    private boolean check_Units(double value)
-    {
-        if(value <= 0.0)
-        {
+    private boolean check_Units(double value) {
+        if (value <= 0.0) {
             return false;
-        }
-        else if (value >= 80)
-        {
+        } else if (value >= 80) {
             return false;
-        }
-        else
-        {
+        } else {
             return true;
         }
     }
-
-
 
 
 }

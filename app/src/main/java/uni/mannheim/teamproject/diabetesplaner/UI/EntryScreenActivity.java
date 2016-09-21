@@ -382,6 +382,7 @@ public class EntryScreenActivity extends AppCompatActivity
      * @author Stefan 17.09.2016
      */
     public static void updateDailyRoutine(){
+        System.out.println("instance of: " + (fragment instanceof  DailyRoutineFragment));
         if(fragment instanceof DailyRoutineFragment){
             ((DailyRoutineFragment)fragment).updateView();
         }
