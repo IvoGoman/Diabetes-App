@@ -67,7 +67,7 @@ public class PredictionFramework {
                 switch (algorithms.get(0)) {
                     case PREDICTION_DECISION_TREE:
                         try {
-                            return Prediction.GetRoutineAsAI();
+                            return Prediction.GetRoutineAsAI(train);
                         } catch (Exception e) {
                             e.printStackTrace();
                             Log.e(TAG, e.toString());

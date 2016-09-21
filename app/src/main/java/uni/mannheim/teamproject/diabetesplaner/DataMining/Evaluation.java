@@ -23,80 +23,6 @@ import weka.core.Instances;
 
 public class Evaluation {
 
-    ArrayList<Prediction.TimeAction> CreatorRealRoutine(ArrayList<ActivityItem> Routine){
-        ArrayList<Prediction.TimeAction> result = new ArrayList<Prediction.TimeAction>();
-
-        int duration=0;
-        for (ActivityItem activity:Routine) {
-            java.util.Date Start = activity.getStarttime();
-            Calendar calendar = Calendar.getInstance();
-            int ActivityCur = activity.getActivityId();
-            java.util.Date End = activity.getEndtime();
-            java.util.Date CurDate = Start;
-            int num = 0;
-            while (CurDate.before(End)) {
-                num += 1;
-                if (num == 2) {
-                    duration = 0;
-                }
-                calendar.setTime(Start);
-
-                int minutesleftfrommidnight = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
-                duration += 1;
-
-                result.add(new Prediction.TimeAction(minutesleftfrommidnight,(double)ActivityCur));
-
-                CurDate.setTime(CurDate.getTime() + 1 * 60 * 1000);
-            }
-        }
-        int i=0;
-        while (result.get(i).Time!=0){
-            result.remove(i);
-            i++;
-        }
-        i = result.size()-1;
-        while (result.get(i).Time!=1440){
-            result.remove(i);
-            i--;
-        }
-        return result;
-    }
-
-    ArrayList<Prediction.TimeAction> CreatorPredictedRoutine(ArrayList<ActivityItem> RoutinePredicted, ArrayList<ActivityItem> RoutineReal){
-        int days = RoutineReal.size()/RoutinePredicted.size();
-
-        while(RoutinePredicted.size()!=RoutineReal.size()) {
-            RoutinePredicted.add(RoutinePredicted.get(RoutinePredicted.size()-1440));
-        }
-
-        ArrayList<Prediction.TimeAction> result = new ArrayList<Prediction.TimeAction>();
-        int duration=0;
-        for (ActivityItem activity:RoutinePredicted) {
-            java.util.Date Start = activity.getStarttime();
-            Calendar calendar = Calendar.getInstance();
-            int ActivityCur = activity.getActivityId();
-            java.util.Date End = activity.getEndtime();
-            java.util.Date CurDate = Start;
-            int num = 0;
-            while (CurDate.before(End)) {
-                num += 1;
-                if (num == 2) {
-                    duration = 0;
-                }
-                calendar.setTime(Start);
-
-                int minutesleftfrommidnight = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
-                duration += 1;
-
-                result.add(new Prediction.TimeAction(minutesleftfrommidnight,(double)ActivityCur));
-
-                CurDate.setTime(CurDate.getTime() + 1 * 60 * 1000);
-            }
-        }
-
-        return result;
-    }
-
     public static float usageGsp(ArrayList<ArrayList<ActivityItem>> train){
         ArrayList<ArrayList<ActivityItem>>train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(0,train.size()/2));
         ArrayList<ArrayList<ActivityItem>>train2 = new ArrayList<ArrayList<ActivityItem>>(train.subList(train.size()/2,train.size()));
@@ -107,7 +33,7 @@ public class Evaluation {
         return (accuracy1+accuracy2)/2;
     }
 
-    public static void usageTree() throws Exception {
+    public static float usageTree() throws Exception {
         HashMap<Integer, List<Double>> hashReal = new HashMap<>();
         FastVector Activities = new FastVector();
         String ActivityCur;
@@ -177,59 +103,8 @@ public class Evaluation {
             }
         }
         float accuracy2 = Accuracy(Pred2,hashReal);
+        return (accuracy1+accuracy2)/2;
     }
-
-
-
-//    public static void usage(){
-//        //float f = Accuracy(rtd,gsp);
-//        ArrayList<Prediction.TimeAction> prediction = new ArrayList<Prediction.TimeAction>();
-//        try {
-//            prediction = GetRoutineAsTimeAction();   //array of length 1440 with time,activity
-//            ArrayList<Prediction.PeriodAction> pred = Prediction.GetRoutine1();
-//            HashMap<Integer,List<String>> DayReal = new HashMap<>();
-//            for (int minute=1;minute<1440;minute++){
-//                ArrayList<String> a = new ArrayList<>();
-//                DayReal.put(minute,a);
-//            }
-//            Cursor cursor2 = AppGlobal.getHandler().getAllRoutine();
-//            int p = cursor2.getCount();
-//            if (cursor2.moveToFirst()) {
-//                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-//                int duration=0;
-//                do {
-//                    java.util.Date Start = format.parse(cursor2.getString(cursor2.getColumnIndex("Start")));
-//                    Calendar calendar = Calendar.getInstance();
-//                    String ActivityCur = cursor2.getString(cursor2.getColumnIndex("SubActivity"));
-//                    java.util.Date End = format.parse(cursor2.getString(4));
-//                    java.util.Date CurDate = Start;
-//                    int num = 0;
-//                    while (CurDate.before(End)) {
-//                        num += 1;
-//                        if (num == 2) {
-//                            duration = 0;
-//                        }
-//                        calendar.setTime(Start);
-//
-//                        int minutesleftfrommidnight = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
-//                        duration += 1;
-//                        DayReal.get(minutesleftfrommidnight).add(ActivityCur);  //hashmap of length 1440 with time as a key,array of actions performed at this minute
-//                        CurDate.setTime(CurDate.getTime() + 1 * 60 * 1000);
-//                    }
-//                }
-//                while (cursor2.moveToNext());
-//            }
-//            // close cursor
-//            if (!cursor2.isClosed()) {
-//                cursor2.close();
-//            }
-//
-//            Accuracy(prediction,DayReal);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
 
     static float AccuracyGsp(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> gsp){
         int acc=0;
