@@ -352,7 +352,7 @@ public class Prediction {
                     inst.add(newInstance);
 
                     if (ActivityCur!=ActivityBefore1){
-                        for (int i=0;i<100;i++){
+                        for (int i=0;i<4;i++){
                         inst.add(newInstance);
                         }
                     }
@@ -597,7 +597,7 @@ public class Prediction {
             }
             if (startTimeS.charAt(2) == ':' && startTimeS.length()==4){
                 String Start2 ="";
-                Start2+=startTimeS+"0";
+                Start2+="0"+startTimeS;
                 startTimeS=Start2;
             }
             if (startTimeS.charAt(2) == ':' && startTimeS.length()==4){
@@ -618,7 +618,7 @@ public class Prediction {
             }
             if (endTimeS.charAt(2) == ':' && endTimeS.length()==4){
                 String End2 ="";
-                End2+=endTimeS+"0";
+                End2+="0"+endTimeS;
                 endTimeS=End2;
             }
             if (endTimeS.charAt(2) == ':' && endTimeS.length()==4){
@@ -672,7 +672,7 @@ public class Prediction {
             }
             if (startTimeS.charAt(2) == ':' && startTimeS.length()==4){
                 String Start2 ="";
-                Start2+=startTimeS+"0";
+                Start2+="0"+startTimeS;
                 startTimeS=Start2;
             }
             if (startTimeS.charAt(2) == ':' && startTimeS.length()==4){
@@ -693,7 +693,7 @@ public class Prediction {
             }
             if (endTimeS.charAt(2) == ':' && endTimeS.length()==4){
                 String End2 ="";
-                End2+=endTimeS+"0";
+                End2+="0"+endTimeS;
                 endTimeS=End2;
             }
             if (endTimeS.charAt(2) == ':' && endTimeS.length()==4){
