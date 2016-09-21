@@ -112,7 +112,7 @@ public class ActivityInputHandler {
                 try{
                     subId = Integer.parseInt(event[3]);
                 } catch(Exception e){
-                    subId = 0;
+                    subId = Integer.parseInt(event[2]);
                     e.printStackTrace();
                 }
                     if (lastitemEnd!=0) {

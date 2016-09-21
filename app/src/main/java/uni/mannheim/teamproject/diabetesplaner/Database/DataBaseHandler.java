@@ -270,6 +270,33 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             activityID = cursor.getInt(0);
         }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return activityID;
+    }
+
+    public int getActivityIDForPred(String activity)
+    {
+        int activityID = -1;
+        String activityTitle;
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        HashMap<String,Integer> Activities = new HashMap<>();
+        Cursor cursor = db1.rawQuery("select id,title from Activities;", null);
+        if (cursor.moveToFirst()) {
+            do {
+                activityID = cursor.getInt(cursor.getColumnIndex("id"));
+                activityTitle = cursor.getString(cursor.getColumnIndex("title"));
+                Activities.put(activityTitle.replace(" ", ""), activityID);
+            }
+            while(cursor.moveToNext());
+        }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        activityID = Activities.get(activity);
         return activityID;
     }
 
@@ -279,6 +306,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select id_Activity from SubActivities where title= '"+ subactivity+ "'; ", null);
         if (cursor.moveToFirst()) {
             return (cursor.getInt(0));
+        }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
         }
         return -1;
     }
@@ -290,6 +321,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             return (cursor.getString(0));
         }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
         return "Default";
     }
 
@@ -299,6 +334,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select Activities.Title from SubActivities inner join Activities on SubActivities.id_Activity=Activities.id where SubActivities.id= '"+ subactivityId+ "'; ", null);
         if (cursor.moveToFirst()) {
             return (cursor.getString(0));
+        }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
         }
         return "Default";
     }
@@ -310,6 +349,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             return (cursor.getInt(0));
         }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
         return 15;
     }
 
@@ -320,18 +363,26 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             return (cursor.getInt(0));
         }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
         return -1;
     }
 
     public String getSubactivity(int subactivityID)
     {
+        String subActivity="";
         SQLiteDatabase db1 = this.getReadableDatabase();
         Cursor cursor = db1.rawQuery("select title from SubActivities where id= "+ subactivityID + "; ", null);
         if (cursor.moveToFirst()) {
-            return (cursor.getString(0));
+            subActivity = cursor.getString(0);
         }
-        cursor.close();
-        return "";
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return subActivity;
     }
 
 
@@ -345,7 +396,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
 
         }
-        cursor.close();
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
         return result;
     }
 

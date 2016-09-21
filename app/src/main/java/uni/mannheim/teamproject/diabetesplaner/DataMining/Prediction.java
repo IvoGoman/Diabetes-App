@@ -295,7 +295,7 @@ public class Prediction {
         String Activity = ActivitySubActivity.substring(0,ActivitySubActivity.indexOf("|"));
         String SubActivity = ActivitySubActivity.substring(ActivitySubActivity.indexOf("|")+1,ActivitySubActivity.length());
 
-        HashMap<String,Integer> subActivities = AppGlobal.getHandler().getAllSubactivities(AppGlobal.getHandler().getActivityID(Activity));
+        HashMap<String,Integer> subActivities = AppGlobal.getHandler().getAllSubactivities(AppGlobal.getHandler().getActivityIDForPred(Activity));
         int subActivity = subActivities.get(SubActivity);
         return subActivity;
     }
