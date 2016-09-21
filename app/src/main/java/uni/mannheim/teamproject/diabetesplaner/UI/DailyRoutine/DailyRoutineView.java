@@ -26,7 +26,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
-import uni.mannheim.teamproject.diabetesplaner.DataMining.Evaluation;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -194,11 +193,6 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
 
         initColors();
         initPaints();
-        try {
-            Evaluation.usageTree();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     /**
