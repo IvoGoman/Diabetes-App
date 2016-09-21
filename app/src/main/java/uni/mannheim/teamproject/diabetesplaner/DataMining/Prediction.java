@@ -13,6 +13,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
+import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import weka.classifiers.trees.J48;
@@ -358,15 +359,6 @@ public class Prediction {
                         inst.add(newInstance);
                         inst.add(newInstance);
                         inst.add(newInstance);
-                        inst.add(newInstance);
-                        inst.add(newInstance);
-                        inst.add(newInstance);
-                        inst.add(newInstance);
-                        inst.add(newInstance);
-                        inst.add(newInstance);
-                        inst.add(newInstance);
-                        inst.add(newInstance);
-                        inst.add(newInstance);
                     }
 
                     CurDate.setTime(CurDate.getTime() + 1 * 60 * 1000);
@@ -483,6 +475,60 @@ public class Prediction {
             int activityId = AppGlobal.getHandler().getActivityIdbySubActicityId(subActivityId);
             String startTimeS = pa.GetStart();
             String endTimeS = pa.GetEnd();
+
+            Calendar calendar = Calendar.getInstance();
+            int Year = calendar.get(Calendar.YEAR);
+            String Month = DataBaseHandler.formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+            String Day = DataBaseHandler.formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+            String StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day);
+            String EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day);
+
+            if (startTimeS.charAt(1) == ':' && startTimeS.length()==3){
+                String Start2 ="";
+                Start2+="0"+startTimeS.charAt(0)+":0"+startTimeS.charAt(2);
+                startTimeS=Start2;
+            }
+            if (Start.charAt(1) == ':' && Start.length()==4){
+                String Start2 ="";
+                Start2+="0"+startTimeS.charAt(0)+":"+startTimeS.charAt(2)+startTimeS.charAt(3);
+                startTimeS=Start2;
+            }
+            if (startTimeS.charAt(2) == ':' && startTimeS.length()==4){
+                String Start2 ="";
+                Start2+=startTimeS+"0";
+                startTimeS=Start2;
+            }
+            if (startTimeS.charAt(2) == ':' && startTimeS.length()==4){
+                String Start2 ="";
+                Start2+=startTimeS.charAt(0)+startTimeS.charAt(1)+":0"+startTimeS.charAt(3);
+                startTimeS=Start2;
+            }
+
+            if (endTimeS.charAt(1) == ':' && endTimeS.length()==3){
+                String End2 ="";
+                End2+="0"+endTimeS.charAt(0)+":0"+endTimeS.charAt(2);
+                endTimeS=End2;
+            }
+            if (endTimeS.charAt(1) == ':' && endTimeS.length()==4){
+                String End2 ="";
+                End2+="0"+endTimeS.charAt(0)+":"+endTimeS.charAt(2)+endTimeS.charAt(3);
+                endTimeS=End2;
+            }
+            if (endTimeS.charAt(2) == ':' && endTimeS.length()==4){
+                String End2 ="";
+                End2+=endTimeS+"0";
+                endTimeS=End2;
+            }
+            if (endTimeS.charAt(2) == ':' && endTimeS.length()==4){
+                String End2 ="";
+                End2+=endTimeS.charAt(0)+endTimeS.charAt(1)+":0"+endTimeS.charAt(3);
+                endTimeS=End2;
+            }
+
+
+            startTimeS = StartOfDay.toString() + " " + startTimeS;
+            endTimeS = EndOfDay.toString()  + " " + endTimeS;
+
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
             Date startTime = format.parse(startTimeS);
             Date endTime = format.parse(endTimeS);

@@ -97,13 +97,14 @@ public class Evaluation {
         return result;
     }
 
-    public static void usageGsp(ArrayList<ArrayList<ActivityItem>> train){
+    public static float usageGsp(ArrayList<ArrayList<ActivityItem>> train){
         ArrayList<ArrayList<ActivityItem>>train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(0,train.size()/2));
         ArrayList<ArrayList<ActivityItem>>train2 = new ArrayList<ArrayList<ActivityItem>>(train.subList(train.size()/2,train.size()));
         ArrayList<ActivityItem> gsp1 = GSP_Prediction.makeGSPPrediction(train1, 0.2f);
         ArrayList<ActivityItem> gsp2 = GSP_Prediction.makeGSPPrediction(train2, 0.2f);
         float accuracy1 = AccuracyGsp(train1,gsp1);
         float accuracy2 = AccuracyGsp(train2,gsp2);
+        return (accuracy1+accuracy2)/2;
     }
 
     public static void usageTree() throws Exception {
