@@ -5,6 +5,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
@@ -43,23 +44,29 @@ public class GSP_Prediction {
 
 			HashMap<String, Long> avgTimes = GSP_Util.getAvgTime(train);
 
+			for (Map.Entry<String, Long> entry :avgTimes.entrySet()) {
+				String key = entry.getKey();
+				Long value = entry.getValue();
+				Log.d("GSP", key + ": " + value);
+			}
+
 			//create list with the average times for each activity
 			//sum up times
-			Long sum = 0l;
+			int sum = 0;
 			ArrayList<Long> times = new ArrayList<>();
 			for (int i = 0; i < drList.size(); i++) {
 				Long avgTime = avgTimes.get(drList.get(i));
 				times.add(avgTime);
-				sum += avgTime;
+				sum += (int)(avgTime/1000/60);
 			}
 
 			//normalize times to fit a day
-			float ratio = 1440f / (float) (sum / 1000 / 60);
+			float ratio = 1440f / (float) (sum);
 
 			ArrayList<Float> mods = new ArrayList<>();
 //		ArrayList<Float> floatTimes = new ArrayList<>();
 			for (int i = 0; i < times.size(); i++) {
-				times.set(i, (long) ((float) (times.get(i) / 1000 / 60) * ratio));
+				times.set(i, (long) ((times.get(i) / 1000 / 60) * ratio));
 				mods.add(((float) (times.get(i) / 1000 / 60) * ratio) % 1);
 			}
 

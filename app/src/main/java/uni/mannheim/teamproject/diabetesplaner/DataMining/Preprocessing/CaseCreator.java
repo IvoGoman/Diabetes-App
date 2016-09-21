@@ -294,7 +294,7 @@ public class CaseCreator {
 
 		ArrayList<Boolean> sameAsBefore = new ArrayList<>();
 		//find duplicates
-		for(int i=1; i<list.size();i++){
+		for(int i=0; i<list.size();i++){
 			//initialize filed in arraylist
 			sameAsBefore.add(false);
 			//first activity cannot be a duplicate
@@ -308,7 +308,7 @@ public class CaseCreator {
 			else if(list.get(i)[0].equals(prevCaseID)){
 				//subactivity is taken into acocunt
 				if (prevActivity.equals(list.get(i)[2]) && prevSubactivity.equals(list.get(i)[3]) && withSubactivity) {
-					sameAsBefore.add(true);
+					sameAsBefore.set(i,true);
 
 					prevCaseID = list.get(i)[0];
 					prevActivity = list.get(i)[2];
@@ -335,7 +335,7 @@ public class CaseCreator {
 		}
 		ArrayList<String[]> resultList = new ArrayList<>();
 		//merge duplicates
-		for(int i=sameAsBefore.size()-1; i>=0; i--){
+		for(int i=0; i<sameAsBefore.size(); i++){
 			if(sameAsBefore.get(i)){
 				String[] actual = list.get(i);
 				String[] prev = list.get(i-1);
@@ -344,6 +344,8 @@ public class CaseCreator {
 				list.get(i-1)[endtimeIndex] = list.get(i)[endtimeIndex];
 				//remove previous from list
 				list.remove(i);
+				sameAsBefore.remove(i);
+				i--;
 			}
 		}
 	}

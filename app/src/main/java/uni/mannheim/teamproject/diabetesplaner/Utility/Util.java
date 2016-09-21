@@ -596,7 +596,8 @@ public class Util {
      * @author Stefan 13.09.2016
      */
     public static boolean checkDay(ArrayList<ActivityItem> day){
-        boolean complete = isDayComplete(day);
+//        boolean complete = isDayComplete(day);
+        boolean complete = true;
         boolean isToday = isToday(day);
 
         return complete && !isToday;

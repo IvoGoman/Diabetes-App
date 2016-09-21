@@ -1,7 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
@@ -27,9 +26,9 @@ public class Main_ExecutionTutorial {
 		//reads the csv from the source path
 		ArrayList<String[]> list = Util.read(source);
 
-		for(int i=0; i<list.size(); i++){
-			System.out.println(list.get(i)[0]);
-		}
+//		for(int i=0; i<list.size(); i++){
+//			System.out.println(list.get(i)[0]);
+//		}
 
 		//creates a CaseCreator object with the CSV file in an ArrayList
 		CaseCreator creator = new CaseCreator(list);
@@ -37,8 +36,8 @@ public class Main_ExecutionTutorial {
 		creator.createCases();
 		//adds a column with the day of the week
 		creator.addDayOfWeek();
-		Util.printList(list);
-		System.out.println("-------------------------------------------------");
+//		Util.printList(list);
+//		System.out.println("-------------------------------------------------");
 		//first case of the complete list is csv header (causes type conversation errors if not removed)
 		creator.removeFirstCase(true);
 		creator.shiftSameBorderTime();
@@ -50,16 +49,16 @@ public class Main_ExecutionTutorial {
 		creator.removeFirstCase(true);
 		creator.removeLastCase();
 
-		for(int i=0; i<creator.getList().size(); i++){
-			for(int j=0; j<creator.getList().get(i).length; j++){
-				if(j == creator.getStarttimeIndex() || j == creator.getEndtimeIndex()) {
-					System.out.println(new Date(Long.parseLong(creator.getList().get(i)[j])));
-				}else {
-					System.out.println(creator.getList().get(i)[j]);
-				}
-			}
-			System.out.println();
-		}
+//		for(int i=0; i<creator.getList().size(); i++){
+//			for(int j=0; j<creator.getList().get(i).length; j++){
+//				if(j == creator.getStarttimeIndex() || j == creator.getEndtimeIndex()) {
+//					System.out.println(new Date(Long.parseLong(creator.getList().get(i)[j])));
+//				}else {
+//					System.out.println(creator.getList().get(i)[j]);
+//				}
+//			}
+//			System.out.println();
+//		}
 
 //		Util.printList(creator.getList());
 
