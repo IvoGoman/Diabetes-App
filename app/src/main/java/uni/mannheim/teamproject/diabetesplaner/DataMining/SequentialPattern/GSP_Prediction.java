@@ -5,7 +5,6 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Map.Entry;
 
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
@@ -42,13 +41,13 @@ public class GSP_Prediction {
 			ArrayList<String> drList = GSP_Prediction.createDailyRoutine(mostFreqStart, mostFreqEnd, result);
 			Sequence dailyRoutine = new Sequence(drList);
 
-			HashMap<String, Long> avgTimes = GSP_Util.getAvgTime(train);
+			HashMap<String, Long> avgTimes = GSP_Util.getAvgTime(train, true);
 
-			for (Map.Entry<String, Long> entry :avgTimes.entrySet()) {
-				String key = entry.getKey();
-				Long value = entry.getValue();
-				Log.d("GSP", key + ": " + value);
-			}
+//			for (Map.Entry<String, Long> entry :avgTimes.entrySet()) {
+//				String key = entry.getKey();
+//				Long value = entry.getValue();
+//				Log.d("GSP", key + ": " + value);
+//			}
 
 			//create list with the average times for each activity
 			//sum up times
@@ -66,11 +65,11 @@ public class GSP_Prediction {
 			ArrayList<Float> mods = new ArrayList<>();
 //		ArrayList<Float> floatTimes = new ArrayList<>();
 			for (int i = 0; i < times.size(); i++) {
-				times.set(i, (long) ((times.get(i) / 1000 / 60) * ratio));
-				mods.add(((float) (times.get(i) / 1000 / 60) * ratio) % 1);
+				times.set(i, (long)((times.get(i) / 1000 / 60) * ratio));
+				mods.add(((((float)times.get(i) / 1000f / 60f) * ratio)) % 1f);
 			}
 
-			while (GSP_Util.sumUp(times) != 1440) {
+			while (GSP_Util.sumUpList(times) != 1440) {
 				int maxIndex = GSP_Util.findMax(mods);
 				times.set(maxIndex, times.get(maxIndex) + 1);
 				mods.set(maxIndex, 0f);

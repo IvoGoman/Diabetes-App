@@ -1,5 +1,7 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern;
 
+import org.apache.commons.math3.stat.descriptive.DescriptiveStatistics;
+
 import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -100,16 +102,24 @@ public class GSP_Util {
 	}
 
 	/**
-	 * returns average time of an activity subactivity combination in milliseconds
+	 * Returns average time of an activity subactivity combination.
+	 * Excludes outliers with Interquartile Range if removeOutliers is set.
 	 * @param data
+	 * @param removeOutliers true if outlier detection should be performed, false otherwise
 	 * @return
 	 * @author Stefan 27.07.2016
+	 * edited 21.09.2016: outlier detection added
 	 */
-	public static HashMap<String, Long> getAvgTime(ArrayList<ArrayList<ActivityItem>> data){
+	public static HashMap<String, Long> getAvgTime(ArrayList<ArrayList<ActivityItem>> data, boolean removeOutliers){
 		HashMap<String, Long> sum = new HashMap<>();
 		HashMap<String, Integer> count = new HashMap<>();
-		for(int i=0; i<data.size(); i++) {
-			for (int j = 0; j < data.get(i).size(); j++){
+
+		//list that collects values
+		HashMap<String, ArrayList<Long>> values = new HashMap<>();
+		ArrayList<String[]> distr = new ArrayList<>();
+		int distrCount = 0;
+		for(int i=0; i<data.size(); i++){
+			for(int j=0; j<data.get(i).size(); j++) {
 				ActivityItem item = data.get(i).get(j);
 				long starttime = item.getStarttime().getTime();
 				long endtime = item.getEndtime().getTime();
@@ -128,22 +138,67 @@ public class GSP_Util {
 					key = item.getActivityId() + "_" + item.getSubactivityId() + "_PM";
 				}
 
-
-				if (!sum.containsKey(key)) {
-					sum.put(key, diff);
-					count.put(key, 1);
+				//fill list <name, list with durations>
+				if (!values.containsKey(key)) {
+					ArrayList<Long> valI = new ArrayList<Long>();
+					valI.add(diff);
+					values.put(key, valI);
 				} else {
-					sum.put(key, sum.get(key) + diff);
-					count.put(key, count.get(key) + 1);
+					ArrayList<Long> valI = values.get(key);
+					valI.add(diff);
+					values.put(key, valI);
 				}
 			}
 		}
 
-		for(Entry<String, Long> m : sum.entrySet()){
-			sum.put(m.getKey(), (long)m.getValue()/count.get(m.getKey()));
+		if(removeOutliers){
+			//perform outlier detection
+			for(Entry<String, ArrayList<Long>> v : values.entrySet()){
+				String key = v.getKey();
+				ArrayList<Long> value = v.getValue();
+				//only remove outliers if the activity occurs very often i.e. >= 90% of number of logged days
+				// (Activity can occure more than once a day)
+				if(value.size() >= (float)values.size()*0.9f){
+					v.setValue(removeOutlierWithInterquartileRange(value));
+				}
+			}
+		}
+
+		//calculates the average
+		for(Entry<String, ArrayList<Long>> v : values.entrySet()){
+			String key = v.getKey();
+			ArrayList<Long> value = v.getValue();
+
+			sum.put(key, (long)sumUpList(value)/value.size());
 		}
 
 		return sum;
+	}
+
+	/**
+	 * removes outliers with Interquartile Range
+	 * @param list
+	 * @return
+	 * @author Stefan 21.09.2016
+	 */
+	public static ArrayList<Long> removeOutlierWithInterquartileRange(ArrayList<Long> list){
+		DescriptiveStatistics stats = new DescriptiveStatistics();
+		for(int i=0; i<list.size(); i++){
+			stats.addValue(list.get(i));
+		}
+		double median = stats.getPercentile(50);
+		double iqr = stats.getPercentile(75) - stats.getPercentile(25);
+
+		double upperBound = median+1.5d*iqr;
+		double lowerBound = median-1.5d*iqr;
+
+		for(int i=0; i<list.size(); i++){
+			if(!(list.get(i) >= lowerBound && list.get(i) <= upperBound)){
+				list.remove(i);
+				i--;
+			}
+		}
+		return list;
 	}
 
 	/**
@@ -152,7 +207,7 @@ public class GSP_Util {
 	 * @return
 	 * @author Stefan
      */
-	public static int sumUp(ArrayList<Long> list){
+	public static int sumUpList(ArrayList<Long> list){
 		int sum = 0;
 		for(int i=0 ;i<list.size(); i++){
 			sum += list.get(i);
