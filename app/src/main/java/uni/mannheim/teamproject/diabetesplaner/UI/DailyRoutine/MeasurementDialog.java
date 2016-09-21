@@ -124,6 +124,9 @@ public class MeasurementDialog extends MeasurementInputDialog {
                     insulin_value = addInsulin.getText().toString();
                     String date_s = btn_date.getText().toString();
                     String time_s = btn_time.getText().toString();
+                    if(btn_time.getText().toString().length() < 8) {
+                        time_s = btn_time.getText().toString()+ ":" + Calendar.getInstance().get(Calendar.SECOND);
+                    }
                     timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s, time_s).getTime();
 
                     if (measure_value.equals("") == true && insulin_value.equals("") == true) {
