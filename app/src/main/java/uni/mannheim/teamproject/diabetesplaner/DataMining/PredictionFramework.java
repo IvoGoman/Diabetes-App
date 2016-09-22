@@ -80,8 +80,8 @@ public class PredictionFramework {
                         FuzzyModel model = new FuzzyModel(train, false);
                         return model.makeFuzzyMinerPrediction();
                     case PREDICTION_HEURISTICS_MINER:
-//                        return HeuristicsMinerImplementation.runHeuristicsMiner(train);
-                        return null;
+                        HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation();
+                        return HMmodel.runHeuristicsMiner(train);
                 }
             } else if (algorithms.size() > 1) {
                 return vote(algorithms, train);
@@ -128,7 +128,8 @@ public class PredictionFramework {
                     FuzzyModel model = new FuzzyModel(train, false);
                     results.put(PREDICTION_FUZZY_MINER, model.makeFuzzyMinerPrediction());
                 case PREDICTION_HEURISTICS_MINER:
-                    results.put(PREDICTION_HEURISTICS_MINER,HeuristicsMinerImplementation.runHeuristicsMiner(train.get(0)));
+                    HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation();
+                    results.put(PREDICTION_HEURISTICS_MINER,HMmodel.runHeuristicsMiner(train));
 
             }
         }

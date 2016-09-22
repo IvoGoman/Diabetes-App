@@ -281,12 +281,31 @@ public class ProcessMiningUtil {
             }
             startEndDate = TimeUtils.getDate(date, duration);
 //            remove the am/pm-flag from the id
-            int id = removeAMPMFlag(idDurationMap.get(i).first);
-            item = new ActivityItem(id, 0, startEndDate[0], startEndDate[1], 0);
+//            int id = removeAMPMFlag(idDurationMap.get(i).first);
+            int[] ids = splitID(idDurationMap.get(i).first);
+            item = new ActivityItem(ids[0], ids[1], startEndDate[0], startEndDate[1], 0);
             result.add(item);
             date = startEndDate[1];
         }
         return result;
+    }
+    /**
+     * split the ID back to ID and SubActivityID
+     */
+    public static int[] splitID(int id){
+        int subActivityID;
+        int activityID;
+
+        String tempId = String.valueOf(id);
+        if(tempId.length() == 4)
+        {
+            activityID = Integer.parseInt(tempId.substring(0,2));
+            subActivityID = Integer.parseInt(tempId.substring(2,4));
+            return new int[]{activityID,subActivityID};
+        }
+        activityID = Integer.parseInt(tempId.substring(2,4));
+        subActivityID = Integer.parseInt(tempId.substring(4,6));
+        return new int[]{activityID,subActivityID};
     }
 
     /**
@@ -307,6 +326,7 @@ public class ProcessMiningUtil {
     }
 
     /**
+     *
      * Removes the flag of the activity for AM/PM
      *
      * @param id activity id with AM/PM flag
@@ -315,9 +335,10 @@ public class ProcessMiningUtil {
     public static int removeAMPMFlag(int id) {
         //            remove the am/pm-flag from the id
         String tempId = String.valueOf(id);
-        id = Integer.parseInt(tempId.substring(0, tempId.length() - 1));
+        id = Integer.parseInt(tempId.substring(2, tempId.length()));
         return id;
     }
+
 
     /**
      * Convert the list of activities grouped by days as one big list
@@ -325,7 +346,7 @@ public class ProcessMiningUtil {
      * @param train the training data provided by the Prediction Framework
      * @return training data format used by FuzzyMiner
      */
-    public static ArrayList<ActivityItem> convertDayToAllStructure(ArrayList<ArrayList<ActivityItem>> train) {
+    public static ArrayList<ActivityItem> convertDayToALStructure(ArrayList<ArrayList<ActivityItem>> train) {
         ArrayList<ActivityItem> items = new ArrayList<>();
         for (ArrayList<ActivityItem> list : train) {
             for (ActivityItem item : list) {
@@ -333,6 +354,14 @@ public class ProcessMiningUtil {
             }
         }
         return items;
+    }
+
+    public static String getIDwithLeadingZero(int id){
+        if(id < 10){
+            return "0"+id;
+        }else{
+            return String.valueOf(id);
+        }
     }
 
     public static long getAverageStartTime(String ID, ArrayList<String[]> eventlist) {
