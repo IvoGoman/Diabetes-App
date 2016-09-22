@@ -55,7 +55,7 @@ public class DailyRoutineFragment extends Fragment {
     private static LinearLayout linearLayout;
 
     public static final String TAG = DailyRoutineFragment.class.getSimpleName();
-    private Date date;
+    private Date date = TimeUtils.getCurrentDate();
     private Timer timer;
     private TimerTask timerTask;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
@@ -143,8 +143,8 @@ public class DailyRoutineFragment extends Fragment {
 //        }
 
         ArrayList<Integer> algos = new ArrayList<>();
-        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
-//        algos.add(PredictionFramework.PREDICTION_GSP);
+//        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
+        algos.add(PredictionFramework.PREDICTION_GSP);
 //        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
 //        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
         try {
@@ -223,8 +223,8 @@ public class DailyRoutineFragment extends Fragment {
 //        dbHandler.InsertBloodsugarEntryScreen(Calendar.getInstance().getTimeInMillis(),1,100,MeasureItem.UNIT_MG);
 //        dbHandler.InsertBloodsugarEntryScreen((new Date()).getTime()-(60*1000*150),1,90,MeasureItem.UNIT_MG);
 
-        ArrayList<MeasureItem> bsList = dbHandler.getMeasurementValues(TimeUtils.getCurrentDate(),"DAY",MeasureItem.MEASURE_KIND_BLOODSUGAR);
-        ArrayList<MeasureItem> insulinList = dbHandler.getMeasurementValues(TimeUtils.getCurrentDate(),"DAY",MeasureItem.MEASURE_KIND_INSULIN);
+        ArrayList<MeasureItem> bsList = dbHandler.getMeasurementValues(date,"DAY",MeasureItem.MEASURE_KIND_BLOODSUGAR);
+        ArrayList<MeasureItem> insulinList = dbHandler.getMeasurementValues(date,"DAY",MeasureItem.MEASURE_KIND_INSULIN);
 
 //        bsList.add(new MeasureItem((new Date()).getTime(), 100, MeasureItem.UNIT_MG));
 //        insulinList.add(new MeasureItem((new Date()).getTime(), 100, MeasureItem.UNIT_MG));
@@ -472,5 +472,9 @@ public class DailyRoutineFragment extends Fragment {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         Log.d(TAG, "onActivityResult in Fragement");
+    }
+
+    public void setDate(Date date){
+        this.date = date;
     }
 }

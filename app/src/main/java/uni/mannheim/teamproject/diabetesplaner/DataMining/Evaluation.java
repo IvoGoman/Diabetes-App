@@ -4,8 +4,6 @@ package uni.mannheim.teamproject.diabetesplaner.DataMining;
  * Created by leonidgunko on 17/08/16.
  */
 
-import android.database.Cursor;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -15,10 +13,6 @@ import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
-import weka.core.Attribute;
-import weka.core.FastVector;
-import weka.core.Instances;
 
 
 public class Evaluation {
@@ -33,76 +27,13 @@ public class Evaluation {
         return (accuracy1+accuracy2)/2;
     }
 
-    public static float usageTree() throws Exception {
-        HashMap<Integer, List<Double>> hashReal = new HashMap<>();
-        FastVector Activities = new FastVector();
-        String ActivityCur;
-
-        for (int i=0;i<1440;i++) {
-            List<Double> l = new ArrayList<>();
-            hashReal.put(i,l);
-        }
-        Instances train = Prediction.getInstances();
-
-        Cursor cursor2 = AppGlobal.getHandler().getAllRoutine();
-
-        if (cursor2.moveToFirst()) {
-            do {
-                ActivityCur = cursor2.getString(cursor2.getColumnIndex("Activity")).replace(" ","") +"|"+ cursor2.getString(cursor2.getColumnIndex("SubActivity")).replace(" ","");
-                if (!Activities.contains(ActivityCur)) {
-                    Activities.addElement(ActivityCur);
-                }
-            }
-            while (cursor2.moveToNext());
-        }
-
-        Attribute Activity = new Attribute("Activity", Activities);
-        Attribute Activity1 = new Attribute("Activity1", Activities);
-        Attribute Time = new Attribute("Time");
-        Attribute Dur = new Attribute("Duration");
-
-        FastVector attinfo = new FastVector(4);
-        attinfo.addElement(Time);
-        attinfo.addElement(Dur);
-        attinfo.addElement(Activity);
-        attinfo.addElement(Activity1);
-        Instances train1 = new Instances("output", attinfo, 1);
-        for (int i=0;i<train.numInstances()/2;i++){
-            train1.add(train.instance(i));
-        }
-        ArrayList<Prediction.TimeAction> Pred = Prediction.GetRoutineAsTimeAction(train1);
-        for (int i=0;i<train1.numInstances();i++){
-            int minute = (int)train.instance(i).value(0);
-            double action = (int)train.instance(i).value(3);
-            if (!hashReal.get(minute).contains(action)) {
-                List<Double> actions = hashReal.get(minute);
-                actions.add(action);
-                hashReal.put(minute,actions);
-            }
-        }
-        float accuracy1 = Accuracy(Pred,hashReal);
-
-        HashMap<Integer, List<Double>> hashReal2 = new HashMap<>();
-        Instances train2 = new Instances("output", attinfo, 1);
-        for (int i=train.numInstances()/2;i<train.numInstances();i++){
-            train2.add(train.instance(i));
-        }
-        ArrayList<Prediction.TimeAction> Pred2 = Prediction.GetRoutineAsTimeAction(train2);
-
-        for (int i=0;i<1440;i++) {
-            List<Double> l = new ArrayList<>();
-            hashReal.put(i,l);
-        }
-        for (int i=0;i<train2.numInstances();i++){
-            int minute = (int)train.instance(i).value(0);
-            double action = (int)train.instance(i).value(3);
-            if (!hashReal.get(minute).contains(action)) {
-                List<Double> actions = hashReal.get(minute);
-                actions.add(action);
-                hashReal.put(minute,actions);
-            }
-        }
-        float accuracy2 = Accuracy(Pred2,hashReal);
+    public static float usageTree(ArrayList<ArrayList<ActivityItem>> train) throws Exception {
+        ArrayList<ArrayList<ActivityItem>>train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(0,train.size()/2));
+        ArrayList<ArrayList<ActivityItem>>train2 = new ArrayList<ArrayList<ActivityItem>>(train.subList(train.size()/2,train.size()));
+        ArrayList<ActivityItem> tree1 = Prediction.GetRoutineAsAI(train1);
+        ArrayList<ActivityItem> tree2 = Prediction.GetRoutineAsAI(train2);
+        float accuracy1 = AccuracyGsp(train1,tree1);
+        float accuracy2 = AccuracyGsp(train2,tree2);
         return (accuracy1+accuracy2)/2;
     }
 
@@ -133,7 +64,6 @@ public class Evaluation {
                 }
             }
         }
-
         return (float)acc/count;
     }
 
@@ -148,7 +78,6 @@ public class Evaluation {
                     }
                 count++;
             }
-
         }
         return (float)Acc/count;
     }
