@@ -28,6 +28,7 @@ import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.DummyDataCreator;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
@@ -141,12 +142,12 @@ public class DailyRoutineFragment extends Fragment {
 //            drv.setLayoutParams(params);
 //            items.add(drv);
 //        }
-
+        //DummyDataCreator.populateDataBase();
         ArrayList<Integer> algos = new ArrayList<>();
 //        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
-        algos.add(PredictionFramework.PREDICTION_GSP);
+        //algos.add(PredictionFramework.PREDICTION_GSP);
 //        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
-//        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
+        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
         try {
             drHandler.predictDailyRoutine(algos, PredictionFramework.EVERY_DAY);
         } catch (Exception e) {

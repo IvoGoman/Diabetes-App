@@ -295,7 +295,14 @@ public class ProcessMiningUtil {
     public static int[] splitID(int id){
         int subActivityID;
         int activityID;
+
         String tempId = String.valueOf(id);
+        if(tempId.length() == 4)
+        {
+            activityID = Integer.parseInt(tempId.substring(0,2));
+            subActivityID = Integer.parseInt(tempId.substring(2,4));
+            return new int[]{activityID,subActivityID};
+        }
         activityID = Integer.parseInt(tempId.substring(2,4));
         subActivityID = Integer.parseInt(tempId.substring(4,6));
         return new int[]{activityID,subActivityID};

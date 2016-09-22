@@ -74,7 +74,7 @@ public class FuzzyModel {
      * @param percentage Flag to choose if the durations should be handled as minutes or %
      */
     public FuzzyModel(ArrayList<ArrayList<ActivityItem>> train, boolean percentage) {
-        ArrayList<ActivityItem> items = ProcessMiningUtil.convertDayToAllStructure(train);
+        ArrayList<ActivityItem> items = ProcessMiningUtil.convertDayToALStructure(train);
         CustomXLog customXLog = new CustomXLog(items);
         XLog xLog = customXLog.getXLog();
         FuzzyMinerImpl fuzzyMiner = new FuzzyMinerImpl(xLog);

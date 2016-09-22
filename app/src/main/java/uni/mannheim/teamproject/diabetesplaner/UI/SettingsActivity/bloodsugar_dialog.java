@@ -19,6 +19,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
@@ -99,6 +100,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         time_s = btn_time.getText().toString();
         //Set current Date and Time
         Calendar c = Calendar.getInstance();
+        c.setTimeZone(TimeZone.getDefault());
         if(date_s.contentEquals("Date"))
         {
             date_s = new SimpleDateFormat("dd.MM.yyyy").format(c.getTime());
