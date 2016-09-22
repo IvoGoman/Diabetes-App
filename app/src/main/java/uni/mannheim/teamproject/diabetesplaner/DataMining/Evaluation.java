@@ -25,11 +25,13 @@ public class Evaluation {
         float accuracy1 = AccuracyGsp(train1,gsp1);
         float accuracy2 = AccuracyGsp(train2,gsp2);
         return (accuracy1+accuracy2)/2;
-    }
+     }
 
     public static float usageTree(ArrayList<ArrayList<ActivityItem>> train) throws Exception {
+        ArrayList<ArrayList<ActivityItem>> train3 = new ArrayList<>();
         ArrayList<ArrayList<ActivityItem>>train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(0,train.size()/2));
         ArrayList<ArrayList<ActivityItem>>train2 = new ArrayList<ArrayList<ActivityItem>>(train.subList(train.size()/2,train.size()));
+
         ArrayList<ActivityItem> tree1 = Prediction.GetRoutineAsAI(train1);
         ArrayList<ActivityItem> tree2 = Prediction.GetRoutineAsAI(train2);
         float accuracy1 = AccuracyGsp(train1,tree1);
@@ -172,6 +174,7 @@ public class Evaluation {
 
             int minutesleftfrommidnight = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
             result.put(minutesleftfrommidnight,activityCur);
+            curDate.setTime(curDate.getTime() + 1 * 60 * 1000);
         }
         return result;
     }

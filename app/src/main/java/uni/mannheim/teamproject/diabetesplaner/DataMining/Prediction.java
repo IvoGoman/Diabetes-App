@@ -400,10 +400,12 @@ public class Prediction {
             SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
             int duration = 0;
             for (ActivityItem ai: routine){
-                java.util.Date Start = ai.getStarttime();
+                java.util.Date Start = new Date();
+                Start.setTime(ai.getStarttime().getTime());
                 Calendar calendar = Calendar.getInstance();
                 ActivityCur = AppGlobal.getHandler().getActionById(ai.getActivityId()).replace(" ","") +"|"+ AppGlobal.getHandler().getSubactivity(ai.getSubactivityId()).replace(" ","");
-                java.util.Date End = ai.getEndtime();
+                java.util.Date End = new Date();
+                End.setTime(ai.getEndtime().getTime());
                 java.util.Date CurDate = Start;
                 int num = 0;
                 while (CurDate.before(End)) {
