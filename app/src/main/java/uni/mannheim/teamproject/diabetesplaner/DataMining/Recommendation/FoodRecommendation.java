@@ -81,15 +81,18 @@ public class FoodRecommendation extends Recommendation {
             mIdOffset = Recommendation.FOOD_REC;
 
             ActivityItem item = getLastActivity();
+            ActivityItem curr = AppGlobal.getHandler().getCurrentActivity();
             if(item != null) {
-                if (first) {
-                    previous = item;
-                    first = false;
-                    doRecommendation(item);
-                } else {
-                    if (!previous.equals(item)) {
-                        doRecommendation(item);
+                if(item.getSubactivityId() != curr.getSubactivityId()) {
+                    if (first) {
                         previous = item;
+                        first = false;
+                        doRecommendation(item);
+                    } else {
+                        if (!previous.equals(item)) {
+                            doRecommendation(item);
+                            previous = item;
+                        }
                     }
                 }
             }
@@ -175,7 +178,7 @@ public class FoodRecommendation extends Recommendation {
      * @author Stefan 30.04.2016
      * returns current activity
      */
-    public int getCurrentActivity() {
+    private int getCurrentActivity() {
         ArrayList<ActivityItem> routine = DayHandler.getDailyRoutine();
 
         Date current = TimeUtils.getCurrentDate();

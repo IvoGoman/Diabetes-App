@@ -129,6 +129,8 @@ public class DailyRoutineFragment extends Fragment {
         //get the layout
         linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_daily_routine);
 
+        linearLayout.setVisibility(View.GONE);
+
         TextView textView = (TextView) inflaterView.findViewById(R.id.daily_routine_date_view);
         textView.setText(TimeUtils.getDateAsString());
         this.date = TimeUtils.getCurrentDate();
