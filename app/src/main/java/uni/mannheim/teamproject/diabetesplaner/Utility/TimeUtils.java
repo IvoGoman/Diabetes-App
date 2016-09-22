@@ -592,13 +592,14 @@ public class TimeUtils {
 
     /**
      * @param timestamp
-     * @return 0 for AM or 1 for PM
+     * @return 10 for AM or 11 for PM
      */
 
-    public static int isAM(long timestamp) {
+    public static String isAM(long timestamp) {
         Calendar calendar = TimeUtils.getCalendar(timestamp);
         int am_pm = calendar.get(Calendar.AM_PM);
-        return am_pm;
+        String flag = "1"+am_pm;
+        return flag;
     }
 
     /**
