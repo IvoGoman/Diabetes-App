@@ -1,5 +1,6 @@
 package uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -28,7 +29,6 @@ import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
-import uni.mannheim.teamproject.diabetesplaner.Utility.DummyDataCreator;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
@@ -71,6 +71,7 @@ public class DailyRoutineFragment extends Fragment {
     private static AppCompatActivity aca;
     private static ScrollView scrollView;
     private DailyRoutineHandler drHandler;
+    private Activity parentActivity;
 
     /**
      * Use this factory method to create a new instance of
@@ -109,7 +110,7 @@ public class DailyRoutineFragment extends Fragment {
         aca.getSupportActionBar().setTitle(R.string.menu_item_daily_routine);
 
         drHandler = new DailyRoutineHandler(this);
-
+        parentActivity = getActivity();
     }
 
     /**
@@ -129,8 +130,6 @@ public class DailyRoutineFragment extends Fragment {
         //get the layout
         linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_daily_routine);
 
-        linearLayout.setVisibility(View.GONE);
-
         TextView textView = (TextView) inflaterView.findViewById(R.id.daily_routine_date_view);
         textView.setText(TimeUtils.getDateAsString());
         this.date = TimeUtils.getCurrentDate();
@@ -145,17 +144,19 @@ public class DailyRoutineFragment extends Fragment {
 //            items.add(drv);
 //        }
         //DummyDataCreator.populateDataBase();
+
         ArrayList<Integer> algos = new ArrayList<>();
 //        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
-        //algos.add(PredictionFramework.PREDICTION_GSP);
+        algos.add(PredictionFramework.PREDICTION_GSP);
 //        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
-        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
-        try {
+//        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
+//        try {
             drHandler.predictDailyRoutine(algos, PredictionFramework.EVERY_DAY);
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG +".onCreateView()", e.getLocalizedMessage());
-        }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            Log.e(TAG +".onCreateView()", e.getLocalizedMessage());
+//        }
+
         //DummyDataCreator.populateDataBase();
         //drHandler.predictDailyRoutine(PredictionFramework.EVERY_DAY, getContext());
 
@@ -183,7 +184,7 @@ public class DailyRoutineFragment extends Fragment {
         linearLayout.removeAllViews();
         items.clear();
         //TODO --------- for testing ------------------------------------------
-        ArrayList<ActivityItem> listItems = drHandler.getDayRoutine(new Date());
+        ArrayList<ActivityItem> listItems = drHandler.getDayRoutine(date);
 //        ArrayList<ActivityItem> listItems = new ArrayList<>();
 //
 //        String start1 = "17.09.2016 00:00:00";
@@ -235,7 +236,7 @@ public class DailyRoutineFragment extends Fragment {
         Log.d(TAG, "BS List size: " + bsList.size());
         Log.d(TAG, "insulinList: " + bsList.size());
         for(int i=0; i<listItems.size(); i++){
-            DailyRoutineView drv = new DailyRoutineView(getActivity(), listItems.get(i));
+            DailyRoutineView drv = new DailyRoutineView(parentActivity, listItems.get(i));
 
             //TODO getting the bloodsugar of current activity and set it
             String bloodsugar = "";
@@ -479,5 +480,9 @@ public class DailyRoutineFragment extends Fragment {
 
     public void setDate(Date date){
         this.date = date;
+    }
+
+    public LinearLayout getLayout(){
+        return linearLayout;
     }
 }

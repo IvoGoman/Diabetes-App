@@ -7,8 +7,12 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.media.Ringtone;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Binder;
 import android.os.Handler;
+import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.support.v4.app.TaskStackBuilder;
 import android.util.Log;
@@ -140,6 +144,15 @@ public abstract class Recommendation extends IntentService {
             // mId allows you to update the notification later on.
             mNotificationManager.notify(mId, notification);
 
+            //vibrate
+            if(preferences.getBoolean("pref_key_vibrate", true)){
+                vibrate(getApplicationContext(), 200);
+            }
+
+            //play notification sound
+            if (preferences.getBoolean("pref_key_sound", true)){
+                playSound();
+            }
         }
     }
 
@@ -161,5 +174,31 @@ public abstract class Recommendation extends IntentService {
 
     public String getName(){
         return this.name;
+    }
+
+    /**
+     * performs a vibrate
+     *
+     * @param context context
+     * @param millis  milliseconds to vibrate
+     * @author Stefan 23.09.2016
+     */
+    private void vibrate(Context context, int millis) {
+        Vibrator vibr = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+        vibr.vibrate(millis);
+    }
+
+    /**
+     * plays a notification sound
+     * @author Stefan 23.09.2016
+     */
+    private void playSound(){
+        try {
+            Uri notification = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
+            Ringtone r = RingtoneManager.getRingtone(getApplicationContext(), notification);
+            r.play();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }

@@ -20,7 +20,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
  * Created by Stefan on 22.02.2016.
  */
 public class DailyRoutineHandler extends DayHandler{
-    private ArrayList<ActivityItem> dailyRoutine= new ArrayList<>();
+    private ArrayList<ActivityItem> dailyRoutine;
     public static final String TAG = DailyRoutineHandler.class.getSimpleName();
     private static DailyRoutineFragment drFragment;
     public Date date;
@@ -40,20 +40,14 @@ public class DailyRoutineHandler extends DayHandler{
      * @param mode     EVERY_DAY, WEEKDAYS, WEEKENDS, MONDAY, ... , SUNDAY
      * @author Stefan 06.09.2016
      */
-    /**
-     * daily routine must be checked for null before clearing, it causes mistakes in editing and history
-     * Leonid
-     */
-    public void predictDailyRoutine(ArrayList<Integer> algorithms, int mode) throws Exception {
-        if (dailyRoutine!=null) {
-            dailyRoutine.clear();
-        }
-        dailyRoutine = PredictionFramework.predict(PredictionFramework.retrieveTrainingData(mode), algorithms);
+    public void predictDailyRoutine(ArrayList<Integer> algorithms, int mode){
+        dailyRoutine.clear();
+        new Thread(new PredictionFramework(PredictionFramework.retrieveTrainingData(mode), algorithms, this)).start();
 //        Log.d(TAG, "predicted daily routine: ");
 //        for(int i=0; i<dailyRoutine.size();i++){
 //            Log.d(TAG, dailyRoutine.get(i).print());
 //        }
-        AppGlobal.getHandler().insertNewRoutine(dailyRoutine);
+//        AppGlobal.getHandler().insertNewRoutine(dailyRoutine);
     }
 
     /**
@@ -82,12 +76,11 @@ public class DailyRoutineHandler extends DayHandler{
         }
 
         try {
-            dailyRoutine = PredictionFramework.predict(PredictionFramework.retrieveTrainingData(mode), algorithms);
+            new Thread(new PredictionFramework(PredictionFramework.retrieveTrainingData(mode), algorithms, this)).start();
         } catch (Exception e) {
             e.printStackTrace();
         }
         Log.d("DailyRoutineFragment", "Size after predict " +dailyRoutine.get(0).getStarttime());
-        AppGlobal.getHandler().insertNewRoutine(dailyRoutine);
     }
 
 
@@ -107,9 +100,7 @@ public class DailyRoutineHandler extends DayHandler{
                 if (!AppGlobal.getHandler().CheckRoutineAdded()){
                     prediction = prediction1.GetRoutineAsPAforInserting();
                     AppGlobal.getHandler().InsertNewRoutine(prediction);
-                    if (dailyRoutine!=null) {
-                        dailyRoutine.clear();
-                    }
+                    dailyRoutine.clear();
                     String dateString = null;
                     for (int i = 0; i < prediction.size(); i++) {
                         dateString = TimeUtils.convertDateToDateString(date);
@@ -121,9 +112,7 @@ public class DailyRoutineHandler extends DayHandler{
                     Calendar calendar = Calendar.getInstance();
                     //Date date = calendar.getTime();
                     ArrayList<ActivityItem> Day1 = AppGlobal.getHandler().GetDay(date);
-                    if (dailyRoutine!=null) {
-                        dailyRoutine.clear();
-                    }
+                    dailyRoutine.clear();
                     String dateString = null;
                     for (int i = 0; i < Day1.size(); i++) {
                         dateString = TimeUtils.convertDateToDateString(date);
@@ -138,9 +127,7 @@ public class DailyRoutineHandler extends DayHandler{
                 if (!AppGlobal.getHandler().CheckRoutineAdded()){
                     prediction = prediction1.GetRoutineAsPAforInserting();
                     AppGlobal.getHandler().InsertNewRoutine(prediction);
-                    if (dailyRoutine!=null) {
-                        dailyRoutine.clear();
-                    }
+                    dailyRoutine.clear();
                     String dateString = null;
                     for (int i = 0; i < prediction.size(); i++) {
                         dateString = TimeUtils.convertDateToDateString(date);
@@ -152,9 +139,7 @@ public class DailyRoutineHandler extends DayHandler{
                     Calendar calendar = Calendar.getInstance();
                     //Date date = calendar.getTime();
                     ArrayList<ActivityItem> Day1 = AppGlobal.getHandler().GetDay(date);
-                    if (dailyRoutine!=null) {
-                        dailyRoutine.clear();
-                    }
+                    dailyRoutine.clear();
                     String dateString = null;
                     for (int i = 0; i < Day1.size(); i++) {
                         dateString = TimeUtils.convertDateToDateString(date);
@@ -172,9 +157,12 @@ public class DailyRoutineHandler extends DayHandler{
     }
 
     public void clearDailyRoutine(){
-        if (dailyRoutine!=null) {
-            dailyRoutine.clear();
-        }
+        dailyRoutine.clear();
+    }
+
+    public void setDailyRoutine(ArrayList<ActivityItem> dailyRoutine){
+        this.dailyRoutine = dailyRoutine;
+        AppGlobal.getHandler().insertNewRoutine(dailyRoutine);
     }
 
 }

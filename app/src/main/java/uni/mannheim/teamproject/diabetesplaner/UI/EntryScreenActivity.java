@@ -72,7 +72,7 @@ public class EntryScreenActivity extends AppCompatActivity
     private boolean mBoundActivityRec = false;
     private boolean mBoundBSRec = false;
     private boolean mBoundFoodRec = false;
-
+    public static boolean optionsMenuCreated = false;
 
     public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 

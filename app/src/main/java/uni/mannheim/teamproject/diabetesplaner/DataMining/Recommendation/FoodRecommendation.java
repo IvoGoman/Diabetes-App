@@ -80,10 +80,9 @@ public class FoodRecommendation extends Recommendation {
 //            mIdOffset = getMidOffset();
             mIdOffset = Recommendation.FOOD_REC;
 
-//-------Auskommentiert von Jens am 23.9. weils Probleme macht
-/*            ActivityItem item = getLastActivity();
-            ActivityItem curr = AppGlobal.getHandler().getCurrentActivity();
-            if(item != null) {
+            ActivityItem item = getLastActivity();
+            ActivityItem curr = getCurrentActivity();
+            if(item != null && curr != null) {
                 if(item.getSubactivityId() != curr.getSubactivityId()) {
                     if (first) {
                         previous = item;
@@ -97,9 +96,6 @@ public class FoodRecommendation extends Recommendation {
                     }
                 }
             }
-
-            */ //-------Auskommentiert von Jens am 23.9. weils Probleme macht
-
         }
     }
 
@@ -182,7 +178,7 @@ public class FoodRecommendation extends Recommendation {
      * @author Stefan 30.04.2016
      * returns current activity
      */
-    private int getCurrentActivity() {
+    private int getCurrentActivityIndex() {
         ArrayList<ActivityItem> routine = DayHandler.getDailyRoutine();
 
         Date current = TimeUtils.getCurrentDate();
@@ -197,13 +193,32 @@ public class FoodRecommendation extends Recommendation {
     }
 
     /**
+     * @return index in daily routine
+     * @author Stefan 23.09.2016
+     * returns current activity
+     */
+    private ActivityItem getCurrentActivity() {
+        ArrayList<ActivityItem> routine = DayHandler.getDailyRoutine();
+
+        Date current = TimeUtils.getCurrentDate();
+
+        for (int i = 0; i < routine.size(); i++) {
+            ActivityItem item = routine.get(i);
+            if (TimeUtils.isTimeInbetween(item.getStarttime(), item.getEndtime(), current)) {
+                return routine.get(i);
+            }
+        }
+        return null;
+    }
+
+    /**
      * returns the last actitivity
      * @return
      * @author Stefan 13.09.2016
      */
     public ActivityItem getLastActivity(){
         try {
-            int iCurr = getCurrentActivity();
+            int iCurr = getCurrentActivityIndex();
             ArrayList<ActivityItem> routine = DayHandler.getDailyRoutine();
             if (iCurr > 0) {
                 return routine.get(iCurr - 1);

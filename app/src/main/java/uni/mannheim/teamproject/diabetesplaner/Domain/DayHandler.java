@@ -88,18 +88,8 @@ public class DayHandler {
         DailyRoutineView.setActionBarItems();
         clearDailyRoutine();
         getDayRoutine(date);
-        /*for (int i = 1; i < dailyRoutine.size(); i++) {
-            if (dailyRoutine.get(i-1).getActivityId()==dailyRoutine.get(i).getActivityId()){
-                ActivityItem Act = dailyRoutine.get(i-1);
-                String Start = dailyRoutine.get(i-1).getStarttimeAsString();
-                Date End = dailyRoutine.get(i-1).getEndtime();
-                Act.setEndtime(End);
-                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
-                AppGlobal.getHandler().DeleteActivity(AppGlobal.getHandler(),dailyRoutine.get(i).getStarttime().toString(),dailyRoutine.get(i).getEndtime().toString());
-                AppGlobal.getHandler().InsertActivity(Act);
-            }
-        }*/
-        this.drFragment.updateView();
+
+        drFragment.updateView();
     }
 
     /**
@@ -268,4 +258,7 @@ public class DayHandler {
         dailyRoutine.clear();
     }
 
+    public DailyRoutineFragment getDailyRoutineFragment(){
+        return drFragment;
+    }
 }
