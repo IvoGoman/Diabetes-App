@@ -50,7 +50,7 @@
             android:title="@string/pref_sound"
             android:defaultValue="false"/>
         <CheckBoxPreference
-            android:key="pref_key_sound"
+            android:key="pref_key_vibrate"
             android:title="@string/pref_vibration"
             android:defaultValue="false"/>
     </PreferenceCategory>
