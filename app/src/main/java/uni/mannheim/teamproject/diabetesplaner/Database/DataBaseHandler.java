@@ -405,10 +405,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public ArrayList<String> getAllSubactivities() {
         SQLiteDatabase db1 = this.getReadableDatabase();
         ArrayList<String> result = new ArrayList<>();
-        Cursor cursor = db1.rawQuery("select title from SubActivities;", null);
+        Cursor cursor = db1.rawQuery("select Title from SubActivities;", null);
         if (cursor.moveToFirst()) {
             do {
-                result.add(cursor.getString(cursor.getColumnIndex("title")));
+                result.add(cursor.getString(cursor.getColumnIndex("Title")));
             } while (cursor.moveToNext());
 
         }
@@ -450,13 +450,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void insertLocation(double lat, double longt, String title) {
         SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("insert into Location(Latitude, Longtitude, Title) values(" + lat + "," + longt + "," + "'" + title + "'" + "); ");
-        db1.close();
+//        db1.close();
     }
 
     public void insertWIFI(String ssid, String title) {
         SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("insert into WIFI(ssid, Title) values(" + ssid + "," + "'" + title + "'" + "); ");
-        db1.close();
+//        db1.close();
     }
 
     /**
@@ -488,7 +488,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
         SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("insert into ActivityList(id_SubActivity, id_Location, id_WIFI, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation + " , " + idWIFI +" ,'" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
-        db1.close();
+//        db1.close();
     }
 
     /**
@@ -517,14 +517,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db1 = this.getWritableDatabase();
         System.out.println("insert into ActivityList(id_SubActivity, id_Location,id_WIFI, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation+ "," + idWIFI + " , '" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
         db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation + "," + idWIFI+ " , '" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
-        db1.close();
+//        db1.close();
     }
 
 
     public void InsertActivity(int idActivity, int idLocation, int idWIFI, String Start, String End) {
         SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI Start, End) values(" + idActivity + "," + idLocation+ "," + idWIFI + " , '" + Start + "','" + End + "' ); ");
-        db1.close();
+//        db1.close();
     }
 
     public void InsertProfile(String name, String surename, int age)
@@ -534,7 +534,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             long tslong = System.currentTimeMillis() / 1000;
             db1.execSQL("insert into " + PROFILE_TABLE_NAME + "(name, lastname, age, timestamp)" +
                     " values('" + name + "' , '" + surename + "' , '" + age + "' , '" + tslong + "' );");
-            db1.close();
+//            db1.close();
         }catch(Exception e)
         {
             e.getMessage();
@@ -552,7 +552,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getWritableDatabase();
         db.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, timestamp, measure_value, measure_unit, measure_kind) values(" + profile_id + ","
                  + item.getTimestamp() +" , '" + item.getMeasure_value()+ "' , '" + item.getMeasure_unit() + "' ,'"+ item.getMeasure_kind()+"');");
-        db.close();
+//        db.close();
     }
 
 
@@ -567,7 +567,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         long tslong = System.currentTimeMillis() / 1000;
         db1.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, measure_value, timestamp, measure_unit, measure_kind) values(" + profile_id + ","
                 + weight + " , '" + tslong + "' , '" +measure_unit+"' , 'weight');");
-        db1.close();
+//        db1.close();
     }
 
     /***
@@ -613,7 +613,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         InsertActivity(Activ);
         SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("delete from ActivityList where Start>=End");
-        db1.close();
+//        db1.close();
     }
 
     public int getSuperActivityID(int idActivity){
@@ -737,7 +737,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             End = EndOfDay.toString()  + " " + End;
             db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI, Start, End) values(" + idActivity + "," + idLocation +"," + idWIFI + " , '" + Start + "','" + End + "' ); ");
         }
-        db1.close();
+//        db1.close();
     }
 
 
@@ -1007,7 +1007,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
+//        db.close();
         return measureList;
     }
 
@@ -1030,7 +1030,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             } while (cursor.moveToNext());
         }
         cursor.close();
-        db.close();
+//        db.close();
         return measureList;
     }
 
@@ -1049,7 +1049,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             measureItem = new MeasureItem(cursor.getLong(2),cursor.getDouble(0),cursor.getString(1));
         }
         cursor.close();
-        db.close();
+//        db.close();
         return measureItem;
     }
 
@@ -1130,7 +1130,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI, Start, End) values(16,1,1,'"+Start+"','"+End+"');");
         }
 
-        db1.close();
+//        db1.close();
     }
     public void DeleteActivity(String Start, String End) {
         SQLiteDatabase db1 = this.getWritableDatabase();
@@ -1142,7 +1142,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
             db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI, Start, End) values(16,1,1,'"+Start+"','"+End+"');");
         }
-        db1.close();
+//        db1.close();
     }
 
 
@@ -1153,7 +1153,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             do {
                 db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + cursor.getString(cursor.getColumnIndex("id")) + "';");
             } while (cursor.moveToNext());
-            db1.close();
+//            db1.close();
             cursor.close();
         }
     }
@@ -1165,7 +1165,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             do {
                 db1.execSQL("update ActivityList set Start = '" + PlusMinute(End) + "' where id = '" + cursor.getString(cursor.getColumnIndex("id")) + "';");
             } while (cursor.moveToNext());
-            db1.close();
+//            db1.close();
             cursor.close();
         }
     }
@@ -1178,7 +1178,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                 db1.execSQL("delete from ActivityList where id = '" + cursor.getString(cursor.getColumnIndex("id")) + "';");
             } while (cursor.moveToNext());
             cursor.close();
-            db1.close();
+//            db1.close();
         }
     }
 
@@ -1199,7 +1199,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
                 InsertActivity(activityItem);
             } while (cursor.moveToNext());
-            db1.close();
+//            db1.close();
             cursor.close();
         }
     }

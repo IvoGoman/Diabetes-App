@@ -578,8 +578,10 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
     protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
         //scrolls the scrollview to focus the running activity
         int[] loc = new int[2];
-        DailyRoutineView.getCurrentRunning().getLocationOnScreen(loc);
-        DailyRoutineFragment.getScrollView().scrollTo(0, loc[1]);
+        if(DailyRoutineView.getCurrentRunning() != null) {
+            DailyRoutineView.getCurrentRunning().getLocationOnScreen(loc);
+            DailyRoutineFragment.getScrollView().scrollTo(0, loc[1]);
+        }
         super.onLayout(changed, left, top, right, bottom);
     }
 
