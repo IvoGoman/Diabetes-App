@@ -110,7 +110,7 @@ public abstract class Recommendation extends IntentService {
 
             Notification.Builder mBuilder =
                     new Notification.Builder(this)
-                            .setSmallIcon(R.drawable.account_box)
+                            .setSmallIcon(R.mipmap.ic_launcher)
                             .setContentTitle(getResources().getString(R.string.recommendation))
                             .setContentText(text);
             // Creates an explicit intent for an Activity in your app
