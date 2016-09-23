@@ -80,7 +80,8 @@ public class FoodRecommendation extends Recommendation {
 //            mIdOffset = getMidOffset();
             mIdOffset = Recommendation.FOOD_REC;
 
-            ActivityItem item = getLastActivity();
+//-------Auskommentiert von Jens am 23.9. weils Probleme macht
+/*            ActivityItem item = getLastActivity();
             ActivityItem curr = AppGlobal.getHandler().getCurrentActivity();
             if(item != null) {
                 if(item.getSubactivityId() != curr.getSubactivityId()) {
@@ -96,6 +97,9 @@ public class FoodRecommendation extends Recommendation {
                     }
                 }
             }
+
+            */ //-------Auskommentiert von Jens am 23.9. weils Probleme macht
+
         }
     }
 

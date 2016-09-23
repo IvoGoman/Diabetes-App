@@ -53,11 +53,6 @@
             android:key="pref_key_sound"
             android:title="@string/pref_vibration"
             android:defaultValue="false"/>
-        <CheckBoxPreference
-            android:key="pref_key_assistant"
-            android:title="@string/pref_assistant_notification"
-            android:summary="@string/pref_assistant_summary"
-            android:defaultValue="true"/>
     </PreferenceCategory>
 
     <PreferenceCategory
@@ -81,14 +76,7 @@
     <PreferenceCategory
         android:title="@string/pref_predModel"
         android:key="pref_predModel">
-        <uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.MyDialogPreference
-            android:key="pref_key_reset"
-            android:title="@string/pref_reset"
-            android:summary="@string/pref_reset_summary"
-            android:dialogIcon="@android:drawable/ic_dialog_alert"
-            android:dialogMessage="@string/pref_reset_dialog_message"
-            android:positiveButtonText="@string/reset"
-            android:negativeButtonText="@string/cancel"/>
+
         <CheckBoxPreference
             android:key="pref_datacollection"
             android:title="@string/pref_datacollection"
@@ -98,11 +86,6 @@
             android:dialogIcon="@android:drawable/ic_dialog_alert"
             android:positiveButtonText="@string/Yes"
             android:negativeButtonText="@string/No"/>
-        <CheckBoxPreference
-            android:key="pref_vacation"
-            android:summary="@string/pref_vacation_summary"
-            android:title="@string/pref_vacation_title"
-            android:defaultValue="false"/>
 
         <PreferenceScreen
             android:key="pref_key_algos_super"
@@ -136,6 +119,15 @@
     <PreferenceCategory
         android:title="@string/pref_other"
         android:key="pref_key_other">
+
+        <uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.MyDialogPreference
+            android:key="pref_key_export"
+            android:title="@string/pref_dbexport"
+            android:summary="@string/pref_dbexport_summary"
+            android:dialogIcon="@android:drawable/ic_dialog_alert"
+            android:dialogMessage="@string/pref_dbexport_message"
+            android:positiveButtonText="@string/export"
+            android:negativeButtonText="@string/cancel"/>
 
         <uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.MyDialogPreference
             android:key="pref_key_help"

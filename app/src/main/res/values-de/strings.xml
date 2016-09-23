@@ -18,6 +18,10 @@
     <string name="pref_blood_sugar_summary">Blutzucker eingeben</string>
     <string name="pref_help">Hilfe</string>
     <string name="pref_help_summary">Tutorial</string>
+    <string name="pref_dbexport">Datenbank Export</string>
+    <string name="pref_dbexport_summary">Exportiert die SQL-Datenbank auf das Handy</string>
+    <string name="pref_dbexport_message">Willst du wirklich die SQL-Datenbank auf das Handy exportieren?</string>
+
     <string name="pref_name">Vor- und Nachname</string>
     <string name="pref_name_summary">Platzhalter</string>
     <string name="pref_other">Anderes</string>
@@ -55,6 +59,7 @@
     <string name="pref_reset_summary">Stellt das Vorhersagemodell zurück.</string>
     <string name="reset">Zurücksetzen</string>
     <string name="cancel">Abbrechen</string>
+    <string name="export">Exportieren</string>
     <string name="pref_datacollection_dialog">Möchten Sie wirklich die Datensammlung beenden? Dadurch werden die Vorhersagen ungenau.</string>
     <string name="Yes">Ja</string>
     <string name="No">Nein</string>

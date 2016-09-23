@@ -471,8 +471,6 @@ public class EntryScreenActivity extends AppCompatActivity
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivity(settingsIntent);
 
-        } else if (id == R.id.nav_share) {
-
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

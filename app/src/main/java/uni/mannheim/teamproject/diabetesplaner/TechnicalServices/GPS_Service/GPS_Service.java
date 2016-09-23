@@ -64,7 +64,7 @@ public class GPS_Service extends Service implements LocationListener {
             provider = locationManager.GPS_PROVIDER;
         }
 
-        Toast.makeText(getApplicationContext(), provider, Toast.LENGTH_SHORT).show();
+        //Toast.makeText(getApplicationContext(), provider, Toast.LENGTH_SHORT).show();
 
         String permission = "android.permission.INTERNET";
         int res = checkCallingOrSelfPermission(permission);
