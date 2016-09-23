@@ -129,14 +129,10 @@
             android:positiveButtonText="@string/export"
             android:negativeButtonText="@string/cancel"/>
 
-        <uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.MyDialogPreference
+        <Preference
             android:key="pref_key_help"
             android:title="@string/pref_help"
-            android:summary="@string/pref_help_summary"
-            android:dialogIcon="@android:drawable/ic_dialog_info"
-            android:dialogMessage="@string/pref_help_dialog_message"
-            android:positiveButtonText="@string/ok"
-            android:negativeButtonText="@string/cancel"/>
+            android:summary="@string/pref_help_summary"/>
         <Preference
             android:key="pref_key_about"
             android:summary="@string/pref_version_summary"
