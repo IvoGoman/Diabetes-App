@@ -24,6 +24,8 @@ import java.util.TimeZone;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DatePickerFragmentM;
+import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.TimerPickerFragmentM;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
@@ -62,8 +64,9 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = (LayoutInflater) getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_layout, null);
-
         database = AppGlobal.getHandler();
+        TimerPicker = new TimerPickerFragment();
+        DatePicker = new DatePickerFragment();
 
         mg = (RadioButton) view.findViewById(R.id.bs_mg);
         mmol = (RadioButton) view.findViewById(R.id.bs_mm);
@@ -75,7 +78,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         btn_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePicker = new DatePickerFragment();
+
                 DatePicker.setBloodsugarDialog(bloodsugar_dialog.this);
                 DatePicker.show(getFragmentManager(), "datePicker");
 
@@ -89,7 +92,6 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         btn_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TimerPicker = new TimerPickerFragment();
                 TimerPicker.SetDialog(bloodsugar_dialog.this);
                 TimerPicker.show(getFragmentManager(), "timePicker");
                 //timerpickerfragment.SetDialog(bloodsugar_dialog.this);
