@@ -61,6 +61,8 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
         View view = getLayout();
 
+        DatePicker = new DatePickerFragmentM();
+        TimerPicker = new TimerPickerFragmentM();
 
         builder.setView(view);
 
@@ -91,7 +93,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
         btn_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePicker = new DatePickerFragmentM();
+//                DatePicker = new DatePickerFragmentM();
                 DatePicker.setBloodsugarDialog(MeasurementDialog.this);
                 DatePicker.show(getFragmentManager(), "datePicker");
 
@@ -106,7 +108,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
         btn_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TimerPicker = new TimerPickerFragmentM();
+//                TimerPicker = new TimerPickerFragmentM();
                 TimerPicker.SetDialog(MeasurementDialog.this);
                 TimerPicker.show(getFragmentManager(), "timePicker");
                 //timerpickerfragment.SetDialog(bloodsugar_dialog.this);
