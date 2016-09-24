@@ -31,11 +31,15 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Random;
 
+import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
+import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineView;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 
 /**
@@ -119,8 +123,33 @@ public class HistoryFragment extends DailyRoutineFragment {
         DateFormat df = DateFormat.getDateInstance();
         Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.add(Calendar.DAY_OF_MONTH, -1);
-        Date date = calendar.getTime();
+        date = calendar.getTime();
         dateString = df.format(date);
+
+//        ArrayList<ArrayList<String>> result = new ArrayList<>();
+//        ArrayList<String> tempResult;
+//        ArrayList<ActivityItem> temp;
+//
+//        DataBaseHandler handler = AppGlobal.getHandler();
+//        try {
+//
+//            for (int i = 0; i < 7; i++) {
+//                FuzzyModel model = new FuzzyModel(i, false);
+//                temp = model.makeFuzzyMinerPrediction();
+//                tempResult = new ArrayList<>();
+//                for (ActivityItem item : temp) {
+//
+//                    tempResult.add(item.getActivityId() + "," + item.getSubactivityId() + "," + handler.getActionById(item.getActivityId()) + "," + handler.getSubactivity(item.getSubactivityId()) + "," + item.getStarttimeAsString() + "," + item.getEndtimeAsString());
+//
+//                }
+//                result.add(tempResult);
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//
+//        result.size();
+//        ProcessMiningUtil.logResult(result);
 
 
         dateView.setText(dateString);
@@ -135,6 +164,7 @@ public class HistoryFragment extends DailyRoutineFragment {
         });
         ScrollView scrollView = (ScrollView) inflaterView.findViewById(R.id.history_scrollview);
         // Inflate the layout for this fragment
+        updateView();
         return inflaterView;
     }
 
@@ -160,17 +190,69 @@ public class HistoryFragment extends DailyRoutineFragment {
         linearLayout.removeAllViews();
         items_history.clear();
         ArrayList<ActivityItem> listItems = new ArrayList<>();
-        listItems = dayHandler.getDailyRoutine();
+        listItems = dayHandler.getDayRoutine(date);
         Log.d(TAG, "list size after update: " + listItems.size());
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
-        for (int i = 0; i < listItems.size(); i++) {
-            DailyRoutineView drv = new DailyRoutineView(getActivity(), listItems.get(i));
-            linearLayout.addView(drv);
-            drv.setState(false);
-            drv.setLayoutParams(params);
-            items_history.add(drv);
+        DataBaseHandler dbHandler = AppGlobal.getHandler();
+        ArrayList<MeasureItem> bsList = dbHandler.getMeasurementValues(date, "DAY", MeasureItem.MEASURE_KIND_BLOODSUGAR);
+        ArrayList<MeasureItem> insulinList = dbHandler.getMeasurementValues(date, "DAY", MeasureItem.MEASURE_KIND_INSULIN);
+        if (listItems.size()> 0) {
+            for (int i = 0; i < listItems.size(); i++) {
+                DailyRoutineView drv = new DailyRoutineView(getActivity(), listItems.get(i));
+                String bloodsugar = "";
+                String insulin = "";
+                int numberOfMeasuresWithinOneBS = 0;
+                int numberOfMeasuresWithinOneINS = 0;
+
+                for (int j = 0; j < bsList.size(); j++) {
+                    MeasureItem bs = bsList.get(j);
+                    //checks if time of the bloodsugar measurement is inbetween start and endtime of an activity
+                    if (TimeUtils.isTimeInbetween(listItems.get(i).getStarttime(), listItems.get(i).getEndtime(), TimeUtils.getDate(bs.getTimestamp()))) {
+                        String name = getResources().getString(R.string.pref_blood_sugar);
+                        String at = getResources().getString(R.string.at);
+
+                        if (numberOfMeasuresWithinOneBS == 0) {
+                            bloodsugar = name + " " + at + " " + TimeUtils.getTimeInUserFormat(bs.getTimestamp(), getContext()) + ": " + bs.getMeasure_value() + " " + bs.getMeasure_unit();
+                            numberOfMeasuresWithinOneBS = 1;
+                        } else {
+                            bloodsugar += "\n" + name + " " + at + " " + TimeUtils.getTimeInUserFormat(bs.getTimestamp(), getContext()) + ": " + bs.getMeasure_value() + " " + bs.getMeasure_unit();
+                        }
+                    }
+                }
+
+                drv.setBloodsugarText(bloodsugar);
+
+                for (int j = 0; j < insulinList.size(); j++) {
+                    MeasureItem ins = insulinList.get(j);
+                    //checks if time of the bloodsugar measurement is inbetween start and endtime of an activity
+                    if (TimeUtils.isTimeInbetween(listItems.get(i).getStarttime(), listItems.get(i).getEndtime(), TimeUtils.getDate(ins.getTimestamp()))) {
+                        String name = getResources().getString(R.string.insulinInput);
+                        String at = getResources().getString(R.string.at);
+
+                        if (numberOfMeasuresWithinOneINS == 0) {
+                            insulin = name + " " + at + " " + TimeUtils.getTimeInUserFormat(ins.getTimestamp(), getContext()) + ": " + ins.getMeasure_value() + " " + ins.getMeasure_unit();
+                            numberOfMeasuresWithinOneINS = 1;
+                        } else {
+                            insulin += "\n" + name + " " + at + " " + TimeUtils.getTimeInUserFormat(ins.getTimestamp(), getContext()) + ": " + ins.getMeasure_value() + " " + ins.getMeasure_unit();
+                        }
+                    }
+                }
+
+                drv.setInsulinText(insulin);
+                linearLayout.addView(drv);
+                drv.setState(false);
+                drv.setLayoutParams(params);
+                items_history.add(drv);
+            }
+        } else {
+            TextView tv = new TextView(getContext());
+            tv.setText(R.string.no_data);
+            linearLayout.addView(tv);
+            tv.setLayoutParams(params);
+            tv.setGravity(Gravity.CENTER);
         }
+
     }
 
     /**
@@ -180,32 +262,34 @@ public class HistoryFragment extends DailyRoutineFragment {
      * @param linearLayout the layout of the history fragment
      * @param params       the layout parameters
      */
-    public void onDateSelected(LinearLayout linearLayout, LinearLayout.LayoutParams params, Date date) {
+    public void onDateSelected(LinearLayout linearLayout, LinearLayout.LayoutParams params, Date dateSelected) {
+        date = dateSelected;
         linearLayout.removeAllViews();
         DailyRoutineView.clearSelectedActivities();
         Log.i(TAG, date.toString());
-        ArrayList<ActivityItem> day = dayHandler.getDayRoutine(date);
+//        ArrayList<ActivityItem> day = dayHandler.getDayRoutine(date);
         DailyRoutineView.clearSelectedActivities();
         DailyRoutineView.setSelectable(false);
         DailyRoutineView.setActionBarItems();
         setDate(date);
-
-        if (day.size() > 0) {
-            for (int i = 0; i < day.size(); i++) {
-                DailyRoutineView drv = new DailyRoutineView(getActivity(), day.get(i));
-                drv.setState(true);
-                linearLayout.addView(drv);
-                drv.setLayoutParams(params);
-                items_history.add(drv);
-
-            }
-        } else {
-            TextView tv = new TextView(getContext());
-            tv.setText(R.string.no_data);
-            linearLayout.addView(tv);
-            tv.setLayoutParams(params);
-            tv.setGravity(Gravity.CENTER);
-        }
+        updateView();
+//        if (day.size() > 0) {
+//            for (int i = 0; i < day.size(); i++) {
+//                DailyRoutineView drv = new DailyRoutineView(getActivity(), day.get(i));
+//                drv.setState(true);
+//                linearLayout.addView(drv);
+//                drv.setLayoutParams(params);
+//                items_history.add(drv);
+//                updateView();
+//
+//            }
+//        } else {
+//            TextView tv = new TextView(getContext());
+//            tv.setText(R.string.no_data);
+//            linearLayout.addView(tv);
+//            tv.setLayoutParams(params);
+//            tv.setGravity(Gravity.CENTER);
+//        }
     }
 
     /**

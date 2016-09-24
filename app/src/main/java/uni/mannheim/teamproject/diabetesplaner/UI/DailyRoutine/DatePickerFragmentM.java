@@ -31,6 +31,9 @@ public class DatePickerFragmentM extends DialogFragment
 
     public void onDateSet(DatePicker view, int year, int month, int day) {
         // Do something with the date chosen by the user
+
+        //      0 is January therefore for the Month +1
+        month += 1;
         try
         {
             if (month < 10)
@@ -45,10 +48,11 @@ public class DatePickerFragmentM extends DialogFragment
             {
                 dialog.btn_date.setText(String.format("0%d.0%d.%d",day,month,year));
             }
-            if((day > 10) && (month > 10))
+            if((day >= 10) && (month >= 10))
             {
                 dialog.btn_date.setText(String.format("%d.%d.%d",day,month,year));
             }
+
 
         }catch (Exception e)
         {
