@@ -88,14 +88,15 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             initialize_weight();
 
 
-            final Preference pref_add_Activity = findPreference("pref_add_activity");
-            //pref_EditText.setDialogLayoutResource(1);
+            final Preference pref_add_Activity = findPreference("pref_key_help");
             pref_add_Activity.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
                 @Override
                 public boolean onPreferenceClick(Preference preference) {
-                    FragmentManager manager = getFragmentManager();
-                    edit_activitylist_dialog ea = new edit_activitylist_dialog();
-                    ea.show(manager, "Test");
+
+                    Intent myIntent = new Intent(getActivity(), HelpActivity.class);
+                    getActivity().startActivity(myIntent);
+
+
                     return true;
                 }
             });
