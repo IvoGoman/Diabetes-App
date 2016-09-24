@@ -344,30 +344,32 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     public int getActivityIdbySubActicityId(int subactivityId)
     {
+        int activityId=16;
         SQLiteDatabase db1 = this.getReadableDatabase();
         Cursor cursor = db1.rawQuery("select Activities.id from SubActivities inner join Activities on SubActivities.id_Activity=Activities.id where SubActivities.id= '"+ subactivityId+ "'; ", null);
         if (cursor.moveToFirst()) {
-            return (cursor.getInt(0));
+            activityId = cursor.getInt(0);
         }
         // close cursor
         if (!cursor.isClosed()) {
             cursor.close();
         }
-        return 15;
+        return activityId;
     }
 
     public int getSubactivityID(String subactivity)
     {
+        int subActivityId=16;
         SQLiteDatabase db1 = this.getReadableDatabase();
         Cursor cursor = db1.rawQuery("select id from SubActivities where title= '"+ subactivity + "'; ", null);
         if (cursor.moveToFirst()) {
-            return (cursor.getInt(0));
+            subActivityId = cursor.getInt(0);
         }
         // close cursor
         if (!cursor.isClosed()) {
             cursor.close();
         }
-        return -1;
+        return subActivityId;
     }
 
     public String getSubactivity(int subactivityID)
@@ -1113,7 +1115,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public ActivityItem getCurrentActivity(){
         Date currentTime = TimeUtils.getCurrentDate();
         Cursor cursor = db.rawQuery("select * from ActivityList where ActivityList.Start < '" + currentTime.toString() + "' and ActivityList.End >= '"+ currentTime.toString() +"';",null );
-        return GetArrayFromCursor(cursor,currentTime).get(0);
+        if (GetArrayFromCursor(cursor,currentTime).size()>0) {
+            return GetArrayFromCursor(cursor, currentTime).get(0);
+        }
+        else {
+            return null;
+        }
     }
 
 //    Delete Statements
