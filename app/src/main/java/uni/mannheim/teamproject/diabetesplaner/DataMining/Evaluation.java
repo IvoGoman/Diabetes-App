@@ -7,6 +7,7 @@ package uni.mannheim.teamproject.diabetesplaner.DataMining;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -159,10 +160,12 @@ public class Evaluation {
         HashMap<Integer,Integer> result = new HashMap<Integer,Integer>();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         int duration = 0;
-        java.util.Date start = activityItem.getStarttime();
+        java.util.Date start = new Date();
+        start.setTime(activityItem.getStarttime().getTime());
         Calendar calendar = Calendar.getInstance();
         int activityCur = activityItem.getSubactivityId();
-        java.util.Date end = activityItem.getEndtime();
+        java.util.Date end = new Date();
+        end.setTime(activityItem.getEndtime().getTime());
         java.util.Date curDate = start;
         int num = 0;
         while (curDate.before(end)) {
