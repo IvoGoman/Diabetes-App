@@ -69,7 +69,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
         Date date = Calendar.getInstance(Locale.getDefault()).getTime();
         current_date = date;
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:MM:ss");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
         String dateString = dateFormat.format(date);
         String timeString = timeFormat.format(date);
 
@@ -364,8 +364,6 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
     /***
      * Click Handler for the dialog.
-     *
-     * @param view
      */
  /*   private View.OnClickListener myListenserTwo = new View.OnClickListener() {
         public void onClick(View view) {
