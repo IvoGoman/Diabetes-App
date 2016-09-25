@@ -16,12 +16,4 @@
             android:title="@string/menu_item_settings" />
     </group>
 
-
-    <item android:title="@string/communicate">
-        <menu>
-            <item android:id="@+id/nav_share" android:icon="@android:drawable/ic_menu_share"
-                android:title="@string/menu_item_share" />
-        </menu>
-    </item>
-
 </menu>

@@ -88,17 +88,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             initialize_weight();
 
 
-            final Preference pref_add_Activity = findPreference("pref_add_activity");
-            //pref_EditText.setDialogLayoutResource(1);
-            pref_add_Activity.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    FragmentManager manager = getFragmentManager();
-                    edit_activitylist_dialog ea = new edit_activitylist_dialog();
-                    ea.show(manager, "Test");
-                    return true;
-                }
-            });
+
 
 
             //define preference for the onclick-method
@@ -135,7 +125,19 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 //            String Test1 = sharedPrefs.getString("pref_key_name", "Vorname, Name");
 //            pref_name.setSummary(Test1);
             int id = database.getUserID();
-            pref_name.setSummary(database.getUser(id)[0] + " " + database.getUser(id)[1] );
+
+            pref_name.setSummary(database.getUser(database.getUserID())[0] + database.getUser(database.getUserID())[1]);
+            final Preference pref_add_Activity = findPreference("pref_add_activity");
+            //pref_EditText.setDialogLayoutResource(1);
+            pref_add_Activity.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    FragmentManager manager = getFragmentManager();
+                    edit_activitylist_dialog ea = new edit_activitylist_dialog();
+                    ea.show(manager, "Test");
+                    return true;
+                }
+            });
 
         }catch(Exception e)
         {
@@ -213,13 +215,26 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
                 View header = navigationView.getHeaderView(0);
                 TextView name = (TextView) header.findViewById(R.id.username);
-
-                name.setText(nameDialog.getText().toString().split(" ")[0] +" " +nameDialog.getText().toString().split(" ")[1]);
+                String[] new_name = nameDialog.getText().toString().split(" ");
 
                 Log.d(TAG, String.valueOf(R.string.username));
-                database.InsertProfile(nameDialog.getText().toString().split(" ")[0],
-                        nameDialog.getText().toString().split(" ")[1], 20);
-                editTextPref.setSummary(nameDialog.getText());
+
+                if(new_name.length == 1) {
+                    database.InsertProfile(new_name[0],
+                            "",0);
+                }
+                else
+                {
+                    String connected_name = "";
+                    for(int j = 0;j<new_name.length-1;j++)
+                    {
+                        connected_name = connected_name + new_name[j] + " ";
+                    }
+                    database.InsertProfile(connected_name,
+                            new_name[new_name.length-1], 0);
+                }
+
+                editTextPref.setSummary(database.getUser(database.getUserID())[0] + database.getUser(database.getUserID())[1]);
             } else if (editTextPref.getKey().equals("pref_key_weight")) {
 
                 if (pref_weight_measurement.getEntry().equals("Kilogramm")) {

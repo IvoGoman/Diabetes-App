@@ -13,7 +13,9 @@ import java.util.Random;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.HeuristicsMinerImplementation;
+import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
@@ -21,8 +23,9 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 /**
  * Created by Stefan on 06.09.2016.
  */
-public class PredictionFramework {
+public class PredictionFramework implements Runnable{
     private static final String TAG = "PredictionFramework";
+
 
     public static final int PREDICTION_DECISION_TREE = 0;
     public static final int PREDICTION_GSP = 1;
@@ -41,6 +44,74 @@ public class PredictionFramework {
     public static final int SATURDAY = Calendar.SATURDAY;
     public static final int SUNDAY = Calendar.SUNDAY;
 
+    private static ArrayList<ActivityItem> dailyRoutine = new ArrayList<>();
+    private static HashMap<Integer, ArrayList<ActivityItem>> results = new HashMap<>();
+    private final ArrayList<ArrayList<ActivityItem>> train;
+    private final ArrayList<Integer> algorithms;
+    private final DailyRoutineHandler drHandler;
+    private static int completed = 0;
+
+    public PredictionFramework(final ArrayList<ArrayList<ActivityItem>> train, final ArrayList<Integer> algorithms, final DailyRoutineHandler drHandler){
+        super();
+        this.train = train;
+        this.algorithms = algorithms;
+        this.drHandler = drHandler;
+    }
+
+    @Override
+    public void run() {
+        completed = 0;
+        dailyRoutine.clear();
+        if(train.size()>0) {
+            runAlgorithms(train, algorithms);
+            //wait until all algorithms terminated
+            while (completed != algorithms.size()) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            //check if voting should be performed
+            if (algorithms.size() > 1) {
+                dailyRoutine = vote();
+            } else if (algorithms.size() == 1) {
+                dailyRoutine = results.get(algorithms.get(0));
+            }
+        }
+
+        //daily routine is empty
+        if (dailyRoutine!=null && dailyRoutine.size() < 1) {
+            if (!AppGlobal.getHandler().CheckRoutineAdded()) {
+                //default prediction (Sleeping from 0:00 to 23:59)
+                Date start = TimeUtils.getDate(new Date(), 0, 0);
+                Date end = TimeUtils.getDate(new Date(), 23, 59);
+                ActivityItem item = new ActivityItem(1, 1, start, end);
+                dailyRoutine.add(item);
+            }
+        }
+
+        Log.d("PredictionFramework", "doInBackground done");
+        drHandler.setDailyRoutine(dailyRoutine);
+
+
+        drHandler.getDailyRoutineFragment().getLayout().post(new Runnable() {
+            @Override
+            public void run() {
+                while(EntryScreenActivity.getOptionsMenu() == null){
+                    try {
+                        Thread.sleep(100);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+                drHandler.update();
+            }
+        });
+    }
+
+
     /**
      * returns the training data specified by mode
      *
@@ -53,84 +124,112 @@ public class PredictionFramework {
         return dbHandler.getAllDays(mode);
     }
 
+//    /**
+//     * predicts a day
+//     *
+//     * @param train      an arrayList that contains the training data (the days to train on)
+//     * @param algorithm the algorithm that should be chosen
+//     * @return
+//     * @author Stefan 06.09.2016
+//     */
+//    public void predict(final ArrayList<ArrayList<ActivityItem>> train, final int algorithm) {
+//        new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                if (train.size() > 0) {
+//                    switch (algorithms.get(0)) {
+//                        case PREDICTION_DECISION_TREE:
+//                            try {
+//                                Evaluation.usageTree(train);
+//                                dailyRoutine = Prediction.GetRoutineAsAI(train);
+//                            } catch (Exception e) {
+//                                e.printStackTrace();
+//                                Log.e(TAG, "Decision Tree " + e.getLocalizedMessage());
+//                            }
+//                            break;
+//                        case PREDICTION_GSP:
+//                            dailyRoutine = GSP_Prediction.makeGSPPrediction(train, 0.2f);
+//                            break;
+//                        case PREDICTION_FUZZY_MINER:
+//                            FuzzyModel model = new FuzzyModel(train, false);
+//                            dailyRoutine = model.makeFuzzyMinerPrediction();
+//                            break;
+//                        case PREDICTION_HEURISTICS_MINER:
+//                            HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation();
+//                            dailyRoutine = HMmodel.runHeuristicsMiner(train);
+//                            break;
+//                    }
+//                }
+//            }
+//        });
+//    }
+
     /**
-     * predicts a day
-     *
-     * @param train     an arrayList that contains the training data (the days to train on)
+     * runs the algorithms in algorithms, each in a differnt thread
+     * @param train      an arrayList that contains the training data (the days to train on)
      * @param algorithms the algorithms that should be chosen
-     * @return
-     * @author Stefan 06.09.2016
+     * @author Stefan 22.09.2016
      */
-    public static ArrayList<ActivityItem> predict(ArrayList<ArrayList<ActivityItem>> train, ArrayList<Integer> algorithms){
-        if(train.size()>0) {
-            if (algorithms.size() == 1) {
-                switch (algorithms.get(0)) {
-                    case PREDICTION_DECISION_TREE:
-                        try {
-                            return Prediction.GetRoutineAsAI();
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            Log.e(TAG, e.toString());
+    public static void runAlgorithms(final ArrayList<ArrayList<ActivityItem>> train, ArrayList<Integer> algorithms){
+        //run the algorithms specified in parameter algos
+        for (int i = 0; i < algorithms.size(); i++) {
+            int algo = algorithms.get(i);
+            switch (algo) {
+                case PREDICTION_DECISION_TREE:
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                results.put(PREDICTION_DECISION_TREE, Prediction.GetRoutineAsAI(train));
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                                Log.e(TAG, "Decision Tree " + e.getLocalizedMessage());
+                            }
+                            completed++;
+                            Log.d(TAG, "Decision Tree done");
                         }
-                        return null;
-                    case PREDICTION_GSP:
-                        return GSP_Prediction.makeGSPPrediction(train, 0.2f);
-                    case PREDICTION_FUZZY_MINER:
-                        FuzzyModel model = new FuzzyModel(train, false);
-                        return model.makeFuzzyMinerPrediction();
-                    case PREDICTION_HEURISTICS_MINER:
-//                        return HeuristicsMinerImplementation.runHeuristicsMiner(train);
-                        return null;
-                }
-            } else if (algorithms.size() > 1) {
-                return vote(algorithms, train);
+                    }).start();
+                    break;
+                case PREDICTION_GSP:
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            results.put(PREDICTION_GSP, GSP_Prediction.makeGSPPrediction(train, 0.2f));
+                            completed++;
+                        }
+                    }).start();
+                    break;
+                case PREDICTION_FUZZY_MINER:
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            FuzzyModel model = new FuzzyModel(train, false);
+                            results.put(PREDICTION_FUZZY_MINER, model.makeFuzzyMinerPrediction());
+                            completed++;
+                        }
+                    }).start();
+                    break;
+                case PREDICTION_HEURISTICS_MINER:
+                    new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation();
+                            results.put(PREDICTION_HEURISTICS_MINER, HMmodel.runHeuristicsMiner(train));
+                            completed++;
+                        }
+                    }).start();
+                    break;
             }
         }
-
-        ArrayList<ActivityItem> defaultRoutine = new ArrayList<>();
-
-        if(!AppGlobal.getHandler().CheckRoutineAdded()) {
-            //default prediction (Sleeping from 0:00 to 23:59)
-            Date start = TimeUtils.getDate(new Date(), 0, 0);
-            Date end = TimeUtils.getDate(new Date(), 23, 59);
-            ActivityItem item = new ActivityItem(1, 1, start, end);
-            defaultRoutine.add(item);
-        }
-        return defaultRoutine;
     }
 
     /**
      * implements a voting
      *
-     * @param algos algorithms to use
-     * @param train training data
      * @return dailyRoutine
      * @author Stefan 13.09.2016
      */
-    public static ArrayList<ActivityItem> vote(ArrayList<Integer> algos, ArrayList<ArrayList<ActivityItem>> train) {
-        HashMap<Integer, ArrayList<ActivityItem>> results = new HashMap<>();
-        //run the algorithms specified in parameter algos
-        for (int i = 0; i < algos.size(); i++) {
-            int algo = algos.get(i);
-            switch (algo) {
-                case PREDICTION_DECISION_TREE:
-                    try {
-                        results.put(PREDICTION_DECISION_TREE, Prediction.GetRoutineAsAI());
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e(TAG, e.toString());
-                    }
-                    break;
-                case PREDICTION_GSP:
-                    results.put(PREDICTION_GSP, GSP_Prediction.makeGSPPrediction(train, 0.2f));
-                case PREDICTION_FUZZY_MINER:
-                    FuzzyModel model = new FuzzyModel(train, false);
-                    results.put(PREDICTION_FUZZY_MINER, model.makeFuzzyMinerPrediction());
-                case PREDICTION_HEURISTICS_MINER:
-                    results.put(PREDICTION_HEURISTICS_MINER,HeuristicsMinerImplementation.runHeuristicsMiner(train.get(0)));
-
-            }
-        }
+    private static ArrayList<ActivityItem> vote() {
 
         ArrayList<Pair<Integer, Integer>> dailyRoutinePairs = new ArrayList<>();
         //iterate through every minute of the day

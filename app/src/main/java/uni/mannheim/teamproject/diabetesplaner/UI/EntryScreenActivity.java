@@ -72,7 +72,7 @@ public class EntryScreenActivity extends AppCompatActivity
     private boolean mBoundActivityRec = false;
     private boolean mBoundBSRec = false;
     private boolean mBoundFoodRec = false;
-
+    public static boolean optionsMenuCreated = false;
 
     public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
 
@@ -313,14 +313,22 @@ public class EntryScreenActivity extends AppCompatActivity
                 return true;
 
             case R.id.chooseDate_action_bar:
+            case R.id.statistic_day:
+            case R.id.statistic_month:
+            case R.id.statistic_week:
                 int itemId = item.getItemId();
                 //get the currently active fragment that is shown to the user
-                Fragment active = null;
+                ChartFragment active = null;
                 FragmentManager fragmentManager = this.getSupportFragmentManager();
                 List<Fragment> fragments = fragmentManager.getFragments();
                 for (Fragment fragment : fragments) {
-                    if (fragment != null && fragment.getUserVisibleHint())
-                        active = fragment;
+                    if (fragment != null && fragment.getUserVisibleHint()){
+                        try {
+                            active = (ChartFragment) fragment;
+                        } catch(ClassCastException e){
+                            e.printStackTrace();
+                        }
+                            }
                 }
                 //update the chart of the fragment based on the TimeWindow selected
                 if (!(active == null)) {
@@ -328,7 +336,7 @@ public class EntryScreenActivity extends AppCompatActivity
                         case R.id.statistic_day:
 //                    TODO:Update the charts by calling them by their ID
                             try{
-                                ChartFragment chartFragment = (ChartFragment) active;
+                                ChartFragment chartFragment = active;
                                 chartFragment.updateChart("DAY");
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -337,7 +345,7 @@ public class EntryScreenActivity extends AppCompatActivity
                         case R.id.statistic_week:
 //                    TODO: Update the charts by calling them by their ID
                             try{
-                                ChartFragment chartFragment = (ChartFragment) active;
+                                ChartFragment chartFragment =  active;
                                 chartFragment.updateChart("WEEK");
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -347,7 +355,7 @@ public class EntryScreenActivity extends AppCompatActivity
                         case R.id.statistic_month:
 //                    TODO:Update the charts by calling them by their ID
                             try{
-                                ChartFragment chartFragment = (ChartFragment) active;
+                                ChartFragment chartFragment = active;
                                 chartFragment.updateChart("MONTH");
                             }catch (Exception e){
                                 e.printStackTrace();
@@ -470,8 +478,6 @@ public class EntryScreenActivity extends AppCompatActivity
 
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivity(settingsIntent);
-
-        } else if (id == R.id.nav_share) {
 
         }
 

@@ -4,234 +4,79 @@ package uni.mannheim.teamproject.diabetesplaner.DataMining;
  * Created by leonidgunko on 17/08/16.
  */
 
-import android.database.Cursor;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
-import weka.core.Attribute;
-import weka.core.FastVector;
-import weka.core.Instances;
+import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.HeuristicsMinerImplementation;
 
 
 public class Evaluation {
 
-    ArrayList<Prediction.TimeAction> CreatorRealRoutine(ArrayList<ActivityItem> Routine){
-        ArrayList<Prediction.TimeAction> result = new ArrayList<Prediction.TimeAction>();
-
-        int duration=0;
-        for (ActivityItem activity:Routine) {
-            java.util.Date Start = activity.getStarttime();
-            Calendar calendar = Calendar.getInstance();
-            int ActivityCur = activity.getActivityId();
-            java.util.Date End = activity.getEndtime();
-            java.util.Date CurDate = Start;
-            int num = 0;
-            while (CurDate.before(End)) {
-                num += 1;
-                if (num == 2) {
-                    duration = 0;
-                }
-                calendar.setTime(Start);
-
-                int minutesleftfrommidnight = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
-                duration += 1;
-
-                result.add(new Prediction.TimeAction(minutesleftfrommidnight,(double)ActivityCur));
-
-                CurDate.setTime(CurDate.getTime() + 1 * 60 * 1000);
-            }
+    public static double usageGspK(ArrayList<ArrayList<ActivityItem>> train, int k){
+        double accuracy =0;
+        if (k>train.size()){
+            k=train.size();
         }
-        int i=0;
-        while (result.get(i).Time!=0){
-            result.remove(i);
-            i++;
+        for (int i=0;i<k;i++) {
+            ArrayList<ArrayList<ActivityItem>> train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(i * train.size() / k, (i + 1) * train.size() / k));
+            ArrayList<ActivityItem> tree1 = GSP_Prediction.makeGSPPrediction(train1, 0.2f);
+            double accuracy1 = Accuracy(train1, tree1);
+            accuracy += accuracy1;
         }
-        i = result.size()-1;
-        while (result.get(i).Time!=1440){
-            result.remove(i);
-            i--;
+        return accuracy/k;
+     }
+
+    public static double usageTreeK(ArrayList<ArrayList<ActivityItem>> train, int k) throws Exception {
+        double accuracy =0;
+        if (k>train.size()){
+            k=train.size();
         }
-        return result;
+        for (int i=0;i<k;i++){
+            ArrayList<ArrayList<ActivityItem>>train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(i*train.size()/k,(i+1)*train.size()/k));
+            ArrayList<ActivityItem> tree1 = Prediction.GetRoutineAsAI(train1);
+            double accuracy1 = Accuracy(train1,tree1);
+            accuracy+=accuracy1;
+        }
+        return accuracy/k;
     }
 
-    ArrayList<Prediction.TimeAction> CreatorPredictedRoutine(ArrayList<ActivityItem> RoutinePredicted, ArrayList<ActivityItem> RoutineReal){
-        int days = RoutineReal.size()/RoutinePredicted.size();
-
-        while(RoutinePredicted.size()!=RoutineReal.size()) {
-            RoutinePredicted.add(RoutinePredicted.get(RoutinePredicted.size()-1440));
+    public static double usageFMK(ArrayList<ArrayList<ActivityItem>> train, int k) throws Exception {
+        double accuracy =0;
+        if (k>train.size()){
+            k=train.size();
         }
-
-        ArrayList<Prediction.TimeAction> result = new ArrayList<Prediction.TimeAction>();
-        int duration=0;
-        for (ActivityItem activity:RoutinePredicted) {
-            java.util.Date Start = activity.getStarttime();
-            Calendar calendar = Calendar.getInstance();
-            int ActivityCur = activity.getActivityId();
-            java.util.Date End = activity.getEndtime();
-            java.util.Date CurDate = Start;
-            int num = 0;
-            while (CurDate.before(End)) {
-                num += 1;
-                if (num == 2) {
-                    duration = 0;
-                }
-                calendar.setTime(Start);
-
-                int minutesleftfrommidnight = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
-                duration += 1;
-
-                result.add(new Prediction.TimeAction(minutesleftfrommidnight,(double)ActivityCur));
-
-                CurDate.setTime(CurDate.getTime() + 1 * 60 * 1000);
-            }
+        for (int i=0;i<k;i++){
+            ArrayList<ArrayList<ActivityItem>>train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(i*train.size()/k,(i+1)*train.size()/k));
+            FuzzyModel model = new FuzzyModel(train1, false);
+            ArrayList<ActivityItem> fM = model.makeFuzzyMinerPrediction();
+            double accuracy1 = Accuracy(train1,fM);
+            accuracy+=accuracy1;
         }
-
-        return result;
+        return accuracy/k;
     }
 
-    public static float usageGsp(ArrayList<ArrayList<ActivityItem>> train){
-        ArrayList<ArrayList<ActivityItem>>train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(0,train.size()/2));
-        ArrayList<ArrayList<ActivityItem>>train2 = new ArrayList<ArrayList<ActivityItem>>(train.subList(train.size()/2,train.size()));
-        ArrayList<ActivityItem> gsp1 = GSP_Prediction.makeGSPPrediction(train1, 0.2f);
-        ArrayList<ActivityItem> gsp2 = GSP_Prediction.makeGSPPrediction(train2, 0.2f);
-        float accuracy1 = AccuracyGsp(train1,gsp1);
-        float accuracy2 = AccuracyGsp(train2,gsp2);
-        return (accuracy1+accuracy2)/2;
+    public static double usageHMK(ArrayList<ArrayList<ActivityItem>> train, int k) throws Exception {
+        double accuracy =0;
+        if (k>train.size()){
+            k=train.size();
+        }
+        for (int i=0;i<k;i++){
+            ArrayList<ArrayList<ActivityItem>>train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(i*train.size()/k,(i+1)*train.size()/k));
+            HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation();
+            ArrayList<ActivityItem> fM = HMmodel.runHeuristicsMiner(train1);
+            double accuracy1 = Accuracy(train1,fM);
+            accuracy+=accuracy1;
+        }
+        return accuracy/k;
     }
 
-    public static void usageTree() throws Exception {
-        HashMap<Integer, List<Double>> hashReal = new HashMap<>();
-        FastVector Activities = new FastVector();
-        String ActivityCur;
-
-        for (int i=0;i<1440;i++) {
-            List<Double> l = new ArrayList<>();
-            hashReal.put(i,l);
-        }
-        Instances train = Prediction.getInstances();
-
-        Cursor cursor2 = AppGlobal.getHandler().getAllRoutine();
-
-        if (cursor2.moveToFirst()) {
-            do {
-                ActivityCur = cursor2.getString(cursor2.getColumnIndex("Activity")).replace(" ","") +"|"+ cursor2.getString(cursor2.getColumnIndex("SubActivity")).replace(" ","");
-                if (!Activities.contains(ActivityCur)) {
-                    Activities.addElement(ActivityCur);
-                }
-            }
-            while (cursor2.moveToNext());
-        }
-
-        Attribute Activity = new Attribute("Activity", Activities);
-        Attribute Activity1 = new Attribute("Activity1", Activities);
-        Attribute Time = new Attribute("Time");
-        Attribute Dur = new Attribute("Duration");
-
-        FastVector attinfo = new FastVector(4);
-        attinfo.addElement(Time);
-        attinfo.addElement(Dur);
-        attinfo.addElement(Activity);
-        attinfo.addElement(Activity1);
-        Instances train1 = new Instances("output", attinfo, 1);
-        for (int i=0;i<train.numInstances()/2;i++){
-            train1.add(train.instance(i));
-        }
-        ArrayList<Prediction.TimeAction> Pred = Prediction.GetRoutineAsTimeAction(train1);
-        for (int i=0;i<train1.numInstances();i++){
-            int minute = (int)train.instance(i).value(0);
-            double action = (int)train.instance(i).value(3);
-            if (!hashReal.get(minute).contains(action)) {
-                List<Double> actions = hashReal.get(minute);
-                actions.add(action);
-                hashReal.put(minute,actions);
-            }
-        }
-        float accuracy1 = Accuracy(Pred,hashReal);
-
-        HashMap<Integer, List<Double>> hashReal2 = new HashMap<>();
-        Instances train2 = new Instances("output", attinfo, 1);
-        for (int i=train.numInstances()/2;i<train.numInstances();i++){
-            train2.add(train.instance(i));
-        }
-        ArrayList<Prediction.TimeAction> Pred2 = Prediction.GetRoutineAsTimeAction(train2);
-
-        for (int i=0;i<1440;i++) {
-            List<Double> l = new ArrayList<>();
-            hashReal.put(i,l);
-        }
-        for (int i=0;i<train2.numInstances();i++){
-            int minute = (int)train.instance(i).value(0);
-            double action = (int)train.instance(i).value(3);
-            if (!hashReal.get(minute).contains(action)) {
-                List<Double> actions = hashReal.get(minute);
-                actions.add(action);
-                hashReal.put(minute,actions);
-            }
-        }
-        float accuracy2 = Accuracy(Pred2,hashReal);
-    }
-
-
-
-//    public static void usage(){
-//        //float f = Accuracy(rtd,gsp);
-//        ArrayList<Prediction.TimeAction> prediction = new ArrayList<Prediction.TimeAction>();
-//        try {
-//            prediction = GetRoutineAsTimeAction();   //array of length 1440 with time,activity
-//            ArrayList<Prediction.PeriodAction> pred = Prediction.GetRoutine1();
-//            HashMap<Integer,List<String>> DayReal = new HashMap<>();
-//            for (int minute=1;minute<1440;minute++){
-//                ArrayList<String> a = new ArrayList<>();
-//                DayReal.put(minute,a);
-//            }
-//            Cursor cursor2 = AppGlobal.getHandler().getAllRoutine();
-//            int p = cursor2.getCount();
-//            if (cursor2.moveToFirst()) {
-//                SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-//                int duration=0;
-//                do {
-//                    java.util.Date Start = format.parse(cursor2.getString(cursor2.getColumnIndex("Start")));
-//                    Calendar calendar = Calendar.getInstance();
-//                    String ActivityCur = cursor2.getString(cursor2.getColumnIndex("SubActivity"));
-//                    java.util.Date End = format.parse(cursor2.getString(4));
-//                    java.util.Date CurDate = Start;
-//                    int num = 0;
-//                    while (CurDate.before(End)) {
-//                        num += 1;
-//                        if (num == 2) {
-//                            duration = 0;
-//                        }
-//                        calendar.setTime(Start);
-//
-//                        int minutesleftfrommidnight = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
-//                        duration += 1;
-//                        DayReal.get(minutesleftfrommidnight).add(ActivityCur);  //hashmap of length 1440 with time as a key,array of actions performed at this minute
-//                        CurDate.setTime(CurDate.getTime() + 1 * 60 * 1000);
-//                    }
-//                }
-//                while (cursor2.moveToNext());
-//            }
-//            // close cursor
-//            if (!cursor2.isClosed()) {
-//                cursor2.close();
-//            }
-//
-//            Accuracy(prediction,DayReal);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//    }
-
-
-    static float AccuracyGsp(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> gsp){
+    static double Accuracy(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> gsp){
         int acc=0;
         int count=0;
         HashMap<Integer,Integer> gspRes = new HashMap<>();
@@ -258,24 +103,92 @@ public class Evaluation {
                 }
             }
         }
-
-        return (float)acc/count;
+        return (double)acc/count;
     }
 
+    static double AccuracyFlow(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> prediction){
+        HashMap<Integer,ArrayList<Integer>> real = new HashMap<>(); //MAP<Activity, List of following activities>
+        HashMap<Integer,ArrayList<Integer>> predicted = new HashMap<>();
 
-    static float Accuracy(ArrayList<Prediction.TimeAction> prediction, HashMap<Integer,List<Double>> DayReal){
-        int Acc=0;
-        int count=0;
-        for (int minute=0;minute<prediction.size();minute++){
-            for (int i=0;i<DayReal.get(minute).size()-1;i++){
-                    if (prediction.get(minute).Action==DayReal.get(minute).get(i)){
-                        Acc++;
-                    }
-                count++;
+        for (ArrayList<ActivityItem> day: train){
+            for (int i=0;i<day.size()-1;i++){
+                int idSubActivity = day.get(i).getSubactivityId();
+                int idNextSubActivity = day.get(i+1).getSubactivityId();
+                if (real.keySet().contains(day.get(i).getSubactivityId())){
+                    real.get(idSubActivity).add(idNextSubActivity);
+                }
+                else{
+                    real.put(idSubActivity,new ArrayList<Integer>());
+                }
             }
-
         }
-        return (float)Acc/count;
+
+        for (int i=0;i<prediction.size()-1;i++){
+            int idSubActivity = prediction.get(i).getSubactivityId();
+            int idNextSubActivity = prediction.get(i+1).getSubactivityId();
+            if (predicted.keySet().contains(prediction.get(i).getSubactivityId())){
+                predicted.get(idSubActivity).add(idNextSubActivity);
+            }
+            else{
+                predicted.put(idSubActivity,new ArrayList<Integer>());
+                predicted.get(idSubActivity).add(idNextSubActivity);
+            }
+        }
+
+        HashMap<Integer,HashMap<Integer,Double>> real1 = new HashMap<>(); //MAP<Activity, MAP<following activity, confidence>
+        HashMap<Integer,HashMap<Integer,Double>> predicted1 = new HashMap<>();
+
+        for (int subactivity:real.keySet()){
+            real1.put(subactivity, new HashMap<Integer,Double>());
+            for (int followingSubActivity:real.get(subactivity)){
+                real1.get(subactivity).put(followingSubActivity,0.0);
+            }
+        }
+
+        for (int subactivity:real.keySet()){
+            for (int followingSubactivity:real.get(subactivity)){
+                for (int followingSubactivity1:real1.get(subactivity).keySet()){
+                    if (followingSubactivity == followingSubactivity1){
+                        real1.get(subactivity).put(followingSubactivity,real1.get(subactivity).get(followingSubactivity) +1.0/real.get(subactivity).size());
+                    }
+                }
+            }
+        }
+
+        for (int subactivity:predicted.keySet()){
+            predicted1.put(subactivity, new HashMap<Integer,Double>());
+            for (int followingSubActivity:predicted.get(subactivity)){
+                predicted1.get(subactivity).put(followingSubActivity,0.0);
+            }
+        }
+
+        for (int subactivity:predicted.keySet()){
+            for (int followingSubactivity:predicted.get(subactivity)){
+                for (int followingSubactivity1:predicted1.get(subactivity).keySet()){
+                    if (followingSubactivity == followingSubactivity1){
+                        predicted1.get(subactivity).put(followingSubactivity,predicted1.get(subactivity).get(followingSubactivity) +1.0/predicted1.get(subactivity).keySet().size());
+                    }
+                }
+            }
+        }
+
+        double error =0.0;
+        for (int int1:predicted1.keySet()) {
+            HashMap<Integer,Double> following = predicted1.get(int1);   //Map of following activities with confidence
+            for (int subactivity : following.keySet()){
+                try {
+                    double confidencepred = predicted1.get(int1).get(subactivity);
+                    double confidencereal = real1.get(int1).get(subactivity);
+                    error += Math.abs(confidencepred - confidencereal);
+                }
+                catch(Exception e){
+                    continue;
+                }
+            }
+        }
+
+        error = error/predicted1.keySet().size();
+        return 1-error;
     }
 
     ArrayList<Double> Precision(ArrayList<Integer> Actions, ArrayList<Integer> Predicted,ArrayList<Integer> Real ){
@@ -353,10 +266,12 @@ public class Evaluation {
         HashMap<Integer,Integer> result = new HashMap<Integer,Integer>();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
         int duration = 0;
-        java.util.Date start = activityItem.getStarttime();
+        java.util.Date start = new Date();
+        start.setTime(activityItem.getStarttime().getTime());
         Calendar calendar = Calendar.getInstance();
         int activityCur = activityItem.getSubactivityId();
-        java.util.Date end = activityItem.getEndtime();
+        java.util.Date end = new Date();
+        end.setTime(activityItem.getEndtime().getTime());
         java.util.Date curDate = start;
         int num = 0;
         while (curDate.before(end)) {
@@ -368,6 +283,7 @@ public class Evaluation {
 
             int minutesleftfrommidnight = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
             result.put(minutesleftfrommidnight,activityCur);
+            curDate.setTime(curDate.getTime() + 1 * 60 * 1000);
         }
         return result;
     }

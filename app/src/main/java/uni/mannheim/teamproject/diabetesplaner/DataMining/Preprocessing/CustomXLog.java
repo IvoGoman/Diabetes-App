@@ -4,9 +4,11 @@ package uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.impl.XAttributeTimestampImpl;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 
+import uni.mannheim.teamproject.diabetesplaner.DataMining.ProcessMiningUtil;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
@@ -45,7 +47,7 @@ public class CustomXLog {
         builder.startLog("ActivityLog");
         String caseHelper = eventList.get(1)[0];
         builder.addTrace(eventList.get(1)[0]);
-
+        int activityID = 0;
         this.createInitialEvent(builder, eventList.get(1));
 //		iterate through the event list with cases
 //        TODO:do not reduce the full amount of activities
@@ -110,13 +112,19 @@ public class CustomXLog {
         String[] event;
         event = new String[]{"", "", "starttime", "endtime"};
         eventList.add(event);
-        String id;
-        int isAM;
+        String id, subActivityID, isAMStart, isPMStart, isAM;
         for (ActivityItem item : items) {
-            id = String.valueOf(item.getActivityId());
+            id = ProcessMiningUtil.getIDwithLeadingZero(item.getActivityId());
+            subActivityID = ProcessMiningUtil.getIDwithLeadingZero(item.getSubactivityId());
             Long[] timestamps = TimeUtils.convertDateStringToTimestamp(new String[]{item.getStarttimeAsString(), item.getEndtimeAsString()});
-            isAM = TimeUtils.isAM(timestamps[0] * 1000);
-            event = new String[]{AppGlobal.getHandler().getActionById(item.getActivityId()), id + isAM, String.valueOf(timestamps[0] * 1000), String.valueOf(timestamps[1] * 1000)};
+            isAMStart = TimeUtils.isAM(timestamps[0]);
+            isPMStart = TimeUtils.isAM(timestamps[1]);
+            if(isAMStart.equals("11") || isPMStart.equals("11")){
+                isAM = "11";
+            } else {
+                isAM = "10";
+            };
+            event = new String[]{AppGlobal.getHandler().getActionById(item.getActivityId()), isAM + id + subActivityID, String.valueOf(timestamps[0] ), String.valueOf(timestamps[1] )};
             eventList.add(event);
         }
         return eventList;

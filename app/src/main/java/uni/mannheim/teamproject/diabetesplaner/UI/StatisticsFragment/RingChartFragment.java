@@ -8,14 +8,15 @@ import android.view.ViewGroup;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.components.Legend;
-import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
+import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
@@ -27,29 +28,9 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
  * Created by Stefan on 11.01.2016.
  */
 public class RingChartFragment extends ChartFragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
-    // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment RingChartFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static RingChartFragment newInstance(String param1, String param2) {
+    public static RingChartFragment newInstance(){
         RingChartFragment fragment = new RingChartFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -75,16 +56,21 @@ public class RingChartFragment extends ChartFragment {
         PieChart chart = (PieChart) inflaterView.findViewById(R.id.activitypiechart);
         chart.setData(pieData);
         chart.setUsePercentValues(true);
-        chart.setDescription("Overview of activities");
+        chart.setDescription("");
         chart.highlightValues(null);
         chart.setTransparentCircleColor(Color.WHITE);
+        chart.setEntryLabelColor(Color.BLACK);
+        chart.setEntryLabelTextSize(10f);
         chart.setRotationEnabled(false);
+        chart.setNoDataText(String.valueOf(R.string.no_data));
         Legend legend = chart.getLegend();
         legend.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
         legend.setXEntrySpace(7f);
         legend.setYEntrySpace(0f);
         legend.setYOffset(0f);
         legend.setEnabled(true);
+        legend.setTextColor(Color.BLACK);
+        legend.setTextSize(10f);
         chart.invalidate();
 
         return inflaterView;
@@ -102,7 +88,7 @@ public class RingChartFragment extends ChartFragment {
 //        ArrayList<ActivityItem> activityItems = handler.GetDay(handler,date);
         ArrayList<ActivityItem> activityItems = handler.getActivities(date, timeFrame);
         ArrayList<String> labels = new ArrayList<>();
-        ArrayList<Entry> pieValues = new ArrayList<>();
+        List<PieEntry> pieValues = new ArrayList<>();
         HashMap<String, Integer> valueMap = new HashMap<>();
         String label = "";
         int value = 0;
@@ -111,20 +97,18 @@ public class RingChartFragment extends ChartFragment {
             item = activityItems.get(i);
             label = handler.getActionById(item.getActivityId());
             if (!valueMap.containsKey(label)) {
-                value = TimeUtils.getDuration(item.getStarttime(), item.getEndtime());
+                value = TimeUtils.getDurationMinutes(item.getStarttime(), item.getEndtime());
                 valueMap.put(label, value);
             } else {
                 value = valueMap.get(label);
-                value += TimeUtils.getDuration(item.getStarttime(), item.getEndtime());
+                value += TimeUtils.getDurationMinutes(item.getStarttime(), item.getEndtime());
                 valueMap.put(label, value);
             }
         }
         int j = 0;
         for (String entryKey : valueMap.keySet()) {
-
-            labels.add(entryKey);
             float duration = (float) valueMap.get(entryKey);
-            pieValues.add(new Entry(duration, j));
+            pieValues.add(new PieEntry(duration, entryKey));
             j++;
         }
         PieDataSet pieDataSet = new PieDataSet(pieValues, getResources().getString(R.string.activity));
@@ -141,7 +125,7 @@ public class RingChartFragment extends ChartFragment {
         pieDataSet.addColor(Color.rgb(77, 208, 255));
 
 
-        return new PieData(labels, pieDataSet);
+        return new PieData(pieDataSet);
     }
 
     /**
@@ -153,6 +137,7 @@ public class RingChartFragment extends ChartFragment {
     public void updateChart(String timeFrame) {
         PieChart chart = (PieChart) this.getView().findViewById(R.id.activitypiechart);
         PieData pieData = this.getData(timeFrame);
+
         chart.setData(pieData);
         chart.invalidate();
 

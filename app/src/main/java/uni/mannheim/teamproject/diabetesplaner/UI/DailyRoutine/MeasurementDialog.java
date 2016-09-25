@@ -32,40 +32,37 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
     EditText addBloodSugar;
     EditText addInsulin;
-
     RadioButton mg, percentage, mmol;
     RadioButton units, ml;
 
-    Button btn_date;
-    Button btn_time;
-
     private String measure;
     private String measure_value;
+    private Long timestamp;
     private String insulin;
     private String insulin_value;
     private MeasureItem measureItem;
 
-    private Long timestamp;
-
     DataBaseHandler database;
 
+    Button btn_date;
+    Button btn_time;
     private TimerPickerFragmentM TimerPicker;
     private DatePickerFragmentM DatePicker;
     Date current_date;
 
-    /**
-     *
-     * @param savedInstanceState
-     * @return
-     * @author Naira
-     */
+
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
+
+
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.input_measurements);
 
         View view = getLayout();
+
+        DatePicker = new DatePickerFragmentM();
+        TimerPicker = new TimerPickerFragmentM();
 
         builder.setView(view);
 
@@ -96,7 +93,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
         btn_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePicker = new DatePickerFragmentM();
+//                DatePicker = new DatePickerFragmentM();
                 DatePicker.setBloodsugarDialog(MeasurementDialog.this);
                 DatePicker.show(getFragmentManager(), "datePicker");
 
@@ -111,7 +108,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
         btn_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TimerPicker = new TimerPickerFragmentM();
+//                TimerPicker = new TimerPickerFragmentM();
                 TimerPicker.SetDialog(MeasurementDialog.this);
                 TimerPicker.show(getFragmentManager(), "timePicker");
                 //timerpickerfragment.SetDialog(bloodsugar_dialog.this);
@@ -129,6 +126,9 @@ public class MeasurementDialog extends MeasurementInputDialog {
                     insulin_value = addInsulin.getText().toString();
                     String date_s = btn_date.getText().toString();
                     String time_s = btn_time.getText().toString();
+                    if(btn_time.getText().toString().length() < 8) {
+                        time_s = btn_time.getText().toString()+ ":" + Calendar.getInstance().get(Calendar.SECOND);
+                    }
                     timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s, time_s).getTime();
 
                     if (measure_value.equals("") == true && insulin_value.equals("") == true) {

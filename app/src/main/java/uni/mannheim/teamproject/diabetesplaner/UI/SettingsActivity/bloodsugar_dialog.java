@@ -19,10 +19,13 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.TimeZone;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DatePickerFragmentM;
+import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.TimerPickerFragmentM;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
@@ -61,8 +64,9 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         LayoutInflater inflater = (LayoutInflater) getActivity().getLayoutInflater();
         View view = inflater.inflate(R.layout.dialog_layout, null);
-
         database = AppGlobal.getHandler();
+        TimerPicker = new TimerPickerFragment();
+        DatePicker = new DatePickerFragment();
 
         mg = (RadioButton) view.findViewById(R.id.bs_mg);
         mmol = (RadioButton) view.findViewById(R.id.bs_mm);
@@ -74,7 +78,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         btn_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                DatePicker = new DatePickerFragment();
+
                 DatePicker.setBloodsugarDialog(bloodsugar_dialog.this);
                 DatePicker.show(getFragmentManager(), "datePicker");
 
@@ -88,7 +92,6 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         btn_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                TimerPicker = new TimerPickerFragment();
                 TimerPicker.SetDialog(bloodsugar_dialog.this);
                 TimerPicker.show(getFragmentManager(), "timePicker");
                 //timerpickerfragment.SetDialog(bloodsugar_dialog.this);
@@ -99,6 +102,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         time_s = btn_time.getText().toString();
         //Set current Date and Time
         Calendar c = Calendar.getInstance();
+        c.setTimeZone(TimeZone.getDefault());
         if(date_s.contentEquals("Date"))
         {
             date_s = new SimpleDateFormat("dd.MM.yyyy").format(c.getTime());
@@ -118,7 +122,6 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //if value is changed, then store value and change display
-                long timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s,time_s).getTime();
                 try {
                     if (measure_value.equals(bloodsugar_level.getText().toString().replace(".","-")) == false) {
                         measure_value = bloodsugar_level.getText().toString();
@@ -126,6 +129,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                         if(btn_time.getText().toString().length() < 8) {
                             time_s = btn_time.getText().toString()+ ":" + Calendar.getInstance().get(Calendar.SECOND);
                         }
+                        long timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s,time_s).getTime();
                         //Check if entered value is to high or to low
                         if(check_mg(convert_to_mg(Double.parseDouble(measure_value),measure)) == true) {
                            MeasureItem measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value),measure, MeasureItem.MEASURE_KIND_BLOODSUGAR);

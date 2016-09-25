@@ -40,14 +40,14 @@ public class DailyRoutineHandler extends DayHandler{
      * @param mode     EVERY_DAY, WEEKDAYS, WEEKENDS, MONDAY, ... , SUNDAY
      * @author Stefan 06.09.2016
      */
-    public void predictDailyRoutine(ArrayList<Integer> algorithms, int mode) throws Exception {
+    public void predictDailyRoutine(ArrayList<Integer> algorithms, int mode){
         dailyRoutine.clear();
-        dailyRoutine = PredictionFramework.predict(PredictionFramework.retrieveTrainingData(mode), algorithms);
+        new Thread(new PredictionFramework(PredictionFramework.retrieveTrainingData(mode), algorithms, this)).start();
 //        Log.d(TAG, "predicted daily routine: ");
 //        for(int i=0; i<dailyRoutine.size();i++){
 //            Log.d(TAG, dailyRoutine.get(i).print());
 //        }
-        AppGlobal.getHandler().insertNewRoutine(dailyRoutine);
+//        AppGlobal.getHandler().insertNewRoutine(dailyRoutine);
     }
 
     /**
@@ -76,12 +76,11 @@ public class DailyRoutineHandler extends DayHandler{
         }
 
         try {
-            dailyRoutine = PredictionFramework.predict(PredictionFramework.retrieveTrainingData(mode), algorithms);
+            new Thread(new PredictionFramework(PredictionFramework.retrieveTrainingData(mode), algorithms, this)).start();
         } catch (Exception e) {
             e.printStackTrace();
         }
         Log.d("DailyRoutineFragment", "Size after predict " +dailyRoutine.get(0).getStarttime());
-        AppGlobal.getHandler().insertNewRoutine(dailyRoutine);
     }
 
 
@@ -96,6 +95,7 @@ public class DailyRoutineHandler extends DayHandler{
         Context context = AppGlobal.getcontext();
         Prediction prediction1 = new Prediction();
         try{
+            AppGlobal.getHandler().deleteDay(TimeUtils.getDateFromString("2016-09-21"));
             if (AppGlobal.getHandler()!=null){
                 if (!AppGlobal.getHandler().CheckRoutineAdded()){
                     prediction = prediction1.GetRoutineAsPAforInserting();
@@ -158,6 +158,11 @@ public class DailyRoutineHandler extends DayHandler{
 
     public void clearDailyRoutine(){
         dailyRoutine.clear();
+    }
+
+    public void setDailyRoutine(ArrayList<ActivityItem> dailyRoutine){
+        this.dailyRoutine = dailyRoutine;
+        AppGlobal.getHandler().insertNewRoutine(dailyRoutine);
     }
 
 }

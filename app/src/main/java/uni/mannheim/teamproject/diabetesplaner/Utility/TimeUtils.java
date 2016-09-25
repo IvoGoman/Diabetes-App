@@ -351,14 +351,25 @@ public class TimeUtils {
         return calendar.getTime();
     }
 
-    public static int getDuration(Date starttime, Date endtime) {
-
+    public static int getDurationMinutes(Date starttime, Date endtime) {
         long duration = endtime.getTime() - starttime.getTime();
         long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(duration);
         long diffInHours = TimeUnit.MILLISECONDS.toHours(duration);
         /**int [] time = {(int)diffInHours, (int) diffInMinutes};
          return time;**/
         return (int) diffInMinutes;
+    }
+
+    public static int getDurationHours(Date starttime, Date endtime) {
+        long duration = endtime.getTime() - starttime.getTime();
+        long diffInHours = TimeUnit.MILLISECONDS.toHours(duration);
+        return (int) diffInHours;
+    }
+
+    public static int getDurationDays(Date starttime, Date endtime) {
+        long duration = endtime.getTime() - starttime.getTime();
+        long diffInDays = TimeUnit.MILLISECONDS.toDays(duration);
+        return (int) diffInDays;
     }
 
     /**
@@ -592,13 +603,14 @@ public class TimeUtils {
 
     /**
      * @param timestamp
-     * @return 0 for AM or 1 for PM
+     * @return 10 for AM or 11 for PM
      */
 
-    public static int isAM(long timestamp) {
+    public static String isAM(long timestamp) {
         Calendar calendar = TimeUtils.getCalendar(timestamp);
         int am_pm = calendar.get(Calendar.AM_PM);
-        return am_pm;
+        String flag = "1"+am_pm;
+        return flag;
     }
 
     /**
@@ -638,4 +650,76 @@ public class TimeUtils {
                 && c1.get(Calendar.MONTH) == c2.get(Calendar.MONTH)
                 && c1.get(Calendar.YEAR) == c2.get(Calendar.YEAR);
     }
+
+    /**
+     * Ivo Gosemann 18.03.2016
+     * Reusing Leonids Code to calculate the start and end of a day
+     * The start and end are then returned as unix timestamps
+     * In Addition a Parameter can be provided to specify the time window
+     * DAY, WEEK or MONTH are acceptable inputs
+     * @param date the day for which start and end shall be returned
+     * @param window string with the value for the timeframe
+     * @return array with 2 fields [0] = windowStart ; [1] = windowEnd
+     */
+    public static String[] getWindowStartEnd(Date date,String window) {
+        String startDay, endDay;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(date);
+//      Set the end of the time window
+        int year = calendar.get(Calendar.YEAR);
+        String month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+        String day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+        endDay = String.valueOf(year) + "-" + String.valueOf(month) + "-" + String.valueOf(day) + " " + "23:59";
+        switch (window){
+            case "MONTH":
+                calendar.add(Calendar.DAY_OF_MONTH,-30);
+                break;
+            case "WEEK":
+                calendar.add(Calendar.DAY_OF_MONTH,-7);
+        }
+        year =calendar.get(Calendar.YEAR);
+        month = formatMonthOrDay(calendar.get(Calendar.MONTH)+1);
+        day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+
+        startDay = String.valueOf(year) + "-" + String.valueOf(month) + "-" + String.valueOf(day) + " " + "00:00";
+        String[] timeWindow = {startDay,endDay};
+        return timeWindow;
+    }
+
+    public static String formatMonthOrDay(int i) {
+        if (i > 9) {
+            return String.valueOf(i);
+        } else {
+            return "0" + String.valueOf(i);
+        }
+    }
+
+    public static String PlusMinute(String SDate1) {
+        Date Date1;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        try {
+            Date1 = format.parse(SDate1);
+            Date1 = TimeUtils.addMinuteFromDate(Date1, 1);
+            SDate1 = TimeUtils.dateToDateTimeString(Date1);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return SDate1;
+    }
+
+    public static String MinusMinute(String SDate1) {
+        Date Date1;
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
+        try {
+            Date1 = format.parse(SDate1);
+            Date1 = TimeUtils.addMinuteFromDate(Date1, -1);
+            SDate1 = TimeUtils.dateToDateTimeString(Date1);
+
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return SDate1;
+    }
+
 }

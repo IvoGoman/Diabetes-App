@@ -112,15 +112,17 @@ public class ActivityInputHandler {
                 try{
                     subId = Integer.parseInt(event[3]);
                 } catch(Exception e){
-                    subId = 0;
+                    subId = Integer.parseInt(event[2]);
                     e.printStackTrace();
                 }
                     if (lastitemEnd!=0) {
                         item = new ActivityItem(Integer.parseInt(event[2]), subId, TimeUtils.getDate(String.valueOf(lastitemEnd + 60000)), TimeUtils.getDate(event[5]));
+                        AppGlobal.setEditFlag(true);
                         dbHandler.DeleteActivity(item.getStarttimeAsString(),item.getEndtimeAsString());
                         dbHandler.InsertActivityFromCSV(item);
                     }else{
                         item = new ActivityItem(Integer.parseInt(event[2]), subId, TimeUtils.getDate(event[4]), TimeUtils.getDate(event[5]));
+                        AppGlobal.setEditFlag(true);
                         dbHandler.DeleteActivity(item.getStarttimeAsString(),item.getEndtimeAsString());
                         dbHandler.InsertActivityFromCSV(item);
                     }

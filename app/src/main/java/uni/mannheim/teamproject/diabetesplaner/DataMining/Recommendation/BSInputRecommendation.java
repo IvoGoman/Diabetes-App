@@ -29,7 +29,7 @@ public class BSInputRecommendation extends Recommendation {
     private ArrayList<Double> means;
     private HashMap<Integer, Integer> mIds = new HashMap<>();
     private int mIdOffset;
-    private int eps = 45;
+    private int eps = 60;
 
     public BSInputRecommendation() {
         super("BSInputRecommendationService");
