@@ -180,7 +180,11 @@ public class PredictionFramework implements Runnable{
                         @Override
                         public void run() {
                             try {
-                                results.put(PREDICTION_DECISION_TREE, Prediction.GetRoutineAsAI(train));
+                                ArrayList<ActivityItem> prediction = Prediction.GetRoutineAsAI(train);
+                                double acc1 = Evaluation.Accuracy(train, prediction);
+                                double acc2 = Evaluation.AccuracyFlow(train, prediction);
+                                double acc3 = Evaluation.usageTreeK(train,15);
+                                results.put(PREDICTION_DECISION_TREE, prediction);
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Log.e(TAG, "Decision Tree " + e.getLocalizedMessage());
