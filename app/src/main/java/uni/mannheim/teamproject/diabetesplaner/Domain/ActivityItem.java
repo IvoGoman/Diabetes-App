@@ -102,6 +102,12 @@ public class ActivityItem {
         this.endtime = TimeUtils.getTime(endtime);
     }
 
+    public ActivityItem(int id, int subID, Double duration_value) {
+        this.activityId = id;
+        this.subactivityId = subID;
+        this.duration = duration_value;
+    }
+
     public int getActivityId() {
         return activityId;
     }
