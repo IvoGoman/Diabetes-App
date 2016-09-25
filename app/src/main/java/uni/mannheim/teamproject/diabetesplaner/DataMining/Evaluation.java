@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Prediction;
@@ -23,8 +22,8 @@ public class Evaluation {
         ArrayList<ArrayList<ActivityItem>>train2 = new ArrayList<ArrayList<ActivityItem>>(train.subList(train.size()/2,train.size()));
         ArrayList<ActivityItem> gsp1 = GSP_Prediction.makeGSPPrediction(train1, 0.2f);
         ArrayList<ActivityItem> gsp2 = GSP_Prediction.makeGSPPrediction(train2, 0.2f);
-        float accuracy1 = AccuracyGsp(train1,gsp1);
-        float accuracy2 = AccuracyGsp(train2,gsp2);
+        float accuracy1 = Accuracy(train1,gsp1);
+        float accuracy2 = Accuracy(train2,gsp2);
         return (accuracy1+accuracy2)/2;
      }
 
@@ -35,12 +34,12 @@ public class Evaluation {
 
         ArrayList<ActivityItem> tree1 = Prediction.GetRoutineAsAI(train1);
         ArrayList<ActivityItem> tree2 = Prediction.GetRoutineAsAI(train2);
-        float accuracy1 = AccuracyGsp(train1,tree1);
-        float accuracy2 = AccuracyGsp(train2,tree2);
+        float accuracy1 = Accuracy(train1,tree1);
+        float accuracy2 = Accuracy(train2,tree2);
         return (accuracy1+accuracy2)/2;
     }
 
-    static float AccuracyGsp(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> gsp){
+    static float Accuracy(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> gsp){
         int acc=0;
         int count=0;
         HashMap<Integer,Integer> gspRes = new HashMap<>();
@@ -70,19 +69,84 @@ public class Evaluation {
         return (float)acc/count;
     }
 
+    static double AccuracyFlow(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> prediction){
+        HashMap<Integer,ArrayList<Integer>> real = new HashMap<>(); //MAP<Activity, List of following activities>
+        HashMap<Integer,ArrayList<Integer>> predicted = new HashMap<>();
 
-    static float Accuracy(ArrayList<Prediction.TimeAction> prediction, HashMap<Integer,List<Double>> DayReal){
-        int Acc=0;
-        int count=0;
-        for (int minute=0;minute<prediction.size();minute++){
-            for (int i=0;i<DayReal.get(minute).size()-1;i++){
-                    if (prediction.get(minute).Action==DayReal.get(minute).get(i)){
-                        Acc++;
-                    }
-                count++;
+        for (ArrayList<ActivityItem> day: train){
+            for (int i=0;i<day.size()-1;i++){
+                int idSubActivity = day.get(i).getSubactivityId();
+                int idNextSubActivity = day.get(i+1).getSubactivityId();
+                if (real.keySet().contains(day.get(i).getSubactivityId())){
+                    real.get(idSubActivity).add(idNextSubActivity);
+                }
+                else{
+                    real.put(idSubActivity,new ArrayList<Integer>());
+                }
             }
         }
-        return (float)Acc/count;
+
+        for (int i=0;i<prediction.size()-1;i++){
+            int idSubActivity = prediction.get(i).getSubactivityId();
+            int idNextSubActivity = prediction.get(i+1).getSubactivityId();
+            if (predicted.keySet().contains(prediction.get(i).getSubactivityId())){
+                predicted.get(idSubActivity).add(idNextSubActivity);
+            }
+            else{
+                predicted.put(idSubActivity,new ArrayList<Integer>());
+                predicted.get(idSubActivity).add(idNextSubActivity);
+            }
+        }
+
+        HashMap<Integer,HashMap<Integer,Double>> real1 = new HashMap<>(); //MAP<Activity, MAP<following activity, confidence>
+        HashMap<Integer,HashMap<Integer,Double>> predicted1 = new HashMap<>();
+
+        for (int subactivity:real.keySet()){
+            real1.put(subactivity, new HashMap<Integer,Double>());
+            for (int followingSubActivity:real.get(subactivity)){
+                real1.get(subactivity).put(followingSubActivity,0.0);
+            }
+        }
+
+        for (int subactivity:real.keySet()){
+            for (int followingSubactivity:real.get(subactivity)){
+                for (int followingSubactivity1:real1.get(subactivity).keySet()){
+                    if (followingSubactivity == followingSubactivity1){
+                        real1.get(subactivity).put(followingSubactivity,real1.get(subactivity).get(followingSubactivity) +1.0/real.get(subactivity).size());
+                    }
+                }
+            }
+        }
+
+        for (int subactivity:predicted.keySet()){
+            predicted1.put(subactivity, new HashMap<Integer,Double>());
+            for (int followingSubActivity:predicted.get(subactivity)){
+                predicted1.get(subactivity).put(followingSubActivity,0.0);
+            }
+        }
+
+        for (int subactivity:predicted.keySet()){
+            for (int followingSubactivity:predicted.get(subactivity)){
+                for (int followingSubactivity1:predicted1.get(subactivity).keySet()){
+                    if (followingSubactivity == followingSubactivity1){
+                        predicted1.get(subactivity).put(followingSubactivity,predicted1.get(subactivity).get(followingSubactivity) +1.0/predicted1.get(subactivity).keySet().size());
+                    }
+                }
+            }
+        }
+
+        double error =0.0;
+        for (int int1:predicted1.keySet()) {
+            HashMap<Integer,Double> following = predicted1.get(int1);   //Map of following activities with confidence
+            for (int subactivity : following.keySet()){
+                double confidencepred = predicted1.get(int1).get(subactivity);
+                double confidencereal = real1.get(int1).get(subactivity);
+                error += Math.abs(confidencepred-confidencereal);
+            }
+        }
+
+        error = error/predicted1.keySet().size();
+        return 1-error;
     }
 
     ArrayList<Double> Precision(ArrayList<Integer> Actions, ArrayList<Integer> Predicted,ArrayList<Integer> Real ){
