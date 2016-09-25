@@ -16,6 +16,7 @@ import java.util.Locale;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import weka.classifiers.trees.J48;
 import weka.core.Attribute;
 import weka.core.FastVector;
@@ -588,8 +589,8 @@ public class Prediction {
 
             Calendar calendar = Calendar.getInstance();
             int Year = calendar.get(Calendar.YEAR);
-            String Month = DataBaseHandler.formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
-            String Day = DataBaseHandler.formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+            String Month = TimeUtils.formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+            String Day = TimeUtils.formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
             String StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day);
             String EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day);
 
@@ -663,8 +664,8 @@ public class Prediction {
 
             Calendar calendar = Calendar.getInstance();
             int Year = calendar.get(Calendar.YEAR);
-            String Month = DataBaseHandler.formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
-            String Day = DataBaseHandler.formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+            String Month = TimeUtils.formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+            String Day = TimeUtils.formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
             String StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day);
             String EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day);
 
