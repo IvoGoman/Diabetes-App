@@ -13,33 +13,70 @@ import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.HeuristicsMinerImplementation;
 
 
 public class Evaluation {
 
-    public static float usageGsp(ArrayList<ArrayList<ActivityItem>> train){
-        ArrayList<ArrayList<ActivityItem>>train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(0,train.size()/2));
-        ArrayList<ArrayList<ActivityItem>>train2 = new ArrayList<ArrayList<ActivityItem>>(train.subList(train.size()/2,train.size()));
-        ArrayList<ActivityItem> gsp1 = GSP_Prediction.makeGSPPrediction(train1, 0.2f);
-        ArrayList<ActivityItem> gsp2 = GSP_Prediction.makeGSPPrediction(train2, 0.2f);
-        float accuracy1 = Accuracy(train1,gsp1);
-        float accuracy2 = Accuracy(train2,gsp2);
-        return (accuracy1+accuracy2)/2;
+    public static double usageGspK(ArrayList<ArrayList<ActivityItem>> train, int k){
+        double accuracy =0;
+        if (k>train.size()){
+            k=train.size();
+        }
+        for (int i=0;i<k;i++) {
+            ArrayList<ArrayList<ActivityItem>> train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(i * train.size() / k, (i + 1) * train.size() / k));
+            ArrayList<ActivityItem> tree1 = GSP_Prediction.makeGSPPrediction(train1, 0.2f);
+            double accuracy1 = Accuracy(train1, tree1);
+            accuracy += accuracy1;
+        }
+        return accuracy/k;
      }
 
-    public static float usageTree(ArrayList<ArrayList<ActivityItem>> train) throws Exception {
-        ArrayList<ArrayList<ActivityItem>> train3 = new ArrayList<>();
-        ArrayList<ArrayList<ActivityItem>>train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(0,train.size()/2));
-        ArrayList<ArrayList<ActivityItem>>train2 = new ArrayList<ArrayList<ActivityItem>>(train.subList(train.size()/2,train.size()));
-
-        ArrayList<ActivityItem> tree1 = Prediction.GetRoutineAsAI(train1);
-        ArrayList<ActivityItem> tree2 = Prediction.GetRoutineAsAI(train2);
-        float accuracy1 = Accuracy(train1,tree1);
-        float accuracy2 = Accuracy(train2,tree2);
-        return (accuracy1+accuracy2)/2;
+    public static double usageTreeK(ArrayList<ArrayList<ActivityItem>> train, int k) throws Exception {
+        double accuracy =0;
+        if (k>train.size()){
+            k=train.size();
+        }
+        for (int i=0;i<k;i++){
+            ArrayList<ArrayList<ActivityItem>>train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(i*train.size()/k,(i+1)*train.size()/k));
+            ArrayList<ActivityItem> tree1 = Prediction.GetRoutineAsAI(train1);
+            double accuracy1 = Accuracy(train1,tree1);
+            accuracy+=accuracy1;
+        }
+        return accuracy/k;
     }
 
-    static float Accuracy(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> gsp){
+    public static double usageFMK(ArrayList<ArrayList<ActivityItem>> train, int k) throws Exception {
+        double accuracy =0;
+        if (k>train.size()){
+            k=train.size();
+        }
+        for (int i=0;i<k;i++){
+            ArrayList<ArrayList<ActivityItem>>train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(i*train.size()/k,(i+1)*train.size()/k));
+            FuzzyModel model = new FuzzyModel(train1, false);
+            ArrayList<ActivityItem> fM = model.makeFuzzyMinerPrediction();
+            double accuracy1 = Accuracy(train1,fM);
+            accuracy+=accuracy1;
+        }
+        return accuracy/k;
+    }
+
+    public static double usageHMK(ArrayList<ArrayList<ActivityItem>> train, int k) throws Exception {
+        double accuracy =0;
+        if (k>train.size()){
+            k=train.size();
+        }
+        for (int i=0;i<k;i++){
+            ArrayList<ArrayList<ActivityItem>>train1 = new ArrayList<ArrayList<ActivityItem>>(train.subList(i*train.size()/k,(i+1)*train.size()/k));
+            HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation();
+            ArrayList<ActivityItem> fM = HMmodel.runHeuristicsMiner(train1);
+            double accuracy1 = Accuracy(train1,fM);
+            accuracy+=accuracy1;
+        }
+        return accuracy/k;
+    }
+
+    static double Accuracy(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> gsp){
         int acc=0;
         int count=0;
         HashMap<Integer,Integer> gspRes = new HashMap<>();
@@ -66,7 +103,7 @@ public class Evaluation {
                 }
             }
         }
-        return (float)acc/count;
+        return (double)acc/count;
     }
 
     static double AccuracyFlow(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> prediction){
