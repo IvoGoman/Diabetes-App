@@ -176,9 +176,14 @@ public class Evaluation {
         for (int int1:predicted1.keySet()) {
             HashMap<Integer,Double> following = predicted1.get(int1);   //Map of following activities with confidence
             for (int subactivity : following.keySet()){
-                double confidencepred = predicted1.get(int1).get(subactivity);
-                double confidencereal = real1.get(int1).get(subactivity);
-                error += Math.abs(confidencepred-confidencereal);
+                try {
+                    double confidencepred = predicted1.get(int1).get(subactivity);
+                    double confidencereal = real1.get(int1).get(subactivity);
+                    error += Math.abs(confidencepred - confidencereal);
+                }
+                catch(Exception e){
+                    continue;
+                }
             }
         }
 
