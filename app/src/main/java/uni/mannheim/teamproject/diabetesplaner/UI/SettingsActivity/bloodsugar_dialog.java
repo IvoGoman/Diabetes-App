@@ -111,7 +111,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         }
         if (time_s.contentEquals("Time"))
         {
-            time_s = new SimpleDateFormat("HH:MM:ss").format(c.getTime());
+            time_s = new SimpleDateFormat("HH:mm:ss").format(c.getTime());
             btn_time.setText(time_s);
         }
 
@@ -129,7 +129,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                         if(btn_time.getText().toString().length() < 8) {
                             time_s = btn_time.getText().toString()+ ":" + Calendar.getInstance().get(Calendar.SECOND);
                         }
-                        long timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s,time_s).getTime();
+                        long timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s, time_s).getTime();
                         //Check if entered value is to high or to low
                         if(check_mg(convert_to_mg(Double.parseDouble(measure_value),measure)) == true) {
                            MeasureItem measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value),measure, MeasureItem.MEASURE_KIND_BLOODSUGAR);
