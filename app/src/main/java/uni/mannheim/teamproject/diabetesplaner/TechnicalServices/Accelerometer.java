@@ -14,9 +14,10 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 
-import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Calculation;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.PauseSystem;
 
 
@@ -26,6 +27,8 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.PauseSystem;
 public class Accelerometer extends Service implements SensorEventListener {
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
+
+    private ArrayList<Integer> currentActivities;
 
     private int accelerometerCacheCounter = 0;
 
@@ -126,7 +129,17 @@ public class Accelerometer extends Service implements SensorEventListener {
 
                     if (aggregatedRecords[1]=="Walking" || aggregatedRecords[1]=="Climbing up" || aggregatedRecords[1]=="Climbing down" || aggregatedRecords[1]=="Running" || aggregatedRecords[1]=="Jumping")
                     {
-
+                        currentActivities.add(1);
+                        currentActivities.add(2);
+                        currentActivities.add(3);
+                        currentActivities.add(4);
+                        currentActivities.add(5);
+                        currentActivities.add(10);
+                        currentActivities.add(18);
+                        currentActivities.add(21);
+                    }
+                    else{
+                        currentActivities.clear();
                     }
 
                     try {
