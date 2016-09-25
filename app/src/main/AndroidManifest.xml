@@ -74,10 +74,6 @@
             android:name="com.google.android.gms.version"
             android:value="@integer/google_play_services_version" />
 
-        <activity
-            android:name=".UI.ActivityPop"
-            android:theme="@style/AppTheme.CustomTheme" />
-
         <service android:name=".TechnicalServices.Accelerometer" />
         <service android:name=".TechnicalServices.GPS_Service.GPS_Service" />
 
