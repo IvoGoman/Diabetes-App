@@ -686,8 +686,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             String StartOfDay, EndOfDay;
             Calendar calendar = Calendar.getInstance();
             int Year = calendar.get(Calendar.YEAR);
-            String Month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
-            String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+            String Month = TimeUtils.formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+            String Day = TimeUtils.formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
             StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day);
             EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day);
             Start =prediction.get(i).Start;
@@ -884,11 +884,17 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public ArrayList<ActivityItem> getAllActivitiesByWeekday(int day){
         SQLiteDatabase db = this.getReadableDatabase();
         ActivityItem activity = null;
+        int subactivityID = 0;
         ArrayList<ActivityItem> activityList = new ArrayList<ActivityItem>();
-        Cursor cursor = db.rawQuery("select ActivityList.id_SubActivity, SubActivities.title, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id  where strftime('%w', ActivityList.Start)='"+day+"' order by ActivityList.Start ASC", null);
+        Cursor cursor = db.rawQuery("select id_Activity, ActivityList.id_SubActivity, SubActivities.title, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id  where strftime('%w', ActivityList.Start)='"+day+"' order by ActivityList.Start ASC", null);
         if(cursor.moveToFirst()){
             do {
-                activity = new ActivityItem(cursor.getInt(0),0,TimeUtils.getDateFromString(cursor.getString(2)),TimeUtils.getDateFromString(cursor.getString(3)));
+                try {
+                    subactivityID = cursor.getInt(0);
+                } catch (Exception e) {
+                    subactivityID = 0;
+                }
+                activity = new ActivityItem(cursor.getInt(0),cursor.getInt(1),TimeUtils.getDateFromString(cursor.getString(3)),TimeUtils.getDateFromString(cursor.getString(4)));
                 activityList.add(activity);
             } while (cursor.moveToNext());
         }
@@ -996,7 +1002,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public ArrayList<MeasureItem> getMeasurementValues(Date date, String window, String measure_kind){
         SQLiteDatabase db = this.getReadableDatabase();
-        Long[] windowStartEnd = TimeUtils.convertDateStringToTimestamp(getWindowStartEnd(date,window));
+        Long[] windowStartEnd = TimeUtils.convertDateStringToTimestamp(TimeUtils.getWindowStartEnd(date,window));
         Cursor cursor = db.rawQuery("select measure_value, measure_unit, timestamp from  " + MEASUREMENT_TABLE_NAME + " "  +
                 "where timestamp>='"+windowStartEnd[0]+"' and timestamp <'"+windowStartEnd[1]+"'" +
                 "AND measure_kind = '"+measure_kind+"';",null);
@@ -1064,7 +1070,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public ArrayList<ActivityItem> getActivities(Date date, String window){
 //        calculate the timeframe for the given date and window values
-        String[] timeWindow = getWindowStartEnd(date,window);
+        String[] timeWindow = TimeUtils.getWindowStartEnd(date,window);
         String StartOfDay = timeWindow[0],EndOfDay = timeWindow[1];
         SQLiteDatabase db = this.getReadableDatabase();
         String S = "select SubActivities.id, ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id where (ActivityList.End >= '" + StartOfDay + "' and ActivityList.Start < '" + EndOfDay + "') or (ActivityList.Start < '" + EndOfDay + "' and ActivityList.Start >= '" + StartOfDay+ "');";
@@ -1098,8 +1104,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(Date);
         int Year = calendar.get(Calendar.YEAR);
-        String Month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
-        String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+        String Month = TimeUtils.formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+        String Day = TimeUtils.formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
         StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
         EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
 
@@ -1158,7 +1164,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + Start + "' and End >= '" + Start + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + cursor.getString(cursor.getColumnIndex("id")) + "';");
+                db1.execSQL("update ActivityList set End = '" + TimeUtils.MinusMinute(Start) + "' where id = '" + cursor.getString(cursor.getColumnIndex("id")) + "';");
             } while (cursor.moveToNext());
 //            db1.close();
             cursor.close();
@@ -1170,7 +1176,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + End + "' and End >= '" + End + "'; ", null);
         if (cursor.moveToFirst()) {
             do {
-                db1.execSQL("update ActivityList set Start = '" + PlusMinute(End) + "' where id = '" + cursor.getString(cursor.getColumnIndex("id")) + "';");
+                db1.execSQL("update ActivityList set Start = '" + TimeUtils.PlusMinute(End) + "' where id = '" + cursor.getString(cursor.getColumnIndex("id")) + "';");
             } while (cursor.moveToNext());
 //            db1.close();
             cursor.close();
@@ -1202,7 +1208,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
                 ActivityItem activityItem = new ActivityItem(getActivityIdbySubActicityId(idSubActivity),idSubActivity,StartNew,EndNew);
                 String id = cursor.getString(cursor.getColumnIndex("id"));
-                db1.execSQL("update ActivityList set End = '" + MinusMinute(Start) + "' where id = '" + id + "';");
+                db1.execSQL("update ActivityList set End = '" + TimeUtils.MinusMinute(Start) + "' where id = '" + id + "';");
 
                 InsertActivity(activityItem);
             } while (cursor.moveToNext());
@@ -1216,8 +1222,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         String StartOfDay, EndOfDay;
         Calendar calendar = Calendar.getInstance();
         int Year = calendar.get(Calendar.YEAR);
-        String Month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
-        String Day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+        String Month = TimeUtils.formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+        String Day = TimeUtils.formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
         StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "00:00";
         EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day) + " " + "23:59";
         SQLiteDatabase db = this.getReadableDatabase();
@@ -1284,77 +1290,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
 //  Potential Utility Functions
-    /**
-     * Ivo Gosemann 18.03.2016
-     * Reusing Leonids Code to calculate the start and end of a day
-     * The start and end are then returned as unix timestamps
-     * In Addition a Parameter can be provided to specify the time window
-     * DAY, WEEK or MONTH are acceptable inputs
-     * @param date the day for which start and end shall be returned
-     * @param window string with the value for the timeframe
-     * @return array with 2 fields [0] = windowStart ; [1] = windowEnd
-     */
-    private String[] getWindowStartEnd(Date date,String window) {
-        String startDay, endDay;
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(date);
-//      Set the end of the time window
-        int year = calendar.get(Calendar.YEAR);
-        String month = formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
-        String day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
-        endDay = String.valueOf(year) + "-" + String.valueOf(month) + "-" + String.valueOf(day) + " " + "23:59";
-        switch (window){
-            case "MONTH":
-                calendar.add(Calendar.DAY_OF_MONTH,-30);
-                break;
-            case "WEEK":
-                calendar.add(Calendar.DAY_OF_MONTH,-7);
-        }
-        year =calendar.get(Calendar.YEAR);
-        month = formatMonthOrDay(calendar.get(Calendar.MONTH)+1);
-        day = formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
-
-        startDay = String.valueOf(year) + "-" + String.valueOf(month) + "-" + String.valueOf(day) + " " + "00:00";
-        String[] timeWindow = {startDay,endDay};
-        return timeWindow;
-    }
 
 
-    public static String formatMonthOrDay(int i) {
-        if (i > 9) {
-            return String.valueOf(i);
-        } else {
-            return "0" + String.valueOf(i);
-        }
-    }
-
-    public String PlusMinute(String SDate1) {
-        Date Date1;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-        try {
-            Date1 = format.parse(SDate1);
-            Date1 = TimeUtils.addMinuteFromDate(Date1, 1);
-            SDate1 = TimeUtils.dateToDateTimeString(Date1);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return SDate1;
-    }
-
-    public String MinusMinute(String SDate1) {
-        Date Date1;
-        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-        try {
-            Date1 = format.parse(SDate1);
-            Date1 = TimeUtils.addMinuteFromDate(Date1, -1);
-            SDate1 = TimeUtils.dateToDateTimeString(Date1);
-
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return SDate1;
-    }
 
 
     public String[] getUser(int id)
