@@ -147,5 +147,4 @@ public class MeasurementFragment extends Fragment {
         return inflaterView;
     }
 
-
 }
