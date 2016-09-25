@@ -2,7 +2,6 @@ package uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment;
 
 import android.graphics.Color;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +25,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
@@ -38,7 +36,6 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
  * Created by Stefan on 11.01.2016.
  */
 public class LineChartFragment extends ChartFragment {
-private final String tag = "CHARTS";
     public LineChartFragment() {
         // Required empty public constructor
     }
@@ -199,7 +196,9 @@ private final String tag = "CHARTS";
     private List<Entry> getEntries(Date date, String timeFrame, String measurekind) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
-        ArrayList<MeasureItem> measurements = AppGlobal.getHandler().getMeasurementValues(date, timeFrame, measurekind);
+
+            ArrayList<MeasureItem> measurements = AppGlobal.getHandler().getMeasurementValues(date, timeFrame, measurekind);
+
         String[] window = TimeUtils.getWindowStartEnd(date, timeFrame);
         int i = 0;
         HashMap<Float,Float> values = new HashMap<>();
@@ -220,16 +219,13 @@ private final String tag = "CHARTS";
                 c.setTimeInMillis(item.getTimestamp());
                 c.set(c.get(Calendar.YEAR),c.get(Calendar.MONTH),c.get(Calendar.DAY_OF_MONTH),0,0,0);
                 entryTimestamp = (float) c.getTimeInMillis();
-                Log.d(tag, TimeUtils.getTimeStampAsDateString(((long) entryTimestamp)) +" Calendar Value");
             }
             if(values.containsKey(entryTimestamp)){
                 value = values.get(entryTimestamp);
                 value = (value + (float) item.getMeasure_value()) / 2;
-                Log.d(tag, TimeUtils.getTimeStampAsDateString(((long) entryTimestamp)) +" Contained");
                 values.put(entryTimestamp, value);
             } else{
                 values.put(entryTimestamp, (float) item.getMeasure_value());
-                Log.d(tag, TimeUtils.getTimeStampAsDateString(((long) entryTimestamp)) +" Not Contained");
             }
         }
         long timestamp;
@@ -243,11 +239,9 @@ private final String tag = "CHARTS";
 
                     if (values.containsKey((float)timestamp)){
                         entry = new Entry( j, values.get((float)timestamp));
-                        Log.d(tag,TimeUtils.getTimeStampAsDateString(((long) entry.getX())) + " DAY Contained");
                         result.add(entry);
                     } else {
                         entry = new Entry(j, 0f);
-                        Log.d(tag,TimeUtils.getTimeStampAsDateString(((long) entry.getX())) + " DAY Not Contained");
                         result.add(entry);
                     }
                 }
@@ -269,11 +263,10 @@ private final String tag = "CHARTS";
                 break;
             case("MONTH"):
                 i = 30;
-                for(int j = 30; j>0; j--){
+                for(int j = 30; j>=0; j--){
                     c.setTime(date);
                     c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH) - j,0,0,0);
                     timestamp = c.getTimeInMillis();
-                    Log.d(tag,String.valueOf(timestamp));
                     if (values.containsKey((float)timestamp)){
                         entry = new Entry( (float) timestamp, values.get((float)timestamp));
                         result.add(entry);
