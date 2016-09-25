@@ -32,35 +32,40 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
     EditText addBloodSugar;
     EditText addInsulin;
+
     RadioButton mg, percentage, mmol;
     RadioButton units, ml;
 
+    Button btn_date;
+    Button btn_time;
+
     private String measure;
     private String measure_value;
-    private Long timestamp;
     private String insulin;
     private String insulin_value;
     private MeasureItem measureItem;
 
+    private Long timestamp;
+
     DataBaseHandler database;
 
-    Button btn_date;
-    Button btn_time;
     private TimerPickerFragmentM TimerPicker;
     private DatePickerFragmentM DatePicker;
     Date current_date;
 
-
+    /**
+     *
+     * @param savedInstanceState
+     * @return
+     * @author Naira
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setTitle(R.string.input_measurements);
 
         View view = getLayout();
-
 
         builder.setView(view);
 

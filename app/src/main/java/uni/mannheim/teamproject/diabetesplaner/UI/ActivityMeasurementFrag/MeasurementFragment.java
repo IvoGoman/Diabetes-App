@@ -24,6 +24,7 @@ import uni.mannheim.teamproject.diabetesplaner.UI.CustomListView;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
 /**
+ * old subfragment for old measurements tab.. not used
  * created by Naira
  */
 
@@ -36,12 +37,15 @@ public class MeasurementFragment extends Fragment {
     private static final String ARG_PARAM2 = "param2";
     private String mParam1;
     private String mParam2;
-
     private static View inflaterView;
-
-   // MeasurementInputHandler MeasurementInputHandlr= new MeasurementInputHandler();
     final DataBaseHandler DBHandler = AppGlobal.getHandler();
 
+    /**
+     * @param param1
+     * @param param2
+     * @return
+     * @author Naira
+     */
     public static MeasurementFragment newInstance(String param1, String param2) {
         MeasurementFragment fragment = new MeasurementFragment();
         Bundle args = new Bundle();
@@ -55,6 +59,11 @@ public class MeasurementFragment extends Fragment {
         // Required empty public constructor
     }
 
+    /**
+     *
+     * @param savedInstanceState
+     * @author Naira
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,16 +71,22 @@ public class MeasurementFragment extends Fragment {
             mParam1 = getArguments().getString(ARG_PARAM1);
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
-
     }
 
-
+    /**
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     * @author Naira
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         inflaterView = inflater.inflate(R.layout.fragment_measurement, container, false);
         final ImageButton floatingButton = (ImageButton) inflaterView.findViewById(R.id.add_button);
 
+        //added to adjust floating button location
         ViewTreeObserver viewTreeObserver = floatingButton.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
             viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -91,7 +106,13 @@ public class MeasurementFragment extends Fragment {
             });
         }
 
+
         floatingButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             *
+             * @param v
+             * @author Naira
+             */
             @Override
             public void onClick(View v) {
 
@@ -99,15 +120,14 @@ public class MeasurementFragment extends Fragment {
                 dialog.setContentView(R.layout.pop_measurement_window);
                 final EditText GlucoseInput = (EditText) dialog.findViewById(R.id.editText);
                 GlucoseInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-                //GlucoseInput.setText("My Edit");
                 final EditText InsulinInput = (EditText) dialog.findViewById(R.id.editText2);
                 InsulinInput.setInputType(InputType.TYPE_CLASS_NUMBER);
-               // final TextView Add = (TextView) dialog.findViewById(R.id.textView4);
 
-                // Button Done = (Button) dialog.findViewById(R.id.button);
                 dialog.setTitle("Input Measurements");
                 measurementList.clear();
+
                 Cursor cursor = AppGlobal.getHandler().getAllMeasurements(1);
+
                 if (cursor.moveToFirst()) {
                     do {
                         String MeasurementString = cursor.getString(1) + " " + cursor.getString(2) + "," + " " + cursor.getString(2) + " units";
@@ -120,28 +140,6 @@ public class MeasurementFragment extends Fragment {
 
                 lv = (AbsListView) inflaterView.findViewById(R.id.MListView);
                 adapter = new CustomListView(getActivity(), measurementList);
-
-              /* Add.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        //   if (GlucoseInput.getText().toString().equals("") && InsulinInput.getText().toString().equals("")){
-                        //      Toast.makeText(getActivity(), "Invalid Input", Toast.LENGTH_LONG).show();
-                        //  }
-                        //  else {
-                        String MeasurementString = GlucoseInput.getText().toString() + " mg/dl" + "," + " " + InsulinInput.getText().toString() + " units";
-                        measurementList.add(MeasurementString);
-                        Toast.makeText(getActivity(), "Measurements have been added", Toast.LENGTH_LONG).show();
-                        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-                        java.util.Date CurDatTime = new Date();
-                        String SCurDatTime = format.format(CurDatTime);
-                        AppGlobal.getHandler().InsertBloodsugar(AppGlobal.getHandler(), 1, Double.parseDouble( GlucoseInput.getText().toString()),"mg/dl");
-                        AppGlobal.getHandler().InsertInsulin(AppGlobal.getHandler(), 1, Double.parseDouble(InsulinInput.getText().toString()), "ml");
-                        ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
-                        // }
-                        dialog.dismiss();
-                    }
-                });*/
-
                 dialog.show();
             }
         });

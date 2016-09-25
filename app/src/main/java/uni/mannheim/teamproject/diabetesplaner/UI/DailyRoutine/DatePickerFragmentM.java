@@ -10,11 +10,20 @@ import java.util.Calendar;
 
 import uni.mannheim.teamproject.diabetesplaner.R;
 
+/**
+ * created by Naira
+ */
 
 public class DatePickerFragmentM extends DialogFragment
         implements DatePickerDialog.OnDateSetListener {
     MeasurementDialog dialog;
 
+    /**
+     * Called when it is first created.
+     * @param savedInstanceState
+     * @return
+     * @author Naira
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         // Use the current date as the default date in the picker
@@ -22,13 +31,17 @@ public class DatePickerFragmentM extends DialogFragment
         int year = c.get(Calendar.YEAR);
         int month = c.get(Calendar.MONTH);
         int day = c.get(Calendar.DAY_OF_MONTH);
-
-        // Create a new instance of DatePickerDialog and return it
-        //Edit by Naira, Changing  date picker color
-        //return new DatePickerDialog(getActivity(), this, year, month, day);
         return new DatePickerDialog(getActivity(), R.style.picker, this,year,month,day);
     }
 
+    /**
+     * sets date on DatePicker
+     * @param view
+     * @param year
+     * @param month
+     * @param day
+     * @author Naira
+     */
     public void onDateSet(DatePicker view, int year, int month, int day) {
         // Do something with the date chosen by the user
         try
@@ -56,6 +69,10 @@ public class DatePickerFragmentM extends DialogFragment
         }
     }
 
+    /**
+     * @param bs_dialog
+     * @author Naira
+     */
     public void setBloodsugarDialog(MeasurementDialog bs_dialog)
     {
         this.dialog = bs_dialog;
