@@ -13,7 +13,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
 
-import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
@@ -392,7 +391,7 @@ public class Prediction {
         ActivityBefore1 = "Schlafen|Schlafen";
 
         ArrayList<ActivityItem>routine = new ArrayList<>();
-        for (int i=1;i<15;i++){
+        for (int i=1;i<train.size()+1;i++){
             try {
                 ArrayList<ActivityItem> day = train.get(train.size() - i);
                 for (ActivityItem ai : day) {
@@ -432,7 +431,7 @@ public class Prediction {
 
                     inst.add(newInstance);
                     if (ActivityCur!=ActivityBefore1){
-                        for (int i=0;i<1000;i++){
+                        for (int i=0;i<1100;i++){
                             inst.add(newInstance);
                         }}
 
