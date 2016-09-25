@@ -82,7 +82,7 @@ public class PredictionFramework implements Runnable{
         }
 
         //daily routine is empty
-        if (dailyRoutine.size() < 1) {
+        if (dailyRoutine!=null && dailyRoutine.size() < 1) {
             if (!AppGlobal.getHandler().CheckRoutineAdded()) {
                 //default prediction (Sleeping from 0:00 to 23:59)
                 Date start = TimeUtils.getDate(new Date(), 0, 0);
@@ -180,7 +180,7 @@ public class PredictionFramework implements Runnable{
                         @Override
                         public void run() {
                             try {
-                                results.put(PREDICTION_DECISION_TREE, Prediction.GetRoutineAsAI());
+                                results.put(PREDICTION_DECISION_TREE, Prediction.GetRoutineAsAI(train));
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Log.e(TAG, "Decision Tree " + e.getLocalizedMessage());

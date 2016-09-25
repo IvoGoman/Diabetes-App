@@ -391,9 +391,15 @@ public class Prediction {
         ActivityBefore1 = "Schlafen|Schlafen";
 
         ArrayList<ActivityItem>routine = new ArrayList<>();
-        for (ArrayList<ActivityItem> day:train){
-            for(ActivityItem ai:day){
-                routine.add(ai);
+        for (int i=1;i<15;i++){
+            try {
+                ArrayList<ActivityItem> day = train.get(train.size() - i);
+                for (ActivityItem ai : day) {
+                    routine.add(ai);
+                }
+            }
+            catch(Exception e){
+                continue;
             }
         }
 
@@ -424,8 +430,8 @@ public class Prediction {
                     newInstance.setValue(3, ActivityBefore1);
 
                     inst.add(newInstance);
-                    for (int i=0;i<300;i++){
-                        if (ActivityCur!=ActivityBefore1){
+                    if (ActivityCur!=ActivityBefore1){
+                        for (int i=0;i<1000;i++){
                             inst.add(newInstance);
                         }}
 
@@ -592,7 +598,7 @@ public class Prediction {
                 Start2+="0"+startTimeS.charAt(0)+":0"+startTimeS.charAt(2);
                 startTimeS=Start2;
             }
-            if (Start.charAt(1) == ':' && Start.length()==4){
+            if (startTimeS.charAt(1) == ':' && startTimeS.length()==4){
                 String Start2 ="";
                 Start2+="0"+startTimeS.charAt(0)+":"+startTimeS.charAt(2)+startTimeS.charAt(3);
                 startTimeS=Start2;
