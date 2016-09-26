@@ -99,8 +99,88 @@ public class PredictionFramework implements Runnable{
             if (!AppGlobal.getHandler().CheckRoutineAdded()) {
                 //default prediction (Sleeping from 0:00 to 23:59)
                 Date start = TimeUtils.getDate(new Date(), 0, 0);
-                Date end = TimeUtils.getDate(new Date(), 23, 59);
+                Date end = TimeUtils.getDate(new Date(), 6, 59);
                 ActivityItem item = new ActivityItem(1, 1, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 7, 0);
+                end = TimeUtils.getDate(new Date(), 7, 29);
+                item = new ActivityItem(3, 3, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 7, 30);
+                end = TimeUtils.getDate(new Date(), 7, 44);
+                item = new ActivityItem(10, 10, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 7, 45);
+                end = TimeUtils.getDate(new Date(), 7, 59);
+                item = new ActivityItem(2, 18, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 8, 0);
+                end = TimeUtils.getDate(new Date(), 8, 59);
+                item = new ActivityItem(12, 50, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 9, 0);
+                end = TimeUtils.getDate(new Date(), 10, 29);
+                item = new ActivityItem(13, 13, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 10, 30);
+                end = TimeUtils.getDate(new Date(), 10, 39);
+                item = new ActivityItem(2, 21, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 10, 40);
+                end = TimeUtils.getDate(new Date(), 12, 59);
+                item = new ActivityItem(13, 13, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 13, 0);
+                end = TimeUtils.getDate(new Date(), 13, 59);
+                item = new ActivityItem(2, 19, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 14, 0);
+                end = TimeUtils.getDate(new Date(), 17, 59);
+                item = new ActivityItem(13, 13, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 18, 0);
+                end = TimeUtils.getDate(new Date(), 18, 59);
+                item = new ActivityItem(14, 14, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 19, 0);
+                end = TimeUtils.getDate(new Date(), 19, 59);
+                item = new ActivityItem(12, 52, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 7, 45);
+                end = TimeUtils.getDate(new Date(), 8, 59);
+                item = new ActivityItem(18, 2, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 9, 0);
+                end = TimeUtils.getDate(new Date(), 9, 14);
+                item = new ActivityItem(10, 10, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 9, 15);
+                end = TimeUtils.getDate(new Date(), 9, 59);
+                item = new ActivityItem(2, 20, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 10, 0);
+                end = TimeUtils.getDate(new Date(), 10, 59);
+                item = new ActivityItem(12, 53, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 11, 0);
+                end = TimeUtils.getDate(new Date(), 23, 59);
+                item = new ActivityItem(1, 1, start, end);
                 dailyRoutine.add(item);
             }
         }
