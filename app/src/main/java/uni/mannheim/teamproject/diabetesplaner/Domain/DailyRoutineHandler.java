@@ -20,7 +20,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
  * Created by Stefan on 22.02.2016.
  */
 public class DailyRoutineHandler extends DayHandler{
-    private ArrayList<ActivityItem> dailyRoutine;
+    private static ArrayList<ActivityItem> dailyRoutine;
     public static final String TAG = DailyRoutineHandler.class.getSimpleName();
     private static DailyRoutineFragment drFragment;
     public Date date;
@@ -160,8 +160,8 @@ public class DailyRoutineHandler extends DayHandler{
         dailyRoutine.clear();
     }
 
-    public void setDailyRoutine(ArrayList<ActivityItem> dailyRoutine){
-        this.dailyRoutine = dailyRoutine;
+    public static void setDailyRoutine(ArrayList<ActivityItem> dailyRoutine){
+        DailyRoutineHandler.dailyRoutine = dailyRoutine;
         AppGlobal.getHandler().insertNewRoutine(dailyRoutine);
     }
 
