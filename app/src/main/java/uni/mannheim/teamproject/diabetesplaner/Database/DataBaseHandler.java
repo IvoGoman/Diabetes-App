@@ -86,7 +86,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String ACTIVITIES_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " +
                     ACTIVITIES_TABLE_NAME +
-                    " (id INTEGER PRIMARY KEY, title VARCHAR(20), id_SuperActivity INTEGER,  FOREIGN KEY(id_SuperActivity) REFERENCES SuperActivities(id));";
+                    " (id INTEGER PRIMARY KEY, title VARCHAR(20),title_eng VARCHAR(20), id_SuperActivity INTEGER,  FOREIGN KEY(id_SuperActivity) REFERENCES SuperActivities(id));";
 
     // Super Activity Table
     private static final String SUPER_ACTIVITIES_TABLE_NAME = "SuperActivities";
@@ -108,7 +108,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     private static final String SUB_ACTIVITIES_CREATE_TABLE =
             "CREATE TABLE IF NOT EXISTS " +
                     SUB_ACTIVITIES_TABLE_NAME +
-                    " (id INTEGER PRIMARY KEY, id_Activity INTEGER, Title VARCHAR(20), FOREIGN KEY(id_Activity) REFERENCES Activities(id));";
+                    " (id INTEGER PRIMARY KEY, id_Activity INTEGER, Title VARCHAR(20), Title_eng VARCHAR(20), FOREIGN KEY(id_Activity) REFERENCES Activities(id));";
 
     //Location Table
     private static final String LOCATION_TABLE_NAME = "Location";
@@ -199,7 +199,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
 
         for(int i=0 ;i< activities.size(); i++){
-            db.execSQL("insert into Activities(Title, id_SuperActivity) values('" + activities.get(i)[1] + "','" + activities.get(i)[2] + "'); ");
+            db.execSQL("insert into Activities(Title_eng, Title, id_SuperActivity) values('" + activities.get(i)[2] + "','" + activities.get(i)[1] + "','" + activities.get(i)[3] + "'); ");
         }
 
 
@@ -207,12 +207,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.execSQL(SUB_ACTIVITIES_CREATE_TABLE);
         Log.d("Database", "Sub Activities Table Created");
         for(int i=0 ;i< activities.size(); i++){
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('"+ activities.get(i)[1] +"','"+ activities.get(i)[0] +"'); ");
+            db.execSQL("insert into SubActivities(Title_eng, Title, id_Activity) values('"+activities.get(i)[2] +"','"+ activities.get(i)[1] +"','"+ activities.get(i)[0] +"'); ");
         }
 
         ArrayList<String[]> subActs = Util.readSubActivities("SubActivity.csv", context);
         for(int i=0 ;i< subActs.size(); i++){
-            db.execSQL("insert into SubActivities(Title, id_Activity) values('"+ subActs.get(i)[2] +"','"+ subActs.get(i)[1] +"'); ");
+            db.execSQL("insert into SubActivities(Title_eng, Title, id_Activity) values('"+ subActs.get(i)[3] +"','"+ subActs.get(i)[2]+"','"+ subActs.get(i)[1] +"'); ");
         }
 
 
@@ -278,7 +278,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public ArrayList<String> GetSubActivities(int idActivity)
     {
         SQLiteDatabase db1 = this.getReadableDatabase();
+
         Cursor cursor = db1.rawQuery("select Title from SubActivities where id_Activity= "+ String.valueOf(idActivity)+ " and id_Activity != id; ", null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db1.rawQuery("select Title_eng from SubActivities where id_Activity= "+ String.valueOf(idActivity)+ " and id_Activity != id; ", null);
+        }
         ArrayList<String> SubActivityList = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
@@ -299,6 +303,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         int activityID = -1;
         SQLiteDatabase db1 = this.getReadableDatabase();
         Cursor cursor = db1.rawQuery("select id from Activities where title= '"+ activity + "'; ", null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db1.rawQuery("select id from Activities where title_eng= '"+ activity + "'; ", null);
+        }
         if (cursor.moveToFirst()) {
             activityID = cursor.getInt(0);
         }
@@ -316,6 +323,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db1 = this.getReadableDatabase();
         HashMap<String,Integer> Activities = new HashMap<>();
         Cursor cursor = db1.rawQuery("select id,title from Activities;", null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db1.rawQuery("select id,title_eng as title from Activities;", null);
+        }
         if (cursor.moveToFirst()) {
             do {
                 activityID = cursor.getInt(cursor.getColumnIndex("id"));
@@ -394,8 +404,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         int subActivityId=16;
         SQLiteDatabase db1 = this.getReadableDatabase();
         Cursor cursor = db1.rawQuery("select id from SubActivities where title= '"+ subactivity + "'; ", null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db1.rawQuery("select id from SubActivities where title_eng= '"+ subactivity + "'; ", null);
+        }
         if (cursor.moveToFirst()) {
-            subActivityId = cursor.getInt(0);
+            subActivityId = cursor.getInt(cursor.getColumnIndex("id"));
         }
         // close cursor
         if (!cursor.isClosed()) {
@@ -409,6 +422,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         String subActivity="";
         SQLiteDatabase db1 = this.getReadableDatabase();
         Cursor cursor = db1.rawQuery("select title from SubActivities where id= "+ subactivityID + "; ", null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db1.rawQuery("select Title_eng from SubActivities where id= "+ subactivityID + "; ", null);
+        }
         if (cursor.moveToFirst()) {
             subActivity = cursor.getString(0);
         }
@@ -424,9 +440,28 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db1 = this.getReadableDatabase();
         HashMap<String,Integer> result = new HashMap<>();
         Cursor cursor = db1.rawQuery("select id,title from SubActivities where id_Activity=" + String.valueOf(activityId), null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db1.rawQuery("select id,title_eng as Title from SubActivities where id_Activity=" + String.valueOf(activityId), null);
+        }
         if (cursor.moveToFirst()) {
             do {
                 result.put(cursor.getString(cursor.getColumnIndex("Title")).replace(" ",""),cursor.getInt(cursor.getColumnIndex("id")));
+            } while (cursor.moveToNext());
+
+        }
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return result;
+    }
+
+    public ArrayList<Integer> getAllSubactivitiesId() {
+        ArrayList<Integer> result = new ArrayList<>();
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        Cursor cursor = db1.rawQuery("select id from SubActivities;", null);
+        if (cursor.moveToFirst()) {
+            do {
+                result.add(cursor.getInt(cursor.getColumnIndex("id")));
             } while (cursor.moveToNext());
 
         }
@@ -440,6 +475,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db1 = this.getReadableDatabase();
         ArrayList<String> result = new ArrayList<>();
         Cursor cursor = db1.rawQuery("select Title from SubActivities;", null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db1.rawQuery("select Title_eng from SubActivities;", null);
+        }
         if (cursor.moveToFirst()) {
             do {
                 result.add(cursor.getString(cursor.getColumnIndex("Title")));
@@ -661,6 +699,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
 
         InsertActivity(Activ);
+        mergeSimilarActivities();
         SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("delete from ActivityList where Start>=End");
 //        db1.close();
@@ -709,7 +748,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @author Stefan 20.09.2016
      */
     public void insertNewRoutine(ArrayList<ActivityItem> prediction){
-        if(prediction.size()>0) {
+        if(prediction!=null && prediction.size()>0) {
             deleteDay(prediction.get(0).getStarttime());
 
             for(int i=0; i<prediction.size(); i++){
@@ -820,10 +859,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param id
      * @return
      * @author Stefan
+     * 25.09 edited by Leonid
      */
     public String getActionById(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("select title from " + ACTIVITIES_TABLE_NAME + " where id=" + id, null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db.rawQuery("select title_eng from " + ACTIVITIES_TABLE_NAME + " where id=" + id, null);
+        }
         String name = "";
         if(cursor.moveToFirst()){
             name = cursor.getString(0);
@@ -867,16 +910,20 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * 27.06.2016 Stefan
      * returns all activities as a list
      * @return
+     * 25.09 edited Leonid
      */
     public ArrayList<String> getAllActionsAsList() {
         SQLiteDatabase db = this.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
-        Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
+        Cursor cursor = db.rawQuery("select title from " + ACTIVITIES_TABLE_NAME, null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db.rawQuery("select title_eng as title from " + ACTIVITIES_TABLE_NAME, null);
+        }
         ArrayList<String> actionsList = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
             do {
-                actionsList.add(cursor.getString(1));
+                actionsList.add(cursor.getString(cursor.getColumnIndex("title")));
             }
             while (cursor.moveToNext());
         }
@@ -890,6 +937,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public Cursor getAllRoutine() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("select ActivityList.id, Activities.title as Activity, SubActivities.title as SubActivity,  ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id inner join Activities on Subactivities.id_Activity = Activities.id", null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db.rawQuery("select ActivityList.id, Activities.title_eng as Activity, SubActivities.title_eng as SubActivity,  ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id inner join Activities on Subactivities.id_Activity = Activities.id", null);
+        }
         return cursor;
     }
 
@@ -1277,6 +1327,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     //      Handler Utility Methods
     public boolean CheckRoutineAdded(){
+        boolean result = true;
         String StartOfDay, EndOfDay;
         Calendar calendar = Calendar.getInstance();
         int Year = calendar.get(Calendar.YEAR);
@@ -1289,12 +1340,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         if (cursor.getCount() < 1)
         {
             cursor.close();
-            return false;
+            result = false;
         }
-        else{
+        else {
             cursor.close();
-            return true;
+            result = true;
         }
+        return result;
     }
 
     public ArrayList<ActivityItem> GetArrayFromCursor(Cursor cursor, Date Date) {
@@ -1349,8 +1401,85 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
 //  Potential Utility Functions
 
+    public void mergeSimilarActivities() {
+        SQLiteDatabase db1 = this.getWritableDatabase();
+        Cursor cursor = db1.rawQuery("select id_SubActivity,Start,End,Meal,ImagePath,Intensity from ActivityList order by Start;", null);
+        ActivityItem last_activity = new ActivityItem(0, 0, TimeUtils.getDateFromString("1980-01-01 00:00"), TimeUtils.getDateFromString("1980-01-01 00:00"));
+        ActivityItem activity = new ActivityItem(0, 0, TimeUtils.getDateFromString("1980-01-01 00:00"), TimeUtils.getDateFromString("1980-01-01 00:00"));
+        if (cursor.moveToFirst()) {
+            do {
+                if (activity.getSubactivityId() != 0) {
+                    last_activity.setSubactivityId(activity.getSubactivityId());
+                    last_activity.setActivityId(activity.getActivityId());
+                    last_activity.setStarttime(activity.getStarttime());
+                    last_activity.setEndtime(activity.getEndtime());
+                    last_activity.setMeal(activity.getMeal());
+                    last_activity.setIntensity(activity.getIntensity());
+                    last_activity.setDuration(activity.getDuration());
+                }
+                activity.setSubactivityId(cursor.getInt(cursor.getColumnIndex("id_SubActivity")));
+                int activityId = this.getActivityIdbySubActicityId(activity.getSubactivityId());
+                activity.setActivityId(activityId);
+                activity.setStarttime(TimeUtils.getDateFromString(cursor.getString(cursor.getColumnIndex("Start"))));
+                activity.setEndtime(TimeUtils.getDateFromString(cursor.getString(cursor.getColumnIndex("End"))));
+                activity.setMeal(cursor.getString(cursor.getColumnIndex("Meal")));
+                activity.setImagePath(cursor.getString(cursor.getColumnIndex("ImagePath")));
+                activity.setIntensity(cursor.getInt(cursor.getColumnIndex("Intensity")));
+
+                if (activity.getSubactivityId() == last_activity.getSubactivityId()){
+                    if (getСompleteness(activity)>getСompleteness(last_activity)){
+                        if (activity.getStarttime().after(last_activity.getStarttime())){
+                            activity.setStarttime(last_activity.getStarttime());
+                        }
+                        if (activity.getEndtime().before(last_activity.getEndtime())){
+                            activity.setEndtime(last_activity.getEndtime());
+                        }
+                        String Start = activity.getStarttimeAsString();
+                        String End = activity.getEndtimeAsString();
+                        findActionbyStartEndTime(Start, End);
+                        findActionbyStartEndTime2(Start, End);
+                        findActionbyStartTime(Start);
+                        findActionbyEndTime(End);
 
 
+                        InsertActivity(activity);
+                    }
+                    else{
+                        if (last_activity.getStarttime().after(activity.getStarttime())){
+                            last_activity.setStarttime(activity.getStarttime());
+                        }
+                        if (last_activity.getEndtime().before(activity.getEndtime())){
+                            last_activity.setEndtime(activity.getEndtime());
+                        }
+                        String Start = last_activity.getStarttimeAsString();
+                        String End = last_activity.getEndtimeAsString();
+                        findActionbyStartEndTime(Start, End);
+                        findActionbyStartEndTime2(Start, End);
+                        findActionbyStartTime(Start);
+                        findActionbyEndTime(End);
+
+
+                        InsertActivity(last_activity);
+                    }
+                }
+            }
+            while (cursor.moveToNext());
+        }
+    }
+
+    private int getСompleteness(ActivityItem ai){
+        int completeness =0;
+        if (ai.getImagePath()!=null && ai.getImagePath()!=""){
+            completeness++;
+        }
+        if (ai.getIntensity()!=null && ai.getIntensity()!=0){
+            completeness++;
+        }
+        if (ai.getMeal()!=null && ai.getMeal()!=""){
+            completeness++;
+        }
+        return completeness;
+    }
 
     public String[] getUser(int id)
     {

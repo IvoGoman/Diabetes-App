@@ -22,6 +22,11 @@ public class ActivityItem {
     private Date starttime;
     private Date endtime;
     private String meal = null;
+
+    public void setImagePath(String imagePath) {
+        this.imagePath = imagePath;
+    }
+
     private String imagePath = null;
     private Integer intensity = null;
     private Double duration = null;
