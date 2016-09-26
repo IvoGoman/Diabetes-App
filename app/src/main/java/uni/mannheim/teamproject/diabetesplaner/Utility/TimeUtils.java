@@ -395,7 +395,11 @@ public class TimeUtils {
         Calendar cal = Calendar.getInstance();
         cal.setTime(date);
 //        Start Date is Date + 1 Minute;
-        minute = cal.get(Calendar.MINUTE) + 1;
+        if((cal.get(Calendar.HOUR_OF_DAY)==0 && cal.get(Calendar.MINUTE) == 0)) {
+            minute = cal.get(Calendar.MINUTE);
+        } else {
+            minute = cal.get(Calendar.MINUTE) + 1;
+        }
         cal.set(Calendar.MINUTE, minute);
         result[0] = cal.getTime();
 //        End Date is Date + minutes
