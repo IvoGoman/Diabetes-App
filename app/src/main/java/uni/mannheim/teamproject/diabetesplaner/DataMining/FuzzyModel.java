@@ -62,7 +62,7 @@ public class FuzzyModel {
             } else {
                 durationMap = ProcessMiningUtil.getAverageDurations(eventList);
             }
-            int startID = ProcessMiningUtil.getMostFrequentStartActivity(cases);
+            int startID = ProcessMiningUtil.getMostFrequentStartActivityFromCases(cases);
             int endID = ProcessMiningUtil.getMostFrequentEndActivity(cases);
             try {
                 idDurationMap = createDailyRoutine(startID, endID, durationMap, percentage);
@@ -96,7 +96,7 @@ public class FuzzyModel {
         } else {
             durationMap = ProcessMiningUtil.getAverageDurations(eventList);
         }
-        int startID = ProcessMiningUtil.getMostFrequentStartActivity(cases);
+        int startID = ProcessMiningUtil.getMostFrequentStartActivityFromCases(cases);
         int endID = ProcessMiningUtil.getMostFrequentEndActivity(cases);
         try {
             idDurationMap = createDailyRoutine(startID, endID, durationMap, percentage);
@@ -127,7 +127,7 @@ public class FuzzyModel {
         } else {
             durationMap = ProcessMiningUtil.getAverageDurations(cases);
         }
-        int startID = ProcessMiningUtil.getMostFrequentStartActivity(cases);
+        int startID = ProcessMiningUtil.getMostFrequentStartActivityFromCases(cases);
         int endID = ProcessMiningUtil.getMostFrequentEndActivity(cases);
         int currentId = startID, tempId;
         idDurationMap.add(new Pair<>(currentId, durationMap.get(currentId)));
