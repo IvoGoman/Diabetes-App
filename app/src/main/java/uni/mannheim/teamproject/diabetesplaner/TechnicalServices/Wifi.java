@@ -171,6 +171,7 @@ public class Wifi extends BroadcastReceiver {
                         time_wifi = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(WifiList.get(q).time);
                         System.out.println(time_wifi);
 
+
                     } catch (ParseException e) {
                         //Handle exception here, most of the time you will just log it.
                         e.printStackTrace();
