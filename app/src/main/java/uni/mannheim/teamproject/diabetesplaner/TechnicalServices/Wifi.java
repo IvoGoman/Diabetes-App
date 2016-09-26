@@ -19,6 +19,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Locale;
 
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -74,7 +75,7 @@ public class Wifi extends BroadcastReceiver {
                     //save
                     Date current_date = new Date();
                     //save attributes
-                   // AppGlobal.getHandler().insertWIFI(AppGlobal.getHandler(),ssid, TimeUtils.dateToDateTimeString(current_date));
+                    AppGlobal.getHandler().insertWIFI(ssid, TimeUtils.dateToDateTimeString(current_date));
 
                   //
 
@@ -85,7 +86,7 @@ public class Wifi extends BroadcastReceiver {
                    // createNotification(ssid, mac);
 
                     //stopSelf();
-                   // makePredictionWifi(ssid);
+                    makePredictionWifi(ssid);
                 }
             }, 3000);
             return START_NOT_STICKY;
@@ -122,7 +123,7 @@ public class Wifi extends BroadcastReceiver {
 
        public void makePredictionWifi(String ssid){
 
-            System.out.println("MyTest1: in make Prediction");
+            System.out.println("MyTest1: in make Prediction wifi");
 
             //get all wifis
             ArrayList<myWifi> WifiList = new ArrayList<myWifi>();
@@ -152,6 +153,9 @@ public class Wifi extends BroadcastReceiver {
                 try {
                     time_von = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(x[2]);
                     time_bis = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(x[3]);
+                    System.out.println(time_von);
+                    System.out.println(time_bis);
+
                 } catch (ParseException e) {
                     //Handle exception here, most of the time you will just log it.
                     e.printStackTrace();
@@ -160,10 +164,12 @@ public class Wifi extends BroadcastReceiver {
                 //schauen ob location timestamp innerhalb einer activity ist
                 //for schleife für alle near locations pro einzelne activity
 
-                for(int q = 0; q < WifiList.size(); q++){
+                for(int q = 1; q < WifiList.size(); q++){
+
                     //timestamp location zwischen start und end zeit von activity dann mögliche activity für diese location
                     try {
-                        time_wifi = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(WifiList.get(q).time);
+                        time_wifi = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(WifiList.get(q).time);
+                        System.out.println(time_wifi);
 
                     } catch (ParseException e) {
                         //Handle exception here, most of the time you will just log it.
