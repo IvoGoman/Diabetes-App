@@ -279,8 +279,8 @@ public class HeuristicsMinerImplementation {
 
 
                     //determine nextID of the graph
-                    currentID = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(currentID));
-
+                    //currentID = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(currentID));
+                    currentID = nextID;
                     //split next ActivityID
                     ID_String = myNet.getActivitiesMappingStructures().getActivitiesMapping()[currentID].getId().split("\\+")[0];
                     ActivityID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[0];
