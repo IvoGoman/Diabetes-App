@@ -120,14 +120,10 @@
         android:title="@string/pref_other"
         android:key="pref_key_other">
 
-        <uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.MyDialogPreference
+        <Preference
             android:key="pref_key_export"
             android:title="@string/pref_dbexport"
-            android:summary="@string/pref_dbexport_summary"
-            android:dialogIcon="@android:drawable/ic_dialog_alert"
-            android:dialogMessage="@string/pref_dbexport_message"
-            android:positiveButtonText="@string/export"
-            android:negativeButtonText="@string/cancel"/>
+            android:summary="@string/pref_dbexport_summary"/>
 
         <Preference
             android:key="pref_key_help"
