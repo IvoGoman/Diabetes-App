@@ -81,11 +81,6 @@ public class Accelerometer extends Service implements SensorEventListener {
             }
         }
 
-
-        Log.d("x", Float.toString(last_x));
-        Log.d("y",Float.toString(last_y));
-        Log.d("z",Float.toString(last_z));
-
         float[] values = sensorEvent.values.clone();
         if (PauseSystem.gapSuitable()) {
 
