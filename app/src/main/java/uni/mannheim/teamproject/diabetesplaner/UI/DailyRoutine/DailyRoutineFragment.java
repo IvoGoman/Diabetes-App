@@ -1,7 +1,9 @@
 package uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -16,6 +18,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -111,6 +114,45 @@ public class DailyRoutineFragment extends Fragment {
 
         drHandler = new DailyRoutineHandler(this);
         parentActivity = getActivity();
+
+        SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("PREDICTION_SERVICE_FILE", Context.MODE_PRIVATE);
+        String last_prediction =  sharedPreferences.getString("LAST_PREDICTION","0");
+
+        Calendar current = Calendar.getInstance();
+        Calendar predicted = Calendar.getInstance();
+        long timestamp_current = current.getTimeInMillis();
+        long timestamp_predicted = Long.valueOf(last_prediction);
+        current.setTimeInMillis(timestamp_current);
+        predicted.setTimeInMillis(timestamp_predicted);
+
+        if(predicted.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR) && predicted.get(Calendar.YEAR)<= current.get(Calendar.YEAR)){
+
+            ArrayList<Integer> algos = new ArrayList<>();
+//        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
+            algos.add(PredictionFramework.PREDICTION_GSP);
+//        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
+//        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
+//        try {
+            drHandler.predictDailyRoutine(algos, PredictionFramework.EVERY_DAY);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            Log.e(TAG +".onCreateView()", e.getLocalizedMessage());
+//        }
+
+            //DummyDataCreator.populateDataBase();
+            //drHandler.predictDailyRoutine(PredictionFramework.EVERY_DAY, getContext());
+
+//        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(),0);
+//        ArrayList<ActivityItem> result = HeuristicsMinerImplementation.runHeuristicsMiner(items);
+
+//        drHandler.predictDailyRoutine(this.date);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("LAST_PREDICTION", String.valueOf(current.getTimeInMillis()));
+            editor.commit();
+
+        }
+
+
     }
 
     /**
@@ -143,27 +185,7 @@ public class DailyRoutineFragment extends Fragment {
 //            drv.setLayoutParams(params);
 //            items.add(drv);
 //        }
-        //DummyDataCreator.populateDataBase();
 
-        ArrayList<Integer> algos = new ArrayList<>();
-//        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
-        algos.add(PredictionFramework.PREDICTION_GSP);
-//        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
-//        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
-//        try {
-            drHandler.predictDailyRoutine(algos, PredictionFramework.EVERY_DAY);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            Log.e(TAG +".onCreateView()", e.getLocalizedMessage());
-//        }
-
-        //DummyDataCreator.populateDataBase();
-        //drHandler.predictDailyRoutine(PredictionFramework.EVERY_DAY, getContext());
-
-//        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(),0);
-//        ArrayList<ActivityItem> result = HeuristicsMinerImplementation.runHeuristicsMiner(items);
-
-//        drHandler.predictDailyRoutine(this.date);
 
         DailyRoutineView.clearSelectedActivities();
         updateView();
