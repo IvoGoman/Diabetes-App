@@ -35,6 +35,7 @@ import com.google.android.gms.appindexing.AppIndex;
 import com.google.android.gms.common.api.GoogleApiClient;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.ActivityRecommendation;
@@ -55,6 +56,8 @@ import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.InputDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.MeasurementDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.ChartFragment;
+import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.LineChartFragment;
+import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.RingChartFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.StatisticsFragment;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
@@ -251,7 +254,7 @@ public class EntryScreenActivity extends AppCompatActivity
         int id = item.getItemId();
 
         //handles event when add button in the ActionBar on the ActivityInputFragment page was clicked
-        switch (id){
+        switch (id) {
             case R.id.add_icon_action_bar:
                 //TODO: add activity log
                 ActivityInputFragment.list.add("ActivityData.csv");
@@ -264,12 +267,12 @@ public class EntryScreenActivity extends AppCompatActivity
 
             case R.id.delete_icon_action_bar:
                 //Get the currently selected items and removes them
-                if(fragment instanceof DailyRoutineFragment) {
+                if (fragment instanceof DailyRoutineFragment) {
                     DayHandler drHandler = ((DailyRoutineFragment) fragment).getDrHandler();
-                    if(drHandler.getDailyRoutine().size() == 1 || getIndexesOfSelected(((DailyRoutineFragment) fragment)).size() == drHandler.getDailyRoutine().size()){
+                    if (drHandler.getDailyRoutine().size() == 1 || getIndexesOfSelected(((DailyRoutineFragment) fragment)).size() == drHandler.getDailyRoutine().size()) {
                         ActivityLimitDialog ald = new ActivityLimitDialog();
                         ald.show(getFragmentManager(), "editDialog");
-                    }else {
+                    } else {
                         //  drHandler.ic_delete(getIndexesOfSelected(((DailyRoutineFragment) fragment)));
                         ArrayList<Integer> selected = getIndexesOfSelected((DailyRoutineFragment) fragment);
                         for (int i = 0; i < selected.size(); i++) {
@@ -287,7 +290,7 @@ public class EntryScreenActivity extends AppCompatActivity
             case R.id.edit_icon_action_bar_routine:
 
                 EditDialog editDialog = new EditDialog();
-                if(fragment instanceof DailyRoutineFragment){
+                if (fragment instanceof DailyRoutineFragment) {
                     editDialog.setDayHandler(((DailyRoutineFragment) fragment).getDrHandler());
                     editDialog.setActivityItem(DailyRoutineView.getSelectedActivities().get(0).getActivityItem());
                     editDialog.setSelected(getIndexesOfSelected(((DailyRoutineFragment) fragment)).get(0));
@@ -300,70 +303,73 @@ public class EntryScreenActivity extends AppCompatActivity
             case R.id.add_icon_action_bar_routine:
                 //create an AddDialog
                 AddDialog addDialog = new AddDialog();
-                if(fragment instanceof DailyRoutineFragment) {
+                if (fragment instanceof DailyRoutineFragment) {
                     addDialog.setDayHandler(((DailyRoutineFragment) fragment).getDrHandler());
                     addDialog.setDate(((DailyRoutineFragment) fragment).getDrHandler().getDate());
                 }
-                addDialog.show(getFragmentManager(),"addDialog");
+                addDialog.show(getFragmentManager(), "addDialog");
                 return true;
 
             case R.id.addMeasurements_icon_action_bar_routine:
                 MeasurementDialog measurementDialog = new MeasurementDialog();
-                measurementDialog.show(getFragmentManager(),"MeasurementDialog");
+                if(fragment instanceof HistoryFragment){
+                    HistoryFragment historyFragment = (HistoryFragment) fragment;
+                    Date date = historyFragment.getDate();
+                    measurementDialog.setDate(date);
+                } else if(fragment instanceof DailyRoutineFragment){
+                    DailyRoutineFragment dailyRoutineFragment = (DailyRoutineFragment) fragment;
+                    Date date = dailyRoutineFragment.getDate();
+                    measurementDialog.setDate(date);
+                }
+                measurementDialog.show(getFragmentManager(), "MeasurementDialog");
                 return true;
 
             case R.id.chooseDate_action_bar:
             case R.id.statistic_day:
             case R.id.statistic_month:
             case R.id.statistic_week:
-                int itemId = item.getItemId();
-                //get the currently active fragment that is shown to the user
                 ChartFragment active = null;
                 FragmentManager fragmentManager = this.getSupportFragmentManager();
                 List<Fragment> fragments = fragmentManager.getFragments();
                 for (Fragment fragment : fragments) {
-                    if (fragment != null && fragment.getUserVisibleHint()){
+                    if (fragment != null && fragment.getUserVisibleHint() && !(fragment instanceof StatisticsFragment)) {
                         try {
                             active = (ChartFragment) fragment;
-                        } catch(ClassCastException e){
+                        } catch (ClassCastException e) {
                             e.printStackTrace();
                         }
-                            }
-                }
-                //update the chart of the fragment based on the TimeWindow selected
-                if (!(active == null)) {
-                    switch (itemId) {
-                        case R.id.statistic_day:
-//                    TODO:Update the charts by calling them by their ID
-                            try{
-                                ChartFragment chartFragment = active;
-                                chartFragment.updateChart("DAY");
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                            break;
-                        case R.id.statistic_week:
-//                    TODO: Update the charts by calling them by their ID
-                            try{
-                                ChartFragment chartFragment =  active;
-                                chartFragment.updateChart("WEEK");
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-
-                            break;
-                        case R.id.statistic_month:
-//                    TODO:Update the charts by calling them by their ID
-                            try{
-                                ChartFragment chartFragment = active;
-                                chartFragment.updateChart("MONTH");
-                            }catch (Exception e){
-                                e.printStackTrace();
-                            }
-                            break;
                     }
                 }
-                return true;
+                //update the chart of the fragment based on the TimeWindow selected
+                int itemId = item.getItemId();
+                ChartFragment chartFragment = (ChartFragment) active;
+                switch (itemId) {
+                    case R.id.statistic_day:
+                        try {
+                            chartFragment.updateChart("DAY");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case R.id.statistic_week:
+                        try {
+                            chartFragment.updateChart("WEEK");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+
+                        break;
+                    case R.id.statistic_month:
+                        try {
+                            chartFragment.updateChart("MONTH");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                }
+
+        return true;
+
         }
 
         return super.onOptionsItemSelected(item);

@@ -32,6 +32,7 @@ import java.util.Locale;
 import java.util.Random;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyModel;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.ProcessMiningUtil;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
@@ -59,7 +60,7 @@ public class HistoryFragment extends DailyRoutineFragment {
     private static final String TAG = "history";
     private static ArrayList<DailyRoutineView> items_history = new ArrayList<>();
     private static LinearLayout linearLayout;
-    private static Date date;
+    private Date date;
     private OnFragmentInteractionListener mListener;
     private DayHandler dayHandler;
 
@@ -91,7 +92,11 @@ public class HistoryFragment extends DailyRoutineFragment {
     }
 
     public void setDate(Date date) {
-        HistoryFragment.date = date;
+        this.date = date;
+    }
+
+    public Date getDate(){
+        return this.date;
     }
 
     @Override
@@ -127,30 +132,31 @@ public class HistoryFragment extends DailyRoutineFragment {
         date = calendar.getTime();
         dateString = df.format(date);
 
-        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        ArrayList<ArrayList<String>> resultFuzzy = new ArrayList<>();
+        ArrayList<ArrayList<String>> resultHeuristics = new ArrayList<>();
         ArrayList<String> tempResult;
-        ArrayList<ActivityItem> temp;
+        ArrayList<ActivityItem> tempFuzzy;
+        ArrayList<ActivityItem> tempHeuristics;
 
         DataBaseHandler handler = AppGlobal.getHandler();
         try {
 
             for (int i = 0; i < 7; i++) {
                 FuzzyModel model = new FuzzyModel(i, false);
-                temp = model.makeFuzzyMinerPrediction();
+                tempFuzzy = model.makeFuzzyMinerPrediction();
                 tempResult = new ArrayList<>();
-                for (ActivityItem item : temp) {
+                for (ActivityItem item : tempFuzzy) {
 
                     tempResult.add(item.getActivityId() + "," + item.getSubactivityId() + "," + handler.getActionById(item.getActivityId()) + "," + handler.getSubactivity(item.getSubactivityId()) + "," + item.getStarttimeAsString() + "," + item.getEndtimeAsString());
 
                 }
-                result.add(tempResult);
+                resultFuzzy.add(tempResult);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        result.size();
-//        ProcessMiningUtil.logResult(result);
+        resultFuzzy.size();
 
 
         dateView.setText(dateString);

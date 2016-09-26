@@ -523,6 +523,10 @@ public class DailyRoutineFragment extends Fragment {
         this.date = date;
     }
 
+    public Date getDate(){
+        return this.date;
+    }
+
     public LinearLayout getLayout(){
         return linearLayout;
     }

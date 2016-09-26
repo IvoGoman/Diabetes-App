@@ -41,14 +41,14 @@ public class MeasurementDialog extends MeasurementInputDialog {
     private String insulin;
     private String insulin_value;
     private MeasureItem measureItem;
-
+    private Date date;
     DataBaseHandler database;
 
     Button btn_date;
     Button btn_time;
     private TimerPickerFragmentM TimerPicker;
     private DatePickerFragmentM DatePicker;
-    Date current_date;
+
 
 
     @Override
@@ -65,9 +65,9 @@ public class MeasurementDialog extends MeasurementInputDialog {
         TimerPicker = new TimerPickerFragmentM();
 
         builder.setView(view);
-
-        Date date = Calendar.getInstance(Locale.getDefault()).getTime();
-        current_date = date;
+        if(date == null) {
+            date = Calendar.getInstance(Locale.getDefault()).getTime();
+        }
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
         String dateString = dateFormat.format(date);
@@ -361,6 +361,10 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
         }
     };
+
+    public void setDate(Date date){
+        this.date = date;
+    }
 
     /***
      * Click Handler for the dialog.
