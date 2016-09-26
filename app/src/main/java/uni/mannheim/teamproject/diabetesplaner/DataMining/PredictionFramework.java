@@ -149,7 +149,6 @@ public class PredictionFramework implements Runnable{
 //                            }
 //                            break;
 //                        case PREDICTION_GSP:
-//                            dailyRoutine = GSP_Prediction.makeGSPPrediction(train, 0.2f);
 //                            break;
 //                        case PREDICTION_FUZZY_MINER:
 //                            FuzzyModel model = new FuzzyModel(train, false);
@@ -280,24 +279,46 @@ public class PredictionFramework implements Runnable{
 
         ArrayList<ActivityItem> dailyRoutine = new ArrayList<>();
 
-        //dailyRoutinePairs is a list, that contains a <activityID ,subactivityID>-pair for every minute
-        //now those pairs are combined into ActivityItems
+        ArrayList<Pair<Integer, Integer>> votedDailyRoutine = new ArrayList<>();
+        Pair<Integer, Integer> prev = null;
+        for(int i=0; i<dailyRoutinePairs.size(); i++){
+            Pair<Integer, Integer> curr = dailyRoutinePairs.get(i);
+            if(i%2 == 1){
+                if(prev != curr){
+                    votedDailyRoutine.add(curr);
+                }else{
+                    Random random = new Random();
+                    //take curr
+                    if(random.nextBoolean()){
+                        votedDailyRoutine.add(curr);
+                    }else{
+                        //take prev
+                        votedDailyRoutine.add(prev);
+                    }
+                }
+            }
+            prev = dailyRoutinePairs.get(i);
+        }
+
         Pair<Integer, Integer> prevPair = null;
         int start = 0;
         Date date = new Date();
-        for (int i = 0; i < dailyRoutinePairs.size(); i++) {
-            Pair<Integer, Integer> pair = dailyRoutinePairs.get(i);
+        for (int i = 0; i < votedDailyRoutine.size(); i++) {
+            Pair<Integer, Integer> pair = votedDailyRoutine.get(i);
             if (prevPair == null) {
                 prevPair = pair;
             } else {
                 if (!pair.equals(prevPair)) {
-                    ActivityItem item = new ActivityItem(prevPair.first, prevPair.second, TimeUtils.minOfDayToDate(start, date), TimeUtils.minOfDayToDate((i - 1), date));
-                    start = i;
+                    ActivityItem item = new ActivityItem(prevPair.first, prevPair.second, TimeUtils.minOfDayToDate(start, date), TimeUtils.minOfDayToDate(((i+1)*2 - 1), date));
+                    start = (i+1)*2;
                     prevPair = pair;
                     dailyRoutine.add(item);
                 }
             }
         }
+        //add last item
+        ActivityItem item = new ActivityItem(prevPair.first, prevPair.second, TimeUtils.minOfDayToDate(start, date), TimeUtils.minOfDayToDate(1439, date));
+        dailyRoutine.add(item);
         return dailyRoutine;
 
     }
