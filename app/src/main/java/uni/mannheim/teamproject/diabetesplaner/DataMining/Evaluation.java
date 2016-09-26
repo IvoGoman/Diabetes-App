@@ -14,6 +14,7 @@ import java.util.Locale;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.HeuristicsMinerImplementation;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
 
 public class Evaluation {
@@ -98,7 +99,7 @@ public class Evaluation {
             }
             for (Integer key: realRes.keySet()){
                 count++;
-                if (realRes.get(key)==gspRes.get(key)){
+                if (realRes.keySet().contains(key) && realRes.get(key)==gspRes.get(key)){
                     acc++;
                 }
             }
@@ -191,75 +192,95 @@ public class Evaluation {
         return 1-error;
     }
 
-    ArrayList<Double> Precision(ArrayList<Integer> Actions, ArrayList<Integer> Predicted,ArrayList<Integer> Real ){
-        ArrayList<Double> Precisions = new ArrayList<Double>(Actions.size());
-        int Acc=0;
-        ArrayList<Integer> predicted = new ArrayList(Actions.size());
-        ArrayList<Integer> positivepredicted = new ArrayList(Actions.size());
+    static double Precision(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> pred){
+        ArrayList<Integer> Actions = AppGlobal.getHandler().getAllSubactivitiesId();
+        int acc=0;
+        int count=0;
+        HashMap<Integer,Integer> gspRes = new HashMap<>();
+        HashMap<Integer,Integer> realRes = new HashMap<>();
+        ArrayList<Double> precisions = new ArrayList<>();
 
-        for (int i=0;i<predicted.size();i++){
-            predicted.set(i, 0);
-            positivepredicted.set(i, 0);
-        }
-
-        for (int i=0;i<Predicted.size();i++){
-            for (int j=0;j<Actions.size();j++){
-                if (Predicted.get(i)==Actions.get(j)){
-                    if (Predicted.get(i)==Real.get(i)){
-                        positivepredicted.set(j, positivepredicted.get(j)+1);
-                        predicted.set(j, predicted.get(j)+1);
-                    }
-                    else{
-                        predicted.set(j, predicted.get(j)+1);
-                    }
-                }
+        for (ActivityItem pred1:pred){
+            HashMap<Integer,Integer> hashGsp = activityItemToHashMap(pred1);
+            for (Integer key: hashGsp.keySet()){
+                gspRes.put(key,hashGsp.get(key));
             }
         }
 
-        for (int i=0;i<Precisions.size();i++){
-            Precisions.set(i, (double)positivepredicted.get(i)/predicted.get(i));
-        }
-
-        return Precisions;
-    }
-
-    ArrayList<Double> Recall(ArrayList<Integer> Actions, ArrayList<Integer> Predicted,ArrayList<Integer> Real ){
-        ArrayList<Double> Recalls = new ArrayList<Double>(Actions.size());
-        int Acc=0;
-        ArrayList<Integer> predicted = new ArrayList(Actions.size());
-        ArrayList<Integer> real = new ArrayList(Actions.size());
-
-        for (int i=0;i<predicted.size();i++){
-            predicted.set(i, 0);
-            real.set(i, 0);
-        }
-
-        for (int i=0;i<Real.size();i++){
-            for (int j=0;j<Actions.size();j++){
-                if (Real.get(i)==Actions.get(j)){
-                    real.set(j, real.get(j)+1);
+        for (ArrayList<ActivityItem> day: train){
+            for (ActivityItem activityItem: day){
+                HashMap<Integer,Integer> hashReal = activityItemToHashMap(activityItem);
+                for (Integer key: hashReal.keySet()){
+                    realRes.put(key,hashReal.get(key));
                 }
-                if (Predicted.get(i)==Actions.get(j)){
-                    if (Predicted.get(i)==Real.get(j)){
-                        predicted.set(j, predicted.get(j)+1);
+            }
+            for (int Action:Actions) {
+                for (Integer key : gspRes.keySet()) {
+                    if (gspRes.get(key) == Action) {
+                        count++;
+                        if (realRes.keySet().contains(key) && realRes.get(key) == gspRes.get(key)) {
+                            acc++;
+                        }
                     }
                 }
+                precisions.add((double)acc/(double)count);
+            }
+        }
+        double sumPrecisions = 0;
+        for (double precision:precisions){
+            sumPrecisions+=precision;
+        }
+        return sumPrecisions/precisions.size();
+    }
+
+    static double Recall(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> pred){
+        ArrayList<Integer> Actions = AppGlobal.getHandler().getAllSubactivitiesId();
+        int acc=0;
+        int count=0;
+        HashMap<Integer,Integer> gspRes = new HashMap<>();
+        HashMap<Integer,Integer> realRes = new HashMap<>();
+        ArrayList<Double> recalls = new ArrayList<>();
+
+        for (ActivityItem pred1:pred){
+            HashMap<Integer,Integer> hashGsp = activityItemToHashMap(pred1);
+            for (Integer key: hashGsp.keySet()){
+                gspRes.put(key,hashGsp.get(key));
             }
         }
 
-        for (int i=0;i<Recalls.size();i++){
-            Recalls.set(i, (double)predicted.get(i)/real.get(i));
+        for (ArrayList<ActivityItem> day: train){
+            for (ActivityItem activityItem: day){
+                HashMap<Integer,Integer> hashReal = activityItemToHashMap(activityItem);
+                for (Integer key: hashReal.keySet()){
+                    realRes.put(key,hashReal.get(key));
+                }
+            }
+            for (int Action:Actions) {
+                acc=0;
+                count=0;
+                for (Integer key : realRes.keySet()) {
+                    if (realRes.get(key) == Action) {
+                        count++;
+                        if (realRes.keySet().contains(key) && realRes.get(key) == gspRes.get(key)) {
+                            acc++;
+                        }
+                    }
+                }
+                if (count!=0) {
+                    recalls.add((double) acc / (double) count);
+                }
+            }
         }
-
-        return Recalls;
+        double sumRecalls = 0;
+        for (double recall:recalls){
+            sumRecalls+=recall;
+        }
+        return sumRecalls/recalls.size();
     }
 
-    Double Fmeasure(ArrayList<Double> Precisions, ArrayList<Double> Recalls){
-        Double Fmeasure=(double) 0;
-        for (int i=0;i<Precisions.size();i++){
-            Fmeasure+=(2*Precisions.get(i)*Recalls.get(i))/(Precisions.get(i)+Recalls.get(i));
-        }
-        return Fmeasure/Precisions.size();
+    static double Fmeasure(double precision, double recall){
+        Double Fmeasure=2*precision*recall/(recall+precision);
+        return Fmeasure;
     }
 
     static HashMap<Integer,Integer> activityItemToHashMap(ActivityItem activityItem){
@@ -271,7 +292,7 @@ public class Evaluation {
         Calendar calendar = Calendar.getInstance();
         int activityCur = activityItem.getSubactivityId();
         java.util.Date end = new Date();
-        end.setTime(activityItem.getEndtime().getTime());
+        end.setTime(activityItem.getEndtime().getTime()+60000);
         java.util.Date curDate = start;
         int num = 0;
         while (curDate.before(end)) {

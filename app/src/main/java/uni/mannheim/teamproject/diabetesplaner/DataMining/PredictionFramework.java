@@ -273,7 +273,14 @@ public class PredictionFramework implements Runnable{
                         @Override
                         public void run() {
                             try {
-                                results.put(PREDICTION_DECISION_TREE, Prediction.GetRoutineAsAI(train));
+                                double acc3 = Evaluation.usageTreeK(train,15);
+                                ArrayList<ActivityItem> prediction = Prediction.GetRoutineAsAI(train);
+                                double acc1 = Evaluation.Accuracy(train, prediction);
+                                double acc2 = Evaluation.AccuracyFlow(train, prediction);
+                                double precision = Evaluation.Precision(train, prediction);
+                                double recall = Evaluation.Recall(train, prediction);
+                                double fMeasure = Evaluation.Fmeasure(precision,recall);
+                                results.put(PREDICTION_DECISION_TREE, prediction);
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Log.e(TAG, "Decision Tree " + e.getLocalizedMessage());
@@ -287,7 +294,13 @@ public class PredictionFramework implements Runnable{
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            results.put(PREDICTION_GSP, GSP_Prediction.makeGSPPrediction(train, 0.2f));
+                            ArrayList<ActivityItem> prediction = GSP_Prediction.makeGSPPrediction(train, 0.2f);
+                            results.put(PREDICTION_GSP, prediction);
+                            double acc1 = Evaluation.Accuracy(train, prediction);
+                            double acc2 = Evaluation.AccuracyFlow(train, prediction);
+                            double precision = Evaluation.Precision(train, prediction);
+                            double recall = Evaluation.Recall(train, prediction);
+                            double fMeasure = Evaluation.Fmeasure(precision,recall);
                             completed++;
                         }
                     }).start();
@@ -297,7 +310,13 @@ public class PredictionFramework implements Runnable{
                         @Override
                         public void run() {
                             FuzzyModel model = new FuzzyModel(train, false);
-                            results.put(PREDICTION_FUZZY_MINER, model.makeFuzzyMinerPrediction());
+                            ArrayList<ActivityItem> prediction = model.makeFuzzyMinerPrediction();
+                            results.put(PREDICTION_FUZZY_MINER, prediction);
+                            double acc1 = Evaluation.Accuracy(train, prediction);
+                            double acc2 = Evaluation.AccuracyFlow(train, prediction);
+                            double precision = Evaluation.Precision(train, prediction);
+                            double recall = Evaluation.Recall(train, prediction);
+                            double fMeasure = Evaluation.Fmeasure(precision,recall);
                             completed++;
                         }
                     }).start();
@@ -306,14 +325,19 @@ public class PredictionFramework implements Runnable{
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation(0.6,1,0.05);
-                            results.put(PREDICTION_HEURISTICS_MINER, HMmodel.runHeuristicsMiner(train));
+                            HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation();
+                            ArrayList<ActivityItem> prediction = HMmodel.runHeuristicsMiner(train);
+                            results.put(PREDICTION_HEURISTICS_MINER, prediction);
+                            double acc1 = Evaluation.Accuracy(train, prediction);
+                            double acc2 = Evaluation.AccuracyFlow(train, prediction);
+                            double precision = Evaluation.Precision(train, prediction);
+                            double recall = Evaluation.Recall(train, prediction);
+                            double fMeasure = Evaluation.Fmeasure(precision,recall);
                             completed++;
                         }
                     }).start();
                     break;
             }
-
         }
     }
 

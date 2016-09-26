@@ -529,7 +529,7 @@ public class Util {
             String[] nextLine;
             reader.readNext();
             while ((nextLine = reader.readNext()) != null) {
-                if(nextLine.length == 3) {
+                if(nextLine.length == 4) {
 //                    Log.d("tag","activity: " +  nextLine[0] + ", " + nextLine[1] + ", " + nextLine[2]);
                     list.add(nextLine);
                 }
@@ -556,7 +556,7 @@ public class Util {
             String[] nextLine;
             reader.readNext();
             while ((nextLine = reader.readNext()) != null) {
-                if(nextLine.length == 3) {
+                if(nextLine.length == 4) {
 //                    Log.d("tag", "subactivitiy: " + nextLine[0] + ", " + nextLine[1] + ", " + nextLine[2]);
                     list.add(nextLine);
                 }

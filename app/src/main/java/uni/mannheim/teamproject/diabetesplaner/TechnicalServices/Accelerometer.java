@@ -28,6 +28,10 @@ public class Accelerometer extends Service implements SensorEventListener {
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
 
+    public ArrayList<Integer> getCurrentActivities() {
+        return currentActivities;
+    }
+
     private ArrayList<Integer> currentActivities;
 
     private int accelerometerCacheCounter = 0;

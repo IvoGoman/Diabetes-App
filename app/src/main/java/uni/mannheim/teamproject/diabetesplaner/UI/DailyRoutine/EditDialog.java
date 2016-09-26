@@ -45,6 +45,8 @@ public class EditDialog extends InputDialog {
                     String newDateEnd = TimeUtils.dateToDateTimeString(getEndDate());
                     int activityId = getSelectedActivity();
                     int subactivityId = getSelectedSubActivity();
+                    String meal = getMeal();
+                    int intensity = getIntensity();
                     if (subactivityId==0){
                         subactivityId = activityId;
                     }
@@ -54,6 +56,8 @@ public class EditDialog extends InputDialog {
                     item.setStarttime(TimeUtils.getDateFromString(newDateStart));
                     item.setActivityId(activityId);
                     item.setSubactivityId(subactivityId);
+                    item.setIntensity(intensity);
+                    item.setMeal(meal);
 //                    String newDateStart = Util.combineDateAndTime(getDrHandler().getDate(), activityItem.getStarttime());
 //                    String newDateEnd = Util.combineDateAndTime(getDrHandler().getDate(), activityItem.getEndtime());
                     AppGlobal.getHandler().DeleteActivity(dateStart, dateEnd);
