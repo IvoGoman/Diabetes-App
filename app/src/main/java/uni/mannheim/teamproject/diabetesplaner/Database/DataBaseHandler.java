@@ -1,11 +1,28 @@
 package uni.mannheim.teamproject.diabetesplaner.Database;
 
+import android.Manifest;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Build;
+import android.os.Environment;
+import android.os.SystemClock;
+import android.provider.Settings;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.widget.AdapterView;
+import android.widget.ListAdapter;
+import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.nio.channels.FileChannel;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -19,9 +36,12 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionFramework;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
+import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.FileChooser;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
+
+import static uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
 
 
 /**
@@ -30,6 +50,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 public class DataBaseHandler extends SQLiteOpenHelper {
 
     private final Context context;
+
 
     public static final String DATABASE_NAME = "Diabetes.db";
     //Bloodsugar History
@@ -1570,4 +1591,34 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         cursor.close();
         return relevantDays;
     }
+
+
+
+    public void exportDB(){
+        File sd = Environment.getExternalStorageDirectory();
+        File data = Environment.getDataDirectory();
+        FileChannel source=null;
+        FileChannel destination=null;
+
+        String currentDBPath = context.getDatabasePath("Diabetes.db").toString();
+        String backupDBPath = TimeUtils.getTimeStampAsDateString(System.currentTimeMillis())+"_Diabetes.db";
+        File currentDB = new File("", currentDBPath);
+        File backupDB = new File(sd, backupDBPath);
+        try {
+            source = new FileInputStream(currentDB).getChannel();
+            destination = new FileOutputStream(backupDB).getChannel();
+            destination.transferFrom(source, 0, source.size());
+            source.close();
+            destination.close();
+            Toast.makeText(this.context, "DB Exported!", Toast.LENGTH_LONG).show();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+
+
+
+
 }

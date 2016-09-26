@@ -1,12 +1,17 @@
 package uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity;
 
+import android.Manifest;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.FragmentManager;
 import android.app.NotificationManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.preference.CheckBoxPreference;
 import android.preference.EditTextPreference;
@@ -16,22 +21,28 @@ import android.preference.PreferenceFragment;
 import android.preference.PreferenceScreen;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.NotificationCompat;
+import android.support.v4.content.ContextCompat;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewParent;
+import android.widget.AdapterView;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.File;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.Accelerometer;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.GPS_Service.GPS_Service;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.Wifi;
+import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.FileChooser;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
@@ -49,6 +60,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private DataBaseHandler database;
     private CheckBoxPreference pref_datacollection;
     BloodsugarDialog_and_Settings communicator;
+    private static final int MY_PERMISSIONS_WRITE_EXTERNAL_Storage = 0;
 
     private Intent accelerometerCollection;
     private Intent wifi;
@@ -86,6 +98,61 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             //Bloodsugar handling
             initialize_bloodsugar();
             initialize_weight();
+
+
+            //loading the help slider
+            final Preference pref_key_help = findPreference("pref_key_help");
+            pref_key_help.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+
+                    Intent myIntent = new Intent(getActivity(), HelpActivity.class);
+                    getActivity().startActivity(myIntent);
+
+                    return true;
+                }
+            });
+
+            //starting the export
+            final Preference pref_key_export = findPreference("pref_key_export");
+            pref_key_export.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                    // set title
+                    alertDialogBuilder.setTitle(R.string.pref_dbexport);
+                    // set dialog message
+                    alertDialogBuilder
+                            .setMessage(R.string.pref_dbexport_message)
+                            .setIcon(getResources().getDrawable(android.R.drawable.ic_dialog_alert))
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.export,new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    Log.d("PositivButton" , "Gedrückt");
+
+
+                                    dbExport();
+
+
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    // if this button is clicked, just close
+                                    // the dialog box and do nothing
+                                    dialog.cancel();
+                                }
+                            });
+
+                    // create alert dialog
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+
+                    // show it
+                    alertDialog.show();
+
+                    return true;
+                }
+            });
 
 
 
@@ -127,17 +194,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             int id = database.getUserID();
 
             pref_name.setSummary(database.getUser(database.getUserID())[0] + database.getUser(database.getUserID())[1]);
-            final Preference pref_add_Activity = findPreference("pref_add_activity");
-            //pref_EditText.setDialogLayoutResource(1);
-            pref_add_Activity.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
-                @Override
-                public boolean onPreferenceClick(Preference preference) {
-                    FragmentManager manager = getFragmentManager();
-                    edit_activitylist_dialog ea = new edit_activitylist_dialog();
-                    ea.show(manager, "Test");
-                    return true;
-                }
-            });
+
 
         }catch(Exception e)
         {
@@ -577,4 +634,71 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     public String getPage(){
         return this.page;
     }
+
+
+
+    public void dbExport(){
+
+        if (ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.READ_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED
+                || ContextCompat.checkSelfPermission(getActivity(),
+                Manifest.permission.WRITE_EXTERNAL_STORAGE)
+                != PackageManager.PERMISSION_GRANTED) {
+
+            // No explanation needed, we can request the permission.
+            Log.d("filechooser permission", "No permission");
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                Log.d("filechooser permission", "Request permission");
+                requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
+                        MY_PERMISSIONS_WRITE_EXTERNAL_Storage);
+            }
+        }
+        else {
+            Log.d("filechooser permission", "has permission");
+
+
+            AppGlobal.getHandler().exportDB();
+
+
+        }
+
+    }
+
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        Log.d("filechooser permission", "onRequestPermissionResult");
+        switch (requestCode) {
+            case MY_PERMISSIONS_WRITE_EXTERNAL_Storage: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.d("filechooser permission", "permission granted");
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+
+
+                    AppGlobal.getHandler().exportDB();
+
+
+
+
+
+
+
+
+                } else {
+                    Log.d("filechooser permission", "permission denied");
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+                }
+                return;
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
+    }
+
 }
