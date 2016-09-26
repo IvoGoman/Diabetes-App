@@ -75,6 +75,21 @@
     <string name="cancel">Cancel</string>
     <string name="export">Export</string>
 
+    <string name="help_welcome">Welcome!</string>
+    <string name="help_welcome_msg"><i><b>Here is a short introduction of the DiaPlanner</b></i> \n
+    </string>
+
+    <string name="help_welcome_msg2">
+    DiaPlanner helps you with your daily routine and supports you with diabetes \n
+    The main functionality are: \n \n
+    - Activity-Log -\n
+    - Prediction of the daily routine - \n
+    - Measurement statistics - \n
+    - Food tipps - \n
+    - Activity recommendation - \n
+
+    </string>
+
     <string name="pref_reset_summary">Resets the prediction model</string>
     <string name="pref_reset_dialog_message">Are you sure you want to reset the prediction model?</string>
     <string name="pref_datacollection">Data Collection</string>
