@@ -31,6 +31,7 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Random;
 
+import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyModel;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
@@ -126,29 +127,29 @@ public class HistoryFragment extends DailyRoutineFragment {
         date = calendar.getTime();
         dateString = df.format(date);
 
-//        ArrayList<ArrayList<String>> result = new ArrayList<>();
-//        ArrayList<String> tempResult;
-//        ArrayList<ActivityItem> temp;
-//
-//        DataBaseHandler handler = AppGlobal.getHandler();
-//        try {
-//
-//            for (int i = 0; i < 7; i++) {
-//                FuzzyModel model = new FuzzyModel(i, false);
-//                temp = model.makeFuzzyMinerPrediction();
-//                tempResult = new ArrayList<>();
-//                for (ActivityItem item : temp) {
-//
-//                    tempResult.add(item.getActivityId() + "," + item.getSubactivityId() + "," + handler.getActionById(item.getActivityId()) + "," + handler.getSubactivity(item.getSubactivityId()) + "," + item.getStarttimeAsString() + "," + item.getEndtimeAsString());
-//
-//                }
-//                result.add(tempResult);
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//        }
-//
-//        result.size();
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        ArrayList<String> tempResult;
+        ArrayList<ActivityItem> temp;
+
+        DataBaseHandler handler = AppGlobal.getHandler();
+        try {
+
+            for (int i = 0; i < 7; i++) {
+                FuzzyModel model = new FuzzyModel(i, false);
+                temp = model.makeFuzzyMinerPrediction();
+                tempResult = new ArrayList<>();
+                for (ActivityItem item : temp) {
+
+                    tempResult.add(item.getActivityId() + "," + item.getSubactivityId() + "," + handler.getActionById(item.getActivityId()) + "," + handler.getSubactivity(item.getSubactivityId()) + "," + item.getStarttimeAsString() + "," + item.getEndtimeAsString());
+
+                }
+                result.add(tempResult);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        result.size();
 //        ProcessMiningUtil.logResult(result);
 
 
