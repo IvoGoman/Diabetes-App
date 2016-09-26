@@ -162,4 +162,5 @@
     <string name="algos">Verwendete Algorithmen</string>
     <string name="algos_summary">Wähle einen oder mehrere Vorhersage Algorithmen</string>
     <string name="insulinInput">Insulin Eingabe</string>
+    <string name="error_loading_data">Trainingsdaten konnten nicht geladen werden.</string>
 </resources>

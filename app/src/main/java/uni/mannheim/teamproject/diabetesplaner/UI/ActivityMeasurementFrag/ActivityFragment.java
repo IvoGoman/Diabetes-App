@@ -2,6 +2,8 @@ package uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag;
 
 
 import android.Manifest;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
@@ -154,7 +156,15 @@ public class ActivityFragment extends Fragment {
                             if ((ActivityInputHndlr.isFileFormatValid(fileString)) == true) {
                                 FileList.add(requiredSplitPart);
                                 Toast.makeText(getActivity(), "Chosen File:" + requiredSplitPart, Toast.LENGTH_LONG).show();
-                                ActivityInputHndlr.loadIntoDatabase(fileString);
+                                try {
+                                    ActivityInputHndlr.loadIntoDatabase(fileString);
+                                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("PREDICTION_SERVICE_FILE", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("LAST_PREDICTION", "0");
+                                    editor.commit();
+                                } catch(Exception e){
+                                    Toast.makeText(getActivity(), R.string.error_loading_data, Toast.LENGTH_LONG).show();
+                                }
                                 ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
                             } else {
                                 Toast.makeText(getActivity(), "File is not in the correct format", Toast.LENGTH_LONG).show();
