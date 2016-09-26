@@ -205,5 +205,6 @@
     <string name="algos_summary">Choose one or more prediction algorithms</string>
     <string name="insulinInput">Insulin input</string>
     <string name="error_loading_data">Training Data could not be imported</string>
+    <string name="predicting">Calculating daily routine...</string>
 
 </resources>

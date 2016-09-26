@@ -17,6 +17,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -81,6 +82,8 @@ public class DailyRoutineFragment extends Fragment {
     private IntentFilter mStatusIntentFilter;
     private String nameBS;
     private String at;
+    private RelativeLayout progressBar;
+    private LinearLayout routineLayout;
 
     /**
      * Use this factory method to create a new instance of
@@ -145,6 +148,9 @@ public class DailyRoutineFragment extends Fragment {
 
         //get the layout
         linearLayout = (LinearLayout) inflaterView.findViewById(R.id.layout_daily_routine);
+        routineLayout = (LinearLayout) inflaterView.findViewById(R.id.daily_routine_layout);
+        progressBar = (RelativeLayout) inflaterView.findViewById(R.id.daily_routine_progress);
+        progressBar.setVisibility(View.GONE);
 
         TextView textView = (TextView) inflaterView.findViewById(R.id.daily_routine_date_view);
         textView.setText(TimeUtils.getDateAsString());
@@ -171,7 +177,8 @@ public class DailyRoutineFragment extends Fragment {
         current.setTimeInMillis(timestamp_current);
         predicted.setTimeInMillis(timestamp_predicted);
 
-        if (predicted.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR) && predicted.get(Calendar.YEAR) <= current.get(Calendar.YEAR)) {
+//        if (predicted.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR) && predicted.get(Calendar.YEAR) <= current.get(Calendar.YEAR)) {
+
 
         /*
          * Creates a new Intent to start the RSSPullService
@@ -181,39 +188,20 @@ public class DailyRoutineFragment extends Fragment {
             Intent mServiceIntent = new Intent(getActivity(), PredictionService.class);
             // Starts the IntentService
             getActivity().startService(mServiceIntent);
+            progressBar.setVisibility(View.VISIBLE);
+            routineLayout.setVisibility(View.GONE);
 
-            // Instantiates a new ResponseReceiver
+        // Instantiates a new ResponseReceiver
             ResponseReceiver mDownloadStateReceiver =
                     new ResponseReceiver();
             // Registers the ResponseReceiver and its intent filters
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(
                     mDownloadStateReceiver, mStatusIntentFilter);
 
-//        ArrayList<Integer> algos = new ArrayList<>();
-////        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
-//        algos.add(PredictionFramework.PREDICTION_GSP);
-////        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
-////        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
-////        try {
-//        drHandler.predictDailyRoutine(algos, PredictionFramework.EVERY_DAY);
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            Log.e(TAG +".onCreateView()", e.getLocalizedMessage());
-//        }
-
-            //DummyDataCreator.populateDataBase();
-            //drHandler.predictDailyRoutine(PredictionFramework.EVERY_DAY, getContext());
-
-//        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(),0);
-//        ArrayList<ActivityItem> result = HeuristicsMinerImplementation.runHeuristicsMiner(items);
-
-//        drHandler.predictDailyRoutine(this.date);
-
-
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("LAST_PREDICTION", String.valueOf(current.getTimeInMillis()));
             editor.commit();
-        }
+//        }
 
 
         DailyRoutineView.clearSelectedActivities();
@@ -349,6 +337,7 @@ public class DailyRoutineFragment extends Fragment {
         //DailyRoutineView.getSelectedActivities().clear();
         //DailyRoutineView.setSelectable(false);
         //DailyRoutineView.setActionBarItems();
+
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -557,13 +546,17 @@ public class DailyRoutineFragment extends Fragment {
         // Called when the BroadcastReceiver gets an Intent it's registered to receive
 //    @
         public void onReceive(Context context, Intent intent) {
-            if(EntryScreenActivity.getFragment() instanceof DailyRoutineFragment){
-                DailyRoutineFragment drf = ((DailyRoutineFragment)EntryScreenActivity.getFragment());
-                if(drf.getActivity() instanceof  EntryScreenActivity){
-                    drHandler.clearDailyRoutine();
-                    drHandler.update();
+//            if(intent.getStringExtra(EntryScreenActivity.EXTENDED_DATA_STATUS).equals("completed")) {
+                if (EntryScreenActivity.getFragment() instanceof DailyRoutineFragment) {
+                    DailyRoutineFragment drf = ((DailyRoutineFragment) EntryScreenActivity.getFragment());
+                    if (drf.getActivity() instanceof EntryScreenActivity) {
+                        drHandler.clearDailyRoutine();
+                        drHandler.update();
+                        progressBar.setVisibility(View.GONE);
+                        routineLayout.setVisibility(View.VISIBLE);
+                    }
                 }
-            }
+//            }
         }
     }
 }

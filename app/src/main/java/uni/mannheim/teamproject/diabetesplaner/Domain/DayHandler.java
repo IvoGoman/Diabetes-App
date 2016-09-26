@@ -6,6 +6,7 @@ import java.util.Date;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineView;
+import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
@@ -83,9 +84,11 @@ public class DayHandler {
      * @author Stefan
      */
     public void update() {
-        DailyRoutineView.clearSelectedActivities();
-        DailyRoutineView.setSelectable(false);
-        DailyRoutineView.setActionBarItems();
+        if(EntryScreenActivity.getOptionsMenu() != null) {
+            DailyRoutineView.clearSelectedActivities();
+            DailyRoutineView.setSelectable(false);
+            DailyRoutineView.setActionBarItems();
+        }
         clearDailyRoutine();
         getDayRoutine(date);
 

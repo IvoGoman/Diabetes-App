@@ -33,7 +33,7 @@ public class PredictionService extends IntentService {
 //        try {
         predictDailyRoutine(algos,PredictionFramework.EVERY_DAY);
 
-        String status = "Status";
+        String status = "completed";
         Intent localIntent =
                 new Intent(EntryScreenActivity.BROADCAST_ACTION)
                         // Puts the status into the Intent
@@ -87,5 +87,6 @@ public class PredictionService extends IntentService {
     public void predictDailyRoutine(ArrayList<Integer> algorithms, int mode){
         new Thread(new PredictionFramework(PredictionFramework.retrieveTrainingData(mode), algorithms)).start();
     }
+
 }
 

@@ -13,6 +13,7 @@ import java.util.Random;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
+import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.HeuristicsMinerImplementation;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
@@ -105,7 +106,7 @@ public class PredictionFramework implements Runnable{
         }
 
 //        Log.d("PredictionFramework", "doInBackground done");
-//        drHandler.setDailyRoutine(dailyRoutine);
+        DailyRoutineHandler.setDailyRoutine(dailyRoutine);
 //
 //
 //        drHandler.getDailyRoutineFragment().getLayout().post(new Runnable() {
