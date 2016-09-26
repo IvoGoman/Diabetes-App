@@ -153,12 +153,12 @@ public class FuzzyModel {
      */
     private List<Pair<Integer, Double>> createDailyRoutine(int startID, int endID, Map<Integer, Double> durationMap, boolean percentage) {
         List<Pair<Integer, Double>> idDurationMap = new ArrayList<>();
-        int currentID = startID;
+        int currentID = 9990;
         int tempID;
         int predecessorID = 0;
         int prepredecessorID = 0;
         int preprepredecessorID = 0;
-        idDurationMap.add(new Pair<>(currentID, durationMap.get(currentID)));
+//        idDurationMap.add(new Pair<>(currentID, durationMap.get(currentID)));
         if (percentage) {
             while (!ProcessMiningUtil.isTotalPercentageReached(idDurationMap)) {
                 tempID = currentID;
@@ -209,8 +209,9 @@ public class FuzzyModel {
 
             }
         }
-        likelySuccessors.removeAll(visitedEdges);
-
+        if (!visitedEdges.containsAll(likelySuccessors)) {
+            likelySuccessors.removeAll(visitedEdges);
+        }
 
         int successorID = 0;
         int targetID;
@@ -221,6 +222,7 @@ public class FuzzyModel {
         double edgeSignificance = 0.0;
         double edgeCorrelation = 0.0;
         double nodeSignificance = 0.0;
+        if(likelySuccessors.size()>0){
         for (FMEdge edge : likelySuccessors) {
             target = (FMNode) edge.getTarget();
             targetID = Integer.parseInt(target.getElementName());
@@ -228,63 +230,64 @@ public class FuzzyModel {
                 targetTargetID = getNextActivity(targetID, currentActivityId);
             } else targetTargetID = 9991;
 //            check if target produces potential self loops
-                targets.clear();
-                targets.addAll(target.getGraph().getOutEdges(target));
+            targets.clear();
+            targets.addAll(target.getGraph().getOutEdges(target));
 //            start of the activity? then get the outedges of the complete cycle
 
 //            check if the target is a start activity or not
-                if (targets.size() == 1) {
-                    for (FMEdge<? extends FMNode, ? extends FMNode> targetEdge : targets) {
-                        if (targetEdge.getTarget().getElementName().equals(target.getElementName()) && targetEdge.getTarget().getEventType().equals("Complete")) {
-                            tempNode = targetEdge.getTarget();
-                            targets.clear();
-                            targets.addAll(tempNode.getGraph().getOutEdges(tempNode));
-                        }
+            if (targets.size() == 1) {
+                for (FMEdge<? extends FMNode, ? extends FMNode> targetEdge : targets) {
+                    if (targetEdge.getTarget().getElementName().equals(target.getElementName()) && targetEdge.getTarget().getEventType().equals("Complete")) {
+                        tempNode = targetEdge.getTarget();
+                        targets.clear();
+                        targets.addAll(tempNode.getGraph().getOutEdges(tempNode));
                     }
                 }
-                Iterator<FMEdge<? extends FMNode, ? extends FMNode>> iterator = targets.iterator();
-                while (iterator.hasNext()) {
-                    targetNode = iterator.next();
+            }
+            Iterator<FMEdge<? extends FMNode, ? extends FMNode>> iterator = targets.iterator();
+            while (iterator.hasNext()) {
+                targetNode = iterator.next();
 //                remove potential loops
-                    if (Integer.parseInt(targetNode.getTarget().getElementName()) == currentActivityId) {
-                        iterator.remove();
+                if (Integer.parseInt(targetNode.getTarget().getElementName()) == currentActivityId) {
+                    iterator.remove();
 //                remove irrelevant edges
-                    } else if (targetNode.getTarget().getEventType().equals("Complete")) {
-                        iterator.remove();
-                    }
+                } else if (targetNode.getTarget().getEventType().equals("Complete")) {
+                    iterator.remove();
                 }
+            }
 
 //            check if target produces potential self loops
-                targetID = Integer.parseInt(target.getElementName());
-                if (targets.size() > 0 | targetID == 9991) {
-                    if ((Integer.parseInt(target.getElementName()) != currentActivityId) && (targetID != 0) && target.getEventType().equals("Start")) {
-                        if (edge.getCorrelation() > edgeCorrelation) {
-                            edgeSignificance = edge.getSignificance();
-                            edgeCorrelation = edge.getCorrelation();
-                            successorID = targetID;
-                            nodeSignificance = target.getSignificance();
-                            tempSuccessors.clear();
-                            tempSuccessors.add(edge);
-                        } else if ((edge.getSignificance() == edgeSignificance) && (edge.getCorrelation() > edgeCorrelation)) {
-                            edgeSignificance = edge.getSignificance();
-                            edgeCorrelation = edge.getCorrelation();
-                            successorID = targetID;
-                            nodeSignificance = target.getSignificance();
-                            tempSuccessors.clear();
-                            tempSuccessors.add(edge);
-                        } else if ((edge.getSignificance() == edgeSignificance) && (edge.getCorrelation() == edgeCorrelation) && (target.getSignificance() > nodeSignificance)) {
-                            edgeSignificance = edge.getSignificance();
-                            edgeCorrelation = edge.getCorrelation();
-                            successorID = targetID;
-                            nodeSignificance = target.getSignificance();
-                            tempSuccessors.clear();
-                            tempSuccessors.add(edge);
-                        } else if ((edge.getSignificance() == edgeSignificance) && (edge.getCorrelation() == edgeCorrelation) && (target.getSignificance() == nodeSignificance)) {
-                            tempSuccessors.add(edge);
-                        }
+            targetID = Integer.parseInt(target.getElementName());
+            if (targets.size() > 0 | targetID == 9991) {
+                if ((Integer.parseInt(target.getElementName()) != currentActivityId) && (targetID != 0) && target.getEventType().equals("Start")) {
+                    if (edge.getCorrelation() > edgeCorrelation) {
+                        edgeSignificance = edge.getSignificance();
+                        edgeCorrelation = edge.getCorrelation();
+                        successorID = targetID;
+                        nodeSignificance = target.getSignificance();
+                        tempSuccessors.clear();
+                        tempSuccessors.add(edge);
+                    } else if ((edge.getCorrelation() == edgeCorrelation) && (edge.getSignificance() > edgeSignificance)) {
+                        edgeSignificance = edge.getSignificance();
+                        edgeCorrelation = edge.getCorrelation();
+                        successorID = targetID;
+                        nodeSignificance = target.getSignificance();
+                        tempSuccessors.clear();
+                        tempSuccessors.add(edge);
+                    } else if ((edge.getSignificance() == edgeSignificance) && (edge.getCorrelation() == edgeCorrelation) && (target.getSignificance() > nodeSignificance)) {
+                        edgeSignificance = edge.getSignificance();
+                        edgeCorrelation = edge.getCorrelation();
+                        successorID = targetID;
+                        nodeSignificance = target.getSignificance();
+                        tempSuccessors.clear();
+                        tempSuccessors.add(edge);
+                    } else if ((edge.getSignificance() == edgeSignificance) && (edge.getCorrelation() == edgeCorrelation) && (target.getSignificance() == nodeSignificance)) {
+                        tempSuccessors.add(edge);
                     }
                 }
+            }
         }
+    }
         //            if edge significance, edge correlation and node significance are the same choose at random
         if (tempSuccessors.size() > 1) {
             int temp = (int) (tempSuccessors.size() * Math.random());
