@@ -7,8 +7,14 @@ class myWifi {
     String ssid;
     String time;
 
-
-    public myWifi(String ssid, String time){
+    /**
+     * Wifi Constructior
+     *
+     * @param ssid
+     * @param time
+     * @author Naira
+     */
+    public myWifi(String ssid, String time) {
         this.ssid = ssid;
         this.time = time;
     }

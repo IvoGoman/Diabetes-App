@@ -1,4 +1,5 @@
 package uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag;
+
 import android.app.Activity;
 import android.app.Dialog;
 import android.os.Environment;
@@ -9,9 +10,17 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+
 import java.io.File;
 import java.io.FileFilter;
 import java.util.Arrays;
+
+/**
+ * Created by Naira on 4/6/2016.
+ *
+ * @author OpenWebGIS
+ */
+
 
 public class FileChooser {
     private static final String PARENT_DIR = "<<";
@@ -23,19 +32,6 @@ public class FileChooser {
 
     // filter on file extension
     private String extension = null;
-    public void setExtension(String extension) {
-        this.extension = (extension == null) ? null :
-                extension.toLowerCase();
-    }
-
-    // file selection event handling
-    public interface FileSelectedListener {
-        void fileSelected(File file);
-    }
-    public FileChooser setFileListener(FileSelectedListener fileListener) {
-        this.fileListener = fileListener;
-        return this;
-    }
     private FileSelectedListener fileListener;
 
     public FileChooser(Activity activity) {
@@ -43,7 +39,8 @@ public class FileChooser {
         dialog = new Dialog(activity);
         list = new ListView(activity);
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override public void onItemClick(AdapterView<?> parent, View view, int which, long id) {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int which, long id) {
                 String fileChosen = (String) list.getItemAtPosition(which);
                 File chosenFile = getChosenFile(fileChosen);
                 if (chosenFile.isDirectory()) {
@@ -61,10 +58,19 @@ public class FileChooser {
         refresh(Environment.getExternalStorageDirectory());
     }
 
+    public void setExtension(String extension) {
+        this.extension = (extension == null) ? null :
+                extension.toLowerCase();
+    }
+
+    public FileChooser setFileListener(FileSelectedListener fileListener) {
+        this.fileListener = fileListener;
+        return this;
+    }
+
     public void showDialog() {
         dialog.show();
     }
-
 
     /**
      * Sort, filter and display the files for the given path.
@@ -73,12 +79,14 @@ public class FileChooser {
         this.currentPath = path;
         if (path.exists()) {
             File[] dirs = path.listFiles(new FileFilter() {
-                @Override public boolean accept(File file) {
+                @Override
+                public boolean accept(File file) {
                     return (file.isDirectory() && file.canRead());
                 }
             });
             File[] files = path.listFiles(new FileFilter() {
-                @Override public boolean accept(File file) {
+                @Override
+                public boolean accept(File file) {
                     if (!file.isDirectory()) {
                         if (!file.canRead()) {
                             return false;
@@ -104,14 +112,19 @@ public class FileChooser {
             }
             Arrays.sort(dirs);
             Arrays.sort(files);
-            for (File dir : dirs) { fileList[i++] = dir.getName(); }
-            for (File file : files ) { fileList[i++] = file.getName(); }
+            for (File dir : dirs) {
+                fileList[i++] = dir.getName();
+            }
+            for (File file : files) {
+                fileList[i++] = file.getName();
+            }
 
             // refresh the user interface
             dialog.setTitle(currentPath.getPath());
             list.setAdapter(new ArrayAdapter(activity,
                     android.R.layout.simple_list_item_1, fileList) {
-                @Override public View getView(int pos, View view, ViewGroup parent) {
+                @Override
+                public View getView(int pos, View view, ViewGroup parent) {
                     view = super.getView(pos, view, parent);
                     ((TextView) view).setSingleLine(true);
                     return view;
@@ -119,7 +132,6 @@ public class FileChooser {
             });
         }
     }
-
 
     /**
      * Convert a relative filename into an actual File object.
@@ -130,5 +142,11 @@ public class FileChooser {
         } else {
             return new File(currentPath, fileChosen);
         }
+    }
+
+
+    // file selection event handling
+    public interface FileSelectedListener {
+        void fileSelected(File file);
     }
 }

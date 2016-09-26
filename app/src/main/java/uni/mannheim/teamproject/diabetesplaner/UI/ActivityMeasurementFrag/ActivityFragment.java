@@ -24,44 +24,41 @@ import android.widget.Toast;
 import java.io.File;
 import java.util.ArrayList;
 
-import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityInputHandler;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
-import uni.mannheim.teamproject.diabetesplaner.UI.CustomListView;
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityInputHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.UI.CustomListView;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
 
 /**
  * created by Naira
  */
-public class ActivityFragment extends Fragment  {
-
-    private static View inflaterView;
-    private static ListAdapter adapter;
-    public static AbsListView lv;
-    public static ArrayList<String> FileList = new ArrayList<String>();
-    ActivityInputHandler ActivityInputHndlr = new ActivityInputHandler ();
-    final DataBaseHandler DBHandler = AppGlobal.getHandler();
+public class ActivityFragment extends Fragment {
 
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    private static final int MY_PERMISSIONS_READ_Storage = 0;
+    public static AbsListView lv;
+    public static ArrayList<String> FileList = new ArrayList<String>();
+    private static View inflaterView;
+    private static ListAdapter adapter;
+    final DataBaseHandler DBHandler = AppGlobal.getHandler();
+    ActivityInputHandler ActivityInputHndlr = new ActivityInputHandler();
     private String mParam1;
     private String mParam2;
-
     private AppCompatActivity aca;
 
-    private static final int MY_PERMISSIONS_READ_Storage = 0;
+    public ActivityFragment() {
+        // Required empty public constructor
+    }
 
     /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
-     * @return A new instance of fragment HistoryFragment.
+     * @param param1
+     * @param param2
+     * @return A new instance of fragment ActivityFragment
+     * @author Naira
      */
-    // TODO: Rename and change types and number of parameters
     public static ActivityFragment newInstance(String param1, String param2) {
         ActivityFragment fragment = new ActivityFragment();
         Bundle args = new Bundle();
@@ -71,10 +68,11 @@ public class ActivityFragment extends Fragment  {
         return fragment;
     }
 
-    public ActivityFragment() {
-        // Required empty public constructor
-    }
-
+    /**
+     * Called when it is first created.
+     * @param savedInstanceState
+     * @author Naira
+     */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -84,21 +82,29 @@ public class ActivityFragment extends Fragment  {
         }
         aca = (AppCompatActivity) getActivity();
         aca.getSupportActionBar().setTitle("Activity");
-
-
     }
 
-
+    /**
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return inflaterView
+     * @author Naira
+     */
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
 
+        // Inflate the layout for this fragment
         inflaterView = inflater.inflate(R.layout.fragment_activity, container, false);
+
+        //initializing variables to their corresponding layout elements
         final FloatingActionButton floatingButton = (FloatingActionButton) inflaterView.findViewById(R.id.add_button);
         lv = (ListView) inflaterView.findViewById(R.id.listView);
+
         adapter = new CustomListView(getActivity(), FileList);
 
+        //adjusts floating button location
         ViewTreeObserver viewTreeObserver = floatingButton.getViewTreeObserver();
         if (viewTreeObserver.isAlive()) {
             viewTreeObserver.addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
@@ -117,21 +123,19 @@ public class ActivityFragment extends Fragment  {
             });
         }
 
-
-        floatingButton.setOnClickListener(new View.OnClickListener()
-        {
-
+        floatingButton.setOnClickListener(new View.OnClickListener() {
+            /**
+             * @param v
+             */
             @Override
-            public void onClick(View v)
-            {
-
+            public void onClick(View v) {
+                //check if permission is given by the user (for Android version 6 or more)
                 if (ContextCompat.checkSelfPermission(getActivity(),
                         Manifest.permission.READ_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED
                         || ContextCompat.checkSelfPermission(getActivity(),
                         Manifest.permission.WRITE_EXTERNAL_STORAGE)
                         != PackageManager.PERMISSION_GRANTED) {
-
                     // No explanation needed, we can request the permission.
                     Log.d("filechooser permission", "No permission");
                     if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
@@ -139,34 +143,39 @@ public class ActivityFragment extends Fragment  {
                         requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE},
                                 MY_PERMISSIONS_READ_Storage);
                     }
-                }
-                else {
+                } else {
                     Log.d("filechooser permission", "has permission");
                     new FileChooser(getActivity()).setFileListener(new FileChooser.FileSelectedListener() {
-                    @Override
-                    public void fileSelected(final File file) {
-                        String fileString = (String) file.toString();
-                        String[] fileStringSplit = fileString.split("/");
-                        String requiredSplitPart = fileStringSplit[fileStringSplit.length-1];
-                        if ((ActivityInputHndlr.isFileFormatValid(fileString))== true){
-                            FileList.add(requiredSplitPart);
-                            Toast.makeText(getActivity(), "Chosen File:" + requiredSplitPart , Toast.LENGTH_LONG).show();
-                            ActivityInputHndlr.loadIntoDatabase(fileString);
-                            ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
-                        }else{
-                            Toast.makeText(getActivity(), "File is not in the correct format", Toast.LENGTH_LONG).show();
+                        @Override
+                        public void fileSelected(final File file) {
+                            String fileString = (String) file.toString();
+                            String[] fileStringSplit = fileString.split("/");
+                            String requiredSplitPart = fileStringSplit[fileStringSplit.length - 1];
+                            if ((ActivityInputHndlr.isFileFormatValid(fileString)) == true) {
+                                FileList.add(requiredSplitPart);
+                                Toast.makeText(getActivity(), "Chosen File:" + requiredSplitPart, Toast.LENGTH_LONG).show();
+                                ActivityInputHndlr.loadIntoDatabase(fileString);
+                                ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
+                            } else {
+                                Toast.makeText(getActivity(), "File is not in the correct format", Toast.LENGTH_LONG).show();
+                            }
                         }
-                    }
                     }).showDialog();
                 }
 
             }
-            });
-
-
+        });
         return inflaterView;
     }
 
+    /**
+     * permission pop up for read access from phone files
+     *
+     * @param requestCode
+     * @param permissions
+     * @param grantResults
+     * @author Naira
+     */
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -180,25 +189,22 @@ public class ActivityFragment extends Fragment  {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 
-
                     new FileChooser(getActivity()).setFileListener(new FileChooser.FileSelectedListener() {
                         @Override
                         public void fileSelected(final File file) {
                             String fileString = (String) file.toString();
                             String[] fileStringSplit = fileString.split("/");
-                            String requiredSplitPart = fileStringSplit[fileStringSplit.length-1];
-                            if ((ActivityInputHndlr.isFileFormatValid(fileString))== true){
+                            String requiredSplitPart = fileStringSplit[fileStringSplit.length - 1];
+                            if ((ActivityInputHndlr.isFileFormatValid(fileString)) == true) {
                                 FileList.add(requiredSplitPart);
-                                Toast.makeText(getActivity(), "Chosen File:" + requiredSplitPart , Toast.LENGTH_LONG).show();
+                                Toast.makeText(getActivity(), "Chosen File:" + requiredSplitPart, Toast.LENGTH_LONG).show();
                                 ActivityInputHndlr.loadIntoDatabase(fileString);
                                 ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
-                            }else{
+                            } else {
                                 Toast.makeText(getActivity(), "File is not in the correct format", Toast.LENGTH_LONG).show();
                             }
                         }
                     }).showDialog();
-
-
                 } else {
                     Log.d("filechooser permission", "permission denied");
                     // permission denied, boo! Disable the
@@ -206,15 +212,10 @@ public class ActivityFragment extends Fragment  {
                 }
                 return;
             }
-
             // other 'case' lines to check for other
             // permissions this app might request
         }
     }
-
-
-
-
 }
 
 

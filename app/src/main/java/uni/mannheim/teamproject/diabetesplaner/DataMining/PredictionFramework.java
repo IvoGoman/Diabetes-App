@@ -56,6 +56,7 @@ public class PredictionFramework implements Runnable{
         this.train = train;
         this.algorithms = algorithms;
         this.drHandler = drHandler;
+        run();
     }
 
     @Override
