@@ -1,5 +1,7 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern;
 
+import android.util.Log;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,8 +24,6 @@ public class GSP {
 	private ArrayList<Sequence> completeSeqs = new ArrayList<>();
 	private HashMap<Sequence, Float> freqSubSeqKminus1 = new HashMap<>();
 
-	private int k = 1;
-
 	public GSP(ArrayList<ArrayList<ActivityItem>> cases){
 		this.cases = cases;
 	}
@@ -45,6 +45,7 @@ public class GSP {
 	 * @author Stefan
 	 */
 	public HashMap<Sequence, Float> findFrequentPatterns(float minsup){
+		int k = 1;
 		HashMap<Sequence, Float> freqPat = new HashMap<>();
 
 		//1. Step: find frequent 1-Sequences
@@ -57,7 +58,7 @@ public class GSP {
 		//2. Step: until no new frequent subsequences are found
 		while(true){
 			k++;
-			System.out.println("k: " + k);
+			Log.d("GSP","k: " + k);
 			//1. candidate generation
 			generateCandidates();
 
@@ -75,7 +76,6 @@ public class GSP {
 			//3. support count and elimination
 			findFrequentKSequences(minsup);
 
-
 			if(!newSeqs()){
 				HashMap<Sequence, Float> result = new HashMap<>();
 				for(Entry<Sequence, Float> m : freqSubSeq.entrySet()){
@@ -83,7 +83,6 @@ public class GSP {
 						result.put(m.getKey(), m.getValue());
 					}
 				}
-
 				return (HashMap<Sequence, Float>) GSP_Util.sortByValue(result, true);
 			}
 		}

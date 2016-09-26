@@ -56,8 +56,6 @@ import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.InputDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.MeasurementDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.ChartFragment;
-import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.LineChartFragment;
-import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.RingChartFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.StatisticsFragment;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
@@ -445,8 +443,6 @@ public class EntryScreenActivity extends AppCompatActivity
         chooseDateItem.setVisible(false);
 
         if (id == R.id.nav_daily_routine) {
-            Toast.makeText(this, R.string.menu_item_daily_routine, Toast.LENGTH_SHORT).show();
-
             fragment = new DailyRoutineFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
@@ -456,18 +452,12 @@ public class EntryScreenActivity extends AppCompatActivity
             addItemRoutine.setVisible(true);
 
         }else if (id == R.id.nav_activity_measurement) {
-            Toast.makeText(this, R.string.menu_item_activity, Toast.LENGTH_SHORT).show();
-
-//             Log.d(TAG, "listsize: " + list.size());
-
             fragment = new ActivityFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
         }
         else if (id == R.id.nav_statistics) {
-            Toast.makeText(this, R.string.menu_item_statistics, Toast.LENGTH_SHORT).show();
-
             fragment = new StatisticsFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
@@ -476,8 +466,6 @@ public class EntryScreenActivity extends AppCompatActivity
             chooseDateItem.setVisible(true);
 
         } else if (id == R.id.nav_history) {
-            Toast.makeText(this, R.string.menu_item_history, Toast.LENGTH_SHORT).show();
-
             fragment = new HistoryFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
@@ -487,8 +475,6 @@ public class EntryScreenActivity extends AppCompatActivity
             addMeasurements.setVisible(true);
 
         } else if (id == R.id.nav_settings) {
-            Toast.makeText(this, R.string.menu_item_settings, Toast.LENGTH_SHORT).show();
-
             Intent settingsIntent = new Intent(this, SettingsActivity.class);
             startActivity(settingsIntent);
 
@@ -640,7 +626,6 @@ public class EntryScreenActivity extends AppCompatActivity
             if (resultCode == RESULT_OK) {
                 imagePath = InputDialog.getImagePath();
                 InputDialog.displayImageFromPath(imagePath);
-
                 Toast.makeText(this, "Image saved to:\n" +
                         imagePath, Toast.LENGTH_SHORT).show();
 
