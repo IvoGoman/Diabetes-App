@@ -14,6 +14,7 @@ import java.util.Locale;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.HeuristicsMinerImplementation;
+import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
 
 public class Evaluation {
@@ -191,36 +192,45 @@ public class Evaluation {
         return 1-error;
     }
 
-    ArrayList<Double> Precision(ArrayList<Integer> Actions, ArrayList<Integer> Predicted,ArrayList<Integer> Real ){
-        ArrayList<Double> Precisions = new ArrayList<Double>(Actions.size());
-        int Acc=0;
-        ArrayList<Integer> predicted = new ArrayList(Actions.size());
-        ArrayList<Integer> positivepredicted = new ArrayList(Actions.size());
+    double Precision(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> pred){
+        ArrayList<Integer> Actions = AppGlobal.getHandler().getAllSubactivitiesId();
+        int acc=0;
+        int count=0;
+        HashMap<Integer,Integer> gspRes = new HashMap<>();
+        HashMap<Integer,Integer> realRes = new HashMap<>();
+        ArrayList<Double> precisions = new ArrayList<>();
 
-        for (int i=0;i<predicted.size();i++){
-            predicted.set(i, 0);
-            positivepredicted.set(i, 0);
-        }
-
-        for (int i=0;i<Predicted.size();i++){
-            for (int j=0;j<Actions.size();j++){
-                if (Predicted.get(i)==Actions.get(j)){
-                    if (Predicted.get(i)==Real.get(i)){
-                        positivepredicted.set(j, positivepredicted.get(j)+1);
-                        predicted.set(j, predicted.get(j)+1);
-                    }
-                    else{
-                        predicted.set(j, predicted.get(j)+1);
-                    }
-                }
+        for (ActivityItem pred1:pred){
+            HashMap<Integer,Integer> hashGsp = activityItemToHashMap(pred1);
+            for (Integer key: hashGsp.keySet()){
+                gspRes.put(key,hashGsp.get(key));
             }
         }
 
-        for (int i=0;i<Precisions.size();i++){
-            Precisions.set(i, (double)positivepredicted.get(i)/predicted.get(i));
+        for (ArrayList<ActivityItem> day: train){
+            for (ActivityItem activityItem: day){
+                HashMap<Integer,Integer> hashReal = activityItemToHashMap(activityItem);
+                for (Integer key: hashReal.keySet()){
+                    realRes.put(key,hashReal.get(key));
+                }
+            }
+            for (int Action:Actions) {
+                for (Integer key : gspRes.keySet()) {
+                    if (gspRes.get(key) == Action) {
+                        count++;
+                        if (realRes.get(key) == gspRes.get(key)) {
+                            acc++;
+                        }
+                    }
+                }
+                precisions.add((double)acc/(double)count);
+            }
         }
-
-        return Precisions;
+        double sumPrecisions = 0;
+        for (double precision:precisions){
+            sumPrecisions+=precision;
+        }
+        return sumPrecisions/precisions.size();
     }
 
     ArrayList<Double> Recall(ArrayList<Integer> Actions, ArrayList<Integer> Predicted,ArrayList<Integer> Real ){

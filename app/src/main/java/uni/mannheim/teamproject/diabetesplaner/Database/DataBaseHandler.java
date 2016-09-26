@@ -271,6 +271,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         int activityID = -1;
         SQLiteDatabase db1 = this.getReadableDatabase();
         Cursor cursor = db1.rawQuery("select id from Activities where title= '"+ activity + "'; ", null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db1.rawQuery("select id from Activities where title_eng= '"+ activity + "'; ", null);
+        }
         if (cursor.moveToFirst()) {
             activityID = cursor.getInt(0);
         }
@@ -366,8 +369,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         int subActivityId=16;
         SQLiteDatabase db1 = this.getReadableDatabase();
         Cursor cursor = db1.rawQuery("select id from SubActivities where title= '"+ subactivity + "'; ", null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db1.rawQuery("select id from SubActivities where title_eng= '"+ subactivity + "'; ", null);
+        }
         if (cursor.moveToFirst()) {
-            subActivityId = cursor.getInt(0);
+            subActivityId = cursor.getInt(cursor.getColumnIndex("id"));
         }
         // close cursor
         if (!cursor.isClosed()) {
@@ -402,6 +408,22 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         if (cursor.moveToFirst()) {
             do {
                 result.put(cursor.getString(cursor.getColumnIndex("Title")).replace(" ",""),cursor.getInt(cursor.getColumnIndex("id")));
+            } while (cursor.moveToNext());
+
+        }
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return result;
+    }
+
+    public ArrayList<Integer> getAllSubactivitiesId() {
+        ArrayList<Integer> result = new ArrayList<>();
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        Cursor cursor = db1.rawQuery("select id from SubActivities;", null);
+        if (cursor.moveToFirst()) {
+            do {
+                result.add(cursor.getInt(cursor.getColumnIndex("id")));
             } while (cursor.moveToNext());
 
         }
@@ -773,10 +795,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param id
      * @return
      * @author Stefan
+     * 25.09 edited by Leonid
      */
     public String getActionById(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
         Cursor cursor = db.rawQuery("select title from " + ACTIVITIES_TABLE_NAME + " where id=" + id, null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db.rawQuery("select title_eng from " + ACTIVITIES_TABLE_NAME + " where id=" + id, null);
+        }
         String name = "";
         if(cursor.moveToFirst()){
             name = cursor.getString(0);
@@ -820,16 +846,20 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * 27.06.2016 Stefan
      * returns all activities as a list
      * @return
+     * 25.09 edited Leonid
      */
     public ArrayList<String> getAllActionsAsList() {
         SQLiteDatabase db = this.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
-        Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
+        Cursor cursor = db.rawQuery("select title from " + ACTIVITIES_TABLE_NAME, null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db.rawQuery("select title_eng as title from " + ACTIVITIES_TABLE_NAME, null);
+        }
         ArrayList<String> actionsList = new ArrayList<>();
 
         if (cursor.moveToFirst()) {
             do {
-                actionsList.add(cursor.getString(1));
+                actionsList.add(cursor.getString(cursor.getColumnIndex("title")));
             }
             while (cursor.moveToNext());
         }
@@ -1232,6 +1262,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     //      Handler Utility Methods
     public boolean CheckRoutineAdded(){
+        boolean result = true;
         String StartOfDay, EndOfDay;
         Calendar calendar = Calendar.getInstance();
         int Year = calendar.get(Calendar.YEAR);
@@ -1244,12 +1275,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         if (cursor.getCount() < 1)
         {
             cursor.close();
-            return false;
+            result = false;
         }
-        else{
+        else {
             cursor.close();
-            return true;
+            result = true;
         }
+        return result;
     }
 
     public ArrayList<ActivityItem> GetArrayFromCursor(Cursor cursor, Date Date) {
