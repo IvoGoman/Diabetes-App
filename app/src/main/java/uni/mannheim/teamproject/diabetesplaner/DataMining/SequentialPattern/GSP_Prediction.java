@@ -15,6 +15,9 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
  */
 public class GSP_Prediction {
 
+	private static GSP gsp;
+	private static float minsup;
+
 	/**
 	 * Does the actual GSP prediction.
 	 * First of all the GSP is executed to find the frequent sequential patterns,
@@ -27,10 +30,11 @@ public class GSP_Prediction {
 	 * @author Stefan 06.09.2016
      */
 	public static ArrayList<ActivityItem> makeGSPPrediction(ArrayList<ArrayList<ActivityItem>> train, float minsup){
+		GSP_Prediction.minsup = minsup;
 		ArrayList<ActivityItem> aiRoutine = new ArrayList<>();
 
 		try {
-			GSP gsp = new GSP(train);
+			gsp = new GSP(train);
 			HashMap<Sequence, Float> result = gsp.findFrequentPatterns(minsup);
 
 			//get most frequent start and end activities
@@ -135,6 +139,17 @@ public class GSP_Prediction {
 			latest = dr.get(dr.size()-1);
 			if(latest.equals(mfEnd)){
 				return dr;
+			}
+
+			if(seqPat.size() == 0){
+				minsup = minsup-0.05f;
+				if(minsup >= 0) {
+					seqPat = gsp.findFrequentPatterns(minsup);
+					dr = new ArrayList<>();
+					dr.add(mfStart);
+					latest = mfStart;
+					seq = null;
+				}
 			}
 		}
 	}
