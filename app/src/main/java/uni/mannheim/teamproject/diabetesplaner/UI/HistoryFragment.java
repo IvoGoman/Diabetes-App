@@ -132,33 +132,6 @@ public class HistoryFragment extends DailyRoutineFragment {
         date = calendar.getTime();
         dateString = df.format(date);
 
-        ArrayList<ArrayList<String>> resultFuzzy = new ArrayList<>();
-        ArrayList<ArrayList<String>> resultHeuristics = new ArrayList<>();
-        ArrayList<String> tempResult;
-        ArrayList<ActivityItem> tempFuzzy;
-        ArrayList<ActivityItem> tempHeuristics;
-
-        DataBaseHandler handler = AppGlobal.getHandler();
-        try {
-
-            for (int i = 0; i < 7; i++) {
-                FuzzyModel model = new FuzzyModel(i, false);
-                tempFuzzy = model.makeFuzzyMinerPrediction();
-                tempResult = new ArrayList<>();
-                for (ActivityItem item : tempFuzzy) {
-
-                    tempResult.add(item.getActivityId() + "," + item.getSubactivityId() + "," + handler.getActionById(item.getActivityId()) + "," + handler.getSubactivity(item.getSubactivityId()) + "," + item.getStarttimeAsString() + "," + item.getEndtimeAsString());
-
-                }
-                resultFuzzy.add(tempResult);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        resultFuzzy.size();
-
-
         dateView.setText(dateString);
         onDateSelected(linearLayout, params, date);
         dateView.setOnClickListener(new View.OnClickListener() {

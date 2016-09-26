@@ -142,6 +142,39 @@ public class ProcessMiningUtil {
         return mostFrequentID;
     }
 
+    public static int getMostFrequentStartActivityFromTrain(ArrayList<ArrayList<ActivityItem>> train){
+        ActivityItem tempItem;
+        int tempID;
+        String tempIDString;
+        Long[] timestamps;
+        HashMap<String, Integer> activityCount = new HashMap<>();
+        if(train.size()>0) {
+            for (ArrayList<ActivityItem> trace : train) {
+                tempIDString = "";
+                if(trace.size() > 0) {
+                    tempItem = trace.get(0);
+                    timestamps = TimeUtils.convertDateStringToTimestamp(new String[]{tempItem.getStarttimeAsString(),tempItem.getEndtimeAsString()});
+                    tempIDString = TimeUtils.isAM(timestamps[0]+tempItem.getActivityId()) + ProcessMiningUtil.getIDwithLeadingZero(tempItem.getActivityId())+ProcessMiningUtil.getIDwithLeadingZero(tempItem.getSubactivityId());
+                    if(activityCount.containsKey(tempIDString)){
+                        activityCount.put(tempIDString,activityCount.get(tempIDString)+1);
+                    } else{
+                        activityCount.put(tempIDString,1);
+                    }
+
+                }
+            }
+        }
+        int maxCount = 0, currentCount = 0;
+        tempIDString = "0";
+        for (Entry<String, Integer> entry : activityCount.entrySet()) {
+            currentCount = entry.getValue();
+            if (maxCount < currentCount) {
+                maxCount = currentCount;
+                tempIDString = entry.getKey();
+            }
+        }
+        return Integer.valueOf(tempIDString);
+    }
     /**
      * Calculate the most frequent start activity of a day based on the cases
      * Returns the activity which was most often the first in each case
@@ -149,7 +182,8 @@ public class ProcessMiningUtil {
      * @param cases Output of the CaseCreator
      * @return activity ID of the most frequent start activity
      */
-    public static int getMostFrequentStartActivity(ArrayList<String[]> cases) {
+
+    public static int getMostFrequentStartActivityFromCases(ArrayList<String[]> cases) {
         HashMap<Integer, Integer> activityCount = new HashMap<>();
         int currentCase = 0, currentActivity, currentCount;
         String[] caseArray;

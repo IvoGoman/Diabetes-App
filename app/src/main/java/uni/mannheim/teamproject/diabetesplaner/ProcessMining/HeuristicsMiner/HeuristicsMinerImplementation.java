@@ -197,8 +197,9 @@ public class HeuristicsMinerImplementation {
                 Map<Integer, Double> durationMap;
                 durationMap = ProcessMiningUtil.getAverageDurations(eventList);
 
-                StartId = myNet.getActivitiesMappingStructures().getReverseActivitiesMapping().get(
-                        new XEventClass(String.valueOf(ProcessMiningUtil.getMostFrequentStartActivity(cases))+"+Complete", 0)).get(0);
+                StartId = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestStart())));
+                //StartId = myNet.getActivitiesMappingStructures().getReverseActivitiesMapping().get(
+                     //   new XEventClass(String.valueOf(ProcessMiningUtil.getMostFrequentStartActivity(cases))+"+Complete", 0)).get(0);
 
                 if(myNet.getEndActivities().size() == 1)
                 {
@@ -225,9 +226,9 @@ public class HeuristicsMinerImplementation {
 //                ArrayList<Integer> tempArray = ResolveTrace.get(StartId);
 //                tempArray.add(nextStartID);
 //                ResolveTrace.put(StartId, tempArray);
-                int pre_id = -1;
+
                 int count = 0;
-                while (completeID != 9991 || ProcessMiningUtil.isTotalDurationReached(idDurationMap)) {
+                while (!ProcessMiningUtil.isTotalDurationReached(idDurationMap)) {
 
                    /* //loop detected
                     if(ResolveTrace.get(nextID) == nextID)
@@ -241,10 +242,6 @@ public class HeuristicsMinerImplementation {
                         nextID = myNet.getMetrics().getBestOutputEvent(getNextIdIfLoop(nextID,pre_id,myNet));
                     }*/
                     //store predecessor ID
-                    if(count % 2 == 0)
-                    {
-                        pre_id = currentID;
-                    }
                     count++;
                     //add to duration map to check if day is finished
                     idDurationMap.add(new Pair<Integer, Double>(completeID, durationMap.get(completeID)));
@@ -279,13 +276,17 @@ public class HeuristicsMinerImplementation {
 
 
                     //determine nextID of the graph
-                    currentID = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(currentID));
-
+                    //currentID = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(currentID));
+                    currentID = nextID;
                     //split next ActivityID
                     ID_String = myNet.getActivitiesMappingStructures().getActivitiesMapping()[currentID].getId().split("\\+")[0];
                     ActivityID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[0];
                     ActivitySubID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[1];
                     completeID = Integer.parseInt(ID_String);
+                    if(completeID == 9991)
+                    {
+                        break;
+                    }
                 }
 
                 Log.d("HeuristicsMiner", "HM calculation done!--------------------------------");
