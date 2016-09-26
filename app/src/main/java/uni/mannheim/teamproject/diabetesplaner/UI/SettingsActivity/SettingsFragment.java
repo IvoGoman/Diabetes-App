@@ -99,6 +99,44 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             initialize_bloodsugar();
             initialize_weight();
 
+//            resetting the predicted daily routine
+            final Preference pref_algo_reset = findPreference("pref_algos_reset");
+            pref_algo_reset.setOnPreferenceClickListener(new Preference.OnPreferenceClickListener() {
+                @Override
+                public boolean onPreferenceClick(Preference preference) {
+                    AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
+                    // set title
+                    alertDialogBuilder.setTitle(R.string.pref_algos_reset);
+                    // set dialog message
+                    alertDialogBuilder
+                            .setMessage(R.string.pref_algos_reset_message)
+                            .setIcon(getResources().getDrawable(android.R.drawable.ic_dialog_alert))
+                            .setCancelable(false)
+                            .setPositiveButton(R.string.accept,new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("PREDICTION_SERVICE_FILE", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("LAST_PREDICTION", "0");
+                                    editor.commit();
+                                }
+                            })
+                            .setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog,int id) {
+                                    // if this button is clicked, just close
+                                    // the dialog box and do nothing
+                                    dialog.cancel();
+                                }
+                            });
+
+                    // create alert dialog
+                    AlertDialog alertDialog = alertDialogBuilder.create();
+
+                    // show it
+                    alertDialog.show();
+
+                    return true;
+                }
+            });
 
             //loading the help slider
             final Preference pref_key_help = findPreference("pref_key_help");

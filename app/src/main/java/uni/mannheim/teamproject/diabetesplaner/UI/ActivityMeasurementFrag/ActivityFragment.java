@@ -158,10 +158,6 @@ public class ActivityFragment extends Fragment {
                                 Toast.makeText(getActivity(), "Chosen File:" + requiredSplitPart, Toast.LENGTH_LONG).show();
                                 try {
                                     ActivityInputHndlr.loadIntoDatabase(fileString);
-                                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("PREDICTION_SERVICE_FILE", Context.MODE_PRIVATE);
-                                    SharedPreferences.Editor editor = sharedPreferences.edit();
-                                    editor.putString("LAST_PREDICTION", "0");
-                                    editor.commit();
                                 } catch(Exception e){
                                     Toast.makeText(getActivity(), R.string.error_loading_data, Toast.LENGTH_LONG).show();
                                 }
