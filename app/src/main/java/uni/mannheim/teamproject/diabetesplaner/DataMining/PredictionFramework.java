@@ -13,9 +13,7 @@ import java.util.Random;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.HeuristicsMinerImplementation;
-import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
@@ -48,14 +46,13 @@ public class PredictionFramework implements Runnable{
     private static HashMap<Integer, ArrayList<ActivityItem>> results = new HashMap<>();
     private final ArrayList<ArrayList<ActivityItem>> train;
     private final ArrayList<Integer> algorithms;
-    private final DailyRoutineHandler drHandler;
     private static int completed = 0;
 
-    public PredictionFramework(final ArrayList<ArrayList<ActivityItem>> train, final ArrayList<Integer> algorithms, final DailyRoutineHandler drHandler){
+    public PredictionFramework(final ArrayList<ArrayList<ActivityItem>> train, final ArrayList<Integer> algorithms){
         super();
         this.train = train;
         this.algorithms = algorithms;
-        this.drHandler = drHandler;
+        run();
     }
 
     @Override
@@ -72,7 +69,22 @@ public class PredictionFramework implements Runnable{
                     e.printStackTrace();
                 }
             }
+            //for debugging the results of the Prediction
+            String debugResult = null;
+            for(int k = 0; k < algorithms.size();k++) {
+                debugResult = debugResult + "-----------------------" + "\n";
+                debugResult = debugResult + "Algorithm: " + String.valueOf(algorithms.get(k)) + "\n";
+                for (int l = 0; l < results.get(algorithms.get(k)).size(); l++) {
 
+
+                    ActivityItem currentActivity = results.get(algorithms.get(k)).get(l);
+                    debugResult = debugResult + currentActivity.getActivityId() + "," + currentActivity.getSubactivityId() + ","
+                            + currentActivity.getStarttimeAsString() + "," + currentActivity.getEndtimeAsString() + ","
+                            + currentActivity.getDuration() + "\n";
+                }
+                debugResult = debugResult + "-----------------------" + "\n";
+            }
+            Log.d("ResultsPrediction",debugResult);
             //check if voting should be performed
             if (algorithms.size() > 1) {
                 dailyRoutine = vote();
@@ -92,23 +104,24 @@ public class PredictionFramework implements Runnable{
             }
         }
 
-        Log.d("PredictionFramework", "doInBackground done");
-        drHandler.setDailyRoutine(dailyRoutine);
+//        Log.d("PredictionFramework", "doInBackground done");
+//        drHandler.setDailyRoutine(dailyRoutine);
+//
+//
+//        drHandler.getDailyRoutineFragment().getLayout().post(new Runnable() {
+//            @Override
+//            public void run() {
+//                while(EntryScreenActivity.getOptionsMenu() == null){
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                drHandler.update();
+//            }
+//        });
 
-
-        drHandler.getDailyRoutineFragment().getLayout().post(new Runnable() {
-            @Override
-            public void run() {
-                while(EntryScreenActivity.getOptionsMenu() == null){
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                drHandler.update();
-            }
-        });
     }
 
 
@@ -148,7 +161,6 @@ public class PredictionFramework implements Runnable{
 //                            }
 //                            break;
 //                        case PREDICTION_GSP:
-//                            dailyRoutine = GSP_Prediction.makeGSPPrediction(train, 0.2f);
 //                            break;
 //                        case PREDICTION_FUZZY_MINER:
 //                            FuzzyModel model = new FuzzyModel(train, false);
@@ -213,13 +225,14 @@ public class PredictionFramework implements Runnable{
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation();
+                            HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation(0.6,1,0.05);
                             results.put(PREDICTION_HEURISTICS_MINER, HMmodel.runHeuristicsMiner(train));
                             completed++;
                         }
                     }).start();
                     break;
             }
+
         }
     }
 
@@ -279,24 +292,46 @@ public class PredictionFramework implements Runnable{
 
         ArrayList<ActivityItem> dailyRoutine = new ArrayList<>();
 
-        //dailyRoutinePairs is a list, that contains a <activityID ,subactivityID>-pair for every minute
-        //now those pairs are combined into ActivityItems
+        ArrayList<Pair<Integer, Integer>> votedDailyRoutine = new ArrayList<>();
+        Pair<Integer, Integer> prev = null;
+        for(int i=0; i<dailyRoutinePairs.size(); i++){
+            Pair<Integer, Integer> curr = dailyRoutinePairs.get(i);
+            if(i%2 == 1){
+                if(prev != curr){
+                    votedDailyRoutine.add(curr);
+                }else{
+                    Random random = new Random();
+                    //take curr
+                    if(random.nextBoolean()){
+                        votedDailyRoutine.add(curr);
+                    }else{
+                        //take prev
+                        votedDailyRoutine.add(prev);
+                    }
+                }
+            }
+            prev = dailyRoutinePairs.get(i);
+        }
+
         Pair<Integer, Integer> prevPair = null;
         int start = 0;
         Date date = new Date();
-        for (int i = 0; i < dailyRoutinePairs.size(); i++) {
-            Pair<Integer, Integer> pair = dailyRoutinePairs.get(i);
+        for (int i = 0; i < votedDailyRoutine.size(); i++) {
+            Pair<Integer, Integer> pair = votedDailyRoutine.get(i);
             if (prevPair == null) {
                 prevPair = pair;
             } else {
                 if (!pair.equals(prevPair)) {
-                    ActivityItem item = new ActivityItem(prevPair.first, prevPair.second, TimeUtils.minOfDayToDate(start, date), TimeUtils.minOfDayToDate((i - 1), date));
-                    start = i;
+                    ActivityItem item = new ActivityItem(prevPair.first, prevPair.second, TimeUtils.minOfDayToDate(start, date), TimeUtils.minOfDayToDate(((i+1)*2 - 1), date));
+                    start = (i+1)*2;
                     prevPair = pair;
                     dailyRoutine.add(item);
                 }
             }
         }
+        //add last item
+        ActivityItem item = new ActivityItem(prevPair.first, prevPair.second, TimeUtils.minOfDayToDate(start, date), TimeUtils.minOfDayToDate(1439, date));
+        dailyRoutine.add(item);
         return dailyRoutine;
 
     }

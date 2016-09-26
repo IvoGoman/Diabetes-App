@@ -112,14 +112,14 @@ public class CustomXLog {
         String[] event;
         event = new String[]{"", "", "starttime", "endtime"};
         eventList.add(event);
-        String id, subActivityID, isAMStart, isPMStart, isAM;
+        String id, subActivityID, isAM;
         for (ActivityItem item : items) {
             id = ProcessMiningUtil.getIDwithLeadingZero(item.getActivityId());
             subActivityID = ProcessMiningUtil.getIDwithLeadingZero(item.getSubactivityId());
             Long[] timestamps = TimeUtils.convertDateStringToTimestamp(new String[]{item.getStarttimeAsString(), item.getEndtimeAsString()});
-            isAMStart = TimeUtils.isAM(timestamps[0]);
-            isPMStart = TimeUtils.isAM(timestamps[1]);
-            if(isAMStart.equals("11") || isPMStart.equals("11")){
+
+//            if(TimeUtils.isAM(timestamps[0]).equals("11") || TimeUtils.isAM(timestamps[1]).equals("11")){
+            if(TimeUtils.isAM(timestamps[0]).equals("11")){
                 isAM = "11";
             } else {
                 isAM = "10";

@@ -62,7 +62,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public static final String MEASUREMENT_DELETE_TABLE =
             "DROP TABLE IF EXISTS " + MEASUREMENT_TABLE_NAME + ";";
 
-    //InsulinHistory
+
+    /**
+     * creating Insulin Table
+     * @author Naira
+     */
     public static final String INSULIN_TABLE_NAME = "Insulin";
     public static final String INSULIN_CREATE_TABLE = " CREATE TABLE IF NOT EXISTS " + INSULIN_TABLE_NAME +
             "(timestamp Double PRIMARY KEY, profile_ID INTEGER, insulin_value double, insulin_unit VARCHAR(8), insulin_kind VARCHAR(8));";
@@ -122,7 +126,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                     LOCATION1_TABLE_NAME +
                     " (id INTEGER PRIMARY KEY, Latitude double, Longtitude double, Timestamp DateTime);";
 
-    //Wifi Table
+    /**
+     * creating WIFI table
+     * @author Naira
+     */
     private static final String WIFI_TABLE_NAME = "WIFI";
     public static final String WIFI_SELECT =
             "SELECT * FROM " + WIFI_TABLE_NAME + ";";
@@ -134,6 +141,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                     WIFI_TABLE_NAME +
                     " (id INTEGER PRIMARY KEY, ssid VARCHAR(20), Title VARCHAR(20));";
 
+    //amended by Naira, to add WIFI as an extra column
     //ActivityList Table
     private static final String ACTIVITYLIST_TABLE_NAME = "ActivityList";
     public static final String ACTIVITYLIST_SELECT =
@@ -178,6 +186,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Log.d("Database", "Temp Activity Table Created");
         db.execSQL("insert into SuperActivities(Title) values('Schlafen'); ");
         db.execSQL("insert into SuperActivities(Title) values('Essen/Trinken'); ");
+        //amended by Naira
         db.execSQL("insert into SuperActivities(Title) values('Insulin'); ");
         db.execSQL("insert into SuperActivities(Title) values('Exercise'); ");
         db.execSQL("insert into SuperActivities(Title) values('Stress'); ");
@@ -213,6 +222,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Log.d("Database", "Location Table Created");
         db.execSQL("insert into Location(Latitude, Longtitude, Title) values (-1,-1,'Other'); ");   //if the location is unknown
 
+        // created by Naira
         // Create WIF Table
         db.execSQL(WIFI_CREATE_TABLE);
         Log.d("Database", "WIFI Table Created");
@@ -234,6 +244,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         db.execSQL(MEASUREMENT_CREATE_TABLE);
         Log.d("Database", "Measurement Table Created");
 
+        //amended by Naira
         //Create Insulin Table
         db.execSQL(INSULIN_CREATE_TABLE);
         Log.d("Database", "Insulin Table Created");
@@ -476,6 +487,15 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 //        db1.close();
     }
 
+
+
+
+    /**
+     * adding WIFI names into the DB
+     * @author Naira
+     * @param ssid
+     * @param title
+     */
     public void insertWIFI(String ssid, String title) {
         SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("insert into WIFI(ssid, Title) values(" + ssid + "," + "'" + title + "'" + "); ");
@@ -497,6 +517,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             idActivity = Activ.getActivityId();
         }
         int idLocation =1;
+        //amended by Naira, to add wifi within the Activities
         int idWIFI = 1;
         String Start = Activ.getStarttimeAsString();
         String End = Activ.getEndtimeAsString();
@@ -510,6 +531,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Integer Intensity = Activ.getIntensity();
 
         SQLiteDatabase db1 = this.getWritableDatabase();
+        //amended by Naira, to add wifi within the Activities
         db1.execSQL("insert into ActivityList(id_SubActivity, id_Location, id_WIFI, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation + " , " + idWIFI +" ,'" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
 //        db1.close();
     }
@@ -523,6 +545,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         String ImagePath = Activ.getImagePath();
         int idActivity = Activ.getSubactivityId();
         int idLocation =1;
+        //amended by Naira, to add wifi within the Activities
         int idWIFI=1;
         String Start = Activ.getStarttimeAsString();
         String End = Activ.getEndtimeAsString();
@@ -538,6 +561,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             Intensity=null;
         }
         SQLiteDatabase db1 = this.getWritableDatabase();
+        //amended by Naira, to add wifi within the Activities
         System.out.println("insert into ActivityList(id_SubActivity, id_Location,id_WIFI, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation+ "," + idWIFI + " , '" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
         db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI, Start, End, Meal, ImagePath, Intensity) values("+ idActivity + "," + idLocation + "," + idWIFI+ " , '" + Start + "','" + End + "','" + Meal + "','" + ImagePath + "'," + Intensity + "); ");
 //        db1.close();
@@ -564,10 +588,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
+
+
+
     /**
      * Method to store either bloodsugar or insulin to the database
      * This depends on the values provided
-     *
+     * @author Naira and amended by Ivo
      * @param item Measureitem containing the necessary values to insert the measurement into the db
      * @param profile_id Profile ID of the User
      */
@@ -695,6 +722,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     public void InsertNewRoutine(ArrayList<Prediction.PeriodAction> prediction) {
         int idActivity;
         int idLocation;
+        //amended by Naira, to add wifi within the Activities
         int idWIFI;
         String Start;
         String End;
@@ -703,6 +731,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         for(int i=0;i<prediction.size();i++){
             idActivity =prediction.get(i).Action;
             idLocation = 1;
+            //amended by Naira, to add wifi within the Activities
             idWIFI = 1;
             String StartOfDay, EndOfDay;
             Calendar calendar = Calendar.getInstance();
@@ -758,6 +787,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
             Start = StartOfDay.toString() + " " + Start;
             End = EndOfDay.toString()  + " " + End;
+            //amended by Naira, to add wifi within the Activities
             db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI, Start, End) values(" + idActivity + "," + idLocation +"," + idWIFI + " , '" + Start + "','" + End + "' ); ");
         }
 //        db1.close();
@@ -771,6 +801,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return cursor;
     }
 
+
+    /**
+     * retrieves all wifi names
+     * @return
+     * @author Naira
+     */
     public Cursor getAllWIFIs() {
         SQLiteDatabase db = this.getWritableDatabase();
         //Create a Cursor that contains all records from the WIFI table
@@ -1174,6 +1210,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
         else{
             db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
+            //amended by Naira, to delete wifi with of related Activities
             db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI, Start, End) values(16,1,1,'"+Start+"','"+End+"');");
         }
 //        db1.close();

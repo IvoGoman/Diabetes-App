@@ -16,6 +16,7 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.Default.FME
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.Default.FMNode;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.Default.FuzzyMinerImpl;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.Default.MutableFuzzyGraph;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.impl.FMEdgeImpl;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing.CustomXLog;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
@@ -32,15 +33,19 @@ public class FuzzyModel {
     private MutableFuzzyGraph fuzzyMinerModel;
     private List<Pair<Integer, Double>> idDurationMap;
     private boolean percentage;
+    private HashMap<Integer, ActivityPrediction> predictionStructure;
+    private ArrayList<FMEdge<? extends FMNode, ? extends FMNode>> visitedEdges = new ArrayList<>();
 
     /**
      * Create a FuzzyModel based on the Activities of a certain Weekday
      *
      * @param day int value between 0 - 9 where 0 = Sunday
+     * @param percentage values for the duration in % or minutes
      * @throws Exception
      */
     public FuzzyModel(int day, boolean percentage) {
         this.percentage = percentage;
+        this.visitedEdges.clear();
         ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(day);
         if (items.size() > 0) {
             CustomXLog customXLog = new CustomXLog(items);
@@ -61,6 +66,7 @@ public class FuzzyModel {
             int endID = ProcessMiningUtil.getMostFrequentEndActivity(cases);
             try {
                 idDurationMap = createDailyRoutine(startID, endID, durationMap, percentage);
+                this.createPredictionDataStructure(durationMap);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -75,6 +81,7 @@ public class FuzzyModel {
      */
     public FuzzyModel(ArrayList<ArrayList<ActivityItem>> train, boolean percentage) {
         ArrayList<ActivityItem> items = ProcessMiningUtil.convertDayToALStructure(train);
+        this.visitedEdges.clear();
         CustomXLog customXLog = new CustomXLog(items);
         XLog xLog = customXLog.getXLog();
         FuzzyMinerImpl fuzzyMiner = new FuzzyMinerImpl(xLog);
@@ -93,22 +100,20 @@ public class FuzzyModel {
         int endID = ProcessMiningUtil.getMostFrequentEndActivity(cases);
         try {
             idDurationMap = createDailyRoutine(startID, endID, durationMap, percentage);
+            this.createPredictionDataStructure(durationMap);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    public ArrayList<ActivityItem> makeFuzzyMinerPrediction() {
-        return ProcessMiningUtil.createActivities(idDurationMap, percentage);
-    }
-
     /**
      * Create a FuzzyModel based on all available data
      *
-     * @throws Exception
+     * @param percentage durations calculated in % or Minutes
      */
     public FuzzyModel(boolean percentage) {
         ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivities();
+        this.visitedEdges.clear();
         CustomXLog customXLog = new CustomXLog(items);
         XLog xLog = customXLog.getXLog();
         FuzzyMinerImpl fuzzyMiner = new FuzzyMinerImpl(xLog);
@@ -128,10 +133,15 @@ public class FuzzyModel {
         idDurationMap.add(new Pair<>(currentId, durationMap.get(currentId)));
         try {
             idDurationMap = createDailyRoutine(startID, endID, durationMap, percentage);
+            this.createPredictionDataStructure(durationMap);
         } catch (Exception e) {
             e.printStackTrace();
         }
         idDurationMap.size();
+    }
+
+    public ArrayList<ActivityItem> makeFuzzyMinerPrediction() {
+        return ProcessMiningUtil.createActivities(idDurationMap, percentage);
     }
 
     /**
@@ -164,11 +174,12 @@ public class FuzzyModel {
             }
         } else {
             while (!ProcessMiningUtil.isTotalDurationReached(idDurationMap)) {
-                tempID = currentID;
-                currentID = getNextActivity(currentID, predecessorID, prepredecessorID, preprepredecessorID);
-                preprepredecessorID = prepredecessorID;
-                prepredecessorID = predecessorID;
-                predecessorID = tempID;
+//                tempID = currentID;
+//                currentID = getNextActivity(currentID, predecessorID, prepredecessorID, preprepredecessorID);
+                currentID = getNextActivity(currentID);
+//                preprepredecessorID = prepredecessorID;
+//                prepredecessorID = predecessorID;
+//                predecessorID = tempID;
                 if (currentID == 9991) {
                     break;
                 } else {
@@ -189,49 +200,104 @@ public class FuzzyModel {
         Set<FMNode> nodes = fuzzyMinerModel.getNodes();
         Set<FMEdge<? extends FMNode, ? extends FMNode>> likelySuccessors = new HashSet<>();
         Set<FMEdge<? extends FMNode, ? extends FMNode>> tempSuccessors = new HashSet<>();
+        Set<FMEdge<? extends FMNode, ? extends FMNode>> targets = new HashSet<>();
         Set<FMNode> interestingNodes = new HashSet<>();
 //        Retrieve all nodes from the model which have the same ID and are the End of that activity
         for (FMNode node : nodes) {
             if (node.getElementName().equals(String.valueOf(currentActivityId)) && node.getEventType().equals("Complete")) {
                 likelySuccessors.addAll(node.getGraph().getOutEdges(node));
+
             }
         }
+        likelySuccessors.removeAll(visitedEdges);
+
+
         int successorID = 0;
         int targetID;
+        int targetTargetID;
         FMNode target;
+        FMNode tempNode;
+        FMEdge<? extends FMNode, ? extends FMNode> targetNode;
         double edgeSignificance = 0.0;
         double edgeCorrelation = 0.0;
         double nodeSignificance = 0.0;
         for (FMEdge edge : likelySuccessors) {
             target = (FMNode) edge.getTarget();
-//            check if target produces potential self loops
             targetID = Integer.parseInt(target.getElementName());
-            if ((Integer.parseInt(target.getElementName()) != currentActivityId) && (targetID != 0) && target.getEventType().equals("Start")) {
-                if (edge.getSignificance() > edgeSignificance) {
-                    edgeSignificance = edge.getSignificance();
-                    edgeCorrelation = edge.getCorrelation();
-                    successorID = targetID;
-                    nodeSignificance = target.getSignificance();
-                    tempSuccessors.clear();
-                    tempSuccessors.add(edge);
-                } else if ((edge.getSignificance() == edgeSignificance) && (edge.getCorrelation() > edgeCorrelation)) {
-                    edgeSignificance = edge.getSignificance();
-                    edgeCorrelation = edge.getCorrelation();
-                    successorID = targetID;
-                    nodeSignificance = target.getSignificance();
-                    tempSuccessors.clear();
-                    tempSuccessors.add(edge);
-                } else if ((edge.getSignificance() == edgeSignificance) && (edge.getCorrelation() == edgeCorrelation) && (target.getSignificance() > nodeSignificance)) {
-                    edgeSignificance = edge.getSignificance();
-                    edgeCorrelation = edge.getCorrelation();
-                    successorID = targetID;
-                    nodeSignificance = target.getSignificance();
-                    tempSuccessors.clear();
-                    tempSuccessors.add(edge);
-                } else if ((edge.getSignificance() == edgeSignificance) && (edge.getCorrelation() == edgeCorrelation) && (target.getSignificance() == nodeSignificance)) {
-                    tempSuccessors.add(edge);
+            if (targetID != 9991) {
+                targetTargetID = getNextActivity(targetID, currentActivityId);
+            } else targetTargetID = 9991;
+//            check if target produces potential self loops
+                targets.clear();
+                targets.addAll(target.getGraph().getOutEdges(target));
+//            start of the activity? then get the outedges of the complete cycle
+
+//            check if the target is a start activity or not
+                if (targets.size() == 1) {
+                    for (FMEdge<? extends FMNode, ? extends FMNode> targetEdge : targets) {
+                        if (targetEdge.getTarget().getElementName().equals(target.getElementName()) && targetEdge.getTarget().getEventType().equals("Complete")) {
+                            tempNode = targetEdge.getTarget();
+                            targets.clear();
+                            targets.addAll(tempNode.getGraph().getOutEdges(tempNode));
+                        }
+                    }
                 }
-            }
+                Iterator<FMEdge<? extends FMNode, ? extends FMNode>> iterator = targets.iterator();
+                while (iterator.hasNext()) {
+                    targetNode = iterator.next();
+//                remove potential loops
+                    if (Integer.parseInt(targetNode.getTarget().getElementName()) == currentActivityId) {
+                        iterator.remove();
+//                remove irrelevant edges
+                    } else if (targetNode.getTarget().getEventType().equals("Complete")) {
+                        iterator.remove();
+                    }
+                }
+
+//            check if target produces potential self loops
+                targetID = Integer.parseInt(target.getElementName());
+                if (targets.size() > 0 | targetID == 9991) {
+                    if ((Integer.parseInt(target.getElementName()) != currentActivityId) && (targetID != 0) && target.getEventType().equals("Start")) {
+                        if (edge.getCorrelation() > edgeCorrelation) {
+                            edgeSignificance = edge.getSignificance();
+                            edgeCorrelation = edge.getCorrelation();
+                            successorID = targetID;
+                            nodeSignificance = target.getSignificance();
+                            tempSuccessors.clear();
+                            tempSuccessors.add(edge);
+                        } else if ((edge.getSignificance() == edgeSignificance) && (edge.getCorrelation() > edgeCorrelation)) {
+                            edgeSignificance = edge.getSignificance();
+                            edgeCorrelation = edge.getCorrelation();
+                            successorID = targetID;
+                            nodeSignificance = target.getSignificance();
+                            tempSuccessors.clear();
+                            tempSuccessors.add(edge);
+                        } else if ((edge.getSignificance() == edgeSignificance) && (edge.getCorrelation() == edgeCorrelation) && (target.getSignificance() > nodeSignificance)) {
+                            edgeSignificance = edge.getSignificance();
+                            edgeCorrelation = edge.getCorrelation();
+                            successorID = targetID;
+                            nodeSignificance = target.getSignificance();
+                            tempSuccessors.clear();
+                            tempSuccessors.add(edge);
+                        } else if ((edge.getSignificance() == edgeSignificance) && (edge.getCorrelation() == edgeCorrelation) && (target.getSignificance() == nodeSignificance)) {
+                            tempSuccessors.add(edge);
+                        }
+                    }
+                }
+        }
+        //            if edge significance, edge correlation and node significance are the same choose at random
+        if (tempSuccessors.size() > 1) {
+            int temp = (int) (tempSuccessors.size() * Math.random());
+            FMEdge resultEdge = (FMEdge) tempSuccessors.toArray()[temp];
+            target = (FMNode) resultEdge.getTarget();
+//            target.getGraph().getOutEdges(target).remove(resultEdge);
+            visitedEdges.add(resultEdge);
+            successorID = Integer.parseInt(target.getElementName());
+        } else if( tempSuccessors.size() == 1){
+            FMEdge resultEdge = (FMEdge) tempSuccessors.toArray()[0];
+            target = (FMNode) resultEdge.getTarget();
+//            target.getGraph().getOutEdges(target).remove(resultEdge);
+            visitedEdges.add(resultEdge);
         }
         return successorID;
 
@@ -357,6 +423,7 @@ public class FuzzyModel {
                 likelySuccessors.addAll(node.getGraph().getOutEdges(node));
             }
         }
+        likelySuccessors.removeAll(visitedEdges);
         int successorID = 0;
         int targetID;
         int targetTargetID;
@@ -372,7 +439,7 @@ public class FuzzyModel {
             if (targetID != 9991) {
                 targetTargetID = getNextActivity(targetID, currentActivityId);
             } else targetTargetID = 9991;
-            if (targetID != predecessorId && (currentActivityId != preprepredecessorID && targetID != prepredecessorID && targetTargetID != predecessorId)) {
+            if (targetID != predecessorId && (currentActivityId != preprepredecessorID || targetID != prepredecessorID || targetTargetID != predecessorId)) {
 //            check if target produces potential self loops
                 targets.clear();
                 targets.addAll(target.getGraph().getOutEdges(target));
@@ -400,7 +467,7 @@ public class FuzzyModel {
 
                 if (targets.size() > 0 | targetID == 9991) {
                     if ((Integer.parseInt(target.getElementName()) != currentActivityId) && (targetID != 0) && target.getEventType().equals("Start")) {
-                        if (edge.getSignificance() > edgeSignificance) {
+                        if (edge.getCorrelation() > edgeCorrelation) {
                             edgeSignificance = edge.getSignificance();
                             edgeCorrelation = edge.getCorrelation();
                             successorID = targetID;
@@ -433,7 +500,14 @@ public class FuzzyModel {
             int temp = (int) (tempSuccessors.size() * Math.random());
             FMEdge resultEdge = (FMEdge) tempSuccessors.toArray()[temp];
             target = (FMNode) resultEdge.getTarget();
+//            target.getGraph().getOutEdges(target).remove(resultEdge);
+            visitedEdges.add(resultEdge);
             successorID = Integer.parseInt(target.getElementName());
+        } else if( tempSuccessors.size() == 1){
+            FMEdge resultEdge = (FMEdge) tempSuccessors.toArray()[0];
+            target = (FMNode) resultEdge.getTarget();
+//            target.getGraph().getOutEdges(target).remove(resultEdge);
+            visitedEdges.add(resultEdge);
         }
         return successorID;
     }
@@ -443,28 +517,44 @@ public class FuzzyModel {
      * @return Datastructure representing the fuzzy miner model
      */
 
-    private ArrayList<ActivityPrediction> createPredictionDataStructure(Map<Integer, Double> durationMap) {
-        ArrayList<ActivityPrediction> activityPredictions = new ArrayList<>();
+    private void createPredictionDataStructure(Map<Integer, Double> durationMap) {
+//        ArrayList<ActivityPrediction> activityPredictions = new ArrayList<>();
+        HashMap<Integer, ActivityPrediction> activityPredictions  = new HashMap<>();
         DataBaseHandler handler = AppGlobal.getHandler();
         String activityName;
         int activityID;
         HashMap<Integer, Double> successorProbabilityMap = new HashMap<>();
         ActivityPrediction activityPrediction;
         for (FMNode node : fuzzyMinerModel.getNodes()) {
-            if (!node.getElementName().equals("Start//Start") && node.getEventType().equals("Complete")) {
+            if (node.getEventType().equals("Complete")) {
                 activityID = Integer.parseInt(node.getElementName());
-                activityName = handler.getActionById(ProcessMiningUtil.removeAMPMFlag(activityID));
+//                activityName = handler.getActionById(ProcessMiningUtil.removeAMPMFlag(activityID));
+                activityName = handler.getActivitybySubActicityId(ProcessMiningUtil.splitID(activityID)[1]);
                 activityPrediction = new ActivityPrediction(activityID, 0, activityName);
                 for (FMEdge<? extends FMNode, ? extends FMNode> edge : node.getGraph().getOutEdges(node)) {
                     successorProbabilityMap.put(Integer.valueOf(edge.getTarget().getElementName()), edge.getSignificance());
                 }
                 activityPrediction.setFollowerProbabilityMap(successorProbabilityMap);
-                activityPrediction.setAverageDuration(durationMap.get(Integer.parseInt(node.getElementName())));
-                activityPredictions.add(activityPrediction);
+                if(durationMap.containsKey(Integer.parseInt(node.getElementName()))) {
+                    activityPrediction.setAverageDuration(durationMap.get(Integer.parseInt(node.getElementName())));
+                }
+                if(activityID == 9990){
+                    activityPrediction.setStart(true);
+                } else if(activityID == 9991){
+                    activityPrediction.setEnd(true);
+                }
+                activityPredictions.put(activityPrediction.getActivityID(),activityPrediction);
                 successorProbabilityMap = new HashMap<>();
             }
         }
-        return activityPredictions;
+        this.predictionStructure = activityPredictions;
+    }
 
+    /**
+     *
+     * @return POJO representing the Fuzzy Miner Model
+     */
+    public HashMap<Integer, ActivityPrediction> getPredictionStructure(){
+        return this.predictionStructure;
     }
 }

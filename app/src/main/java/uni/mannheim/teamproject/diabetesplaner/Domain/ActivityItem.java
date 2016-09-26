@@ -26,6 +26,7 @@ public class ActivityItem {
     private Integer intensity = null;
     private Double duration = null;
 
+
     public static final Integer INTENSITY_HIGH = 3;
     public static final Integer INTENSITY_MEDIUM = 2;
     public static final Integer INTENSITY_LOW = 1;
@@ -100,6 +101,12 @@ public class ActivityItem {
         this.subactivityId = subactivityId;
         this.starttime = TimeUtils.getTime(starttime);
         this.endtime = TimeUtils.getTime(endtime);
+    }
+
+    public ActivityItem(int id, int subID, Double duration_value) {
+        this.activityId = id;
+        this.subactivityId = subID;
+        this.duration = duration_value;
     }
 
     public int getActivityId() {
