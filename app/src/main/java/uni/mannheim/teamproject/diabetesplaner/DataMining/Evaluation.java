@@ -233,43 +233,50 @@ public class Evaluation {
         return sumPrecisions/precisions.size();
     }
 
-    ArrayList<Double> Recall(ArrayList<Integer> Actions, ArrayList<Integer> Predicted,ArrayList<Integer> Real ){
-        ArrayList<Double> Recalls = new ArrayList<Double>(Actions.size());
-        int Acc=0;
-        ArrayList<Integer> predicted = new ArrayList(Actions.size());
-        ArrayList<Integer> real = new ArrayList(Actions.size());
+    double Recall(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> pred){
+        ArrayList<Integer> Actions = AppGlobal.getHandler().getAllSubactivitiesId();
+        int acc=0;
+        int count=0;
+        HashMap<Integer,Integer> gspRes = new HashMap<>();
+        HashMap<Integer,Integer> realRes = new HashMap<>();
+        ArrayList<Double> recalls = new ArrayList<>();
 
-        for (int i=0;i<predicted.size();i++){
-            predicted.set(i, 0);
-            real.set(i, 0);
-        }
-
-        for (int i=0;i<Real.size();i++){
-            for (int j=0;j<Actions.size();j++){
-                if (Real.get(i)==Actions.get(j)){
-                    real.set(j, real.get(j)+1);
-                }
-                if (Predicted.get(i)==Actions.get(j)){
-                    if (Predicted.get(i)==Real.get(j)){
-                        predicted.set(j, predicted.get(j)+1);
-                    }
-                }
+        for (ActivityItem pred1:pred){
+            HashMap<Integer,Integer> hashGsp = activityItemToHashMap(pred1);
+            for (Integer key: hashGsp.keySet()){
+                gspRes.put(key,hashGsp.get(key));
             }
         }
 
-        for (int i=0;i<Recalls.size();i++){
-            Recalls.set(i, (double)predicted.get(i)/real.get(i));
+        for (ArrayList<ActivityItem> day: train){
+            for (ActivityItem activityItem: day){
+                HashMap<Integer,Integer> hashReal = activityItemToHashMap(activityItem);
+                for (Integer key: hashReal.keySet()){
+                    realRes.put(key,hashReal.get(key));
+                }
+            }
+            for (int Action:Actions) {
+                for (Integer key : realRes.keySet()) {
+                    if (realRes.get(key) == Action) {
+                        count++;
+                        if (realRes.get(key) == gspRes.get(key)) {
+                            acc++;
+                        }
+                    }
+                }
+                recalls.add((double)acc/(double)count);
+            }
         }
-
-        return Recalls;
+        double sumRecalls = 0;
+        for (double recall:recalls){
+            sumRecalls+=recall;
+        }
+        return sumRecalls/recalls.size();
     }
 
-    Double Fmeasure(ArrayList<Double> Precisions, ArrayList<Double> Recalls){
-        Double Fmeasure=(double) 0;
-        for (int i=0;i<Precisions.size();i++){
-            Fmeasure+=(2*Precisions.get(i)*Recalls.get(i))/(Precisions.get(i)+Recalls.get(i));
-        }
-        return Fmeasure/Precisions.size();
+    Double Fmeasure(double precision, double recall){
+        Double Fmeasure=2*precision*recall/(recall+precision);
+        return Fmeasure;
     }
 
     static HashMap<Integer,Integer> activityItemToHashMap(ActivityItem activityItem){
