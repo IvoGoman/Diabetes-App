@@ -105,12 +105,12 @@ public class HeuristicsMiner {
 
 		SimpleNet = new SimpleHeuristicsNet(makeBasicRelations(metrics), metrics, settings);
 
-		metrics.printData();
+		//metrics.printData();
 
 		//----------------------
 
-		System.out.println(SimpleNet.toString() + "\n");
-		System.out.println(this.settings.toString());
+		//System.out.println(SimpleNet.toString() + "\n");
+		//System.out.println(this.settings.toString());
 
 		long finishTime = (new Date()).getTime();
 

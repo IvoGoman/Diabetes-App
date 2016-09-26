@@ -87,6 +87,11 @@
             android:positiveButtonText="@string/Yes"
             android:negativeButtonText="@string/No"/>
 
+        <Preference
+            android:key="pref_algos_reset"
+            android:title="@string/pref_algos_reset"
+            android:summary="@string/pref_algos_reset_summary"/>
+
         <PreferenceScreen
             android:key="pref_key_algos_super"
             android:title="@string/algos"

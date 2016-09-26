@@ -9,7 +9,9 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
 
+import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
+import uni.mannheim.teamproject.diabetesplaner.Utility.DummyDataCreator;
 
 /**
  * Created by Stefan on 26.09.2016.
@@ -25,19 +27,21 @@ public class PredictionService extends IntentService {
         // Gets data from the incoming Intent
         String dataString = workIntent.getDataString();
 
+        //DummyDataCreator.populateDataBase();
+
         ArrayList<Integer> algos = new ArrayList<>();
 //        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
         algos.add(PredictionFramework.PREDICTION_GSP);
-//        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
-//        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
+        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
+        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
 //        try {
-        predictDailyRoutine(algos,PredictionFramework.FRIDAY);
+        predictDailyRoutine(algos,PredictionFramework.MONDAY);
 
         String status = "completed";
         Intent localIntent =
-                new Intent(EntryScreenActivity.BROADCAST_ACTION)
+                new Intent(DailyRoutineFragment.BROADCAST_ACTION)
                         // Puts the status into the Intent
-                        .putExtra(EntryScreenActivity.EXTENDED_DATA_STATUS, status);
+                        .putExtra(DailyRoutineFragment.EXTENDED_DATA_STATUS, status);
         // Broadcasts the Intent to receivers in this app.
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }

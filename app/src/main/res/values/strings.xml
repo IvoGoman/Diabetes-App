@@ -221,5 +221,9 @@
     <string name="insulinInput">Insulin input</string>
     <string name="error_loading_data">Training Data could not be imported</string>
     <string name="predicting">Calculating daily routine...</string>
+    <string name="pref_algos_reset">Reset Prediction</string>
+    <string name="pref_algos_reset_summary">Reset the Prediction for the current Day</string>
+    <string name="pref_algos_reset_message">Are you sure you want to reset the Prediction?</string>
+    <string name="loadingData">Loading into database...</string>
 
 </resources>
