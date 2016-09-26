@@ -1,21 +1,11 @@
 package uni.mannheim.teamproject.diabetesplaner.Database;
 
-import android.Manifest;
 import android.content.Context;
-import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.os.Build;
 import android.os.Environment;
-import android.os.SystemClock;
-import android.provider.Settings;
-import android.support.v4.app.ActivityCompat;
-import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
-import android.widget.AdapterView;
-import android.widget.ListAdapter;
 import android.widget.Toast;
 
 import java.io.File;
@@ -36,12 +26,9 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionFramework;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
-import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.FileChooser;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
-
-import static uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity.MY_PERMISSIONS_REQUEST_READ_CONTACTS;
 
 
 /**
@@ -697,9 +684,17 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         findActionbyStartTime(Start);
         findActionbyEndTime(End);
 
+        String StartOfDay, EndOfDay;
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(TimeUtils.getDateFromString(Start));
+        int Year = calendar.get(Calendar.YEAR);
+        String Month = TimeUtils.formatMonthOrDay(calendar.get(Calendar.MONTH) + 1);
+        String Day = TimeUtils.formatMonthOrDay(calendar.get(Calendar.DAY_OF_MONTH));
+        StartOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day)+" 00:00";
+        EndOfDay = String.valueOf(Year) + "-" + String.valueOf(Month) + "-" + String.valueOf(Day)+" 23:59";
 
         InsertActivity(Activ);
-        mergeSimilarActivities();
+        mergeSimilarActivities(StartOfDay,EndOfDay);
         SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("delete from ActivityList where Start>=End");
 //        db1.close();
@@ -1401,9 +1396,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
 //  Potential Utility Functions
 
-    public void mergeSimilarActivities() {
+    public void mergeSimilarActivities(String StartOfDay, String EndOfDay) {
         SQLiteDatabase db1 = this.getWritableDatabase();
-        Cursor cursor = db1.rawQuery("select id_SubActivity,Start,End,Meal,ImagePath,Intensity from ActivityList order by Start;", null);
+        Cursor cursor = db1.rawQuery("select id_SubActivity,Start,End,Meal,ImagePath,Intensity from ActivityList where Start>'" + StartOfDay + "' and Start<'"+ EndOfDay +"'order by Start;", null);
         ActivityItem last_activity = new ActivityItem(0, 0, TimeUtils.getDateFromString("1980-01-01 00:00"), TimeUtils.getDateFromString("1980-01-01 00:00"));
         ActivityItem activity = new ActivityItem(0, 0, TimeUtils.getDateFromString("1980-01-01 00:00"), TimeUtils.getDateFromString("1980-01-01 00:00"));
         if (cursor.moveToFirst()) {
