@@ -198,7 +198,7 @@ public class HeuristicsMinerImplementation {
                 durationMap = ProcessMiningUtil.getAverageDurations(eventList);
 
                 StartId = myNet.getActivitiesMappingStructures().getReverseActivitiesMapping().get(
-                        new XEventClass(String.valueOf(ProcessMiningUtil.getMostFrequentStartActivity(cases))+"+Complete", 0)).get(0);
+                        new XEventClass(String.valueOf(ProcessMiningUtil.getMostFrequentStartActivityFromCases(cases))+"+Complete", 0)).get(0);
 
                 if(myNet.getEndActivities().size() == 1)
                 {
