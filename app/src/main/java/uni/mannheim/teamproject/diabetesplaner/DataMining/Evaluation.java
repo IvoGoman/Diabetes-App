@@ -120,6 +120,7 @@ public class Evaluation {
                 }
                 else{
                     real.put(idSubActivity,new ArrayList<Integer>());
+                    real.get(idSubActivity).add(idNextSubActivity);
                 }
             }
         }
@@ -167,7 +168,7 @@ public class Evaluation {
             for (int followingSubactivity:predicted.get(subactivity)){
                 for (int followingSubactivity1:predicted1.get(subactivity).keySet()){
                     if (followingSubactivity == followingSubactivity1){
-                        predicted1.get(subactivity).put(followingSubactivity,predicted1.get(subactivity).get(followingSubactivity) +1.0/predicted1.get(subactivity).keySet().size());
+                        predicted1.get(subactivity).put(followingSubactivity,predicted1.get(subactivity).get(followingSubactivity) +1.0/predicted.get(subactivity).size());
                     }
                 }
             }
