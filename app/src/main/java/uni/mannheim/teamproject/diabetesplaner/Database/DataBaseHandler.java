@@ -26,6 +26,7 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionFramework;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
+import uni.mannheim.teamproject.diabetesplaner.Domain.Datafile;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
@@ -154,6 +155,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                     "age INTEGER, diabetes_type INTEGER, " + "timestamp Timestamp, " +
                     "FOREIGN KEY (id) REFERENCES "+MEASUREMENT_TABLE_NAME+"(profile_ID));";
 
+    private static final String DATAFILE_TABLE_NAME = "Datafiles";
+    private static final String DATAFILE_CREATE_TABLE =
+            "CREATE TABLE IF NOT EXISTS " +
+                    DATAFILE_TABLE_NAME +
+                    " (id INTEGER PRIMARY KEY, title VARCHAR(50), timestamp DateTime);";
+
     public SQLiteDatabase db;
     public DataBaseHandler(Context context, String name, SQLiteDatabase.CursorFactory factory,
                            int version) {
@@ -240,6 +247,48 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         //Create Profile Table
         db.execSQL(PROFILE_CREATE_TABLE);
         Log.d("Database", "Profile Table Created");
+
+        //Create datafile table
+        db.execSQL(DATAFILE_CREATE_TABLE);
+        Log.d("Database","Datafile Table Created");
+    }
+
+    /**
+     * insert datafile name into database
+     * @param title
+     * @param date
+     * @author Stefan 26.09.2016
+     */
+    public void insertDatafile(String title, Date date){
+        SQLiteDatabase db = this.getReadableDatabase();
+        String insert = "INSERT INTO " + DATAFILE_TABLE_NAME + "(title, timestamp) values('" + title + "','" + TimeUtils.dateToDateTimeString(date) + "')";
+        db.execSQL(insert);
+    }
+
+    /**
+     * retrieves all datafiles from the database
+     * @return
+     * @author Stefan 26.09.2016
+     */
+    public ArrayList<Datafile> getAllDatafiles(){
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery("select * from "+ DATAFILE_TABLE_NAME , null);
+
+        ArrayList<Datafile> datafiles = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                String title = cursor.getString(cursor.getColumnIndex("title"));
+                Date date = TimeUtils.getDateFromString(cursor.getString(cursor.getColumnIndex("timestamp")));
+                datafiles.add(new Datafile(title, date));
+            }while (cursor.moveToNext());
+        }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return datafiles;
     }
 
     /**

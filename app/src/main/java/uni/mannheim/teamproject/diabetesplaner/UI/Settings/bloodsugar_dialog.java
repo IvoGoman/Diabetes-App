@@ -1,4 +1,4 @@
-package uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity;
+package uni.mannheim.teamproject.diabetesplaner.UI.Settings;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -24,8 +24,6 @@ import java.util.TimeZone;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
-import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DatePickerFragmentM;
-import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.TimerPickerFragmentM;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;

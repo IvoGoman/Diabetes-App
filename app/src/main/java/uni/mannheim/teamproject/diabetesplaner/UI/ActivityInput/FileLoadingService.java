@@ -1,11 +1,10 @@
-package uni.mannheim.teamproject.diabetesplaner.UI;
+package uni.mannheim.teamproject.diabetesplaner.UI.ActivityInput;
 
 import android.app.IntentService;
 import android.content.Intent;
 import android.support.v4.content.LocalBroadcastManager;
 
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityInputHandler;
-import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.ActivityFragment;
 
 /**
  * Created by Stefan on 26.09.2016.

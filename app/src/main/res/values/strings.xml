@@ -225,5 +225,8 @@
     <string name="pref_algos_reset_summary">Reset the Prediction for the current Day</string>
     <string name="pref_algos_reset_message">Are you sure you want to reset the Prediction?</string>
     <string name="loadingData">Loading into database...</string>
+    <string name="added">Added</string>
+    <string name="chosen">Chosen file</string>
+    <string name="wrong_format">File format is not supported.</string>
 
 </resources>

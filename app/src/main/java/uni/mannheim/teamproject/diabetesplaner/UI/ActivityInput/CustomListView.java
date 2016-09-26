@@ -1,4 +1,4 @@
-package uni.mannheim.teamproject.diabetesplaner.UI;
+package uni.mannheim.teamproject.diabetesplaner.UI.ActivityInput;
 
 /**
  * Created by Stefan on 10.01.2016.
@@ -14,17 +14,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 
+import uni.mannheim.teamproject.diabetesplaner.Domain.Datafile;
 import uni.mannheim.teamproject.diabetesplaner.R;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
-public class CustomListView extends ArrayAdapter<String>{
+public class CustomListView extends ArrayAdapter<Datafile>{
 
     private final Activity context;
-    private final ArrayList<String> files;
+    private final ArrayList<Datafile> files;
     private View rowView;
 
     /**
@@ -32,7 +31,7 @@ public class CustomListView extends ArrayAdapter<String>{
      * @param context context activity
      * @param files ArrayList<String> with the items that are added to the list
      */
-    public CustomListView(Activity context, ArrayList<String> files) {
+    public CustomListView(Activity context, ArrayList<Datafile> files) {
         super(context, R.layout.fragment_activity_input_list_item, files);
         this.context = context;
         this.files = files;
@@ -47,16 +46,15 @@ public class CustomListView extends ArrayAdapter<String>{
         TextView txtSubTitle = (TextView) rowView.findViewById(R.id.subtxt);
 
         //set title text to the String in the ArrayList at position "position"
-        txtTitle.setText(files.get(position));
+        txtTitle.setText(files.get(position).getTitle());
 
         //set the subtitle
-        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-        Date date =  new Date();
-        txtSubTitle.setText("  Added: " + dateFormat.format(date));
+        txtSubTitle.setText(getContext().getResources().getString(R.string.added) + ": " + TimeUtils.dateToDateTimeString(files.get(position).getDate()));
         txtSubTitle.setTextColor(getContext().getResources().getColor(R.color.textColorSecondary));
 
         //create ic_delete icon and adds onClickListener to it
         ImageView deleteIcon = (ImageView) rowView.findViewById(R.id.delete_icon_activity_input);
+        deleteIcon.setVisibility(View.GONE);
 
         deleteIcon.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -71,7 +69,6 @@ public class CustomListView extends ArrayAdapter<String>{
                             public void onClick(DialogInterface dialog, int id) {
                                 dialog.cancel();
                                 remove(files.get(position));
-                                //ic_delete from database
                             }
                         });
 
@@ -86,9 +83,6 @@ public class CustomListView extends ArrayAdapter<String>{
                 AlertDialog alert11 = builder1.create();
                 alert11.show();
 
-               /* if(files.size() == 0){
-                    context.findViewById(android.R.id.empty).setVisibility(View.VISIBLE);
-                }*/
             }
         });
 

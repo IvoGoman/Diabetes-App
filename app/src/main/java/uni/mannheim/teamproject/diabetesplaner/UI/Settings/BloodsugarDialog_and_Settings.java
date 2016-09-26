@@ -1,4 +1,4 @@
-package uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity;
+package uni.mannheim.teamproject.diabetesplaner.UI.Settings;
 
 /**
  * Created by Jan on 26.02.16.
