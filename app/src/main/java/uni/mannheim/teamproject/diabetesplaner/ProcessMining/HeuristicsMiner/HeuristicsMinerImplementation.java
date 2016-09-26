@@ -9,6 +9,7 @@ import org.deckfour.xes.classification.XEventAttributeClassifier;
 import org.deckfour.xes.classification.XEventClassifier;
 import org.deckfour.xes.classification.XEventLifeTransClassifier;
 import org.deckfour.xes.classification.XEventNameClassifier;
+import org.deckfour.xes.classification.XEventResourceClassifier;
 import org.deckfour.xes.in.XesXmlGZIPParser;
 import org.deckfour.xes.info.XLogInfo;
 import org.deckfour.xes.info.XLogInfoFactory;
@@ -163,6 +164,7 @@ public class HeuristicsMinerImplementation {
 
                 XEventClassifier nameCl = new XEventNameClassifier();
                 XEventClassifier lifeTransCl = new XEventLifeTransClassifier();
+                XEventClassifier test = new XEventResourceClassifier();
                 XEventAttributeClassifier attrClass = new XEventAndClassifier(nameCl, lifeTransCl);
                 XEventClassifier defaultClassifier = attrClass;
 
@@ -182,7 +184,7 @@ public class HeuristicsMinerImplementation {
                 ActivitiesMappingStructures struct = new ActivitiesMappingStructures(EventClasses);
 
                 //run the HeuristicsMiner
-                HeuristicsMiner miner = new HeuristicsMiner(log, logInfo, hms);
+                HeuristicsMiner miner = new HeuristicsMiner(log,hms);
                 miner.mine();
                 SimpleHeuristicsNet myNet = miner.getSimpleNet2();
 
@@ -193,7 +195,7 @@ public class HeuristicsMinerImplementation {
                 int ActivityID;
                 int ActivitySubID;
                 String ID_String;
-                int completeID;
+                int completeID = -1;
                 ActivityItem StartElement = new ActivityItem(-1,-1);
                 Map<Integer, Double> durationMap;
                 durationMap = ProcessMiningUtil.getAverageDurations(eventList);
@@ -237,16 +239,17 @@ public class HeuristicsMinerImplementation {
                 }
 
                 List<Pair<Integer,Double>> idDurationMap = new ArrayList<>();
+                //determine nextID of the graph
+                nextID = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(nextID));
+                //split next ActivityID
+                ID_String = myNet.getActivitiesMappingStructures().getActivitiesMapping()[nextID].getId().split("\\+")[0];
+                ActivityID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[0];
+                ActivitySubID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[1];
+                completeID = Integer.parseInt(ID_String);
 
-                while (!ProcessMiningUtil.isTotalDurationReached(idDurationMap)) {
-                    //determine nextID of the graph
-                    nextID = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(nextID));
 
-                    //split next ActivityID
-                    ID_String = myNet.getActivitiesMappingStructures().getActivitiesMapping()[nextID].getId().split("\\+")[0];
-                    ActivityID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[0];
-                    ActivitySubID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[1];
-                    completeID = Integer.parseInt(ID_String);
+                while (completeID != 9991) {
+
 
                     //add to duration map to check if day is finished
                     idDurationMap.add(new Pair<Integer, Double>(completeID, durationMap.get(completeID)));
@@ -255,11 +258,20 @@ public class HeuristicsMinerImplementation {
                     ActivityItem PredictElement = new ActivityItem(ActivityID, ActivitySubID, durationMap.get(completeID));
                     //Add it to result list
                     PredictedActivities.add(PredictElement);
+
+                    //determine nextID of the graph
+                    nextID = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(nextID));
+                    //split next ActivityID
+                    ID_String = myNet.getActivitiesMappingStructures().getActivitiesMapping()[nextID].getId().split("\\+")[0];
+                    ActivityID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[0];
+                    ActivitySubID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[1];
+                    completeID = Integer.parseInt(ID_String);
                 }
 
+                return ProcessMiningUtil.createActivities(idDurationMap,false);
                 //Prepare result for the UI
                 //Go through all activities, beginning at the start activity and continue with the next activity ActivityID with the highest probability.
-                for (int i = 1; i < myNet.getActivitiesMappingStructures().getActivitiesMapping().length; i = i+2) {
+               /* for (int i = 1; i < myNet.getActivitiesMappingStructures().getActivitiesMapping().length; i = i+2) {
                     ActivityItem PredictElement = new ActivityItem(-1, -1);
                     if(i != 1) {
                         nextID = myNet.getMetrics().getBestOutputEvent(nextID);
@@ -315,7 +327,7 @@ public class HeuristicsMinerImplementation {
                     return PredictedActivities;
                 } else {
                     return null;
-                }
+                }*/
             }
         } catch (Exception e) {
             Log.d("HeuristicsMiner", e.getMessage());

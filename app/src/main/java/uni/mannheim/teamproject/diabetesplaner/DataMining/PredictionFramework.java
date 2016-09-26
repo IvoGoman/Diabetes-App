@@ -73,7 +73,22 @@ public class PredictionFramework implements Runnable{
                     e.printStackTrace();
                 }
             }
+            //for debugging the results of the Prediction
+            String debugResult = null;
+            for(int k = 0; k < algorithms.size();k++) {
+                debugResult = debugResult + "-----------------------" + "\n";
+                debugResult = debugResult + "Algorithm: " + String.valueOf(algorithms.get(k)) + "\n";
+                for (int l = 0; l < results.get(algorithms.get(k)).size(); l++) {
 
+
+                    ActivityItem currentActivity = results.get(algorithms.get(k)).get(l);
+                    debugResult = debugResult + currentActivity.getActivityId() + "," + currentActivity.getSubactivityId() + ","
+                            + currentActivity.getStarttimeAsString() + "," + currentActivity.getEndtimeAsString() + ","
+                            + currentActivity.getDuration() + "\n";
+                }
+                debugResult = debugResult + "-----------------------" + "\n";
+            }
+            Log.d("ResultsPrediction",debugResult);
             //check if voting should be performed
             if (algorithms.size() > 1) {
                 dailyRoutine = vote();
@@ -110,6 +125,7 @@ public class PredictionFramework implements Runnable{
                 drHandler.update();
             }
         });
+
     }
 
 
@@ -213,13 +229,14 @@ public class PredictionFramework implements Runnable{
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation();
+                            HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation(0.6,1,0.05);
                             results.put(PREDICTION_HEURISTICS_MINER, HMmodel.runHeuristicsMiner(train));
                             completed++;
                         }
                     }).start();
                     break;
             }
+
         }
     }
 

@@ -26,6 +26,7 @@ public class ActivityItem {
     private Integer intensity = null;
     private Double duration = null;
 
+
     public static final Integer INTENSITY_HIGH = 3;
     public static final Integer INTENSITY_MEDIUM = 2;
     public static final Integer INTENSITY_LOW = 1;

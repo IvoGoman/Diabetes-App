@@ -129,11 +129,11 @@ public class DailyRoutineFragment extends Fragment {
 
             ArrayList<Integer> algos = new ArrayList<>();
 //        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
-            algos.add(PredictionFramework.PREDICTION_GSP);
-//        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
-//        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
+        algos.add(PredictionFramework.PREDICTION_GSP);
+        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
+        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
 //        try {
-            drHandler.predictDailyRoutine(algos, PredictionFramework.EVERY_DAY);
+            drHandler.predictDailyRoutine(algos, PredictionFramework.MONDAY);
 //        } catch (Exception e) {
 //            e.printStackTrace();
 //            Log.e(TAG +".onCreateView()", e.getLocalizedMessage());
@@ -186,6 +186,25 @@ public class DailyRoutineFragment extends Fragment {
 //            items.add(drv);
 //        }
 
+        ArrayList<Integer> algos = new ArrayList<>();
+//        algos.add(PredictionFramework.PREDICTION_DECISION_TREE)
+//     algos.add(PredictionFramework.PREDICTION_GSP);
+        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
+       algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
+//        try {
+            drHandler.predictDailyRoutine(algos, PredictionFramework.MONDAY);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            Log.e(TAG +".onCreateView()", e.getLocalizedMessage());
+//        }
+
+        //DummyDataCreator.populateDataBase();
+        //drHandler.predictDailyRoutine(PredictionFramework.EVERY_DAY, getContext());
+
+//        ArrayList<ActivityItem> items = AppGlobal.getHandler().getAllActivitiesByWeekday(AppGlobal.getHandler(),0);
+//        ArrayList<ActivityItem> result = HeuristicsMinerImplementation.runHeuristicsMiner(items);
+
+//        drHandler.predictDailyRoutine(this.date);
 
         DailyRoutineView.clearSelectedActivities();
         updateView();
