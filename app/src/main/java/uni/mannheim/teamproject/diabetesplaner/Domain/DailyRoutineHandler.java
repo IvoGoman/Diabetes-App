@@ -40,15 +40,15 @@ public class DailyRoutineHandler extends DayHandler{
      * @param mode     EVERY_DAY, WEEKDAYS, WEEKENDS, MONDAY, ... , SUNDAY
      * @author Stefan 06.09.2016
      */
-    public void predictDailyRoutine(ArrayList<Integer> algorithms, int mode){
-        dailyRoutine.clear();
-        new Thread(new PredictionFramework(PredictionFramework.retrieveTrainingData(mode), algorithms, this)).start();
-//        Log.d(TAG, "predicted daily routine: ");
-//        for(int i=0; i<dailyRoutine.size();i++){
-//            Log.d(TAG, dailyRoutine.get(i).print());
-//        }
-//        AppGlobal.getHandler().insertNewRoutine(dailyRoutine);
-    }
+//    public void predictDailyRoutine(ArrayList<Integer> algorithms, int mode){
+//        dailyRoutine.clear();
+////        new Thread(new PredictionFramework(PredictionFramework.retrieveTrainingData(mode), algorithms, this)).start();
+////        Log.d(TAG, "predicted daily routine: ");
+////        for(int i=0; i<dailyRoutine.size();i++){
+////            Log.d(TAG, dailyRoutine.get(i).print());
+////        }
+////        AppGlobal.getHandler().insertNewRoutine(dailyRoutine);
+//    }
 
     /**
      * predicts the daily routine and gets the algorithms to choose from the settings
@@ -76,7 +76,7 @@ public class DailyRoutineHandler extends DayHandler{
         }
 
         try {
-            new Thread(new PredictionFramework(PredictionFramework.retrieveTrainingData(mode), algorithms, this)).start();
+//            new Thread(new PredictionFramework(PredictionFramework.retrieveTrainingData(mode), algorithms, this)).start();
         } catch (Exception e) {
             e.printStackTrace();
         }

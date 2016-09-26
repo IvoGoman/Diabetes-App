@@ -13,9 +13,7 @@ import java.util.Random;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.HeuristicsMinerImplementation;
-import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
@@ -48,14 +46,12 @@ public class PredictionFramework implements Runnable{
     private static HashMap<Integer, ArrayList<ActivityItem>> results = new HashMap<>();
     private final ArrayList<ArrayList<ActivityItem>> train;
     private final ArrayList<Integer> algorithms;
-    private final DailyRoutineHandler drHandler;
     private static int completed = 0;
 
-    public PredictionFramework(final ArrayList<ArrayList<ActivityItem>> train, final ArrayList<Integer> algorithms, final DailyRoutineHandler drHandler){
+    public PredictionFramework(final ArrayList<ArrayList<ActivityItem>> train, final ArrayList<Integer> algorithms){
         super();
         this.train = train;
         this.algorithms = algorithms;
-        this.drHandler = drHandler;
         run();
     }
 
@@ -108,23 +104,23 @@ public class PredictionFramework implements Runnable{
             }
         }
 
-        Log.d("PredictionFramework", "doInBackground done");
-        drHandler.setDailyRoutine(dailyRoutine);
-
-
-        drHandler.getDailyRoutineFragment().getLayout().post(new Runnable() {
-            @Override
-            public void run() {
-                while(EntryScreenActivity.getOptionsMenu() == null){
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-                drHandler.update();
-            }
-        });
+//        Log.d("PredictionFramework", "doInBackground done");
+//        drHandler.setDailyRoutine(dailyRoutine);
+//
+//
+//        drHandler.getDailyRoutineFragment().getLayout().post(new Runnable() {
+//            @Override
+//            public void run() {
+//                while(EntryScreenActivity.getOptionsMenu() == null){
+//                    try {
+//                        Thread.sleep(100);
+//                    } catch (InterruptedException e) {
+//                        e.printStackTrace();
+//                    }
+//                }
+//                drHandler.update();
+//            }
+//        });
 
     }
 

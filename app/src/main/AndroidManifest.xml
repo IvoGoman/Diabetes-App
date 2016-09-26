@@ -89,6 +89,9 @@
             android:name=".TechnicalServices.Wifi$WifiActiveService"
             android:exported="false" />
 
+        <service
+            android:name=".DataMining.PredictionService"
+            android:exported="false"/>
         <!--
         <activity android:name=".MeasurementPop" android:theme="@style/AppTheme.CustomTheme" >
         </activity>
