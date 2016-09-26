@@ -60,6 +60,24 @@
     <string name="reset">Zurücksetzen</string>
     <string name="cancel">Abbrechen</string>
     <string name="export">Exportieren</string>
+
+    <string name="help_welcome">Willkommen!</string>
+    <string name="help_welcome_msg"><i><b>Hier ist eine kurze Einführung für den DiaPlanner</b> </i> \n
+    </string>
+
+    <string name="help_welcome_msg2">
+
+    DiaPlanner hilt dir bei deinem Tagesablauf und soll dich speziell für den Umgang mit Diabetes unterstützen. \n\n
+
+    Die wichtigsten Grundfunktionen sind: \n \n
+    - Aktivitäten-Log - \n
+    - Vorhersage des Tagesablaufs - \n
+    - Messwerte-Statistik - \n
+    - Ernährungstipps - \n
+    - Aktivitäten-Empfehlungen - \n
+
+    </string>
+
     <string name="pref_datacollection_dialog">Möchten Sie wirklich die Datensammlung beenden? Dadurch werden die Vorhersagen ungenau.</string>
     <string name="Yes">Ja</string>
     <string name="No">Nein</string>

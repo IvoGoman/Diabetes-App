@@ -31,7 +31,7 @@ public class PredictionService extends IntentService {
 //        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
 //        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
 //        try {
-        predictDailyRoutine(algos,PredictionFramework.EVERY_DAY);
+        predictDailyRoutine(algos,PredictionFramework.FRIDAY);
 
         String status = "completed";
         Intent localIntent =

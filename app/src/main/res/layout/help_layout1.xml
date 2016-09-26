@@ -1,22 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+
+    xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:weightSum="1">
+    android:weightSum="1"
+    tools:background="@color/HelpBackground"
+    android:padding="20dp">
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        tools:background="@color/HelpBackground" />
 
     <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Hilfe"
-        android:id="@+id/textView5"
-        android:layout_gravity="center_horizontal" />
-
-    <ImageView
+        android:text="@string/help_welcome"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/imageView2"
-        android:background="@drawable/screenshot3" />
+        android:layout_height="wrap_content"
+        android:id="@+id/textView6"
+        android:textSize="40sp"
+        android:textStyle="normal|bold|italic"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_horizontal"
+        android:paddingBottom="20dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:text="@string/help_welcome_msg"
+        android:id="@+id/textView5"
+        android:layout_gravity="center_vertical"
+        android:gravity="center_horizontal"
+        android:textSize="24sp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="@android:style/TextAppearance.Large"
+        android:id="@+id/textView7"
+        android:text="@string/help_welcome_msg2"
+        android:textSize="20sp"
+        android:textStyle="normal|bold|italic"
+        android:gravity="center_horizontal" />
 
 </LinearLayout>
 

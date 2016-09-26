@@ -21,12 +21,14 @@
 
     <!-- possible new colors from color calculator-->
 
-    <color name="color1">#FFAE00</color>
-    <color name="color2">#FF1300</color>
-    <color name="color3">#00E528</color>
-    <color name="color4">#0037DB</color>
-    <color name="color5">#FF7A00</color>
-    <color name="color6">#D2006B</color>
+    <color name="color1">#D2D2D2</color>
+    <color name="color2">#D2FF9B</color>
+    <color name="color3">#FFC832</color>
+    <color name="color4">#879DFF</color>
+    <color name="color5">#FF786E</color>
+    <color name="color6">#FFF487</color>
+
+    <color name="HelpBackground">#bdfdf6</color>
 
 
 </resources>

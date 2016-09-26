@@ -35,33 +35,39 @@ public class ColorUtils {
     public static int getColor(int activityid, ActivityItem activityItem) {
         switch (activityid) {
             case 1:
-                return R.color.good;
+                return R.color.color1;
             case 2:
-                return R.color.bad;
+                return R.color.color2;
             case 3:
-                return R.color.no_influence;
+                return R.color.color6;
             case 4:
-                return R.color.potential_bad;
+                return R.color.color6;
             case 5:
-                return R.color.good;
+                return R.color.color1;
             case 6:
-                return R.color.good;
+                return R.color.color4;
             case 7:
-                return R.color.no_influence;
+                return R.color.color3;
             case 8:
-                return R.color.no_influence;
+                return R.color.color4;
             case 9:
-                return R.color.no_influence;
+                return R.color.color4;
             case 10:
-                return R.color.good;
+                return R.color.color6;
             case 11:
-                return R.color.good;
+                return R.color.color6;
             case 12:
-                getIntensityColor(activityItem.getIntensity());
+                return R.color.color4;
             case 13:
-                getIntensityColor(activityItem.getIntensity());
+                return R.color.color5;
+            case 14:
+                return R.color.color4;
+            case 15:
+                return R.color.color5;
+            case 16:
+                return R.color.color6;
             default:
-                return R.color.unknown;
+                return R.color.color1;
         }
     }
 }
