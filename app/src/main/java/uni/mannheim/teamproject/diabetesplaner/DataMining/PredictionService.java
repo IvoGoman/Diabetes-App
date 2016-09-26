@@ -9,7 +9,7 @@ import android.support.v4.content.LocalBroadcastManager;
 
 import java.util.ArrayList;
 
-import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
+import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
 
 /**
  * Created by Stefan on 26.09.2016.
@@ -31,13 +31,13 @@ public class PredictionService extends IntentService {
 //        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
 //        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
 //        try {
-        predictDailyRoutine(algos,PredictionFramework.FRIDAY);
+        predictDailyRoutine(algos,PredictionFramework.EVERY_DAY);
 
         String status = "completed";
         Intent localIntent =
-                new Intent(EntryScreenActivity.BROADCAST_ACTION)
+                new Intent(DailyRoutineFragment.BROADCAST_ACTION)
                         // Puts the status into the Intent
-                        .putExtra(EntryScreenActivity.EXTENDED_DATA_STATUS, status);
+                        .putExtra(DailyRoutineFragment.EXTENDED_DATA_STATUS, status);
         // Broadcasts the Intent to receivers in this app.
         LocalBroadcastManager.getInstance(this).sendBroadcast(localIntent);
     }

@@ -81,13 +81,6 @@ public class EntryScreenActivity extends AppCompatActivity
 
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 
-    // Defines a custom Intent action
-    public static final String BROADCAST_ACTION =
-            "com.example.android.threadsample.BROADCAST";
-    // Defines the key for the status "extra" in an Intent
-    public static final String EXTENDED_DATA_STATUS =
-            "com.example.android.threadsample.STATUS";
-
     /**
      * ATTENTION: This was auto-generated to implement the App Indexing API.
      * See https://g.co/AppIndexing/AndroidStudio for more information.

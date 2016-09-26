@@ -102,11 +102,9 @@
         <service
             android:name=".DataMining.PredictionService"
             android:exported="false"/>
-        <!--
-        <activity android:name=".MeasurementPop" android:theme="@style/AppTheme.CustomTheme" >
-        </activity>
-        -->
-        <!--<activity android:name=".DailyRoutine.EditActivity" />-->
+        <service
+            android:name=".UI.FileLoadingService"
+            android:exported="false"/>
 
         <service
             android:name=".DataMining.Recommendation.BSInputRecommendation"

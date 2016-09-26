@@ -42,23 +42,10 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
  * Created by Stefan
  */
 
-/**
- * A simple {@link Fragment} subclass.
- * Activities that contain this fragment must implement the
- * {@link DailyRoutineFragment.OnFragmentInteractionListener} interface
- * to handle interaction events.
- * Use the {@link DailyRoutineFragment#newInstance} factory method to
- * create an instance of this fragment.
- */
 public class DailyRoutineFragment extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
-    // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
 
     private static final String ARG_LIST = "list";
     private ArrayList<String[]> list2 = new ArrayList<String[]>();
-    //private ArrayList<ActivityItem> listItems;
     private static ArrayList<DailyRoutineView> items = new ArrayList<DailyRoutineView>();
     private static LinearLayout linearLayout;
 
@@ -68,11 +55,6 @@ public class DailyRoutineFragment extends Fragment {
     private TimerTask timerTask;
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
     private static Uri imageURI;
-
-    // TODO: Rename and change types of parameters
-    private ArrayList<String> arglist;
-
-
     private OnFragmentInteractionListener mListener;
     private DailyRoutineView dailyRoutineView;
     private static AppCompatActivity aca;
@@ -85,19 +67,15 @@ public class DailyRoutineFragment extends Fragment {
     private RelativeLayout progressBar;
     private LinearLayout routineLayout;
 
-    /**
-     * Use this factory method to create a new instance of
-     * this fragment using the provided parameters.
-     *
-     * @return A new instance of fragment DailyRoutineFragment.
-     */
-    // TODO: Rename and change types and number of parameters
-    public static DailyRoutineFragment newInstance(ArrayList<String> list) {
-        DailyRoutineFragment fragment = new DailyRoutineFragment();
-        Bundle args = new Bundle();
-        args.putStringArrayList(ARG_LIST, list);
-        fragment.setArguments(args);
+    // Defines a custom Intent action
+    public static final String BROADCAST_ACTION =
+            "com.example.android.threadsample.BROADCAST";
+    // Defines the key for the status "extra" in an Intent
+    public static final String EXTENDED_DATA_STATUS =
+            "com.example.android.threadsample.STATUS";
 
+    public static DailyRoutineFragment newInstance() {
+        DailyRoutineFragment fragment = new DailyRoutineFragment();
         return fragment;
     }
 
@@ -114,9 +92,6 @@ public class DailyRoutineFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            arglist = getArguments().getStringArrayList(ARG_LIST);
-        }
 
         nameBS = getResources().getString(R.string.pref_blood_sugar);
         at = getResources().getString(R.string.at);
@@ -130,7 +105,7 @@ public class DailyRoutineFragment extends Fragment {
 
         // The filter's action is BROADCAST_ACTION
         mStatusIntentFilter = new IntentFilter(
-                EntryScreenActivity.BROADCAST_ACTION);
+                DailyRoutineFragment.BROADCAST_ACTION);
     }
 
     /**
@@ -192,11 +167,11 @@ public class DailyRoutineFragment extends Fragment {
             routineLayout.setVisibility(View.GONE);
 
         // Instantiates a new ResponseReceiver
-            ResponseReceiver mDownloadStateReceiver =
+            ResponseReceiver mPredictionReceiver =
                     new ResponseReceiver();
             // Registers the ResponseReceiver and its intent filters
             LocalBroadcastManager.getInstance(getContext()).registerReceiver(
-                    mDownloadStateReceiver, mStatusIntentFilter);
+                    mPredictionReceiver, mStatusIntentFilter);
 
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("LAST_PREDICTION", String.valueOf(current.getTimeInMillis()));

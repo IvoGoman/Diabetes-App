@@ -2,7 +2,10 @@ package uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag;
 
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -11,6 +14,7 @@ import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -21,6 +25,7 @@ import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.io.File;
@@ -30,6 +35,7 @@ import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityInputHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.UI.CustomListView;
+import uni.mannheim.teamproject.diabetesplaner.UI.FileLoadingService;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
 
@@ -38,35 +44,36 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
  */
 public class ActivityFragment extends Fragment {
 
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
     private static final int MY_PERMISSIONS_READ_Storage = 0;
     public static AbsListView lv;
     public static ArrayList<String> FileList = new ArrayList<String>();
     private static View inflaterView;
-    private static ListAdapter adapter;
+    public static ListAdapter adapter;
     final DataBaseHandler DBHandler = AppGlobal.getHandler();
-    ActivityInputHandler ActivityInputHndlr = new ActivityInputHandler();
     private String mParam1;
     private String mParam2;
     private AppCompatActivity aca;
+    private IntentFilter mStatusIntentFilter;
+
+    // Defines a custom Intent action
+    public static final String BROADCAST_ACTION =
+            "com.example.android.threadsample.BROADCAST";
+    // Defines the key for the status "extra" in an Intent
+    public static final String EXTENDED_DATA_STATUS =
+            "com.example.android.threadsample.STATUS";
+    public static final String FILEPATH = "filepath";
+    private RelativeLayout progressBar;
 
     public ActivityFragment() {
         // Required empty public constructor
     }
 
     /**
-     * @param param1
-     * @param param2
      * @return A new instance of fragment ActivityFragment
      * @author Naira
      */
-    public static ActivityFragment newInstance(String param1, String param2) {
+    public static ActivityFragment newInstance() {
         ActivityFragment fragment = new ActivityFragment();
-        Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
-        fragment.setArguments(args);
         return fragment;
     }
 
@@ -78,12 +85,12 @@ public class ActivityFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
-        }
         aca = (AppCompatActivity) getActivity();
         aca.getSupportActionBar().setTitle("Activity");
+
+        // The filter's action is BROADCAST_ACTION
+        mStatusIntentFilter = new IntentFilter(
+                ActivityFragment.BROADCAST_ACTION);
     }
 
     /**
@@ -103,6 +110,9 @@ public class ActivityFragment extends Fragment {
         //initializing variables to their corresponding layout elements
         final FloatingActionButton floatingButton = (FloatingActionButton) inflaterView.findViewById(R.id.add_button);
         lv = (ListView) inflaterView.findViewById(R.id.listView);
+
+        progressBar = (RelativeLayout) inflaterView.findViewById(R.id.file_chooser_progress);
+        progressBar.setVisibility(View.GONE);
 
         adapter = new CustomListView(getActivity(), FileList);
 
@@ -153,22 +163,41 @@ public class ActivityFragment extends Fragment {
                             String fileString = (String) file.toString();
                             String[] fileStringSplit = fileString.split("/");
                             String requiredSplitPart = fileStringSplit[fileStringSplit.length - 1];
-                            if ((ActivityInputHndlr.isFileFormatValid(fileString)) == true) {
-                                FileList.add(requiredSplitPart);
+                            if ((ActivityInputHandler.isFileFormatValid(fileString)) == true) {
+                                ActivityFragment.FileList.add(requiredSplitPart);
                                 Toast.makeText(getActivity(), "Chosen File:" + requiredSplitPart, Toast.LENGTH_LONG).show();
                                 try {
-                                    ActivityInputHndlr.loadIntoDatabase(fileString);
+
+                                    //-----START-SERVICE-CALL---------------------------------------------------
+                                    progressBar.setVisibility(View.VISIBLE);
+                                    lv.setVisibility(View.GONE);
+                                    Intent mServiceIntent = new Intent(getActivity(), FileLoadingService.class);
+                                    mServiceIntent.putExtra(FILEPATH, fileString);
+                                    // Starts the IntentService
+                                    getActivity().startService(mServiceIntent);
+
+                                    // Instantiates a new ResponseReceiver
+                                    ResponseReceiver mDownloadStateReceiver =
+                                            new ResponseReceiver();
+                                    // Registers the ResponseReceiver and its intent filters
+                                    LocalBroadcastManager.getInstance(getContext()).registerReceiver(
+                                            mDownloadStateReceiver, mStatusIntentFilter);
+
+                                    //------------END-SERVICE-CALL----------------------------------------------
+                                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("PREDICTION_SERVICE_FILE", Context.MODE_PRIVATE);
+                                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                                    editor.putString("LAST_PREDICTION", "0");
+                                    editor.commit();
                                 } catch(Exception e){
                                     Toast.makeText(getActivity(), R.string.error_loading_data, Toast.LENGTH_LONG).show();
                                 }
-                                ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
+                                ((AdapterView<ListAdapter>) ActivityFragment.lv).setAdapter(ActivityFragment.adapter);
                             } else {
                                 Toast.makeText(getActivity(), "File is not in the correct format", Toast.LENGTH_LONG).show();
                             }
                         }
                     }).showDialog();
                 }
-
             }
         });
         return inflaterView;
@@ -195,22 +224,22 @@ public class ActivityFragment extends Fragment {
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 
-                    new FileChooser(getActivity()).setFileListener(new FileChooser.FileSelectedListener() {
-                        @Override
-                        public void fileSelected(final File file) {
-                            String fileString = (String) file.toString();
-                            String[] fileStringSplit = fileString.split("/");
-                            String requiredSplitPart = fileStringSplit[fileStringSplit.length - 1];
-                            if ((ActivityInputHndlr.isFileFormatValid(fileString)) == true) {
-                                FileList.add(requiredSplitPart);
-                                Toast.makeText(getActivity(), "Chosen File:" + requiredSplitPart, Toast.LENGTH_LONG).show();
-                                ActivityInputHndlr.loadIntoDatabase(fileString);
-                                ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
-                            } else {
-                                Toast.makeText(getActivity(), "File is not in the correct format", Toast.LENGTH_LONG).show();
-                            }
-                        }
-                    }).showDialog();
+//                    new FileChooser(getActivity()).setFileListener(new FileChooser.FileSelectedListener() {
+//                        @Override
+//                        public void fileSelected(final File file) {
+//                            String fileString = (String) file.toString();
+//                            String[] fileStringSplit = fileString.split("/");
+//                            String requiredSplitPart = fileStringSplit[fileStringSplit.length - 1];
+//                            if ((ActivityInputHndlr.isFileFormatValid(fileString)) == true) {
+//                                FileList.add(requiredSplitPart);
+//                                Toast.makeText(getActivity(), "Chosen File:" + requiredSplitPart, Toast.LENGTH_LONG).show();
+//                                ActivityInputHndlr.loadIntoDatabase(fileString);
+//                                ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
+//                            } else {
+//                                Toast.makeText(getActivity(), "File is not in the correct format", Toast.LENGTH_LONG).show();
+//                            }
+//                        }
+//                    }).showDialog();
                 } else {
                     Log.d("filechooser permission", "permission denied");
                     // permission denied, boo! Disable the
@@ -220,6 +249,20 @@ public class ActivityFragment extends Fragment {
             }
             // other 'case' lines to check for other
             // permissions this app might request
+        }
+    }
+
+    private class ResponseReceiver extends BroadcastReceiver {
+        // Prevents instantiation
+        private ResponseReceiver() {
+        }
+
+        // Called when the BroadcastReceiver gets an Intent it's registered to receive
+//    @
+        public void onReceive(Context context, Intent intent) {
+            //do something
+            progressBar.setVisibility(View.GONE);
+            lv.setVisibility(View.VISIBLE);
         }
     }
 }
