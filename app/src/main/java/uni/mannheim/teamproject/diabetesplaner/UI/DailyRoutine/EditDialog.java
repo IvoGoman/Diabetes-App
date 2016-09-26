@@ -46,6 +46,7 @@ public class EditDialog extends InputDialog {
                     int activityId = getSelectedActivity();
                     int subactivityId = getSelectedSubActivity();
                     String meal = getMeal();
+                    String imagePath = getImagePath();
                     int intensity = getIntensity();
                     if (subactivityId==0){
                         subactivityId = activityId;
@@ -58,6 +59,7 @@ public class EditDialog extends InputDialog {
                     item.setSubactivityId(subactivityId);
                     item.setIntensity(intensity);
                     item.setMeal(meal);
+                    item.setImagePath(imagePath);
 //                    String newDateStart = Util.combineDateAndTime(getDrHandler().getDate(), activityItem.getStarttime());
 //                    String newDateEnd = Util.combineDateAndTime(getDrHandler().getDate(), activityItem.getEndtime());
                     AppGlobal.getHandler().DeleteActivity(dateStart, dateEnd);
