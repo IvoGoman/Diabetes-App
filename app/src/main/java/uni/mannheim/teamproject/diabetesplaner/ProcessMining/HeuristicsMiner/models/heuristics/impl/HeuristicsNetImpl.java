@@ -333,6 +333,8 @@ public class HeuristicsNetImpl implements Comparable<HeuristicsNet>, HeuristicsN
 		return activitiesMappingStructures;
 	}
 
+
+
 	/*
 	 * (non-Javadoc)
 	 * 

@@ -10,6 +10,8 @@ import android.support.v4.content.LocalBroadcastManager;
 import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
+import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
+import uni.mannheim.teamproject.diabetesplaner.Utility.DummyDataCreator;
 
 /**
  * Created by Stefan on 26.09.2016.
@@ -25,11 +27,13 @@ public class PredictionService extends IntentService {
         // Gets data from the incoming Intent
         String dataString = workIntent.getDataString();
 
+        //DummyDataCreator.populateDataBase();
+
         ArrayList<Integer> algos = new ArrayList<>();
 //        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
         algos.add(PredictionFramework.PREDICTION_GSP);
-//        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
-//        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
+        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
+        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
 //        try {
         predictDailyRoutine(algos,PredictionFramework.EVERY_DAY);
 

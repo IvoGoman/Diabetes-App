@@ -4,6 +4,7 @@ import android.support.v4.util.Pair;
 import android.util.Log;
 
 import org.deckfour.xes.classification.XEventAndClassifier;
+import org.deckfour.xes.classification.XEventClass;
 import org.deckfour.xes.classification.XEventClasses;
 import org.deckfour.xes.classification.XEventAttributeClassifier;
 import org.deckfour.xes.classification.XEventClassifier;
@@ -19,11 +20,11 @@ import org.deckfour.xes.model.XLog;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
-import cern.colt.matrix.DoubleMatrix1D;
-import cern.colt.matrix.DoubleMatrix2D;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing.CustomXLog;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.ProcessMiningUtil;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
@@ -33,7 +34,6 @@ import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plu
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plugins.heuristicsnet.miner.heuristics.HeuristicsMinerConstants;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plugins.heuristicsnet.miner.heuristics.miner.HeuristicsMiner;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plugins.heuristicsnet.miner.heuristics.miner.settings.HeuristicsMinerSettings;
-import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
  * @author Jan
@@ -141,6 +141,7 @@ public class HeuristicsMinerImplementation {
      */
     public ArrayList<ActivityItem> runHeuristicsMinerTest(ArrayList<ActivityItem> train)
     {
+
         return HeuristicsMining(new CustomXLog(train));
     }
 
@@ -155,6 +156,7 @@ public class HeuristicsMinerImplementation {
             if (xLogInput == null) {
                 return null;
             } else {
+
                 CustomXLog xLog = xLogInput;
                 XLog log = xLog.getXLog();
                 ArrayList<String[]> cases = xLog.getCases();
@@ -162,15 +164,12 @@ public class HeuristicsMinerImplementation {
                 cases.remove(0);
                 eventList.remove(0);
 
-                XEventClassifier nameCl = new XEventNameClassifier();
-                XEventClassifier lifeTransCl = new XEventLifeTransClassifier();
-                XEventClassifier test = new XEventResourceClassifier();
-                XEventAttributeClassifier attrClass = new XEventAndClassifier(nameCl, lifeTransCl);
+                XEventAttributeClassifier attrClass = new XEventAndClassifier(new XEventNameClassifier(), new XEventLifeTransClassifier());
                 XEventClassifier defaultClassifier = attrClass;
 
                 XLogInfo logInfo = new XLogInfoImpl(log, defaultClassifier, log.getClassifiers());
                 //Set settings of the HeuristicsMiner
-                XLogInfo logInfo2 = XLogInfoFactory.createLogInfo(log);
+                //XLogInfo logInfo2 = XLogInfoFactory.createLogInfo(log);
 
                 XEventClassifier classifier = logInfo.getEventClassifiers().iterator().next();
 
@@ -180,15 +179,13 @@ public class HeuristicsMinerImplementation {
                 hms.setRelativeToBestThreshold(relativeToBestThreshold);
                 hms.setClassifier(defaultClassifier);
 
-                XEventClasses EventClasses = XEventClasses.deriveEventClasses(defaultClassifier, log);
-                ActivitiesMappingStructures struct = new ActivitiesMappingStructures(EventClasses);
+               // XEventClasses EventClasses = XEventClasses.deriveEventClasses(defaultClassifier, log);
+                //ActivitiesMappingStructures struct = new ActivitiesMappingStructures(EventClasses);
 
                 //run the HeuristicsMiner
                 HeuristicsMiner miner = new HeuristicsMiner(log,hms);
                 miner.mine();
                 SimpleHeuristicsNet myNet = miner.getSimpleNet2();
-
-                ArrayList<ActivityItem> PredictedActivities = new ArrayList<ActivityItem>();
 
                 int StartId = -1;
                 int EndId = -1;
@@ -196,144 +193,155 @@ public class HeuristicsMinerImplementation {
                 int ActivitySubID;
                 String ID_String;
                 int completeID = -1;
-                ActivityItem StartElement = new ActivityItem(-1,-1);
+                HashMap<Integer, ArrayList<Integer>> ResolveTrace = new HashMap<>();
                 Map<Integer, Double> durationMap;
                 durationMap = ProcessMiningUtil.getAverageDurations(eventList);
 
+                StartId = myNet.getActivitiesMappingStructures().getReverseActivitiesMapping().get(
+                        new XEventClass(String.valueOf(ProcessMiningUtil.getMostFrequentStartActivity(cases))+"+Complete", 0)).get(0);
 
-                //Get Start and EndId
-                if(myNet.getStartActivities().size() == 1) {
-                    StartId = myNet.getStartActivities().get(0);
-
-                    //Set Start Activity as first item for PredictedActivity List
-
-                    ID_String = myNet.getActivitiesMappingStructures().getActivitiesMapping()[StartId].getId().split("\\+")[0];
-
-                    ActivityID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[0];
-                    ActivitySubID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[1];
-                    completeID = Integer.parseInt(ID_String);
-                    StartElement.setActivityId(ActivityID);
-                    StartElement.setSubactivityId(ActivitySubID);
-
-                    StartElement.setDuration(durationMap.get(completeID));
-                    PredictedActivities.add(StartElement);
-                }
-                else
-                {
-
-
-                }
                 if(myNet.getEndActivities().size() == 1)
                 {
                     EndId = myNet.getEndActivities().get(0);
 
                 }
-                else
-                {
-
-                }
-                int nextID = StartId;
-                if(nextID == EndId)
+                int currentID = StartId;
+                if(currentID == EndId)
                 {
                     return null;
                 }
 
                 List<Pair<Integer,Double>> idDurationMap = new ArrayList<>();
                 //determine nextID of the graph
-                nextID = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(nextID));
+                //nextID = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(nextID));
                 //split next ActivityID
-                ID_String = myNet.getActivitiesMappingStructures().getActivitiesMapping()[nextID].getId().split("\\+")[0];
+                ID_String = myNet.getActivitiesMappingStructures().getActivitiesMapping()[StartId].getId().split("\\+")[0];
                 ActivityID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[0];
                 ActivitySubID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[1];
                 completeID = Integer.parseInt(ID_String);
 
+                ResolveTrace.put(StartId,new ArrayList<Integer>());
+//                int nextStartID = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(currentID));
+//                ArrayList<Integer> tempArray = ResolveTrace.get(StartId);
+//                tempArray.add(nextStartID);
+//                ResolveTrace.put(StartId, tempArray);
+                int pre_id = -1;
+                int count = 0;
+                while (completeID != 9991 || ProcessMiningUtil.isTotalDurationReached(idDurationMap)) {
 
-                while (completeID != 9991) {
+                   /* //loop detected
+                    if(ResolveTrace.get(nextID) == nextID)
+                    {
+                        nextID = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(nextID));
+                        //Loop which will never end
+                        if((myNet.getMetrics().getOutputSet(nextID).size() == 1) && myNet.getMetrics().getOutputSet(pre_id).size() == 1)
+                            return ProcessMiningUtil.createActivities(idDurationMap,false);
 
-
+                        //Take the second highest dependecy measure as ID of next Event
+                        nextID = myNet.getMetrics().getBestOutputEvent(getNextIdIfLoop(nextID,pre_id,myNet));
+                    }*/
+                    //store predecessor ID
+                    if(count % 2 == 0)
+                    {
+                        pre_id = currentID;
+                    }
+                    count++;
                     //add to duration map to check if day is finished
                     idDurationMap.add(new Pair<Integer, Double>(completeID, durationMap.get(completeID)));
 
-                    //Add next ActivityID as ActivityItem
-                    ActivityItem PredictElement = new ActivityItem(ActivityID, ActivitySubID, durationMap.get(completeID));
-                    //Add it to result list
-                    PredictedActivities.add(PredictElement);
+
+                    if(!ResolveTrace.containsKey(currentID))
+                    {
+                        ResolveTrace.put(currentID,new ArrayList<Integer>());
+                    }
+                    ArrayList<Integer> tempArray = ResolveTrace.get(currentID);
+
+                    //Put next Successor to the Successorlist of current ID
+                    tempArray = ResolveTrace.get(currentID);
+                    int nextID = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(currentID));
+                    //if new successor is already in successor list, search for a new one
+                    if(tempArray.contains(nextID)) {
+                        try {
+                            //if no new ID can be found, return the current Duration map as Activities
+                            nextID = getNextIdIfLoop(currentID,nextID,tempArray,myNet);
+                        }catch (Exception e)
+                        {
+                            Log.d("HeuristicsMiner", "HM calculation done!--------------------------------");
+                            return ProcessMiningUtil.createActivities(idDurationMap,false);
+                        }
+
+                        tempArray.add(nextID);
+                    }else
+                    {
+                        tempArray.add(nextID);
+                    }
+                    ResolveTrace.put(currentID, tempArray);
+
 
                     //determine nextID of the graph
-                    nextID = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(nextID));
+                    currentID = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(currentID));
+
                     //split next ActivityID
-                    ID_String = myNet.getActivitiesMappingStructures().getActivitiesMapping()[nextID].getId().split("\\+")[0];
+                    ID_String = myNet.getActivitiesMappingStructures().getActivitiesMapping()[currentID].getId().split("\\+")[0];
                     ActivityID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[0];
                     ActivitySubID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[1];
                     completeID = Integer.parseInt(ID_String);
                 }
 
+                Log.d("HeuristicsMiner", "HM calculation done!--------------------------------");
                 return ProcessMiningUtil.createActivities(idDurationMap,false);
-                //Prepare result for the UI
-                //Go through all activities, beginning at the start activity and continue with the next activity ActivityID with the highest probability.
-               /* for (int i = 1; i < myNet.getActivitiesMappingStructures().getActivitiesMapping().length; i = i+2) {
-                    ActivityItem PredictElement = new ActivityItem(-1, -1);
-                    if(i != 1) {
-                        nextID = myNet.getMetrics().getBestOutputEvent(nextID);
-                    }
-                    if(nextID != EndId) {
-                        ID_String = myNet.getActivitiesMappingStructures().getActivitiesMapping()[nextID].getId().split("\\+")[0];
 
-                        if (ID_String.contentEquals("Start//Start") == false) {
-                            //resolve ActivityID and SubId
-
-                            ActivityID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[0];
-                            ActivitySubID = ProcessMiningUtil.splitID(Integer.parseInt(ID_String))[1];
-                            completeID = Integer.parseInt(ID_String);
-                            PredictElement.setActivityId(ActivityID);
-                            PredictElement.setSubactivityId(ActivitySubID);
-
-                            PredictElement.setDuration(durationMap.get(completeID));
-
-                            PredictedActivities.add(PredictElement);
-                        }
-                    }
-                    else
-                    {
-                        //Only start and end activity were predicted
-                        if(i == 1)
-                        {
-                            return null;
-                        }
-                        ID_String = myNet.getActivitiesMappingStructures().getActivitiesMapping()[EndId].getId().split("\\+")[0];
-                        if (ID_String.length() == 3) {
-                            ActivityID = Integer.parseInt(ID_String.substring(0, 2));
-                            ActivitySubID = Integer.parseInt(ID_String.substring(2));
-                            completeID = Integer.parseInt(ID_String);
-                            PredictElement.setActivityId(ActivityID);
-                            PredictElement.setSubactivityId(ActivitySubID);
-                        } else {
-                            ActivityID = Integer.parseInt(ID_String);
-                            ActivitySubID = 0;
-                            completeID = ActivityID;
-                            PredictElement.setActivityId(ActivityID);
-                            PredictElement.setSubactivityId(ActivitySubID);
-                        }
-                        PredictElement.setDuration(durationMap.get(completeID));
-                        PredictedActivities.add(PredictElement);
-                        return PredictedActivities;
-                    }
-
-
-                }
-
-                //Check if result is meaningful
-                if (PredictedActivities.size() > 2) {
-                    return PredictedActivities;
-                } else {
-                    return null;
-                }*/
             }
         } catch (Exception e) {
             Log.d("HeuristicsMiner", e.getMessage());
             return null;
         }
     }
+
+    /***
+     * returns the secondhighest measure_id of a given row_id
+     * @param currentID
+     * @param nextID
+     * @param followerArray
+     *@param myNet  @return
+     */
+    private int getNextIdIfLoop(int currentID, int nextID, ArrayList<Integer> followerArray, SimpleHeuristicsNet myNet) {
+        TreeMap<Double, Integer> idMeasureMap = new TreeMap<Double, Integer>();
+        //Decide betweend nextID and pre_ID
+        if ((myNet.getOutputSet(currentID).get(0).size() == 1) && (myNet.getOutputSet(nextID).get(0).size() > 1)) {
+            for (int row = 0; row < myNet.getOutputSet(nextID).get(0).size(); row++) {
+                if(!followerArray.contains(myNet.getOutputSet(nextID).get(0).get(row)-1)) {
+                    double new_measure = myNet.getMetrics().getDependencyMeasuresAccepted().getQuick(currentID, myNet.getOutputSet(currentID).get(0).get(row));
+
+                    if(idMeasureMap.containsKey(new_measure)) {
+                        //Flip coin if new ID is used
+                        if ((Math.random()*100+1) % 2 < 1) {
+                            idMeasureMap.put(myNet.getMetrics().getDependencyMeasuresAccepted().getQuick(nextID, myNet.getOutputSet(nextID).get(0).get(row)), myNet.getOutputSet(nextID).get(0).get(row));
+                        }
+                    }
+                    else
+                    {
+                        idMeasureMap.put(myNet.getMetrics().getDependencyMeasuresAccepted().getQuick(nextID, myNet.getOutputSet(nextID).get(0).get(row)), myNet.getOutputSet(nextID).get(0).get(row));
+                    }
+                }
+            }
+        }
+        else {
+
+            for (int row = 0; row < myNet.getOutputSet(currentID).get(0).size(); row++) {
+                //check if new ID is not the ID of the loop
+                int future_id = myNet.getOutputSet(currentID).get(0).get(row)-1;
+                if(!followerArray.contains(future_id)) {
+                    double new_measure = myNet.getMetrics().getDependencyMeasuresAccepted().getQuick(currentID, future_id+1);
+                    idMeasureMap.put(new_measure, future_id);
+
+                }
+            }
+        }
+        //return the last key
+        return idMeasureMap.lastEntry().getValue();
+    }
+
     /***
      * Runs the HeuristicsMiner and sets the output for the DailyRoutine Fragment
      * @param train

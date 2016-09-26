@@ -71,7 +71,7 @@ public class PredictionFramework implements Runnable{
                 }
             }
             //for debugging the results of the Prediction
-            String debugResult = null;
+            String debugResult = "";
             for(int k = 0; k < algorithms.size();k++) {
                 debugResult = debugResult + "-----------------------" + "\n";
                 debugResult = debugResult + "Algorithm: " + String.valueOf(algorithms.get(k)) + "\n";
@@ -325,7 +325,7 @@ public class PredictionFramework implements Runnable{
                     new Thread(new Runnable() {
                         @Override
                         public void run() {
-                            HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation();
+                            HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation(0.7,1,0.05);
                             ArrayList<ActivityItem> prediction = HMmodel.runHeuristicsMiner(train);
                             results.put(PREDICTION_HEURISTICS_MINER, prediction);
                             double acc1 = Evaluation.Accuracy(train, prediction);
