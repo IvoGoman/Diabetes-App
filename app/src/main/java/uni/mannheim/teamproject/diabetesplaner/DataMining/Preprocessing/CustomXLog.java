@@ -118,7 +118,8 @@ public class CustomXLog {
             subActivityID = ProcessMiningUtil.getIDwithLeadingZero(item.getSubactivityId());
             Long[] timestamps = TimeUtils.convertDateStringToTimestamp(new String[]{item.getStarttimeAsString(), item.getEndtimeAsString()});
 
-            if(TimeUtils.isAM(timestamps[0]).equals("11") || TimeUtils.isAM(timestamps[1]).equals("11")){
+//            if(TimeUtils.isAM(timestamps[0]).equals("11") || TimeUtils.isAM(timestamps[1]).equals("11")){
+            if(TimeUtils.isAM(timestamps[0]).equals("11")){
                 isAM = "11";
             } else {
                 isAM = "10";
