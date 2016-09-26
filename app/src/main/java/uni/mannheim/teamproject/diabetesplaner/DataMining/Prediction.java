@@ -389,6 +389,9 @@ public class Prediction {
         newInstance.setDataset(inst);
 
         ActivityBefore1 = "Schlafen|Schlafen";
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            ActivityBefore1 = "Sleeping|Sleeping";
+        }
 
         ArrayList<ActivityItem>routine = new ArrayList<>();
         for (int i=1;i<train.size()+1;i++){

@@ -62,6 +62,7 @@ public class PredictionFramework implements Runnable{
     public void run() {
         completed = 0;
         dailyRoutine.clear();
+
         if(train.size()>0) {
             runAlgorithms(train, algorithms);
             //wait until all algorithms terminated
@@ -180,10 +181,13 @@ public class PredictionFramework implements Runnable{
                         @Override
                         public void run() {
                             try {
+                                double acc3 = Evaluation.usageTreeK(train,15);
                                 ArrayList<ActivityItem> prediction = Prediction.GetRoutineAsAI(train);
                                 double acc1 = Evaluation.Accuracy(train, prediction);
                                 double acc2 = Evaluation.AccuracyFlow(train, prediction);
-                                double acc3 = Evaluation.usageTreeK(train,15);
+                                double precision = Evaluation.Precision(train, prediction);
+                                double recall = Evaluation.Recall(train, prediction);
+                                double fMeasure = Evaluation.Fmeasure(precision,recall);
                                 results.put(PREDICTION_DECISION_TREE, prediction);
                             } catch (Exception e) {
                                 e.printStackTrace();

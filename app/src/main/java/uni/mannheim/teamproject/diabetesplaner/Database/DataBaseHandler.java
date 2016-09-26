@@ -291,6 +291,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db1 = this.getReadableDatabase();
         HashMap<String,Integer> Activities = new HashMap<>();
         Cursor cursor = db1.rawQuery("select id,title from Activities;", null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db1.rawQuery("select id,title_eng as title from Activities;", null);
+        }
         if (cursor.moveToFirst()) {
             do {
                 activityID = cursor.getInt(cursor.getColumnIndex("id"));
@@ -405,6 +408,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db1 = this.getReadableDatabase();
         HashMap<String,Integer> result = new HashMap<>();
         Cursor cursor = db1.rawQuery("select id,title from SubActivities where id_Activity=" + String.valueOf(activityId), null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db1.rawQuery("select id,title_eng as Title from SubActivities where id_Activity=" + String.valueOf(activityId), null);
+        }
         if (cursor.moveToFirst()) {
             do {
                 result.put(cursor.getString(cursor.getColumnIndex("Title")).replace(" ",""),cursor.getInt(cursor.getColumnIndex("id")));
@@ -693,7 +699,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @author Stefan 20.09.2016
      */
     public void insertNewRoutine(ArrayList<ActivityItem> prediction){
-        if(prediction.size()>0) {
+        if(prediction!=null && prediction.size()>0) {
             deleteDay(prediction.get(0).getStarttime());
 
             for(int i=0; i<prediction.size(); i++){
@@ -874,7 +880,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("select ActivityList.id, Activities.title as Activity, SubActivities.title as SubActivity,  ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id inner join Activities on Subactivities.id_Activity = Activities.id", null);
         if (Locale.getDefault().getLanguage().equals("en")) {
-            db.rawQuery("select ActivityList.id, Activities.title_eng as Activity, SubActivities.title as SubActivity,  ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id inner join Activities on Subactivities.id_Activity = Activities.id", null);
+            cursor = db.rawQuery("select ActivityList.id, Activities.title_eng as Activity, SubActivities.title_eng as SubActivity,  ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id inner join Activities on Subactivities.id_Activity = Activities.id", null);
         }
         return cursor;
     }

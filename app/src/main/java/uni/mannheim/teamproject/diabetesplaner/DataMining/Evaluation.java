@@ -99,7 +99,7 @@ public class Evaluation {
             }
             for (Integer key: realRes.keySet()){
                 count++;
-                if (realRes.get(key)==gspRes.get(key)){
+                if (realRes.keySet().contains(key) && realRes.get(key)==gspRes.get(key)){
                     acc++;
                 }
             }
@@ -192,7 +192,7 @@ public class Evaluation {
         return 1-error;
     }
 
-    double Precision(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> pred){
+    static double Precision(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> pred){
         ArrayList<Integer> Actions = AppGlobal.getHandler().getAllSubactivitiesId();
         int acc=0;
         int count=0;
@@ -218,7 +218,7 @@ public class Evaluation {
                 for (Integer key : gspRes.keySet()) {
                     if (gspRes.get(key) == Action) {
                         count++;
-                        if (realRes.get(key) == gspRes.get(key)) {
+                        if (realRes.keySet().contains(key) && realRes.get(key) == gspRes.get(key)) {
                             acc++;
                         }
                     }
@@ -233,7 +233,7 @@ public class Evaluation {
         return sumPrecisions/precisions.size();
     }
 
-    double Recall(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> pred){
+    static double Recall(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> pred){
         ArrayList<Integer> Actions = AppGlobal.getHandler().getAllSubactivitiesId();
         int acc=0;
         int count=0;
@@ -256,15 +256,19 @@ public class Evaluation {
                 }
             }
             for (int Action:Actions) {
+                acc=0;
+                count=0;
                 for (Integer key : realRes.keySet()) {
                     if (realRes.get(key) == Action) {
                         count++;
-                        if (realRes.get(key) == gspRes.get(key)) {
+                        if (realRes.keySet().contains(key) && realRes.get(key) == gspRes.get(key)) {
                             acc++;
                         }
                     }
                 }
-                recalls.add((double)acc/(double)count);
+                if (count!=0) {
+                    recalls.add((double) acc / (double) count);
+                }
             }
         }
         double sumRecalls = 0;
@@ -274,7 +278,7 @@ public class Evaluation {
         return sumRecalls/recalls.size();
     }
 
-    Double Fmeasure(double precision, double recall){
+    static double Fmeasure(double precision, double recall){
         Double Fmeasure=2*precision*recall/(recall+precision);
         return Fmeasure;
     }
@@ -288,7 +292,7 @@ public class Evaluation {
         Calendar calendar = Calendar.getInstance();
         int activityCur = activityItem.getSubactivityId();
         java.util.Date end = new Date();
-        end.setTime(activityItem.getEndtime().getTime());
+        end.setTime(activityItem.getEndtime().getTime()+60000);
         java.util.Date curDate = start;
         int num = 0;
         while (curDate.before(end)) {
