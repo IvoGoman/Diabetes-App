@@ -651,6 +651,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
 
         InsertActivity(Activ);
+        mergeSimilarActivities();
         SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("delete from ActivityList where Start>=End");
 //        db1.close();
@@ -1342,8 +1343,85 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
 //  Potential Utility Functions
 
+    public void mergeSimilarActivities() {
+        SQLiteDatabase db1 = this.getWritableDatabase();
+        Cursor cursor = db1.rawQuery("select id_SubActivity,Start,End,Meal,ImagePath,Intensity from ActivityList order by Start;", null);
+        ActivityItem last_activity = new ActivityItem(0, 0, TimeUtils.getDateFromString("1980-01-01 00:00"), TimeUtils.getDateFromString("1980-01-01 00:00"));
+        ActivityItem activity = new ActivityItem(0, 0, TimeUtils.getDateFromString("1980-01-01 00:00"), TimeUtils.getDateFromString("1980-01-01 00:00"));
+        if (cursor.moveToFirst()) {
+            do {
+                if (activity.getSubactivityId() != 0) {
+                    last_activity.setSubactivityId(activity.getSubactivityId());
+                    last_activity.setActivityId(activity.getActivityId());
+                    last_activity.setStarttime(activity.getStarttime());
+                    last_activity.setEndtime(activity.getEndtime());
+                    last_activity.setMeal(activity.getMeal());
+                    last_activity.setIntensity(activity.getIntensity());
+                    last_activity.setDuration(activity.getDuration());
+                }
+                activity.setSubactivityId(cursor.getInt(cursor.getColumnIndex("id_SubActivity")));
+                int activityId = this.getActivityIdbySubActicityId(activity.getSubactivityId());
+                activity.setActivityId(activityId);
+                activity.setStarttime(TimeUtils.getDateFromString(cursor.getString(cursor.getColumnIndex("Start"))));
+                activity.setEndtime(TimeUtils.getDateFromString(cursor.getString(cursor.getColumnIndex("End"))));
+                activity.setMeal(cursor.getString(cursor.getColumnIndex("Meal")));
+                activity.setImagePath(cursor.getString(cursor.getColumnIndex("ImagePath")));
+                activity.setIntensity(cursor.getInt(cursor.getColumnIndex("Intensity")));
+
+                if (activity.getSubactivityId() == last_activity.getSubactivityId()){
+                    if (getСompleteness(activity)>getСompleteness(last_activity)){
+                        if (activity.getStarttime().after(last_activity.getStarttime())){
+                            activity.setStarttime(last_activity.getStarttime());
+                        }
+                        if (activity.getEndtime().before(last_activity.getEndtime())){
+                            activity.setEndtime(last_activity.getEndtime());
+                        }
+                        String Start = activity.getStarttimeAsString();
+                        String End = activity.getEndtimeAsString();
+                        findActionbyStartEndTime(Start, End);
+                        findActionbyStartEndTime2(Start, End);
+                        findActionbyStartTime(Start);
+                        findActionbyEndTime(End);
 
 
+                        InsertActivity(activity);
+                    }
+                    else{
+                        if (last_activity.getStarttime().after(activity.getStarttime())){
+                            last_activity.setStarttime(activity.getStarttime());
+                        }
+                        if (last_activity.getEndtime().before(activity.getEndtime())){
+                            last_activity.setEndtime(activity.getEndtime());
+                        }
+                        String Start = last_activity.getStarttimeAsString();
+                        String End = last_activity.getEndtimeAsString();
+                        findActionbyStartEndTime(Start, End);
+                        findActionbyStartEndTime2(Start, End);
+                        findActionbyStartTime(Start);
+                        findActionbyEndTime(End);
+
+
+                        InsertActivity(last_activity);
+                    }
+                }
+            }
+            while (cursor.moveToNext());
+        }
+    }
+
+    private int getСompleteness(ActivityItem ai){
+        int completeness =0;
+        if (ai.getImagePath()!=null && ai.getImagePath()!=""){
+            completeness++;
+        }
+        if (ai.getIntensity()!=null && ai.getIntensity()!=0){
+            completeness++;
+        }
+        if (ai.getMeal()!=null && ai.getMeal()!=""){
+            completeness++;
+        }
+        return completeness;
+    }
 
     public String[] getUser(int id)
     {
