@@ -97,7 +97,7 @@ public class Wifi extends BroadcastReceiver {
 
                     makePredictionWifi(ssid);
                 }
-            }, 3000);
+            }, 7000);
             return START_NOT_STICKY;
         }
 
