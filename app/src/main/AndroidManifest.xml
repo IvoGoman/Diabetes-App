@@ -108,16 +108,13 @@
 
         <service
             android:name=".DataMining.Recommendation.BSInputRecommendation"
-            android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
         <service
             android:name=".DataMining.Recommendation.ActivityRecommendation"
-            android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
         <service
             android:name=".DataMining.Recommendation.FoodRecommendation"
-            android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
     </application>
 
 </manifest>

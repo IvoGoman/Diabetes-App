@@ -189,4 +189,6 @@
     <string name="added">Hinzugefügt</string>
     <string name="chosen">Gewählte Datei</string>
     <string name="wrong_format">Dateiformat wird nicht unterstützt.</string>
+    <string name="usualBSM">Deine gewöhnliche Eingabe des Blutzuckerspiegels ist um</string>
+    <string name="timeToInputBS">Es wird Zeit dein Blutzuckerspiegel einzutragen.</string>
 </resources>

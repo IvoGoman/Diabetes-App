@@ -3,14 +3,11 @@ package uni.mannheim.teamproject.diabetesplaner.UI;
 
 import android.Manifest;
 import android.app.NotificationManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -22,7 +19,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -40,7 +36,6 @@ import java.util.List;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.ActivityRecommendation;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.BSInputRecommendation;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.FoodRecommendation;
-import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.Recommendation;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
@@ -70,9 +65,9 @@ public class EntryScreenActivity extends AppCompatActivity
     private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
 
     //Attributes for recommendations
-    public static ActivityRecommendation recServiceActivity;
-    public static BSInputRecommendation recServiceBS;
-    public static FoodRecommendation recServiceFood;
+//    public static ActivityRecommendation recServiceActivity;
+//    public static BSInputRecommendation recServiceBS;
+//    public static FoodRecommendation recServiceFood;
     private boolean mBoundActivityRec = false;
     private boolean mBoundBSRec = false;
     private boolean mBoundFoodRec = false;
@@ -92,6 +87,7 @@ public class EntryScreenActivity extends AppCompatActivity
     private static Menu optionsMenu;
     public static NavigationView navigationView;
     private static String imagePath;
+    public static boolean servicesRunning;
 
     /**
      * @param savedInstanceState
@@ -142,9 +138,9 @@ public class EntryScreenActivity extends AppCompatActivity
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
 
-            startService(new Intent(this, ActivityRecommendation.class));
-            startService(new Intent(this, BSInputRecommendation.class));
-            startService(new Intent(this, FoodRecommendation.class));
+            startService(new Intent(EntryScreenActivity.this, ActivityRecommendation.class));
+            startService(new Intent(EntryScreenActivity.this, BSInputRecommendation.class));
+//            startService(new Intent(EntryScreenActivity.this, FoodRecommendation.class));
 
             client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
@@ -603,6 +599,7 @@ public class EntryScreenActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        servicesRunning = false;
         stopService(new Intent(this, ActivityRecommendation.class));
         stopService(new Intent(this, BSInputRecommendation.class));
         stopService(new Intent(this, FoodRecommendation.class));
@@ -619,59 +616,59 @@ public class EntryScreenActivity extends AppCompatActivity
      *
      * @author Stefan 05.07.2016
      */
-    protected ServiceConnection mServiceConnActivityRec = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            ActivityRecommendation.RecBinder recBinder = (ActivityRecommendation.RecBinder) binder;
-            recServiceActivity = (ActivityRecommendation) (recBinder.getService());
-            mBoundActivityRec = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mBoundActivityRec = false;
-        }
-    };
-
-    /**
-     * create a service connection for the BSInputRecommendation
-     *
-     * @author Stefan 09.07.2016
-     */
-    protected ServiceConnection mServiceConnBSRec = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            ActivityRecommendation.RecBinder recBinder = (BSInputRecommendation.RecBinder) binder;
-            recServiceBS = (BSInputRecommendation) (recBinder.getService());
-            mBoundBSRec = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mBoundBSRec = false;
-        }
-    };
-
-    /**
-     * create a service connection for the FoodRecommendation
-     *
-     * @author Stefan 12.09.2016
-     */
-    protected ServiceConnection mServiceConnFoodRec = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            FoodRecommendation.RecBinder recBinder = (FoodRecommendation.RecBinder) binder;
-            recServiceFood = (FoodRecommendation) (recBinder.getService());
-
-            mBoundFoodRec = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d(TAG, "onTaskServiceDisconnected");
-            mBoundFoodRec = false;
-        }
-    };
+//    protected ServiceConnection mServiceConnActivityRec = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder binder) {
+//            ActivityRecommendation.RecBinder recBinder = (ActivityRecommendation.RecBinder) binder;
+//            recServiceActivity = (ActivityRecommendation) (recBinder.getService());
+//            mBoundActivityRec = true;
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            mBoundActivityRec = false;
+//        }
+//    };
+//
+//    /**
+//     * create a service connection for the BSInputRecommendation
+//     *
+//     * @author Stefan 09.07.2016
+//     */
+//    protected ServiceConnection mServiceConnBSRec = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder binder) {
+//            ActivityRecommendation.RecBinder recBinder = (BSInputRecommendation.RecBinder) binder;
+//            recServiceBS = (BSInputRecommendation) (recBinder.getService());
+//            mBoundBSRec = true;
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            mBoundBSRec = false;
+//        }
+//    };
+//
+//    /**
+//     * create a service connection for the FoodRecommendation
+//     *
+//     * @author Stefan 12.09.2016
+//     */
+//    protected ServiceConnection mServiceConnFoodRec = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder binder) {
+//            FoodRecommendation.RecBinder recBinder = (FoodRecommendation.RecBinder) binder;
+//            recServiceFood = (FoodRecommendation) (recBinder.getService());
+//
+//            mBoundFoodRec = true;
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            Log.d(TAG, "onTaskServiceDisconnected");
+//            mBoundFoodRec = false;
+//        }
+//    };
 
 
     /**
@@ -680,31 +677,31 @@ public class EntryScreenActivity extends AppCompatActivity
      * @param recType specifies the type of recommendation to start
      * @author Stefan 05.07.2016
      */
-    public void startRec(int recType) {
-        switch (recType) {
-            case Recommendation.ACTIVITY_REC: {
-                if (!mBoundActivityRec) {
-                    bindService(new Intent(this, ActivityRecommendation.class), mServiceConnActivityRec, Context.BIND_AUTO_CREATE);
-                    mBoundActivityRec = true;
-                }
-                break;
-            }
-            case Recommendation.BS_REC: {
-                if (!mBoundBSRec) {
-                    bindService(new Intent(this, BSInputRecommendation.class), mServiceConnBSRec, Context.BIND_AUTO_CREATE);
-                    mBoundBSRec = true;
-                }
-                break;
-            }
-            case Recommendation.FOOD_REC: {
-                if (!mBoundFoodRec) {
-                    bindService(new Intent(this, FoodRecommendation.class), mServiceConnFoodRec, Context.BIND_AUTO_CREATE);
-                    mBoundFoodRec = true;
-                }
-                break;
-            }
-        }
-    }
+//    public void startRec(int recType) {
+//        switch (recType) {
+//            case Recommendation.ACTIVITY_REC: {
+//                if (!mBoundActivityRec) {
+//                    bindService(new Intent(this, ActivityRecommendation.class), mServiceConnActivityRec, Context.BIND_AUTO_CREATE);
+//                    mBoundActivityRec = true;
+//                }
+//                break;
+//            }
+//            case Recommendation.BS_REC: {
+//                if (!mBoundBSRec) {
+//                    bindService(new Intent(this, BSInputRecommendation.class), mServiceConnBSRec, Context.BIND_AUTO_CREATE);
+//                    mBoundBSRec = true;
+//                }
+//                break;
+//            }
+//            case Recommendation.FOOD_REC: {
+//                if (!mBoundFoodRec) {
+//                    bindService(new Intent(this, FoodRecommendation.class), mServiceConnFoodRec, Context.BIND_AUTO_CREATE);
+//                    mBoundFoodRec = true;
+//                }
+//                break;
+//            }
+//        }
+//    }
 
     /**
      * stop and unbind the recommendation service
@@ -712,34 +709,34 @@ public class EntryScreenActivity extends AppCompatActivity
      * @param recType specifies the type of recommendation to stop
      * @author Stefan 05.07.2016
      */
-    public void stopRec(int recType) {
-        switch (recType) {
-            case Recommendation.ACTIVITY_REC: {
-                // Unbind from the service
-                if (mBoundActivityRec) {
-                    unbindService(mServiceConnActivityRec);
-                    mBoundActivityRec = false;
-                }
-                break;
-            }
-            case Recommendation.BS_REC: {
-                // Unbind from the service
-                if (mBoundBSRec) {
-                    unbindService(mServiceConnBSRec);
-                    mBoundBSRec = false;
-                }
-                break;
-            }
-            case Recommendation.FOOD_REC: {
-                // Unbind from the service
-                if (mBoundFoodRec) {
-                    unbindService(mServiceConnFoodRec);
-                    mBoundFoodRec = false;
-                }
-                break;
-            }
-        }
-    }
+//    public void stopRec(int recType) {
+//        switch (recType) {
+//            case Recommendation.ACTIVITY_REC: {
+//                // Unbind from the service
+//                if (mBoundActivityRec) {
+//                    unbindService(mServiceConnActivityRec);
+//                    mBoundActivityRec = false;
+//                }
+//                break;
+//            }
+//            case Recommendation.BS_REC: {
+//                // Unbind from the service
+//                if (mBoundBSRec) {
+//                    unbindService(mServiceConnBSRec);
+//                    mBoundBSRec = false;
+//                }
+//                break;
+//            }
+//            case Recommendation.FOOD_REC: {
+//                // Unbind from the service
+//                if (mBoundFoodRec) {
+//                    unbindService(mServiceConnFoodRec);
+//                    mBoundFoodRec = false;
+//                }
+//                break;
+//            }
+//        }
+//    }
 
     /**
      * returns the task recommendation service
@@ -747,9 +744,9 @@ public class EntryScreenActivity extends AppCompatActivity
      * @return
      * @author Stefan 05.07.2016
      */
-    public ActivityRecommendation getRoutineRecommendationService() {
-        return recServiceActivity;
-    }
+//    public ActivityRecommendation getRoutineRecommendationService() {
+//        return recServiceActivity;
+//    }
 
     /**
      * returns the bloodsugar input recommendation service
@@ -757,9 +754,9 @@ public class EntryScreenActivity extends AppCompatActivity
      * @return
      * @author Stefan 09.07.2016
      */
-    public BSInputRecommendation getBSInputRecommendationService() {
-        return recServiceBS;
-    }
+//    public BSInputRecommendation getBSInputRecommendationService() {
+//        return recServiceBS;
+//    }
 
 
     @Override

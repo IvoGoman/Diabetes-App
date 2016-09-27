@@ -228,5 +228,7 @@
     <string name="added">Added</string>
     <string name="chosen">Chosen file</string>
     <string name="wrong_format">File format is not supported.</string>
+    <string name="usualBSM">Your usual blood sugar measurement is at</string>
+    <string name="timeToInputBS">It\'s time to input your measurement.</string>
 
 </resources>

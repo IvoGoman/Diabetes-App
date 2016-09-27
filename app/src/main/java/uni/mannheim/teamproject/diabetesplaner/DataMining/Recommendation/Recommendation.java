@@ -1,16 +1,15 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation;
 
-import android.app.IntentService;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.Ringtone;
 import android.media.RingtoneManager;
 import android.net.Uri;
-import android.os.Binder;
 import android.os.Handler;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
@@ -23,7 +22,7 @@ import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 /**
  * @author Stefan 09.07.2016
  */
-public abstract class Recommendation extends IntentService {
+public abstract class Recommendation extends Service {
     public static final int ACTIVITY_REC = 0;
     public static final int BS_REC = 1;
     public static final int FOOD_REC = 2;
@@ -32,6 +31,7 @@ public abstract class Recommendation extends IntentService {
     public static final int MIN = 1000*60;
     private static int offset = 1;
     private int midOffset;
+    private static int mid = 100;
     private int interval = MIN*60;
 
     private Handler mHandler = new Handler();
@@ -43,17 +43,28 @@ public abstract class Recommendation extends IntentService {
      * @param name
      * @author Stefan
      */
-    public Recommendation(String name) {
-        super(name);
+    public Recommendation(String name, final int interval) {
+//        super(name);
         this.name = name;
-        this.midOffset = offset;
-        offset += 100;
+//        this.midOffset = offset;
+//        offset += 100;
+        this.interval = interval;
     }
 
-    @Override
-    protected void onHandleIntent(Intent intent) {
+    Runnable mHandlerTask = new Runnable(){
+        @Override
+        public void run() {
+            recommend();
+            Log.e("REC", "Recommend");
 
-    }
+            mHandler.postDelayed(mHandlerTask, interval);
+        }
+    };
+
+//    @Override
+//    protected void onHandleIntent(Intent intent) {
+//
+//    }
 
     @Override
     public void onCreate() {
@@ -64,6 +75,7 @@ public abstract class Recommendation extends IntentService {
     @Override
     public void onDestroy() {
         super.onDestroy();
+        Log.d("Rec", "destroy");
         stopRecommendation();
     }
 
@@ -73,15 +85,6 @@ public abstract class Recommendation extends IntentService {
      * @author Stefan
      */
     public abstract void recommend();
-
-    Runnable mHandlerTask = new Runnable(){
-        @Override
-        public void run() {
-            recommend();
-
-            mHandler.postDelayed(mHandlerTask, interval);
-        }
-    };
 
     public void startRecommendation(){
         Log.d("Rec", name + " started");
@@ -93,9 +96,9 @@ public abstract class Recommendation extends IntentService {
         mHandler.removeCallbacks(mHandlerTask);
     }
 
-    public void setInterval(int interval){
-        this.interval = interval;
-    }
+//    public void setInterval(int interval){
+//        this.interval = interval;
+//    }
 
     /**
      * sends a notification to the android system
@@ -161,16 +164,12 @@ public abstract class Recommendation extends IntentService {
      * runs in the same process as its clients, we don't need to deal with IPC.
      * @author Stefan
      */
-    public class RecBinder extends Binder {
-        public Recommendation getService() {
-            // Return this instance of LocalService so clients can call public methods
-            return Recommendation.this;
-        }
-    }
-
-    public int getMidOffset(){
-        return this.midOffset;
-    }
+//    public class RecBinder extends Binder {
+//        public Recommendation getService() {
+//            // Return this instance of LocalService so clients can call public methods
+//            return Recommendation.this;
+//        }
+//    }
 
     public String getName(){
         return this.name;
@@ -200,5 +199,9 @@ public abstract class Recommendation extends IntentService {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public int getNewMid(){
+        return ++mid;
     }
 }
