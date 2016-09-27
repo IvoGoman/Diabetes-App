@@ -28,6 +28,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionService;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.FoodRecommendation;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
@@ -485,10 +486,22 @@ public class DailyRoutineFragment extends Fragment {
                 if (EntryScreenActivity.getFragment() instanceof DailyRoutineFragment) {
                     DailyRoutineFragment drf = ((DailyRoutineFragment) EntryScreenActivity.getFragment());
                     if (drf.getActivity() instanceof EntryScreenActivity) {
-                        drHandler.clearDailyRoutine();
-                        drHandler.update();
-                        progressBar.setVisibility(View.GONE);
-                        routineLayout.setVisibility(View.VISIBLE);
+                        try {
+                            drHandler.clearDailyRoutine();
+                            drHandler.update();
+                            progressBar.setVisibility(View.GONE);
+                            routineLayout.setVisibility(View.VISIBLE);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            Log.e(TAG, "onReceive: " + e.getLocalizedMessage());
+                        }
+
+                        if(!EntryScreenActivity.servicesRunning) {
+//                            drf.getActivity().startService(new Intent(drf.getActivity(), ActivityRecommendation.class));
+//                            drf.getActivity().startService(new Intent(drf.getActivity(), BSInputRecommendation.class));
+                            drf.getActivity().startService(new Intent(drf.getActivity(), FoodRecommendation.class));
+                            EntryScreenActivity.servicesRunning = true;
+                        }
                     }
                 }
 //            }

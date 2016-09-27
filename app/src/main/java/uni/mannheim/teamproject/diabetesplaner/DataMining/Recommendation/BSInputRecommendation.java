@@ -1,7 +1,10 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import org.apache.commons.math3.ml.clustering.Cluster;
@@ -16,6 +19,7 @@ import java.util.List;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
+import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
@@ -30,15 +34,19 @@ public class BSInputRecommendation extends Recommendation {
     private HashMap<Integer, Integer> mIds = new HashMap<>();
     private int mIdOffset;
     private int eps = 60;
+    private long tsLastNoficiation = 0;
 
     public BSInputRecommendation() {
-        super("BSInputRecommendationService");
+        super("BSInputRecommendationService", INTERVAL);
         dbHandler = AppGlobal.getHandler();
 
 //        createFakeBS();
-        findClusters(5, eps);
-        setInterval(INTERVAL);
+    }
 
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     /**
@@ -49,7 +57,12 @@ public class BSInputRecommendation extends Recommendation {
 
         for(int i=0; i<20; i++) {
             int day = (int)(Math.random()*30)+1;
-            java.sql.Date date = java.sql.Date.valueOf("2016-06-" + day);
+            String date = "";
+            if(day<10){
+                date = "2016.06.0" + day;
+            }else{
+                date = "2016.06." + day;
+            }
 
             int hour = (int)(Math.random())+20;
             int min = (int)(Math.random()*60);
@@ -63,9 +76,14 @@ public class BSInputRecommendation extends Recommendation {
 
         for(int i=0; i<6; i++) {
             int day = (int)(Math.random()*30)+1;
-            java.sql.Date date = java.sql.Date.valueOf("2016-06-" + day);
+            String date = "";
+            if(day<10){
+                date = "2016.06.0" + day;
+            }else{
+                date = "2016.06." + day;
+            }
 
-            int hour = (int)(Math.random())+10;
+            int hour = (int)(Math.random())+12;
             int min = (int)(Math.random()*60);
             int sec = (int)(Math.random()*60);
 
@@ -76,14 +94,14 @@ public class BSInputRecommendation extends Recommendation {
             dbHandler.insertMeasurement(item,1);
         }
 
-        java.sql.Date date = java.sql.Date.valueOf("2016-07-11");
+        String date = "2016.07.11";
 
         int hour = 21;
         int min = 10;
         int sec = 3;
 
         Time time = new Time(hour, min, sec);
-        long timestamp = TimeUtils.convertDateStringToTimestamp(TimeUtils.convertDateAndTimeStringToDate(String.valueOf(date),String.valueOf(time)));
+        long timestamp = TimeUtils.convertDateAndTimeStringToDate(String.valueOf(date),String.valueOf(time)).getTime();
         MeasureItem item = new MeasureItem(timestamp, 150,"mg/dl",MeasureItem.MEASURE_KIND_BLOODSUGAR);
         dbHandler.insertMeasurement(item,1);
     }
@@ -115,6 +133,8 @@ public class BSInputRecommendation extends Recommendation {
         boolean notify = preferences.getBoolean("pref_key_bs_input", true);
 
         if(notify) {
+            findClusters(5, eps);
+
 //            mIdOffset = getMidOffset();
             mIdOffset = Recommendation.BS_REC;
             //for testing
@@ -134,27 +154,28 @@ public class BSInputRecommendation extends Recommendation {
 
             if (means != null) {
                 for (int i = 0; i < means.size(); i++) {
-                    int mean = (int) ((double)means.get(i));
+                    int mean = (int) ((double) means.get(i));
                     long meanTs = TimeUtils.minutesOfDayToTimestamp(mean);
-                    mIds.put(mean,mIdOffset+i);
+                    mIds.put(mean, mIdOffset + i);
 
+                    long currTime = new Date().getTime();
 
-//                    Log.d(TAG, currMinOfDay-eps + " <= " + mean + " <= " + currMinOfDay+eps);
-                    if(currMinOfDay-eps <= mean && mean <= currMinOfDay+eps){
-                        //check if there wasn't already a measurement input within the specified radius eps
-//                        Log.d(TAG, "timestamp: " + TimeUtils.getTimeStampAsDateString(timestamp) + " - "
-//                                + TimeUtils.getTimeStampAsDateString(mi.getTimestamp()) + " > " + eps + " = "
-//                                + ((timestamp - mi.getTimestamp())/1000/60) + " > " + eps);
-                        if(mi != null) {
-                            if ((timestamp - mi.getTimestamp()) / 1000 / 60 > eps) {
+                    if (!(currTime - (eps * 60000) <= tsLastNoficiation && tsLastNoficiation <= currTime + (eps * 60000))) {
+                        if (currMinOfDay - eps <= mean && mean <= currMinOfDay + eps) {
+                            //check if there wasn't already a measurement input within the specified radius eps
+                            if (mi != null) {
+                                if ((timestamp - mi.getTimestamp()) / 1000 / 60 > eps) {
+                                    String usualTime = TimeUtils.getTimeInUserFormat(meanTs, this);
+                                    sendNotification(getResources().getString(R.string.usualBSM) + " " + usualTime + ". " + getResources().getString(R.string.timeToInputBS), mIds.get(mean));
+                                    Log.d(TAG, "time to input bloodsugar");
+                                    tsLastNoficiation = new Date().getTime();
+                                }
+                            } else {
                                 String usualTime = TimeUtils.getTimeInUserFormat(meanTs, this);
-                                sendNotification("Your usual bloodsugar measurement is at " + usualTime + ". It's time to input your measurement.", mIds.get(mean));
+                                sendNotification(getResources().getString(R.string.usualBSM) + " " + usualTime + ". " + getResources().getString(R.string.timeToInputBS), mIds.get(mean));
                                 Log.d(TAG, "time to input bloodsugar");
+                                tsLastNoficiation = new Date().getTime();
                             }
-                        }else{
-                            String usualTime = TimeUtils.getTimeInUserFormat(meanTs, this);
-                            sendNotification("Your usual bloodsugar measurement is at " + usualTime + ". It's time to input your measurement.", mIds.get(mean));
-                            Log.d(TAG, "time to input bloodsugar");
                         }
                     }
                 }
@@ -232,5 +253,27 @@ public class BSInputRecommendation extends Recommendation {
         }
 
         return tmpList;
+    }
+
+    /**
+     * compares two ArrayLists
+     * @param list1
+     * @param list2
+     * @return
+     * @author Stefan 27.09.2016
+     */
+    public boolean compare(ArrayList<Double> list1, ArrayList<Double> list2){
+        for(int i=0; i<list1.size(); i++){
+            boolean found = false;
+            for(int j=0; j<list2.size(); j++){
+                if(list1.get(i).equals(list2.get(j))){
+                    found = true;
+                }
+            }
+            if(!found){
+                return false;
+            }
+        }
+        return true;
     }
 }
