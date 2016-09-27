@@ -73,8 +73,11 @@ public class Wifi extends BroadcastReceiver {
          * @author Naira
          */
         @Override
-        public int onStartCommand(Intent intent, int flags, int startId) {
+        public int onStartCommand(final Intent intent, int flags, int startId) {
             final WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
+            int status = wifiManager.getWifiState();
+            final String statusString = Integer.toString(status);
+
 
             /**
              * Need to wait a bit for the SSID, if done get null
@@ -90,12 +93,21 @@ public class Wifi extends BroadcastReceiver {
 
                     Date current_date = new Date();
 
-                    //save attributes
-                    AppGlobal.getHandler().insertWIFI(ssid, TimeUtils.dateToDateTimeString(current_date));
 
-                    Log.v(TAG, "The SSID & MAC are " + ssid + " " + mac);
+                    if (wifiManager.getWifiState() == 3 && ssid.equals("")!= true ){ //if wifi status is detected and recognized
+                        Log.v(TAG,"status"+ "   "+statusString);
 
-                    makePredictionWifi(ssid);
+                        //save attributes
+                        AppGlobal.getHandler().insertWIFI(ssid, TimeUtils.dateToDateTimeString(current_date));
+
+                        Log.v(TAG, "The SSID & MAC are " + ssid + " " + mac);
+                        makePredictionWifi(ssid);
+                    }
+                    else{ //if wifi can not be detected
+                        Log.v(TAG,"status"+ "  "+statusString);
+                        Toast.makeText(getApplicationContext(), "Wifi status is unknown", Toast.LENGTH_LONG).show();
+                        stopSelf();
+                    }
                 }
             }, 7000);
             return START_NOT_STICKY;
