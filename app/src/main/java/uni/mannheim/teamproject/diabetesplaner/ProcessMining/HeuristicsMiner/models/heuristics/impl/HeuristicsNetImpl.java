@@ -16,6 +16,10 @@ import cern.colt.matrix.DoubleMatrix2D;
  * 
  */
 
+/***
+ * Copied from the Heurisitics Miner Framework
+ * @author Jan
+ */
 public class HeuristicsNetImpl implements Comparable<HeuristicsNet>, HeuristicsNet {
 
 	private ActivitiesMappingStructures activitiesMappingStructures = null; //contains all the necessary mappings from activities to XEventClasses, and vice-versa. 

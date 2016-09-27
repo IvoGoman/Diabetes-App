@@ -5,6 +5,10 @@ import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.mod
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plugins.heuristicsnet.miner.heuristics.HeuristicsMetrics;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plugins.heuristicsnet.miner.heuristics.miner.settings.HeuristicsMinerSettings;
 
+/***
+ * Copied from the Heurisitics Miner Framework
+ * @author Jan
+ */
 public class SimpleHeuristicsNet extends HeuristicsNetImpl {
 
 	private HeuristicsMetrics metrics;

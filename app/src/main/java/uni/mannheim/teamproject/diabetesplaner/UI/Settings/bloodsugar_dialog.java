@@ -30,6 +30,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
  * Created by Jan on 22.02.16.
+ * @author: Jan
  */
 public class bloodsugar_dialog extends DialogFragment implements View.OnClickListener{
     Button submit,cancel;

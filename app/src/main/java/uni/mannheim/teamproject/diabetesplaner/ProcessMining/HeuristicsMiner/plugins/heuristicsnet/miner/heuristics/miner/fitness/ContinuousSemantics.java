@@ -22,6 +22,11 @@ import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.mod
  * @author Ana Karla Alves de Medeiros
  *
  */
+
+/***
+ * Copied from the Heurisitics Miner Framework
+ * @author Jan
+ */
 public class ContinuousSemantics implements Fitness {
 	private XLogInfo logInfo = null;
 	private HeuristicsNet[] population = null;

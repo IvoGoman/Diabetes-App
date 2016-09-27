@@ -41,6 +41,11 @@ import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.Wifi;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
+
+/**
+ * Used to handle the settings for the app
+ * @author: Jan and Jens
+ */
 public class SettingsFragment extends PreferenceFragment implements SharedPreferences.OnSharedPreferenceChangeListener {
 
     public static final String TAG = SettingsFragment.class.getSimpleName();
@@ -235,6 +240,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         }
     }
 
+    /***
+     * Handles the change of preference
+     * @author: Jan
+     * @param preference
+     * @return
+     */
     public boolean onPreferenceChanged(Preference.OnPreferenceChangeListener preference) {
         String old_weight = sharedPrefs.getString("pref_key_weight", "Gewicht eingeben");
         SharedPreferences.Editor edit_value = sharedPrefs.edit();
@@ -282,6 +293,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
         super.onPause();
     }
 
+    /***
+     * Handles the change of shared preferences
+     * @author: Jan
+     * @param sharedPreferences
+     * @param key
+     */
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         try{
@@ -389,6 +406,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     /***
      * JW: Communication of blood sugar dialog and settingsFragement
+     * @author: Jan
      *
      * @param data    entered blood sugar level
      * @param measure the entered measurement
@@ -405,6 +423,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     /***
      * initializes the weight settings
+     * @author: Jan
      */
     private void initialize_weight()
     {
@@ -453,6 +472,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     /***
      * initializes the blood sugar settings
+     * @author: Jan
      */
     private void initialize_bloodsugar()
     {
@@ -525,6 +545,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     /***
      * Converts kg to lns
+     * @author: Jan
      *
      * @param kg
      * @return
@@ -535,6 +556,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
 
     /***
      * Converts lbs to kg
+     * @author: Jan
      *
      * @param lbs
      * @return

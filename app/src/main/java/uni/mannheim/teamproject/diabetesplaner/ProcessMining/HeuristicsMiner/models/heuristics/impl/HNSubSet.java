@@ -9,6 +9,10 @@ import java.util.Map;
  * @author Peter van den Brand and Ana Karla Alves de Medeiros
  * 
  */
+/***
+ * Copied from the Heuristics Miner Framework
+ * @author Jan
+ */
 public class HNSubSet implements Comparable<HNSubSet> {
 
 	private int[] subset;
@@ -264,8 +268,7 @@ public class HNSubSet implements Comparable<HNSubSet> {
 	 * Compares if the given <code>HNSubSet</code> object contains the same
 	 * values of this <code>HNSubSet</code> object
 	 * 
-	 * @param <code>true</code> if the two <code>HNSubSet</code> objects are the
-	 *        same, <code>false</code> otherwise
+	 *
 	 */
 	@Override
 	public boolean equals(Object o) {

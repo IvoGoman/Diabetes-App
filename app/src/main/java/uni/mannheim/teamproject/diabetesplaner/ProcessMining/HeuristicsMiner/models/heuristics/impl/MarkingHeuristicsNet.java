@@ -17,6 +17,11 @@ import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.mod
  * @author Ana Karla Alves de Medeiros
  * 
  */
+
+/***
+ * Copied from the Heuristics Miner Framework
+ * @author Jan
+ */
 public class MarkingHeuristicsNet {
 
 	private HashMap<HNSubSet, Integer>[] marking = null;
@@ -682,7 +687,10 @@ public class MarkingHeuristicsNet {
 	}
 
 }
-
+/***
+ * Copied from the Heuristics Miner Framework
+ * @author Jan
+ */
 class MappingToSubsets {
 
 	private HNSet[][] mapping = null;

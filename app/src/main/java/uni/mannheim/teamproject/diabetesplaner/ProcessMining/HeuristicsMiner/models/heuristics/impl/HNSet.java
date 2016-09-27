@@ -9,6 +9,10 @@ import java.util.Map;
  * @author Peter van den Brand and Ana Karla Alves de Medeiros
  * 
  */
+/***
+ * Copied from the Heuristics Miner Framework
+ * @author Jan
+ */
 public class HNSet {
 
 	private HNSubSet[] set;
@@ -128,7 +132,7 @@ public class HNSet {
 	 * Adds all the subsets in a given <code> HNSet</code> object to this
 	 * <code> HNSet</code> object
 	 * 
-	 * @param toAdd
+	 *
 	 *            set contains the subsets to add
 	 */
 	public void addAll(HNSet setToInclude) {
@@ -225,8 +229,7 @@ public class HNSet {
 	 * Compares if the given <code>HNSet</code> object contains the same values
 	 * of this <code>HNSet</code> object
 	 * 
-	 * @param <code>true</code> if the two <code>HNSet</code> objects are the
-	 *        same, <code>false</code> otherwise
+	 *
 	 */
 	@Override
 	public boolean equals(Object o) {

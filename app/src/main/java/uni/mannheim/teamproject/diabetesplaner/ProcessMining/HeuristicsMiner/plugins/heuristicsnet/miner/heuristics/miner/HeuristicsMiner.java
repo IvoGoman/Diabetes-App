@@ -23,6 +23,10 @@ import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plu
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plugins.heuristicsnet.miner.heuristics.miner.fitness.ImprovedContinuousSemantics;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plugins.heuristicsnet.miner.heuristics.miner.settings.HeuristicsMinerSettings;
 
+/***
+ * Copied from the Heurisitics Miner Framework
+ * @author Jan
+ */
 public class HeuristicsMiner {
 
 	protected XLog log;

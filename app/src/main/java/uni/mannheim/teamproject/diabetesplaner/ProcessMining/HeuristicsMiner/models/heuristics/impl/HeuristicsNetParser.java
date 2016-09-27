@@ -8,6 +8,10 @@ import org.deckfour.xes.model.XTrace;
  * @author Peter van den Brand and Ana Karla Alves de Medeiros
  */
 
+/***
+ * Copied from the Heuristics Miner Framework
+ * @author Jan
+ */
 public interface HeuristicsNetParser {
 	/**
 	 * Replays a log trace in a <code>HeuristicNet</code> object.

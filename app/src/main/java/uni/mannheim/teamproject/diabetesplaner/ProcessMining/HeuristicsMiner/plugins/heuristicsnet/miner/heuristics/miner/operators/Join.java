@@ -6,6 +6,10 @@ import java.util.HashSet;
 
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.models.heuristics.impl.HNSubSet;
 
+/***
+ * Copied from the Heurisitics Miner Framework
+ * @author Jan
+ */
 public class Join extends Operator{
 	
 	private HashMap<String, Stats> joinsLearned;
