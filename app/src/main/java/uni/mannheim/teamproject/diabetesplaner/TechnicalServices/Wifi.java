@@ -31,7 +31,6 @@ public class Wifi extends BroadcastReceiver {
 
     private final static String TAG = Wifi.class.getSimpleName();
     private static String ssid;
-
     /**
      * @param context
      * @param intent

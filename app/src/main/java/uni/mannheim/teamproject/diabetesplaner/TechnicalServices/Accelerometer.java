@@ -52,7 +52,6 @@ public class Accelerometer extends Service implements SensorEventListener {
         Toast.makeText(this, "Data Collection started accelerometer", Toast.LENGTH_SHORT).show();
     }
 
-
     /**
      * detects phone axis (x,y,z)
      * @param sensorEvent

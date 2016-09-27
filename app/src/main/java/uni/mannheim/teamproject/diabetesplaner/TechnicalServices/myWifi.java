@@ -6,7 +6,6 @@ package uni.mannheim.teamproject.diabetesplaner.TechnicalServices;
 class myWifi {
     String ssid;
     String time;
-
     /**
      * Wifi Constructior
      *
