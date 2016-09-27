@@ -34,7 +34,9 @@ public class MeasurementDialog extends MeasurementInputDialog {
     EditText addInsulin;
     RadioButton mg, percentage, mmol;
     RadioButton units, ml;
-
+    DataBaseHandler database;
+    Button btn_date;
+    Button btn_time;
     private String measure;
     private String measure_value;
     private Long timestamp;
@@ -42,38 +44,113 @@ public class MeasurementDialog extends MeasurementInputDialog {
     private String insulin_value;
     private MeasureItem measureItem;
     private Date date;
-    DataBaseHandler database;
-
-    Button btn_date;
-    Button btn_time;
     private TimerPickerFragmentM TimerPicker;
     private DatePickerFragmentM DatePicker;
+    /***
+     * Click Handler for the dialog.
+     *
+     * @param view
+     * @author Naira
+     */
+    private View.OnClickListener myListenser = new View.OnClickListener() {
+        public void onClick(View view) {
+            if (view.getId() == R.id.bs_mg) { //mg/dl is clicked
+                if (measure.equals("%")) {
+                    if (addBloodSugar.getText().toString().isEmpty() == false) {
+                        addBloodSugar.setText(String.valueOf(Util.percentage_to_mg(Double.parseDouble(addBloodSugar.getText().toString()))));
+                    }
 
+                } else if (measure.equals("mmol/l")) {
+                    if (addBloodSugar.getText().toString().isEmpty() == false) {
+                        addBloodSugar.setText(String.valueOf(Util.mmol_to_milligram(Double.parseDouble(addBloodSugar.getText().toString()))));
+                    }
+                }
+                measure = "mg/dl";
+            } else if (view.getId() == R.id.bs_percentage) { //Percentage is clicked
 
+                if (measure.equals("mg/dl")) {
+                    if (addBloodSugar.getText().toString().isEmpty() == false) {
+                        //Convert from mg to percentage
+                        addBloodSugar.setText(String.valueOf(Util.mg_to_percentage(Double.parseDouble(addBloodSugar.getText().toString()))));
+                    }
+                } else if (measure.equals("mmol/l")) {
+                    if (addBloodSugar.getText().toString().isEmpty() == false) {
+                        //Convert from mmol to mg to percentage
+                        addBloodSugar.setText(String.valueOf(Util.mg_to_percentage(Util.mmol_to_milligram(Double.parseDouble(addBloodSugar.getText().toString())))));
+                    }
+                }
+                measure = "%";
+            } else if (view.getId() == R.id.bs_mm) { //mmol/l is clicked
+                if (measure.equals("mg/dl")) {
+                    //Convert mg to mmol
+                    if (addBloodSugar.getText().toString().isEmpty() == false) {
+                        addBloodSugar.setText(String.valueOf(Util.miligram_to_mol(Double.parseDouble(addBloodSugar.getText().toString()))));
+                    }
 
+                } else if (measure.equals("%")) {
+                    if (addBloodSugar.getText().toString().isEmpty() == false) {
+                        //Convert from percentage to mg to mmol
+                        addBloodSugar.setText(String.valueOf(Util.miligram_to_mol(Util.percentage_to_mg(Double.parseDouble(addBloodSugar.getText().toString())))));
+                    }
+                }
+                measure = "mmol/l";
+            }
+
+            if (view.getId() == R.id.insulin_unit) { //unit is clicked
+                if (insulin.equals("mL/cc")) {
+                    if (addInsulin.getText().toString().isEmpty() == false) {
+                        //Convert from ml to units
+                        addInsulin.setText(String.valueOf(Util.ml_to_Units(Double.parseDouble(addInsulin.getText().toString()))));
+                    }
+
+                }
+                insulin = "Units";
+            } else if (view.getId() == R.id.insulin_ml) { //ml clicked
+                if (insulin.equals("Units")) {
+                    if (addInsulin.getText().toString().isEmpty() == false) {
+                        //Convert from units to ml
+                        addInsulin.setText(String.valueOf(Util.Units_to_ml(Double.parseDouble(addInsulin.getText().toString()))));
+                    }
+                }
+                insulin = "mL/cc";
+            }
+        }
+    };
+
+    /**
+     * called when the measurement dialog is opened
+     *
+     * @param savedInstanceState
+     * @return builder
+     * @author Naira
+     */
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
-
         // Use the Builder class for convenient dialog construction
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setTitle(R.string.input_measurements);
 
+        //create a new builder
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+        //setting title for the dialog
+        builder.setTitle(R.string.input_measurements);
         View view = getLayout();
 
         DatePicker = new DatePickerFragmentM();
         TimerPicker = new TimerPickerFragmentM();
 
         builder.setView(view);
-        if(date == null) {
+
+        //setting default date to current date
+        if (date == null) {
             date = Calendar.getInstance(Locale.getDefault()).getTime();
         }
+
+        //adjusting date and time formats
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
         SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
         String dateString = dateFormat.format(date);
         String timeString = timeFormat.format(date);
 
-
+        //initializing variables to their corresponding layout elements
         addBloodSugar = (EditText) view.findViewById(R.id.edit_measure_value_entryscreen);
         addInsulin = (EditText) view.findViewById(R.id.edit_insulin_value);
         database = AppGlobal.getHandler();
@@ -82,6 +159,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
         percentage = (RadioButton) view.findViewById(R.id.bs_percentage);
         units = (RadioButton) view.findViewById(R.id.insulin_unit);
         ml = (RadioButton) view.findViewById(R.id.insulin_ml);
+
         measure = "";
         insulin = "";
 
@@ -89,18 +167,13 @@ public class MeasurementDialog extends MeasurementInputDialog {
         //Button for DatePicker
         btn_date = (Button) view.findViewById(R.id.btn_date);
         btn_date.setText(dateString);
-
         btn_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                DatePicker = new DatePickerFragmentM();
-                DatePicker.setBloodsugarDialog(MeasurementDialog.this);
+                DatePicker.setMeasurementDialog(MeasurementDialog.this);
                 DatePicker.show(getFragmentManager(), "datePicker");
-
-
             }
         });
-
 
         //Button for TimerPicker
         btn_time = (Button) view.findViewById(R.id.btn_time);
@@ -108,64 +181,59 @@ public class MeasurementDialog extends MeasurementInputDialog {
         btn_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                TimerPicker = new TimerPickerFragmentM();
                 TimerPicker.SetDialog(MeasurementDialog.this);
                 TimerPicker.show(getFragmentManager(), "timePicker");
-                //timerpickerfragment.SetDialog(bloodsugar_dialog.this);
             }
         });
-
 
         builder.setPositiveButton(R.string.ADD, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
                 //add measurements
-
                 try {
                     measure_value = addBloodSugar.getText().toString();
-
                     insulin_value = addInsulin.getText().toString();
                     String date_s = btn_date.getText().toString();
                     String time_s = btn_time.getText().toString();
-                    if(btn_time.getText().toString().length() < 8) {
-                        time_s = btn_time.getText().toString()+ ":" + Calendar.getInstance().get(Calendar.SECOND);
+
+                    //adding seconds to time
+                    if (btn_time.getText().toString().length() < 8) {
+                        time_s = btn_time.getText().toString() + ":" + Calendar.getInstance().get(Calendar.SECOND);
                     }
                     timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s, time_s).getTime();
 
-                    if (measure_value.equals("") == true && insulin_value.equals("") == true) {
+                    if (measure_value.equals("") == true && insulin_value.equals("") == true) { //if no inputs are added
                         Toast.makeText(getActivity(), "No Measurements have been entered", Toast.LENGTH_LONG).show();
                     }
 
-
-                    if (measure_value.equals("") == true) {
+                    if (measure_value.equals("") == true) { //if only the blood sugar is added
                         measureItem = new MeasureItem(timestamp, Double.parseDouble(insulin_value), insulin, MeasureItem.MEASURE_KIND_INSULIN);
                         database.insertMeasurement(measureItem, database.getUserID());
-
                         EntryScreenActivity.updateDailyRoutine();
-
                         Toast.makeText(getActivity(), "No Blood sugar level entered; " + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
 
-                    } else if (insulin_value.equals("") == true) {
+                    } else if (insulin_value.equals("") == true) { // if only the insulin is added
                         measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value), measure, MeasureItem.MEASURE_KIND_BLOODSUGAR);
                         database.insertMeasurement(measureItem, database.getUserID());
 
                         EntryScreenActivity.updateDailyRoutine();
 
                         Toast.makeText(getActivity(), "No Insulin Dosage entered; " + measure_value + " " + measure + " stored", Toast.LENGTH_LONG).show();
-                    } else if (check_mg(convert_to_mg(Double.parseDouble(measure_value), measure)) == true && check_Units(convert_to_Units(Double.parseDouble(insulin_value), insulin)) == true) {
+                    } else if (check_mg(convert_to_mg(Double.parseDouble(measure_value), measure)) == true
+                            && check_Units(convert_to_Units(Double.parseDouble(insulin_value), insulin)) == true) { // if both values are correct and added
                         measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value), measure, MeasureItem.MEASURE_KIND_BLOODSUGAR);
                         database.insertMeasurement(measureItem, database.getUserID());
 
                         measureItem = new MeasureItem(timestamp, Double.parseDouble(insulin_value), insulin, MeasureItem.MEASURE_KIND_INSULIN);
                         database.insertMeasurement(measureItem, database.getUserID());
 
+                        //add into Daily Routine Fragments
                         EntryScreenActivity.updateDailyRoutine();
 
                         Toast.makeText(getActivity(), "Measurements: " + measure_value + " " + measure + "," + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
                         dismiss();
-                    } else {
+                    } else { //if both values are added but atleast one is out of range
                         Toast.makeText(getActivity(), "Invalid Measurements", Toast.LENGTH_LONG).show();
                     }
-
                 } catch (Exception e) {
                     Log.d("Rec", "" + e);
                     e.getMessage();
@@ -179,8 +247,8 @@ public class MeasurementDialog extends MeasurementInputDialog {
                     }
                 });
 
+        //checks the selected radio button units
         initialize_measure();
-        // initialize_insulinMeasure();
         mg.setOnClickListener(myListenser);
         mmol.setOnClickListener(myListenser);
         percentage.setOnClickListener(myListenser);
@@ -192,9 +260,14 @@ public class MeasurementDialog extends MeasurementInputDialog {
 
     }
 
-
+    /**
+     * initializes measurement values and units
+     *
+     * @author Naira
+     */
     private void initialize_measure() {
 
+        //sustains the last blood sugar measure inserted
         if (database.getLastBloodsugarMeasurement(1) != null) {
             addBloodSugar.setText(database.getLastBloodsugarMeasurement(1)[0].toString());
             measure = database.getLastBloodsugarMeasurement(1)[1].toString();
@@ -204,6 +277,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
             measure = "mg/dl";
         }
 
+        //selects the radio button units for blood sugar
         switch (measure) {
             case "%":
                 percentage.setActivated(true);
@@ -232,6 +306,8 @@ public class MeasurementDialog extends MeasurementInputDialog {
                 mmol.setChecked(false);
                 break;
         }
+
+        //sustains the last insulin measure inserted
         if (database.getLastInsulinMeasurement(1) != null) {
             addInsulin.setText(database.getLastInsulinMeasurement(1)[0].toString());
             insulin = database.getLastInsulinMeasurement(1)[1].toString();
@@ -241,6 +317,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
             insulin = "Units";
         }
 
+        //selects the radio button units for insulin
         switch (insulin) {
             case "Units":
                 units.setActivated(true);
@@ -259,139 +336,22 @@ public class MeasurementDialog extends MeasurementInputDialog {
         }
     }
 
-  /*  private void initialize_insulinMeasure() {
-        if(database.getLastInsulinMeasurement(AppGlobal.getHandler(),1) != null) {
-            addInsulin.setText(database.getLastInsulinMeasurement(AppGlobal.getHandler(), 1)[0].toString());
-            insulin = database.getLastInsulinMeasurement(AppGlobal.getHandler(), 1)[1].toString();
-        }
-        if (insulin.equals("")) {
-            insulin = "Units";
-        }
-        switch (insulin) {
-            case "Units":
-                units.setActivated(true);
-                units.setChecked(true);
-                ml.setActivated(false);
-                ml.setChecked(false);
-                break;
-            case "mL/cc":
-                ml.setActivated(true);
-                ml.setChecked(true);
-                units.setActivated(false);
-                units.setChecked(false);
-                break;
-        }
-    }*/
-
-    /***
-     * Click Handler for the dialog.
-     *
-     * @param view
+    /**
+     * @param date
+     * @author Naira
      */
-
-    private View.OnClickListener myListenser = new View.OnClickListener() {
-        public void onClick(View view) {
-            //mg/dl is clicked
-            if (view.getId() == R.id.bs_mg) {
-                if (measure.equals("%")) {
-                    if (addBloodSugar.getText().toString().isEmpty() == false) {
-                        addBloodSugar.setText(String.valueOf(Util.percentage_to_mg(Double.parseDouble(addBloodSugar.getText().toString()))));
-                    }
-
-                } else if (measure.equals("mmol/l")) {
-                    if (addBloodSugar.getText().toString().isEmpty() == false) {
-                        addBloodSugar.setText(String.valueOf(Util.mmol_to_milligram(Double.parseDouble(addBloodSugar.getText().toString()))));
-                    }
-                }
-                measure = "mg/dl";
-            }
-            //Percentage is clicked
-            else if (view.getId() == R.id.bs_percentage) {
-
-                if (measure.equals("mg/dl")) {
-                    if (addBloodSugar.getText().toString().isEmpty() == false) {
-                        //Convert from mg to percentage
-                        addBloodSugar.setText(String.valueOf(Util.mg_to_percentage(Double.parseDouble(addBloodSugar.getText().toString()))));
-                    }
-                } else if (measure.equals("mmol/l")) {
-                    if (addBloodSugar.getText().toString().isEmpty() == false) {
-                        //Convert from mmol to mg to percentage
-                        addBloodSugar.setText(String.valueOf(Util.mg_to_percentage(Util.mmol_to_milligram(Double.parseDouble(addBloodSugar.getText().toString())))));
-                    }
-                }
-                measure = "%";
-            }
-            //mmol/l is clicked
-            else if (view.getId() == R.id.bs_mm) {
-                if (measure.equals("mg/dl")) {
-                    //convert mg to mmol
-                    if (addBloodSugar.getText().toString().isEmpty() == false) {
-                        addBloodSugar.setText(String.valueOf(Util.miligram_to_mol(Double.parseDouble(addBloodSugar.getText().toString()))));
-                    }
-
-                } else if (measure.equals("%")) {
-                    if (addBloodSugar.getText().toString().isEmpty() == false) {
-                        //Convert from percentage to mg to mmol
-                        addBloodSugar.setText(String.valueOf(Util.miligram_to_mol(Util.percentage_to_mg(Double.parseDouble(addBloodSugar.getText().toString())))));
-                    }
-                }
-                measure = "mmol/l";
-            }
-
-            //unit clicked
-            if (view.getId() == R.id.insulin_unit) {
-                if (insulin.equals("mL/cc")) {
-                    if (addInsulin.getText().toString().isEmpty() == false) {
-                        addInsulin.setText(String.valueOf(Util.ml_to_Units(Double.parseDouble(addInsulin.getText().toString()))));
-                    }
-
-                }
-                insulin = "Units";
-            }
-            //ml clicked
-            else if (view.getId() == R.id.insulin_ml) {
-
-                if (insulin.equals("Units")) {
-                    if (addInsulin.getText().toString().isEmpty() == false) {
-                        addInsulin.setText(String.valueOf(Util.Units_to_ml(Double.parseDouble(addInsulin.getText().toString()))));
-                    }
-                }
-                insulin = "mL/cc";
-            }
-
-        }
-    };
-
-    public void setDate(Date date){
+    public void setDate(Date date) {
         this.date = date;
     }
 
-    /***
-     * Click Handler for the dialog.
+    /**
+     * auto conversion of blood sugar values
+     *
+     * @param value
+     * @param unit
+     * @return value
+     * @author Jan
      */
- /*   private View.OnClickListener myListenserTwo = new View.OnClickListener() {
-        public void onClick(View view) {
-            //Units is clicked
-            if (view.getId() == R.id.insulin_unit) {
-                if (insulin.equals("Units")) {
-                    if (addInsulin.getText().toString().isEmpty() == false) {
-                        addInsulin.setText(String.valueOf(Util.Units_to_ml(Double.parseDouble(addInsulin.getText().toString()))));
-                    }
-                    insulin = "mL/cc";
-                }
-            }
-            //ml/cc is clicked
-                else if (view.getId() == R.id.insulin_ml) {
-                    if (insulin.equals("mL/cc")) {
-                        if (addInsulin.getText().toString().isEmpty() == false) {
-                            //Convert from ml to Units
-                            addInsulin.setText(String.valueOf(Util.ml_to_Units(Double.parseDouble(addInsulin.getText().toString()))));
-                        }
-                    }
-                    insulin = "Units";
-                }
-            }
-            };*/
     private double convert_to_mg(double value, String unit) {
         switch (unit) {
             case "mg/dl":
@@ -405,11 +365,12 @@ public class MeasurementDialog extends MeasurementInputDialog {
         return 0.0;
     }
 
-    /***
-     * checks the inserted value
+    /**
+     * checks the inserted value of blood sugar
      *
      * @param value
-     * @return
+     * @return boolean
+     * @author Naira
      */
     private boolean check_mg(double value) {
         if (value <= 50) {
@@ -421,6 +382,14 @@ public class MeasurementDialog extends MeasurementInputDialog {
         }
     }
 
+    /**
+     * auto conversion of units values
+     *
+     * @param value
+     * @param unit
+     * @return value
+     * @author Naira
+     */
     private double convert_to_Units(double value, String unit) {
         switch (unit) {
             case "Units":
@@ -432,11 +401,12 @@ public class MeasurementDialog extends MeasurementInputDialog {
         return 0.0;
     }
 
-    /***
-     * checks the inserted value
+    /**
+     * checks the inserted value of insulin
      *
      * @param value
-     * @return
+     * @return boolean
+     * @author Naira
      */
     private boolean check_Units(double value) {
         if (value <= 0.0) {
@@ -447,6 +417,4 @@ public class MeasurementDialog extends MeasurementInputDialog {
             return true;
         }
     }
-
-
 }

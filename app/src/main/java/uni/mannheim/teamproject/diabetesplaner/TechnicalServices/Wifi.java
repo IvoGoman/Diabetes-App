@@ -25,7 +25,10 @@ import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
-// created by: Naira Ibrahim
+/**
+ * Created by Naira Ibrahim
+ */
+
 
 public class Wifi extends BroadcastReceiver {
 
