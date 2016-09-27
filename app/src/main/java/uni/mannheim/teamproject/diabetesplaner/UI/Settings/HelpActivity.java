@@ -38,9 +38,11 @@ public class HelpActivity extends AppCompatActivity {
         // add few more layouts if you want
         layouts = new int[]{
                 R.layout.help_layout1,
-                R.layout.help_layout2,
-                R.layout.help_layout3,
+                R.layout.help_layout1_5,
+                R.layout.help_layout5,
                 R.layout.help_layout4,
+                R.layout.help_layout3,
+                R.layout.help_layout2,
                };
 
 
