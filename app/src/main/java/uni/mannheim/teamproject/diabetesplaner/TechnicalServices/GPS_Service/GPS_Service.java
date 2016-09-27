@@ -32,7 +32,7 @@ public class GPS_Service extends Service implements LocationListener {
     private LocationManager locationManager;
     private String provider;
     Location x_Location = new Location("dummyprovider");
-    Date time_von;
+    Date time_from;
     Date time_bis;
     Date time_loc;
 
@@ -170,9 +170,9 @@ public class GPS_Service extends Service implements LocationListener {
             //Daten zum Vergleich konvertieren
 
             try {
-                time_von = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(x[2]);
+                time_from = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(x[2]);
                 time_bis = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(x[3]);
-               // System.out.println("MyTest4 Activity " + i + " : " + time_von + " bis " + time_bis);
+               // System.out.println("MyTest4 Activity " + i + " : " + time_from + " bis " + time_bis);
             } catch (ParseException e) {
                 //Handle exception here, most of the time you will just log it.
                 e.printStackTrace();
@@ -191,7 +191,7 @@ public class GPS_Service extends Service implements LocationListener {
                     e.printStackTrace();
                 }
 
-                if (TimeUtils.isTimeInbetween(time_von, time_bis, time_loc) == true ) {
+                if (TimeUtils.isTimeInbetween(time_from, time_bis, time_loc) == true ) {
 
                     if (relevant_Activities.contains(x[1]) == false) {
                         relevant_Activities.add(relevant_Activities.size(), x[1]);

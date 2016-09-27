@@ -40,10 +40,12 @@ public class Accelerometer extends Service implements SensorEventListener {
     private float last_x, last_y, last_z;
     private static final int SHAKE_THRESHOLD = 600;
 
-    /** Called when the activity is first created. */
+    /**
+     * Called when the activity is first created.
+     * @author Naira
+     */
     @Override
     public void onCreate() {
-
         senSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         senAccelerometer = senSensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         senSensorManager.registerListener(this, senAccelerometer, SensorManager.SENSOR_DELAY_NORMAL);
@@ -51,11 +53,16 @@ public class Accelerometer extends Service implements SensorEventListener {
     }
 
 
-
+    /**
+     * detects phone axis (x,y,z)
+     * @param sensorEvent
+     * @author Naira
+     */
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         Sensor mySensor = sensorEvent.sensor;
 
+        //phone axis
         if (mySensor.getType() == Sensor.TYPE_ACCELEROMETER) {
             float x = sensorEvent.values[0];
             float y = sensorEvent.values[1];
@@ -72,12 +79,9 @@ public class Accelerometer extends Service implements SensorEventListener {
                 if (speed > SHAKE_THRESHOLD) {
 
                 }
-
                 last_x = x;
                 last_y = y;
                 last_z = z;
-
-
             }
         }
 
@@ -156,32 +160,41 @@ public class Accelerometer extends Service implements SensorEventListener {
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-
             }
-
         }
-
     }
 
+    /**
+     *
+     * @param sensor
+     * @param accuracy
+     */
     @Override
     public void onAccuracyChanged(Sensor sensor, int accuracy) {
 
     }
 
 
-
+    /**
+     * @param intent
+     * @return null
+     * @author Naira
+     */
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
+    /**
+     * called when accelerometer sensor is ordered to be stopped
+     * @author Naira
+     */
     @Override
     public void onDestroy() {
         senSensorManager.unregisterListener(this);
         Toast.makeText(this, "Data Collection stopped", Toast.LENGTH_SHORT).show();
         Log.d("ACCELEROMETER", "access killed!");
-
     }
 }
 

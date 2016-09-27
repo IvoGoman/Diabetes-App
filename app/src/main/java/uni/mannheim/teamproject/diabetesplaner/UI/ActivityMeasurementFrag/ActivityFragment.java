@@ -44,17 +44,6 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
  */
 public class ActivityFragment extends Fragment {
 
-    private static final int MY_PERMISSIONS_READ_Storage = 0;
-    public static AbsListView lv;
-    public static ArrayList<String> FileList = new ArrayList<String>();
-    private static View inflaterView;
-    public static ListAdapter adapter;
-    final DataBaseHandler DBHandler = AppGlobal.getHandler();
-    private String mParam1;
-    private String mParam2;
-    private AppCompatActivity aca;
-    private IntentFilter mStatusIntentFilter;
-
     // Defines a custom Intent action
     public static final String BROADCAST_ACTION =
             "com.example.android.threadsample.BROADCAST";
@@ -62,6 +51,16 @@ public class ActivityFragment extends Fragment {
     public static final String EXTENDED_DATA_STATUS =
             "com.example.android.threadsample.STATUS";
     public static final String FILEPATH = "filepath";
+    private static final int MY_PERMISSIONS_READ_Storage = 0;
+    public static AbsListView lv;
+    public static ArrayList<String> FileList = new ArrayList<String>();
+    public static ListAdapter adapter;
+    private static View inflaterView;
+    final DataBaseHandler DBHandler = AppGlobal.getHandler();
+    private String mParam1;
+    private String mParam2;
+    private AppCompatActivity aca;
+    private IntentFilter mStatusIntentFilter;
     private RelativeLayout progressBar;
 
     public ActivityFragment() {
@@ -79,6 +78,7 @@ public class ActivityFragment extends Fragment {
 
     /**
      * Called when it is first created.
+     *
      * @param savedInstanceState
      * @author Naira
      */
@@ -188,7 +188,7 @@ public class ActivityFragment extends Fragment {
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.putString("LAST_PREDICTION", "0");
                                     editor.commit();
-                                } catch(Exception e){
+                                } catch (Exception e) {
                                     Toast.makeText(getActivity(), R.string.error_loading_data, Toast.LENGTH_LONG).show();
                                 }
                                 ((AdapterView<ListAdapter>) ActivityFragment.lv).setAdapter(ActivityFragment.adapter);
@@ -221,44 +221,32 @@ public class ActivityFragment extends Fragment {
                 if (grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
                     Log.d("filechooser permission", "permission granted");
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-//                    new FileChooser(getActivity()).setFileListener(new FileChooser.FileSelectedListener() {
-//                        @Override
-//                        public void fileSelected(final File file) {
-//                            String fileString = (String) file.toString();
-//                            String[] fileStringSplit = fileString.split("/");
-//                            String requiredSplitPart = fileStringSplit[fileStringSplit.length - 1];
-//                            if ((ActivityInputHndlr.isFileFormatValid(fileString)) == true) {
-//                                FileList.add(requiredSplitPart);
-//                                Toast.makeText(getActivity(), "Chosen File:" + requiredSplitPart, Toast.LENGTH_LONG).show();
-//                                ActivityInputHndlr.loadIntoDatabase(fileString);
-//                                ((AdapterView<ListAdapter>) lv).setAdapter(adapter);
-//                            } else {
-//                                Toast.makeText(getActivity(), "File is not in the correct format", Toast.LENGTH_LONG).show();
-//                            }
-//                        }
-//                    }).showDialog();
+                    // permission was granted
                 } else {
                     Log.d("filechooser permission", "permission denied");
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
+                    // permission denied
                 }
                 return;
             }
-            // other 'case' lines to check for other
             // permissions this app might request
         }
     }
 
+    /**
+     * @author Stefan
+     */
     private class ResponseReceiver extends BroadcastReceiver {
         // Prevents instantiation
         private ResponseReceiver() {
         }
 
-        // Called when the BroadcastReceiver gets an Intent it's registered to receive
-//    @
+        /**
+         * Called when the BroadcastReceiver gets an Intent it's registered to receive
+         *
+         * @param context
+         * @param intent
+         * @author Stefan
+         */
         public void onReceive(Context context, Intent intent) {
             //do something
             progressBar.setVisibility(View.GONE);

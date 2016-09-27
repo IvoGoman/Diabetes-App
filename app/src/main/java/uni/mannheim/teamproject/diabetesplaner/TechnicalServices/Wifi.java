@@ -32,7 +32,11 @@ public class Wifi extends BroadcastReceiver {
     private final static String TAG = Wifi.class.getSimpleName();
     private static String ssid;
 
-
+    /**
+     * @param context
+     * @param intent
+     * @author Naira
+     */
     @Override
     public void onReceive(final Context context, final Intent intent) {
         int wifiState = intent.getIntExtra(WifiManager.EXTRA_WIFI_STATE, -1);
@@ -47,67 +51,81 @@ public class Wifi extends BroadcastReceiver {
     /**
      * Getting the network info and displaying the notification is handled in a service
      * as we need to delay fetching the SSID name.
-     *
      * As the broadcast receiver is flagged for termination as soon as onReceive() completes,
-     *  Placing it in a service lets us control the lifetime.
+     * Placing it in a service lets us control the lifetime
+     *
+     * @author Naira
      */
     public static class WifiActiveService extends Service {
 
         private final static String TAG = WifiActiveService.class.getSimpleName();
-        Date time_von;
-        Date time_bis;
+        Date time_from;
+        Date time_to;
         Date time_wifi;
-      //  Wifi currentWifi;
 
+        /**
+         * @param intent
+         * @param flags
+         * @param startId
+         * @return START_NOT_STICKY
+         * @author Naira
+         */
         @Override
         public int onStartCommand(Intent intent, int flags, int startId) {
             final WifiManager wifiManager = (WifiManager) getSystemService(Context.WIFI_SERVICE);
-            // Need to wait a bit for the SSID
-            // if done get null
+
+            /**
+             * Need to wait a bit for the SSID, if done get null
+             */
             new Handler().postDelayed(new Runnable() {
                 @Override
                 public void run() {
                     WifiInfo info = wifiManager.getConnectionInfo();
                     String mac = info.getMacAddress();
-                    // name of wifi
-                     ssid = info.getSSID();
 
-                    //save
+                    // name of wifi
+                    ssid = info.getSSID();
+
                     Date current_date = new Date();
+
                     //save attributes
                     AppGlobal.getHandler().insertWIFI(ssid, TimeUtils.dateToDateTimeString(current_date));
 
-                  //
+                    Log.v(TAG, "The SSID & MAC are " + ssid + " " + mac);
 
-                 //   if (Log.isLoggable(TAG, Log.VERBOSE)) {
-                        Log.v(TAG, "The SSID & MAC are " + ssid + " " + mac);
-                  //  }
-                    // could be removed just created to make sure it is working properly
-                   // createNotification(ssid, mac);
-
-                    //stopSelf();
                     makePredictionWifi(ssid);
                 }
             }, 3000);
             return START_NOT_STICKY;
         }
 
+        /**
+         * called when wifi is stopped
+         *
+         * @author Naira
+         */
         @Override
-        public void onDestroy(){
-            //stopSelf();
+        public void onDestroy() {
             super.onDestroy();
             Toast.makeText(getApplicationContext(), "Wifi data collection stopped", Toast.LENGTH_LONG).show();
             Log.v("wifi", "wifi stopped");
         }
 
+        /**
+         * @param intent
+         * @return null
+         * @author Naira
+         */
         @Override
         public IBinder onBind(Intent intent) {
             return null;
         }
 
         /**
-         * Creates a notification displaying the SSID & MAC addr
-         * however could be removed later
+         * Creates a notification displaying the SSID & MAC addr, was used for testing
+         *
+         * @param ssid
+         * @param mac
          */
         public void createNotification(String ssid, String mac) {
             Notification n = new NotificationCompat.Builder(this)
@@ -121,72 +139,66 @@ public class Wifi extends BroadcastReceiver {
                     .notify(0, n);
         }
 
-       public void makePredictionWifi(String ssid){
+        /**
+         * checks if the wifi name usually gets connected with the chosen Activity but the user
+         * used for prediction process
+         *
+         * @param ssid
+         * @author Naira
+         */
+        public void makePredictionWifi(String ssid) {
 
+            // print in log cat for testing
             System.out.println("MyTest1: in make Prediction wifi");
 
-            //get all wifis
             ArrayList<myWifi> WifiList = new ArrayList<myWifi>();
 
-
-            ////////////////////////
             Cursor cursor = AppGlobal.getHandler().getAllWIFIs();
-/////////////////////////////////////////////////////////////////////////////////////////////
+
             if (cursor.moveToFirst()) {
                 do {
+                    //adding all wifis in the DB into a WIFI array list
                     myWifi wifi = new myWifi(cursor.getString(1), cursor.getString(2));
                     WifiList.add(wifi);
                 }
                 while (cursor.moveToNext());
             }
-           if (!cursor.isClosed()) {
-               cursor.close();
-           }
+            if (!cursor.isClosed()) {
+                cursor.close();
+            }
             //get all Activities
-            ArrayList<String[]> eventlist  = AppGlobal.getHandler().getAllEvents();
-            // für alle activities
-            for(int i = 0; i < eventlist.size(); i++){ //geh durch alle activities
+            ArrayList<String[]> eventlist = AppGlobal.getHandler().getAllEvents();
+
+            for (int i = 0; i < eventlist.size(); i++) { //loop over activities
                 //activity laden
                 String[] x = eventlist.get(i);
-                //id, name, startdate, enddate
-                //Daten zum Vergleich konvertieren
-                try {
-                    time_von = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(x[2]);
-                    time_bis = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(x[3]);
-                    System.out.println(time_von);
-                    System.out.println(time_bis);
 
+                //convert date for comparison
+                try {
+                    time_from = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(x[2]);
+                    time_to = new SimpleDateFormat("yyyy-MM-dd HH:mm").parse(x[3]);
+                    System.out.println(time_from);
+                    System.out.println(time_to);
                 } catch (ParseException e) {
-                    //Handle exception here, most of the time you will just log it.
+                    //Handle exception here
                     e.printStackTrace();
                 }
 
-                //schauen ob location timestamp innerhalb einer activity ist
-                //for schleife für alle near locations pro einzelne activity
-
-                for(int q = 1; q < WifiList.size(); q++){
-
-                    //timestamp location zwischen start und end zeit von activity dann mögliche activity für diese location
+                for (int q = 1; q < WifiList.size(); q++) {//loop over wifi array list
                     try {
                         time_wifi = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(WifiList.get(q).time);
-                        System.out.println(time_wifi);
-
-
                     } catch (ParseException e) {
-                        //Handle exception here, most of the time you will just log it.
+                        //Handle exception here
                         e.printStackTrace();
                     }
-
-                    if (TimeUtils.isTimeInbetween(time_von, time_bis, time_wifi) == true ) {
-                        System.out.println("relevante Activity für aktuelle WIFI: " + x[1]);
+                    //check if wifi timestamp occurs in between the timings of the start and end activity
+                    if (TimeUtils.isTimeInbetween(time_from, time_to, time_wifi) == true) {
+                        System.out.println("relevant Activity for current WIFI: " + x[1]);
                     } else {
-                        System.out.println("keine relevante Activity für aktuelle WIFI: " + x[1]);
+                        System.out.println("irrelevant Activity for current WIFI: " + x[1]);
                     }
-
                 }
-
-            } //for schleife für alle activities
+            }
         }
-
     }
 }
