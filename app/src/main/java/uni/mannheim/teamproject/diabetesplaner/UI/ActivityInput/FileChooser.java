@@ -1,4 +1,4 @@
-package uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag;
+package uni.mannheim.teamproject.diabetesplaner.UI.ActivityInput;
 
 import android.app.Activity;
 import android.app.Dialog;

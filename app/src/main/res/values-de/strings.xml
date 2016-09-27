@@ -186,4 +186,9 @@
     <string name="pref_algos_reset_summary">Vorhersage für den aktuellen Tag zurücksetzen</string>
     <string name="pref_algos_reset_message">Möchten Sie die Vorhersage wirklich zurücksetzen?</string>
     <string name="loadingData">Lade in Datenbank...</string>
+    <string name="added">Hinzugefügt</string>
+    <string name="chosen">Gewählte Datei</string>
+    <string name="wrong_format">Dateiformat wird nicht unterstützt.</string>
+    <string name="usualBSM">Deine gewöhnliche Eingabe des Blutzuckerspiegels ist um</string>
+    <string name="timeToInputBS">Es wird Zeit dein Blutzuckerspiegel einzutragen.</string>
 </resources>

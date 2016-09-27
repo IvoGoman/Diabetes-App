@@ -1,4 +1,4 @@
-package uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity;
+package uni.mannheim.teamproject.diabetesplaner.UI.Settings;
 
 import android.app.Dialog;
 import android.app.DialogFragment;

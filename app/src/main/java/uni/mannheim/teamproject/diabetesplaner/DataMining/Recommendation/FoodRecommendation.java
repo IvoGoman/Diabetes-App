@@ -1,7 +1,10 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -37,17 +40,22 @@ public class FoodRecommendation extends Recommendation {
     private final int EXERCISE = db.getSuperActivityID(SPORT);
     private final static String TAG = "FoodRecommendation";
 
-    private int mIdOffset = 100;
-    public static final int INTERVAL = 60 * 1000;
+//    private int mIdOffset = 100;
+    public static final int INTERVAL = 10 * 1000;
 
     private ActivityItem previous;
     private boolean first = true;
     private static boolean isPresent = false;
-
+    private String lastRecommendation = "";
 
     public FoodRecommendation() {
-        super("FoodRecommendation");
-        setInterval(INTERVAL);
+        super("FoodRecommendation", INTERVAL);
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
     //    @Override
@@ -78,7 +86,7 @@ public class FoodRecommendation extends Recommendation {
         if (notify) {
             Log.d("Rec", "recommend based on food");
 //            mIdOffset = getMidOffset();
-            mIdOffset = Recommendation.FOOD_REC;
+//            mIdOffset = Recommendation.FOOD_REC;
 
             ActivityItem item = getLastActivity();
             ActivityItem curr = getCurrentActivity();
@@ -109,54 +117,54 @@ public class FoodRecommendation extends Recommendation {
         if (id == PERSONAL_GROOMING) {
             sendNotification(getIntroString(id)
                     + getResources().getString(R.string.recom_pre) + " " + getResources().getString(R.string.a_eine) + " "
-                    + getResources().getString(R.string.banana) + ".", mIdOffset);
+                    + getResources().getString(R.string.banana) + ".");
         } else if (id == MEAL_PREP) {
             sendNotification(getIntroString(id)
                     + getResources().getString(R.string.recom_pre) + " " + getResources().getString(R.string.an_eine) + " "
                     + getResources().getString(R.string.orange) + ", " + getResources().getString(R.string.an) + " "
                     + getResources().getString(R.string.apple) + " " + getResources().getString(R.string.or) + " "
-                    + getResources().getString(R.string.a_eine) + " " + getResources().getString(R.string.strawberry) + ".", mIdOffset);
+                    + getResources().getString(R.string.a_eine) + " " + getResources().getString(R.string.strawberry) + ".");
         } else if (id == SHOPPING) {
             sendNotification(getIntroString(id)
                     + getResources().getString(R.string.recom_pre) + " " + getResources().getString(R.string.a_ein) + " "
-                    + getResources().getString(R.string.reg_soda) + ".", mIdOffset);
+                    + getResources().getString(R.string.reg_soda) + ".");
         } else if (id == HOUSEWORK) {
             sendNotification(getIntroString(id)
                     + getResources().getString(R.string.recom_pre) + " " + getResources().getString(R.string.b_potatoes) + " "
-                    + getResources().getString(R.string.or) + " " + getResources().getString(R.string.kale) + ".", mIdOffset);
+                    + getResources().getString(R.string.or) + " " + getResources().getString(R.string.kale) + ".");
         } else if (id == SOCIALIZING) {
             sendNotification(getIntroString(id)
                     + getResources().getString(R.string.recom_pre) + " " + getResources().getString(R.string.a_ein) + " "
-                    + getResources().getString(R.string.reg_soda) + ".", mIdOffset);
+                    + getResources().getString(R.string.reg_soda) + ".");
         } else if (id == DESK_WORK) {
             sendNotification(getIntroString(id)
-                    + getResources().getString(R.string.recom_pre) + " " + getResources().getString(R.string.yoghurt) + ".", mIdOffset);
+                    + getResources().getString(R.string.recom_pre) + " " + getResources().getString(R.string.yoghurt) + ".");
         } else if (id == TRANSPORTATION) {
             sendNotification(getIntroString(id)
                     + getResources().getString(R.string.recom_pre) + " " + getResources().getString(R.string.diet_soda) + " "
                     + getResources().getString(R.string.or) + " " + getResources().getString(R.string.an_eine) + " "
-                    + getResources().getString(R.string.orange) + ".", mIdOffset);
+                    + getResources().getString(R.string.orange) + ".");
         } else if (id == SLEEPING) {
             sendNotification(getIntroString(id)
                     + getResources().getString(R.string.recom_pre) + " " + getResources().getString(R.string.an) + " "
-                    + getResources().getString(R.string.apple) + ".", mIdOffset);
+                    + getResources().getString(R.string.apple) + ".");
         } else if (id == RELAXING) {
             sendNotification(getIntroString(id)
                     + getResources().getString(R.string.recom_pre) + " " + getResources().getString(R.string.two) + " "
                     + getResources().getString(R.string.apples) + " " + getResources().getString(R.string.or) + " "
-                    + getResources().getString(R.string.tea) + ".", mIdOffset);
+                    + getResources().getString(R.string.tea) + ".");
         } else if (db.getSuperActivityID(id) == EXERCISE) {
             if (item.getIntensity() != null) {
                 if (item.getIntensity() == ActivityItem.INTENSITY_MEDIUM) {
                     sendNotification(getIntroString(id)
                             + getResources().getString(R.string.recom_pre) + " " + getResources().getString(R.string.tuna) + " "
                             + getResources().getString(R.string.or) + " " + getResources().getString(R.string.a_eine) + " "
-                            + getResources().getString(R.string.banana) + ".", mIdOffset);
+                            + getResources().getString(R.string.banana) + ".");
                 } else if (item.getIntensity() == ActivityItem.INTENSITY_HIGH) {
                     sendNotification(getIntroString(id)
                             + getResources().getString(R.string.recom_pre) + " " + getResources().getString(R.string.b_potatoes) + " "
                             + getResources().getString(R.string.or) + " " + getResources().getString(R.string.a_eine) + " "
-                            + getResources().getString(R.string.quinoa) + ".", mIdOffset);
+                            + getResources().getString(R.string.quinoa) + ".");
                 }
             }
         }
@@ -233,6 +241,18 @@ public class FoodRecommendation extends Recommendation {
         }catch(Exception e){
             Log.e(TAG, e.toString());
             return null;
+        }
+    }
+
+    /**
+     * checks if its a new notification and sends a notification
+     * @param notify
+     * @author Stefan 27.09.2016
+     */
+    public void sendNotification(String notify){
+        if(!lastRecommendation.equals(notify)){
+            sendNotification(notify, getNewMid());
+            lastRecommendation = notify;
         }
     }
 }

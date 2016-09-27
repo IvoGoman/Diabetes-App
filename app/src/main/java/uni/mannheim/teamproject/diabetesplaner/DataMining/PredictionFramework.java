@@ -298,6 +298,7 @@ public class PredictionFramework implements Runnable{
                             results.put(PREDICTION_GSP, prediction);
                             double acc1 = Evaluation.Accuracy(train, prediction);
                             double acc2 = Evaluation.AccuracyFlow(train, prediction);
+                            Log.d("TAG", "Accuracy: " + acc1 + " Accuracy Flow: " + acc2);
                             double precision = Evaluation.Precision(train, prediction);
                             double recall = Evaluation.Recall(train, prediction);
                             double fMeasure = Evaluation.Fmeasure(precision,recall);

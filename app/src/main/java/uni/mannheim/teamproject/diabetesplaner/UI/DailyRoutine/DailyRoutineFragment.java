@@ -28,6 +28,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionService;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.FoodRecommendation;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DailyRoutineHandler;
@@ -36,7 +37,6 @@ import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.UI.EntryScreenActivity;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
-import uni.mannheim.teamproject.diabetesplaner.Utility.DummyDataCreator;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
@@ -45,28 +45,25 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 public class DailyRoutineFragment extends Fragment {
 
-    private static final String ARG_LIST = "list";
-    private ArrayList<String[]> list2 = new ArrayList<String[]>();
+    public static final String TAG = DailyRoutineFragment.class.getSimpleName();
+
+    //UI elements
     private static ArrayList<DailyRoutineView> items = new ArrayList<DailyRoutineView>();
     private static LinearLayout linearLayout;
+    private static ScrollView scrollView;
+    private RelativeLayout progressBar;
+    private LinearLayout routineLayout;
 
-    public static final String TAG = DailyRoutineFragment.class.getSimpleName();
     private Date date = TimeUtils.getCurrentDate();
     private Timer timer;
     private TimerTask timerTask;
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-    private static Uri imageURI;
     private OnFragmentInteractionListener mListener;
-    private DailyRoutineView dailyRoutineView;
     private static AppCompatActivity aca;
-    private static ScrollView scrollView;
     private DailyRoutineHandler drHandler;
     private Activity parentActivity;
     private IntentFilter mStatusIntentFilter;
     private String nameBS;
     private String at;
-    private RelativeLayout progressBar;
-    private LinearLayout routineLayout;
 
     // Defines a custom Intent action
     public static final String BROADCAST_ACTION =
@@ -131,17 +128,6 @@ public class DailyRoutineFragment extends Fragment {
         TextView textView = (TextView) inflaterView.findViewById(R.id.daily_routine_date_view);
         textView.setText(TimeUtils.getDateAsString());
         this.date = TimeUtils.getCurrentDate();
-
-
-        //create a DailyRoutineView for every list item, so for every activity in the daily routine
-//        for(int i=0; i<list2.size(); i++){
-//            DailyRoutineView drv = new DailyRoutineView(getActivity(),Integer.valueOf(list2.get(i)[0]),0,list2.get(i)[1], list2.get(i)[2]);
-//            linearLayout.addView(drv);
-//            drv.setState(false);
-//            drv.setLayoutParams(params);
-//            items.add(drv);
-//        }
-
 
         SharedPreferences sharedPreferences = this.getActivity().getSharedPreferences("PREDICTION_SERVICE_FILE", Context.MODE_PRIVATE);
         String last_prediction = sharedPreferences.getString("LAST_PREDICTION", "0");
@@ -249,12 +235,11 @@ public class DailyRoutineFragment extends Fragment {
 //        bsList.add(new MeasureItem((new Date()).getTime(), 100, MeasureItem.UNIT_MG));
 //        insulinList.add(new MeasureItem((new Date()).getTime(), 100, MeasureItem.UNIT_MG));
 
-        Log.d(TAG, "BS List size: " + bsList.size());
-        Log.d(TAG, "insulinList: " + bsList.size());
+//        Log.d(TAG, "BS List size: " + bsList.size());
+//        Log.d(TAG, "insulinList: " + bsList.size());
         for (int i = 0; i < listItems.size(); i++) {
             DailyRoutineView drv = new DailyRoutineView(parentActivity, listItems.get(i));
 
-            //TODO getting the bloodsugar of current activity and set it
             String bloodsugar = "";
             String insulin = "";
             int numberOfMeasuresWithinOneBS = 0;
@@ -294,25 +279,12 @@ public class DailyRoutineFragment extends Fragment {
 
             drv.setInsulinText(insulin);
 
-
-            //-----for testing--------------
-//            if(i==1) {
-//                drv.setSubactivity(4);
-//            }else if(i==1){
-//                drv.setBloodsugarText("4.0");
-//               // drv.setSubactivity(5);
-//               // drv.setMeal("Kartoffeln mit Speck, Schweinshaxen und Salatbeilage");
-//            }
-
             linearLayout.addView(drv);
             drv.setState(false);
             drv.setLayoutParams(params);
             items.add(drv);
         }
         DailyRoutineView.clearSelectedActivities();
-        //DailyRoutineView.getSelectedActivities().clear();
-        //DailyRoutineView.setSelectable(false);
-        //DailyRoutineView.setActionBarItems();
 
     }
 
@@ -322,18 +294,6 @@ public class DailyRoutineFragment extends Fragment {
             mListener.onFragmentInteraction(uri);
         }
     }
-
-    /**
-     * @Override public void onAttach(Activity activity) {
-     * super.onAttach(activity);
-     * try {
-     * mListener = (OnFragmentInteractionListener) activity;
-     * } catch (ClassCastException e) {
-     * throw new ClassCastException(activity.toString()
-     * + " must implement OnFragmentInteractionListener");
-     * }
-     * }
-     **/
 
     @Override
     public void onDetach() {
@@ -526,10 +486,22 @@ public class DailyRoutineFragment extends Fragment {
                 if (EntryScreenActivity.getFragment() instanceof DailyRoutineFragment) {
                     DailyRoutineFragment drf = ((DailyRoutineFragment) EntryScreenActivity.getFragment());
                     if (drf.getActivity() instanceof EntryScreenActivity) {
-                        drHandler.clearDailyRoutine();
-                        drHandler.update();
-                        progressBar.setVisibility(View.GONE);
-                        routineLayout.setVisibility(View.VISIBLE);
+                        try {
+                            drHandler.clearDailyRoutine();
+                            drHandler.update();
+                            progressBar.setVisibility(View.GONE);
+                            routineLayout.setVisibility(View.VISIBLE);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            Log.e(TAG, "onReceive: " + e.getLocalizedMessage());
+                        }
+
+                        if(!EntryScreenActivity.servicesRunning) {
+//                            drf.getActivity().startService(new Intent(drf.getActivity(), ActivityRecommendation.class));
+//                            drf.getActivity().startService(new Intent(drf.getActivity(), BSInputRecommendation.class));
+                            drf.getActivity().startService(new Intent(drf.getActivity(), FoodRecommendation.class));
+                            EntryScreenActivity.servicesRunning = true;
+                        }
                     }
                 }
 //            }

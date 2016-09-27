@@ -7,7 +7,7 @@
         <!--<item android:id="@+id/nav_activity_input" android:icon="@android:drawable/ic_menu_add"-->
             <!--android:title="@string/menu_item_activity_input" />-->
         <item android:id="@+id/nav_activity_measurement" android:icon="@android:drawable/ic_menu_add"
-            android:title="@string/menu_item_activity" />
+            android:title="@string/menu_item_activity_input" />
         <item android:id="@+id/nav_statistics" android:icon="@android:drawable/ic_menu_sort_by_size"
             android:title="@string/menu_item_statistics" />
         <item android:id="@+id/nav_history" android:icon="@android:drawable/ic_menu_today"

@@ -37,7 +37,7 @@
         </activity>
 
         <activity
-            android:name=".UI.SettingsActivity.SettingsActivity"
+            android:name=".UI.Settings.SettingsActivity"
             android:parentActivityName=".UI.EntryScreenActivity"
             android:screenOrientation="portrait">
             <intent-filter android:label="Pref" >
@@ -49,7 +49,7 @@
 
 
 
-        <activity android:name=".UI.SettingsActivity.HelpActivity"
+        <activity android:name=".UI.Settings.HelpActivity"
             android:parentActivityName=".UI.EntryScreenActivity"
             android:screenOrientation="portrait"
             >
@@ -103,21 +103,18 @@
             android:name=".DataMining.PredictionService"
             android:exported="false"/>
         <service
-            android:name=".UI.FileLoadingService"
+            android:name=".UI.ActivityInput.FileLoadingService"
             android:exported="false"/>
 
         <service
             android:name=".DataMining.Recommendation.BSInputRecommendation"
-            android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
         <service
             android:name=".DataMining.Recommendation.ActivityRecommendation"
-            android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
         <service
             android:name=".DataMining.Recommendation.FoodRecommendation"
-            android:enabled="true"
-            android:exported="true" />
+            android:exported="false" />
     </application>
 
 </manifest>

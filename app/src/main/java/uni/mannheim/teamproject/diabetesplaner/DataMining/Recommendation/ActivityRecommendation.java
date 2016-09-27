@@ -1,8 +1,11 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation;
 
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Handler;
+import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.annotation.Nullable;
 import android.util.Log;
 
 import java.util.ArrayList;
@@ -34,8 +37,13 @@ public class ActivityRecommendation extends Recommendation {
      * Creates an IntentService.  Invoked by your subclass's constructor.
      */
     public ActivityRecommendation() {
-        super("RoutineRecommendationProcess");
-        setInterval(INTERVAL);
+        super("RoutineRecommendationProcess", INTERVAL);
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
     }
 
 
@@ -94,11 +102,7 @@ public class ActivityRecommendation extends Recommendation {
         MeasureItem insulin = dbHandler.getMostRecentMeasurmentValue(MeasureItem.MEASURE_KIND_INSULIN);
 
         //there is no measurment within the specified time interval
-        if (bs == null) {
-//            //TODO Ammars rules missing
-//            sendNotification("No blood sugar level measurement within the last " + period / 60 + " hours " + period % 60 + " minutes." +
-//                    "TODO: give recommendation based on activities", mIdOffset);
-        } else {
+        if (bs != null){
             if (previous == null) {
                 giveBSLbasedRec(bs, insulin);
                 previous = bs;
@@ -122,32 +126,23 @@ public class ActivityRecommendation extends Recommendation {
 
         if (150 <= bsLevel && bsLevel < 200) {
             //then Exercise
-            sendNotification(getResources().getString(R.string.rec_bs_between_150_200)+bsString, mIdOffset);
+            sendNotification(getResources().getString(R.string.rec_bs_between_150_200)+bsString, getNewMid());
         } else if (bsLevel >= 200) {
             //then insulin
             if (insulin != null) {
                 Date ins = new Date(insulin.getTimestamp());
                 Date bsl = new Date(bs.getTimestamp());
                 if (ins.before(bsl)) {
-                    sendNotification(getResources().getString(R.string.rec_bs_above_200)+bsString, mIdOffset);
+                    sendNotification(getResources().getString(R.string.rec_bs_above_200)+bsString, getNewMid());
                 }
             } else {
-                sendNotification(getResources().getString(R.string.rec_bs_above_200)+bsString, mIdOffset);
+                sendNotification(getResources().getString(R.string.rec_bs_above_200)+bsString, getNewMid());
             }
         } else if (bsLevel < 100) {
             //Eat
-            sendNotification(getResources().getString(R.string.rec_bs_blow_100)+bsString, mIdOffset);
+            sendNotification(getResources().getString(R.string.rec_bs_blow_100)+bsString, getNewMid());
         }
     }
-
-    public boolean isExercise(ActivityItem curr) {
-        return false;
-    }
-
-    public boolean isLowIntenseExercise(ActivityItem curr) {
-        return false;
-    }
-
 
     /**
      * @return

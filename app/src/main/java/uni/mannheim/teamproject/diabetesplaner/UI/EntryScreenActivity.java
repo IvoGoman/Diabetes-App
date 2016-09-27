@@ -3,14 +3,11 @@ package uni.mannheim.teamproject.diabetesplaner.UI;
 
 import android.Manifest;
 import android.app.NotificationManager;
-import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
-import android.content.ServiceConnection;
 import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.IBinder;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -22,11 +19,9 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,12 +36,11 @@ import java.util.List;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.ActivityRecommendation;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.BSInputRecommendation;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.FoodRecommendation;
-import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.Recommendation;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.TechnicalServices.GPS_Service.GPS_Service;
-import uni.mannheim.teamproject.diabetesplaner.UI.ActivityMeasurementFrag.ActivityFragment;
+import uni.mannheim.teamproject.diabetesplaner.UI.ActivityInput.ActivityFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.ActivityLimitDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.AddDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
@@ -54,7 +48,7 @@ import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineView;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.EditDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.InputDialog;
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.MeasurementDialog;
-import uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.SettingsActivity;
+import uni.mannheim.teamproject.diabetesplaner.UI.Settings.SettingsActivity;
 import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.ChartFragment;
 import uni.mannheim.teamproject.diabetesplaner.UI.StatisticsFragment.StatisticsFragment;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -66,25 +60,18 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 public class EntryScreenActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    public static final String TAG = EntryScreenActivity.class.getSimpleName();
+    public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
+    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
+
     //Attributes for recommendations
-    public static ActivityRecommendation recServiceActivity;
-    public static BSInputRecommendation recServiceBS;
-    public static FoodRecommendation recServiceFood;
+//    public static ActivityRecommendation recServiceActivity;
+//    public static BSInputRecommendation recServiceBS;
+//    public static FoodRecommendation recServiceFood;
     private boolean mBoundActivityRec = false;
     private boolean mBoundBSRec = false;
     private boolean mBoundFoodRec = false;
-    public static boolean optionsMenuCreated = false;
 
-    public static final int MY_PERMISSIONS_REQUEST_READ_CONTACTS = 1;
-
-    public static final String TAG = EntryScreenActivity.class.getSimpleName();
-
-    private static final int CAPTURE_IMAGE_ACTIVITY_REQUEST_CODE = 100;
-
-    /**
-     * ATTENTION: This was auto-generated to implement the App Indexing API.
-     * See https://g.co/AppIndexing/AndroidStudio for more information.
-     */
     private GoogleApiClient client;
 
     //UI attributes
@@ -100,6 +87,7 @@ public class EntryScreenActivity extends AppCompatActivity
     private static Menu optionsMenu;
     public static NavigationView navigationView;
     private static String imagePath;
+    public static boolean servicesRunning;
 
     /**
      * @param savedInstanceState
@@ -131,13 +119,12 @@ public class EntryScreenActivity extends AppCompatActivity
                 @Override
                 public void onLayoutChange(View view, int i, int i1, int i2, int i3, int i4, int i5, int i6, int i7) {
 
-                    navigationView.removeOnLayoutChangeListener( this );
+                    navigationView.removeOnLayoutChangeListener(this);
 
                     //Change of Username
                     TextView textView = (TextView) navigationView.findViewById(R.id.username);
                     DataBaseHandler database = AppGlobal.getHandler();
-                    if (database.getUser(database.getUserID())!=null)
-                    {
+                    if (database.getUser(database.getUserID()) != null) {
                         textView.setText(database.getUser(database.getUserID())[0] + " " +
                                 database.getUser(database.getUserID())[1]);
                     }
@@ -151,20 +138,13 @@ public class EntryScreenActivity extends AppCompatActivity
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
 
-            //starts and binds to recommendation service
-//            startRec(Recommendation.ACTIVITY_REC);
-//            startRec(Recommendation.BS_REC);
+            startService(new Intent(EntryScreenActivity.this, ActivityRecommendation.class));
+            startService(new Intent(EntryScreenActivity.this, BSInputRecommendation.class));
+//            startService(new Intent(EntryScreenActivity.this, FoodRecommendation.class));
 
-
-            startService(new Intent(this, ActivityRecommendation.class));
-            startService(new Intent(this, BSInputRecommendation.class));
-            startService(new Intent(this, FoodRecommendation.class));
-
-            // ATTENTION: This was auto-generated to implement the App Indexing API.
-            // See https://g.co/AppIndexing/AndroidStudio for more information.
             client = new GoogleApiClient.Builder(this).addApi(AppIndex.API).build();
 
-        }catch(Exception e){
+        } catch (Exception e) {
             e.getMessage();
         }
     }
@@ -177,15 +157,14 @@ public class EntryScreenActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
-        }else if(DailyRoutineView.getSelectedActivities().size()>0){
+        } else if (DailyRoutineView.getSelectedActivities().size() > 0) {
             DailyRoutineView.deselectAll();
-        }else{
+        } else {
             super.onBackPressed();
         }
     }
 
     /**
-     *
      * @param menu
      * @return
      * @author Stefan
@@ -207,14 +186,14 @@ public class EntryScreenActivity extends AppCompatActivity
         chooseDateItem.setVisible(false);
 
         //handles the visibility of the action bar icons depending on the fragment
-        if(fragment instanceof DailyRoutineFragment){
+        if (fragment instanceof DailyRoutineFragment) {
             addMeasurements.setVisible(true);
             addItemRoutine.setVisible(true);
-        }else if(fragment instanceof ActivityFragment){
+        } else if (fragment instanceof ActivityFragment) {
 
-        }else if(fragment instanceof StatisticsFragment){
+        } else if (fragment instanceof StatisticsFragment) {
             chooseDateItem.setVisible(true);
-        }else if(fragment instanceof HistoryFragment){
+        } else if (fragment instanceof HistoryFragment) {
             addMeasurements.setVisible(true);
             addItemRoutine.setVisible(true);
         }
@@ -224,7 +203,6 @@ public class EntryScreenActivity extends AppCompatActivity
     }
 
     /**
-     *
      * @param menu
      * @return
      * @author Stefan
@@ -240,6 +218,7 @@ public class EntryScreenActivity extends AppCompatActivity
 
     /**
      * handles ActionBar clicks
+     *
      * @param item
      * @return
      * @author Stefan
@@ -253,16 +232,6 @@ public class EntryScreenActivity extends AppCompatActivity
 
         //handles event when add button in the ActionBar on the ActivityInputFragment page was clicked
         switch (id) {
-            case R.id.add_icon_action_bar:
-                //TODO: add activity log
-                ActivityInputFragment.list.add("ActivityData.csv");
-
-                ListAdapter mAdapter = new CustomListView(this, ActivityInputFragment.list);
-
-                ActivityInputFragment.addListItem(mAdapter);
-
-                return true;
-
             case R.id.delete_icon_action_bar:
                 //Get the currently selected items and removes them
                 if (fragment instanceof DailyRoutineFragment) {
@@ -310,11 +279,11 @@ public class EntryScreenActivity extends AppCompatActivity
 
             case R.id.addMeasurements_icon_action_bar_routine:
                 MeasurementDialog measurementDialog = new MeasurementDialog();
-                if(fragment instanceof HistoryFragment){
+                if (fragment instanceof HistoryFragment) {
                     HistoryFragment historyFragment = (HistoryFragment) fragment;
                     Date date = historyFragment.getDate();
                     measurementDialog.setDate(date);
-                } else if(fragment instanceof DailyRoutineFragment){
+                } else if (fragment instanceof DailyRoutineFragment) {
                     DailyRoutineFragment dailyRoutineFragment = (DailyRoutineFragment) fragment;
                     Date date = dailyRoutineFragment.getDate();
                     measurementDialog.setDate(date);
@@ -366,7 +335,7 @@ public class EntryScreenActivity extends AppCompatActivity
                         break;
                 }
 
-        return true;
+                return true;
 
         }
 
@@ -375,10 +344,11 @@ public class EntryScreenActivity extends AppCompatActivity
 
     /**
      * Returns the indexes of the items that were selected by the user
+     *
      * @return
      * @author Stefan
      */
-    public ArrayList<Integer> getIndexesOfSelected(DailyRoutineFragment fragment){
+    public ArrayList<Integer> getIndexesOfSelected(DailyRoutineFragment fragment) {
         ArrayList<DailyRoutineView> items = fragment.getActivityList();
         ArrayList<Integer> indexes = new ArrayList<>();
         for (int i = 0; i < items.size(); i++) {
@@ -391,29 +361,32 @@ public class EntryScreenActivity extends AppCompatActivity
 
     /**
      * updates the daily routine if the current visible Fragment is the DailyRoutineFragment
+     *
      * @author Stefan 17.09.2016
      */
-    public static void updateDailyRoutine(){
-        System.out.println("instance of: " + (fragment instanceof  DailyRoutineFragment));
-        if(fragment instanceof DailyRoutineFragment){
-            ((DailyRoutineFragment)fragment).updateView();
+    public static void updateDailyRoutine() {
+        System.out.println("instance of: " + (fragment instanceof DailyRoutineFragment));
+        if (fragment instanceof DailyRoutineFragment) {
+            ((DailyRoutineFragment) fragment).updateView();
         }
     }
 
     /**
      * returns the DailyRoutineFragment
+     *
      * @return
      * @author Stefan 17.09.2016
      */
-    public static DailyRoutineFragment getDailyRoutineFragment(){
-        if(fragment instanceof DailyRoutineFragment){
-            return (DailyRoutineFragment)fragment;
+    public static DailyRoutineFragment getDailyRoutineFragment() {
+        if (fragment instanceof DailyRoutineFragment) {
+            return (DailyRoutineFragment) fragment;
         }
         return null;
     }
 
     /**
      * handles if a menu item in the navigation drawer was selected
+     *
      * @param item
      * @return
      * @author Stefan
@@ -444,13 +417,12 @@ public class EntryScreenActivity extends AppCompatActivity
             addMeasurements.setVisible(true);
             addItemRoutine.setVisible(true);
 
-        }else if (id == R.id.nav_activity_measurement) {
+        } else if (id == R.id.nav_activity_measurement) {
             fragment = new ActivityFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
             ft.commit();
-        }
-        else if (id == R.id.nav_statistics) {
+        } else if (id == R.id.nav_statistics) {
             fragment = new StatisticsFragment();
             FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
             ft.replace(R.id.mainFrame, fragment);
@@ -482,10 +454,6 @@ public class EntryScreenActivity extends AppCompatActivity
     public void onStart() {
         super.onStart();
 
-//        startRec(Recommendation.ACTIVITY_REC);
-//        startRec(Recommendation.BS_REC);
-//        startRec(Recommendation.FOOD_REC);
-
         System.out.println("in onStart");
         my_permissions();
 
@@ -507,7 +475,7 @@ public class EntryScreenActivity extends AppCompatActivity
 
     }
 
-    public void my_permissions(){
+    public void my_permissions() {
 
         if (ContextCompat.checkSelfPermission(this,
                 Manifest.permission.ACCESS_FINE_LOCATION)
@@ -533,14 +501,14 @@ public class EntryScreenActivity extends AppCompatActivity
                 // app-defined int constant. The callback method gets the
                 // result of the request.
             }
-        }else {
+        } else {
             startGPS_Service();
         }
 
     }
 
 
-    public void startGPS_Service(){
+    public void startGPS_Service() {
         System.out.println("in Start GPS Service");
         Intent myIntent = new Intent(this, GPS_Service.class);
         this.startService(myIntent);
@@ -557,10 +525,6 @@ public class EntryScreenActivity extends AppCompatActivity
 
     @Override
     public void onStop() {
-        //unbind the recommendation service
-//        stopRec(Recommendation.ACTIVITY_REC);
-//        stopRec(Recommendation.BS_REC);
-//        stopRec(Recommendation.FOOD_REC);
 
         super.onStop();
 
@@ -588,26 +552,26 @@ public class EntryScreenActivity extends AppCompatActivity
 
     /**
      * getter for ActionBar
+     *
      * @return optionsMenu (ActionBar)
      * @author Stefan
      */
-    public static Menu getOptionsMenu(){
+    public static Menu getOptionsMenu() {
         return optionsMenu;
     }
 
     /**
      * returns URI of image captured
+     *
      * @return
      * @author Stefan
      */
-    public static String getImagePath(){
+    public static String getImagePath() {
         return imagePath;
     }
 
 
-
     /**
-     *
      * @param requestCode
      * @param resultCode
      * @param data
@@ -635,6 +599,7 @@ public class EntryScreenActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
+        servicesRunning = false;
         stopService(new Intent(this, ActivityRecommendation.class));
         stopService(new Intent(this, BSInputRecommendation.class));
         stopService(new Intent(this, FoodRecommendation.class));
@@ -648,143 +613,150 @@ public class EntryScreenActivity extends AppCompatActivity
 
     /**
      * create a service connection for the ActivityRecommendation
+     *
      * @author Stefan 05.07.2016
      */
-    protected ServiceConnection mServiceConnActivityRec = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            ActivityRecommendation.RecBinder recBinder = (ActivityRecommendation.RecBinder) binder;
-            recServiceActivity = (ActivityRecommendation)(recBinder.getService());
-            mBoundActivityRec = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mBoundActivityRec = false;
-        }
-    };
-
-    /**
-     * create a service connection for the BSInputRecommendation
-     * @author Stefan 09.07.2016
-     */
-    protected ServiceConnection mServiceConnBSRec = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            ActivityRecommendation.RecBinder recBinder = (BSInputRecommendation.RecBinder) binder;
-            recServiceBS = (BSInputRecommendation)(recBinder.getService());
-            mBoundBSRec = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            mBoundBSRec = false;
-        }
-    };
-
-    /**
-     * create a service connection for the FoodRecommendation
-     * @author Stefan 12.09.2016
-     */
-    protected ServiceConnection mServiceConnFoodRec = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder binder) {
-            FoodRecommendation.RecBinder recBinder = (FoodRecommendation.RecBinder) binder;
-            recServiceFood = (FoodRecommendation)(recBinder.getService());
-
-            mBoundFoodRec = true;
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d(TAG, "onTaskServiceDisconnected");
-            mBoundFoodRec = false;
-        }
-    };
+//    protected ServiceConnection mServiceConnActivityRec = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder binder) {
+//            ActivityRecommendation.RecBinder recBinder = (ActivityRecommendation.RecBinder) binder;
+//            recServiceActivity = (ActivityRecommendation) (recBinder.getService());
+//            mBoundActivityRec = true;
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            mBoundActivityRec = false;
+//        }
+//    };
+//
+//    /**
+//     * create a service connection for the BSInputRecommendation
+//     *
+//     * @author Stefan 09.07.2016
+//     */
+//    protected ServiceConnection mServiceConnBSRec = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder binder) {
+//            ActivityRecommendation.RecBinder recBinder = (BSInputRecommendation.RecBinder) binder;
+//            recServiceBS = (BSInputRecommendation) (recBinder.getService());
+//            mBoundBSRec = true;
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            mBoundBSRec = false;
+//        }
+//    };
+//
+//    /**
+//     * create a service connection for the FoodRecommendation
+//     *
+//     * @author Stefan 12.09.2016
+//     */
+//    protected ServiceConnection mServiceConnFoodRec = new ServiceConnection() {
+//        @Override
+//        public void onServiceConnected(ComponentName name, IBinder binder) {
+//            FoodRecommendation.RecBinder recBinder = (FoodRecommendation.RecBinder) binder;
+//            recServiceFood = (FoodRecommendation) (recBinder.getService());
+//
+//            mBoundFoodRec = true;
+//        }
+//
+//        @Override
+//        public void onServiceDisconnected(ComponentName name) {
+//            Log.d(TAG, "onTaskServiceDisconnected");
+//            mBoundFoodRec = false;
+//        }
+//    };
 
 
     /**
      * bind and start the recommendation service
+     *
      * @param recType specifies the type of recommendation to start
      * @author Stefan 05.07.2016
      */
-    public void startRec(int recType) {
-        switch (recType){
-            case Recommendation.ACTIVITY_REC: {
-                if(!mBoundActivityRec) {
-                    bindService(new Intent(this, ActivityRecommendation.class), mServiceConnActivityRec, Context.BIND_AUTO_CREATE);
-                    mBoundActivityRec = true;
-                }
-                break;
-            }
-            case Recommendation.BS_REC: {
-                if(!mBoundBSRec) {
-                    bindService(new Intent(this, BSInputRecommendation.class), mServiceConnBSRec, Context.BIND_AUTO_CREATE);
-                    mBoundBSRec = true;
-                }
-                break;
-            }
-            case Recommendation.FOOD_REC: {
-                if(!mBoundFoodRec) {
-                    bindService(new Intent(this, FoodRecommendation.class), mServiceConnFoodRec, Context.BIND_AUTO_CREATE);
-                    mBoundFoodRec = true;
-                }
-                break;
-            }
-        }
-    }
+//    public void startRec(int recType) {
+//        switch (recType) {
+//            case Recommendation.ACTIVITY_REC: {
+//                if (!mBoundActivityRec) {
+//                    bindService(new Intent(this, ActivityRecommendation.class), mServiceConnActivityRec, Context.BIND_AUTO_CREATE);
+//                    mBoundActivityRec = true;
+//                }
+//                break;
+//            }
+//            case Recommendation.BS_REC: {
+//                if (!mBoundBSRec) {
+//                    bindService(new Intent(this, BSInputRecommendation.class), mServiceConnBSRec, Context.BIND_AUTO_CREATE);
+//                    mBoundBSRec = true;
+//                }
+//                break;
+//            }
+//            case Recommendation.FOOD_REC: {
+//                if (!mBoundFoodRec) {
+//                    bindService(new Intent(this, FoodRecommendation.class), mServiceConnFoodRec, Context.BIND_AUTO_CREATE);
+//                    mBoundFoodRec = true;
+//                }
+//                break;
+//            }
+//        }
+//    }
 
     /**
      * stop and unbind the recommendation service
+     *
      * @param recType specifies the type of recommendation to stop
      * @author Stefan 05.07.2016
      */
-    public void stopRec(int recType) {
-        switch (recType) {
-            case Recommendation.ACTIVITY_REC: {
-                // Unbind from the service
-                if (mBoundActivityRec) {
-                    unbindService(mServiceConnActivityRec);
-                    mBoundActivityRec = false;
-                }
-                break;
-            }
-            case Recommendation.BS_REC: {
-                // Unbind from the service
-                if (mBoundBSRec) {
-                    unbindService(mServiceConnBSRec);
-                    mBoundBSRec = false;
-                }
-                break;
-            }
-            case Recommendation.FOOD_REC:{
-                // Unbind from the service
-                if (mBoundFoodRec) {
-                    unbindService(mServiceConnFoodRec);
-                    mBoundFoodRec = false;
-                }
-                break;
-            }
-        }
-    }
+//    public void stopRec(int recType) {
+//        switch (recType) {
+//            case Recommendation.ACTIVITY_REC: {
+//                // Unbind from the service
+//                if (mBoundActivityRec) {
+//                    unbindService(mServiceConnActivityRec);
+//                    mBoundActivityRec = false;
+//                }
+//                break;
+//            }
+//            case Recommendation.BS_REC: {
+//                // Unbind from the service
+//                if (mBoundBSRec) {
+//                    unbindService(mServiceConnBSRec);
+//                    mBoundBSRec = false;
+//                }
+//                break;
+//            }
+//            case Recommendation.FOOD_REC: {
+//                // Unbind from the service
+//                if (mBoundFoodRec) {
+//                    unbindService(mServiceConnFoodRec);
+//                    mBoundFoodRec = false;
+//                }
+//                break;
+//            }
+//        }
+//    }
 
     /**
      * returns the task recommendation service
+     *
      * @return
      * @author Stefan 05.07.2016
      */
-    public ActivityRecommendation getRoutineRecommendationService(){
-        return recServiceActivity;
-    }
+//    public ActivityRecommendation getRoutineRecommendationService() {
+//        return recServiceActivity;
+//    }
 
     /**
      * returns the bloodsugar input recommendation service
+     *
      * @return
      * @author Stefan 09.07.2016
      */
-    public BSInputRecommendation getBSInputRecommendationService(){
-        return recServiceBS;
-    }
+//    public BSInputRecommendation getBSInputRecommendationService() {
+//        return recServiceBS;
+//    }
 
 
     @Override
@@ -818,7 +790,7 @@ public class EntryScreenActivity extends AppCompatActivity
         }
     }
 
-    public static Fragment getFragment(){
+    public static Fragment getFragment() {
         return fragment;
     }
 }
