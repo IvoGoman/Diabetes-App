@@ -43,6 +43,8 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
  */
 public class ActivityFragment extends Fragment {
 
+    private static final String TAG = ActivityFragment.class.getSimpleName();
+
     private static final int MY_PERMISSIONS_READ_Storage = 0;
     public static AbsListView lv;
     public static ArrayList<Datafile> FileList = new ArrayList<>();
@@ -255,9 +257,13 @@ public class ActivityFragment extends Fragment {
             floatingButton.setVisibility(View.VISIBLE);
 
             FileList = dbHandler.getAllDatafiles();
-            adapter = new CustomListView(getActivity(), FileList);
-            lv.setAdapter(adapter);
-
+            try {
+                adapter = new CustomListView(getActivity(), FileList);
+                lv.setAdapter(adapter);
+            }catch(Exception e){
+                e.printStackTrace();
+                Log.e(TAG, "onReceive: " + e.getLocalizedMessage());
+            }
         }
     }
 }
