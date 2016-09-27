@@ -648,6 +648,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 //        db1.close();
     }
 
+    /***
+     * Inserts the profile of the user
+     * @author: Jan
+     * @param name
+     * @param surename
+     * @param age
+     */
     public void InsertProfile(String name, String surename, int age)
     {
         try {
@@ -682,6 +689,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /***
      * Insert a new weight measurement
+     * @author: Jan
      * @param profile_id
      * @param weight
      * @param measure_unit
@@ -696,6 +704,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /***
      * Returns the last weight measurement
+     * @author: Jan
      * @param profile_id
      * @return
      */
@@ -1525,6 +1534,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return completeness;
     }
 
+    /***
+     * @author: Jan
+     * @param id
+     * @return
+     */
     public String[] getUser(int id)
     {
         SQLiteDatabase db1 = this.getWritableDatabase();

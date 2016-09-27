@@ -30,10 +30,10 @@ public class PredictionService extends IntentService {
         ArrayList<Integer> algos = new ArrayList<>();
 //        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
         algos.add(PredictionFramework.PREDICTION_GSP);
-//        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
-//        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
+        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
+        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
 //        try {
-        predictDailyRoutine(algos,PredictionFramework.WEEKDAYS);
+        predictDailyRoutine(algos,PredictionFramework.FRIDAY);
 
         String status = "completed";
         Intent localIntent =

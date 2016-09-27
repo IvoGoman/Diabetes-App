@@ -13,6 +13,10 @@ import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plu
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plugins.heuristicsnet.miner.heuristics.miner.operators.Stats;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plugins.heuristicsnet.miner.heuristics.miner.settings.HeuristicsMinerSettings;
 
+/***
+ * Copied from the Heurisitics Miner Framework
+ * @author Jan
+ */
 public class AnnotatedHeuristicsNet extends SimpleHeuristicsNet {
 	
 	protected HashMap<String, Integer> keys;

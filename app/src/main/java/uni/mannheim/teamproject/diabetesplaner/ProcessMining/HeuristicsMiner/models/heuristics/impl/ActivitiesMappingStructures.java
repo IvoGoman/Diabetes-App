@@ -21,6 +21,10 @@ import org.deckfour.xes.classification.XEventClasses;
  * @author Ana Karla Alves de Medeiros
  * 
  */
+/***
+ * Copied from the Heurisitics Miner Framework
+ * @author Jan
+ */
 public class ActivitiesMappingStructures {
 
 	private static final String VISUALIZATION_SEPARATOR = ",";
@@ -292,6 +296,10 @@ public class ActivitiesMappingStructures {
  * 
  * @author Ana Karla Alves de Medeiros
  * 
+ */
+/***
+ * Copied from the Heurisitics Miner Framework
+ * @author Jan
  */
 class XEventClassComparator implements Comparator<XEventClass> {
 	/**

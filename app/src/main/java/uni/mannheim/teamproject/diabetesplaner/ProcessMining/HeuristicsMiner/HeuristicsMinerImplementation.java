@@ -37,6 +37,7 @@ import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plu
 
 /**
  * @author Jan
+ * Used to connect the HeuristicsMiner with the UI and uses the HeuristicsMiner Framework
  */
 public class HeuristicsMinerImplementation {
 
@@ -199,7 +200,7 @@ public class HeuristicsMinerImplementation {
 
                 StartId = myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestOutputEvent(myNet.getMetrics().getBestStart())));
                 //StartId = myNet.getActivitiesMappingStructures().getReverseActivitiesMapping().get(
-                     //   new XEventClass(String.valueOf(ProcessMiningUtil.getMostFrequentStartActivity(cases))+"+Complete", 0)).get(0);
+                  //      new XEventClass(String.valueOf(ProcessMiningUtil.getMostFrequentStartActivity())+"+Complete", 0)).get(0);
 
                 if(myNet.getEndActivities().size() == 1)
                 {

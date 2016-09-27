@@ -1,5 +1,9 @@
 package uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plugins.heuristicsnet.miner.heuristics;
 
+/***
+ * Copied from the Heurisitics Miner Framework
+ * @author Jan
+ */
 public class HeuristicsMinerConstants {
 
 	public static final double RELATIVE_TO_BEST_THRESHOLD = 0.05;

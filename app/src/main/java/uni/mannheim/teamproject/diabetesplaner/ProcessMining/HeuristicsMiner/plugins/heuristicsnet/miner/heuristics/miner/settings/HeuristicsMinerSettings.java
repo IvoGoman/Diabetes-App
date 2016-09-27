@@ -3,6 +3,10 @@ package uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.pl
 import org.deckfour.xes.classification.XEventClassifier;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.plugins.heuristicsnet.miner.heuristics.HeuristicsMinerConstants;
 
+/***
+ * Copied from the Heurisitics Miner Framework
+ * @author Jan
+ */
 public class HeuristicsMinerSettings {
 
 	protected double relativeToBestThreshold = HeuristicsMinerConstants.RELATIVE_TO_BEST_THRESHOLD;

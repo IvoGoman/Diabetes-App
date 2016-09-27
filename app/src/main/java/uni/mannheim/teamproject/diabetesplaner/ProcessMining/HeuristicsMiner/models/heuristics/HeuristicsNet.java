@@ -15,6 +15,10 @@ import cern.colt.matrix.DoubleMatrix2D;
  * @author Ana Karla Alves de Medeiros
  * 
  */
+/***
+ * Copied from the Heurisitics Miner Framework
+ * @author Jan
+ */
 public interface HeuristicsNet {
 
 	/**

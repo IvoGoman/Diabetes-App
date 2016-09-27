@@ -171,7 +171,6 @@ public class HistoryFragment extends DailyRoutineFragment {
         items_history.clear();
         ArrayList<ActivityItem> listItems = new ArrayList<>();
         listItems = dayHandler.getDayRoutine(date);
-        Log.d(TAG, "list size after update: " + listItems.size());
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
         DataBaseHandler dbHandler = AppGlobal.getHandler();
@@ -221,7 +220,7 @@ public class HistoryFragment extends DailyRoutineFragment {
 
                 drv.setInsulinText(insulin);
                 linearLayout.addView(drv);
-                drv.setState(false);
+                drv.setState(true);
                 drv.setLayoutParams(params);
                 items_history.add(drv);
             }

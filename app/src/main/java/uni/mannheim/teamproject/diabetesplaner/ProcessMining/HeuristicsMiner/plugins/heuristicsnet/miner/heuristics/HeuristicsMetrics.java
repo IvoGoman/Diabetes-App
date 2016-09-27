@@ -11,6 +11,10 @@ import cern.colt.matrix.DoubleMatrix1D;
 import cern.colt.matrix.DoubleMatrix2D;
 import uni.mannheim.teamproject.diabetesplaner.ProcessMining.HeuristicsMiner.models.heuristics.impl.HNSubSet;
 
+/***
+ * Copied from the Heurisitics Miner Framework
+ * @author Jan
+ */
 public class HeuristicsMetrics {
 
 private int eventsNumber, tracesNumber, instancesNumber;
