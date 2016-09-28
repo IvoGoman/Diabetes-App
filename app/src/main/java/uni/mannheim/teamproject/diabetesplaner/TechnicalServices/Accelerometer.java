@@ -14,7 +14,6 @@ import android.widget.Toast;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Calculation;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -27,12 +26,6 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.PauseSystem;
 public class Accelerometer extends Service implements SensorEventListener {
     private SensorManager senSensorManager;
     private Sensor senAccelerometer;
-
-    public ArrayList<Integer> getCurrentActivities() {
-        return currentActivities;
-    }
-
-    private ArrayList<Integer> currentActivities;
 
     private int accelerometerCacheCounter = 0;
 
@@ -87,10 +80,10 @@ public class Accelerometer extends Service implements SensorEventListener {
         float[] values = sensorEvent.values.clone();
         if (PauseSystem.gapSuitable()) {
 
-            // write Accelerometer data into Log Cat
-            //Log.d("x y z time", values[0]+" "+values[1]+" "+values[2]+" "+System.currentTimeMillis());
-
-            // create collection of P.finTimeWindow * P.sampleRate values and send it to the Calculation class
+            /**
+             * edited by leonidgunko
+             * predicts current action from accelerometer cache
+             */
             if (this.accelerometerCacheCounter < AppGlobal.accelerometerCache.length) {
 
                 // add Accelerometer data to the array/ collection
@@ -110,14 +103,6 @@ public class Accelerometer extends Service implements SensorEventListener {
                 // to process the Accelerometer data
                 Log.d("COLLECTION OF SIZE " + AppGlobal.accelerometerCache.length, "sent");
 
-                // call function to process the data -> preprocessRecords()
-
-				/*
-			     * START CLASSIFICATION
-			     * @author Mats
-			     * @author Robert
-			     */
-
                 try {
                     InputStream model = getAssets().open(AppGlobal.modelDataFileName);
 
@@ -131,17 +116,19 @@ public class Accelerometer extends Service implements SensorEventListener {
                     // edited by Leonid
                     if (aggregatedRecords[1]=="Walking" || aggregatedRecords[1]=="Climbing up" || aggregatedRecords[1]=="Climbing down" || aggregatedRecords[1]=="Running" || aggregatedRecords[1]=="Jumping")
                     {
-                        currentActivities.add(1);
-                        currentActivities.add(2);
-                        currentActivities.add(3);
-                        currentActivities.add(4);
-                        currentActivities.add(5);
-                        currentActivities.add(10);
-                        currentActivities.add(18);
-                        currentActivities.add(21);
+                        //1,2,13,17,18,19,20,21,34
+                        AppGlobal.accUnusualActivities.add(1);
+                        AppGlobal.accUnusualActivities.add(2);
+                        AppGlobal.accUnusualActivities.add(13);
+                        AppGlobal.accUnusualActivities.add(17);
+                        AppGlobal.accUnusualActivities.add(18);
+                        AppGlobal.accUnusualActivities.add(19);
+                        AppGlobal.accUnusualActivities.add(20);
+                        AppGlobal.accUnusualActivities.add(21);
+                        AppGlobal.accUnusualActivities.add(34);
                     }
                     else{
-                        currentActivities.clear();
+                        AppGlobal.accUnusualActivities.clear();
                     }
 
                     try {
@@ -151,9 +138,6 @@ public class Accelerometer extends Service implements SensorEventListener {
                         //Log.wtf("Diabetes Planner", "Something went wrong with classification!", e);
                     }
 
-		        /*
-		         * END CLASSIFICATION
-		         */
                 } catch (IOException e) {
                     e.printStackTrace();
                 } catch (Exception e) {

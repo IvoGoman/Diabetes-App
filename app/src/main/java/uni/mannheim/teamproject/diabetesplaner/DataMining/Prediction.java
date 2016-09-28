@@ -86,193 +86,10 @@ public class Prediction {
         return inputReader;
     }
 
-    /*
-
-    public ArrayList<PeriodAction> GetRoutine1() throws Exception {
-        // Creates ARFF file for the instances to be saved to
-        Context c = AppGlobal.getcontext();
-        DataBaseHandler helper = AppGlobal.getHandler();
-        String S =c.getApplicationInfo().dataDir + "/files/" + FILENAME;
-        OutputStreamWriter output = new OutputStreamWriter(c.openFileOutput(FILENAME, Context.MODE_ENABLE_WRITE_AHEAD_LOGGING));
-
-        String Actions = "{";
-
-        Cursor cursor1 = helper.getAllActions(helper);
-
-        if (cursor1.moveToFirst()) {
-            do {
-                Actions += cursor1.getString(1) + ",";
-            }
-            while (cursor1.moveToNext());
-            Actions = Actions.substring(0, Actions.length()-1);
-            Actions +="}";
-        }
-        // close cursor
-        if (!cursor1.isClosed()) {
-            cursor1.close();
-        }
-
-        // Create the layout for the file
-        output.write("@RELATION output \n");
-        output.write("\n");
-        output.write("@ATTRIBUTE TimeStamp numeric \n");
-        output.write("@ATTRIBUTE Duration numeric \n");
-        Actions = Actions.replace(" ", "");
-        output.write("@ATTRIBUTE Action" + Actions + "\n");
-        output.write("@ATTRIBUTE Action1" + Actions + "\n");
-
-//        output.write("@ATTRIBUTE Location" + Locations + "\n");
-//        output.write("@ATTRIBUTE Action3" + Actions + "\n");
-        output.write("\n");
-        output.write("@DATA \n");
-
-        int Duration = 0;
-        Cursor cursor2 = helper.getAllRoutine(helper);
-        Activity1 = "Schlafen";
-        int p = cursor2.getCount();
-
-        if (cursor2.moveToFirst()) {
-            SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-            //java.util.Date Start1 = format.parse(cursor2.getString(3));
-            int duration=0;
-            do {
-                java.util.Date Start = format.parse(cursor2.getString(3));
-                Calendar calendar = Calendar.getInstance();
-                Activity = cursor2.getString(1).replace(" ", "");
-                java.util.Date End = format.parse(cursor2.getString(4));
-                java.util.Date CurDate = Start;
-                int num =0;
-                while (CurDate.before(End)) {
-                    num+=1;
-                    if (num == 2 ){
-                        duration = 0;
-                    }
-                    calendar.setTime(Start);
-
-                    int minutesleftfrommidnight = calendar.get(Calendar.HOUR_OF_DAY) * 60 + calendar.get(Calendar.MINUTE);
-                    duration += 10;
-                    //Start1 = format.parse(cursor2.getString(3));
-                    //String S = String.valueOf(calendar.get(Calendar.HOUR_OF_DAY))+ ':' + String.valueOf(calendar.get(Calendar.MINUTE)) + ',' + Activity + "\n";
-                    output.write(String.valueOf(minutesleftfrommidnight) + ',' + String.valueOf(duration) + ',' + Activity + ',' + Activity1  + "\n");
-                    output.write(String.valueOf(minutesleftfrommidnight) + ',' + String.valueOf(duration) + ',' + Activity + ',' + Activity1  + "\n");
-                    output.write(String.valueOf(minutesleftfrommidnight) + ',' + String.valueOf(duration) + ',' + Activity + ',' + Activity1  + "\n");
-                    //output.write(String.valueOf(minutesleftfrommidnight) + ',' + String.valueOf(duration) + ',' + Activity + ',' + Activity1  + "\n");
-
-                    CurDate.setTime(CurDate.getTime() + 10 * 60 * 1000);
-                    Activity1 = Activity;
-                }
-
-
-            }
-            while (cursor2.moveToNext());
-            output.close();
-        }
-        // close cursor
-        if (!cursor2.isClosed()) {
-            cursor2.close();
-        }
-
-        String pat = c.getApplicationInfo().dataDir;
-        String pat1;
-        //pat1 = c.getApplicationInfo().publicSourceDir;
-        pat1 = c.getApplicationInfo().packageName; //
-        //pat1 = c.getPackageResourcePath();
-        //pat1 = c.getFileStreamPath();
-
-        //pat1 = c.getApplicationInfo().sourceDir;
-        String s = "data/data/"+ pat1 + "/files/output.arff";
-        BufferedReader datafile = readDataFile("data/data/"+ pat1 + "/files/output.arff");
-
-        Instances data = new Instances(datafile);
-        data.setClassIndex(data.numAttributes() - 2);
-
-        J48 tree = new J48();
-
-        tree.buildClassifier(data);
-
-        ArrayList<TimeAction>TimeAction1 = new ArrayList<TimeAction>();
-        Duration = 10;
-        OutputStreamWriter output2 = new OutputStreamWriter(c.openFileOutput("output3", Context.MODE_ENABLE_WRITE_AHEAD_LOGGING));
-        double lastactionpr = 0.0;
-        for (int i = 0; i< 1440; i+=10){
-            //Instance inst1 = new Instance(2);
-            data.instance(0).setValue(0,i);
-            data.instance(0).setValue(1,Duration);
-            data.instance(0).setValue(3, lastactionpr);
-
-            //inst1.setValue(0,i);
-            double curentaction = tree.classifyInstance(data.instance(0));
-
-            output2.write(String.valueOf(i) + ',' + String.valueOf(Duration) + ',' +  String.valueOf(lastactionpr) + ',' + String.valueOf(lastactionpr) + "\n");
-
-
-            if (lastactionpr ==curentaction){
-                Duration +=10;
-            }
-            else{
-                Duration = 10;
-            }
-            lastactionpr = curentaction;
-            //double nextaction = tree.classifyInstance(data.instance(i + 1));
-            //String time = String.valueOf(data.instance(i + 1).value(0));
-            //int time = (int)data.instance(0).value(0);
-            TimeAction T1 = new TimeAction();
-            T1.Action = curentaction;
-            T1.Time = i;
-            TimeAction1.add(T1);
-        }
-
-
-//        ArrayList<PeriodAction> PA1 = new ArrayList<PeriodAction>();
-        for (int i =0;i<TimeAction1.size();i++) {
-            int ind = (int)TimeAction1.get(i).Action;
-
-            if (i==0){
-                Action = data.attribute(2).value(ind);
-                int Hours = (int) TimeAction1.get(i).Time / 60;
-                int Minutes = TimeAction1.get(i).Time - Hours * 60;
-                Start = Integer.toString(Hours) + ":" + Integer.toString(Minutes);
-            }
-            else{
-                if (TimeAction1.get(i-1).Action != TimeAction1.get(i).Action){
-                    Action = data.attribute(2).value(ind);
-                    int Hours = (int) TimeAction1.get(i).Time / 60;
-                    int Minutes = TimeAction1.get(i).Time - Hours * 60;
-                    Start = Integer.toString(Hours) + ":" + Integer.toString(Minutes);
-                }
-                if (i<TimeAction1.size()-1) {
-                    if (TimeAction1.get(i+1).Action != TimeAction1.get(i).Action){
-                        int Hours = (int) TimeAction1.get(i).Time / 60;
-                        int Minutes = TimeAction1.get(i).Time - Hours * 60;
-                        End = Integer.toString(Hours) + ":" + Integer.toString(Minutes);
-                        PeriodAction PA = new PeriodAction();
-                        PA.Start = Start;
-                        PA.Action = Action;
-                        PA.End = End;
-                        PA1.add(PA);
-                        output2.write(PA.Start + ',' + PA.End + ',' + PA.Action + "; \n");
-                    }
-                }
-                else{
-                    int Hours = (int) TimeAction1.get(i).Time / 60;
-                    int Minutes = TimeAction1.get(i).Time - Hours * 60;
-                    End = Integer.toString(Hours) + ":" + Integer.toString(Minutes);
-                    PeriodAction PA = new PeriodAction();
-                    PA.Start = Start;
-                    PA.Action = Action;
-                    PA.End = End;
-                    PA1.add(PA);
-                    output2.write(PA.Start + ',' + PA.End + ',' + PA.Action + "; \n");
-
-                }
-            }
-        }
-        output2.close();
-        return PA1;
-    }
-
-    */
-
+    /**
+     * Created by leonidgunko
+     * gets all possible activities for prediction
+     */
     public static FastVector getActivities(){
         FastVector Activities = new FastVector();
 
@@ -291,6 +108,10 @@ public class Prediction {
         return Activities;
     }
 
+    /**
+     * Created by leonidgunko
+     * gets subactivity ID from activity|subactivity
+     */
     public static int getSubactivityID(String ActivitySubActivity){
         String Activity = ActivitySubActivity.substring(0,ActivitySubActivity.indexOf("|"));
         String SubActivity = ActivitySubActivity.substring(ActivitySubActivity.indexOf("|")+1,ActivitySubActivity.length());
@@ -300,7 +121,10 @@ public class Prediction {
         return subActivity;
     }
 
-
+    /**
+     * Created by leonidgunko
+     * gets all instances from db
+     */
     public static Instances getInstances() throws ParseException {
 
         FastVector Activities = getActivities();
@@ -370,6 +194,10 @@ public class Prediction {
         return inst;
     }
 
+    /**
+     * Created by leonidgunko
+     * gets instances from traininf activitylist
+     */
     public static Instances getInstancesFromArray(ArrayList<ArrayList<ActivityItem>> train) throws ParseException {
 
         FastVector Activities = getActivities();
@@ -445,6 +273,10 @@ public class Prediction {
         return inst;
     }
 
+    /**
+     * Created by leonidgunko
+     * predicts routine as array of timeaction
+     */
     public static ArrayList<TimeAction> GetRoutineAsTimeAction(Instances inst) throws Exception {
 
         if (PA1.isEmpty() == false) {
@@ -481,7 +313,10 @@ public class Prediction {
     }
 
 
-
+    /**
+     * Created by leonidgunko
+     * converts routine in timeaction to periodaction
+     */
     public static ArrayList<PeriodAction> GetRoutineAsPA() throws Exception {
         Instances inst = getInstances();
         ArrayList<TimeAction> TimeAction1 = GetRoutineAsTimeAction(inst);
@@ -528,7 +363,10 @@ public class Prediction {
         return PA1;
     }
 
-
+    /**
+     * Created by leonidgunko
+     * predicts routine from training array as a PeriodAction array
+     */
     public static ArrayList<PeriodAction> GetRoutineAsPA(ArrayList<ArrayList<ActivityItem>> train) throws Exception {
         Instances inst = getInstancesFromArray(train);
         ArrayList<TimeAction> TimeAction1 = GetRoutineAsTimeAction(inst);
@@ -576,7 +414,10 @@ public class Prediction {
     }
 
 
-
+    /**
+     * Created by leonidgunko
+     * gets routine as Arraylist of ActivityItems form training array
+     */
     public static ArrayList<ActivityItem> GetRoutineAsAI(ArrayList<ArrayList<ActivityItem>> train) throws Exception {
         ArrayList<ActivityItem> result= new ArrayList<>();
         ArrayList<PeriodAction> PA = GetRoutineAsPA(train);
@@ -651,7 +492,10 @@ public class Prediction {
         return result;
     }
 
-
+    /**
+     * Created by leonidgunko
+     * predicts routine as arraylist of activity items from the whole routine
+     */
     public static ArrayList<ActivityItem> GetRoutineAsAI() throws Exception {
         ArrayList<ActivityItem> result= new ArrayList<>();
         ArrayList<PeriodAction> PA = GetRoutineAsPA();
@@ -726,6 +570,10 @@ public class Prediction {
         return result;
     }
 
+    /**
+     * Created by leonidgunko
+     * predicts routine as arraylist of periodaction
+     */
     public static ArrayList<PeriodAction> GetRoutineAsPAforInserting() throws Exception {
         ArrayList<PeriodAction> result= new ArrayList<>();
         ArrayList<PeriodAction> PA = GetRoutineAsPA();

@@ -48,6 +48,7 @@ public class ActivityInputHandler {
     }
 
     /**
+     * Created by leonidgunko
      * reads a CSV file and puts it into the database
      * @param filepath path where the file is located
      * @author edited 09.09.2016 by Stefan
@@ -82,26 +83,6 @@ public class ActivityInputHandler {
             //header that contains all attributes
             String[] header = eventList.get(0);
 
-            //determine the column indexes
-//            int iId = 0;
-//            int iActId = 0;
-//            int iSubActId = 0;
-//            int iStart = 0;
-//            int iEnd = 0;
-//            for(int i=0; i<header.length; i++){
-//                if(header[i].equals("id")){
-//                    iId = i;
-//                }else if(header[i].equals("activityid")){
-//                    iActId = i;
-//                }else if(header[i].equals("subactivityid")){
-//                    iSubActId = i;
-//                }else if(header[i].equals("starttime")){
-//                    iStart = i;
-//                }else if(header[i].equals("endtime")){
-//                    iEnd = i;
-//                }
-//            }
-
             ActivityItem item;
             long lastitemEnd=0;
             int subId = 0;
@@ -128,44 +109,6 @@ public class ActivityInputHandler {
                     }
                 lastitemEnd = Long.valueOf(event[5]);
             }
-
-            //Old version
-//            if ((header.length >=5)) {
-//                //iterate over all lines of the CSV file
-//                java.util.Date StartDlast = null;
-//                java.util.Date EndDlast = null;
-//                for (int i = 1; i < list.size(); i++) {
-//                    int IdActivity = Integer.valueOf(list.get(i)[iActId]);
-//                    if (IdActivity==2) {
-//                        int IdSubActivity = Integer.valueOf(list.get(i)[iSubActId]);
-//                        switch (IdSubActivity) {
-//                            case 3:
-//                                IdActivity = 17;
-//                            case 4:
-//                                IdActivity = 18;
-//                        }
-//                    }
-//
-//                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());
-//                    java.util.Date StartD = new Date();
-//                    java.util.Date EndD = new Date();
-//                    StartD.setTime(Long.valueOf(list.get(i)[iStart])+60000);
-//                    EndD.setTime(Long.valueOf(list.get(i)[iEnd]));
-//                    if (StartDlast!=null && EndDlast!=null && StartDlast.before(StartD) && EndDlast.after(EndD)) {
-//                        continue;
-//                    }
-//                    if (StartDlast!=null && EndDlast!=null && StartDlast.before(StartD) && EndDlast.before(EndD)) {
-//                        StartD.setTime(EndDlast.getTime()+60000);
-//                        String Start = format.format(StartD);
-//                        String End = format.format(EndD);
-//                        AppGlobal.getHandler().InsertActivity(AppGlobal.getHandler(), IdActivity, 1, Start, End);
-//                        continue;
-//                    }
-//                    String Start = format.format(StartD);
-//                    String End = format.format(EndD);
-//                    AppGlobal.getHandler().InsertActivity(AppGlobal.getHandler(), IdActivity, 1, Start, End);
-//                }
-//            }
         }
     }
 
