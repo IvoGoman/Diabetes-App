@@ -7,9 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.mikephil.charting.charts.PieChart;
-import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.data.PieData;
-import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.PercentFormatter;
 
@@ -63,14 +61,6 @@ public class RingChartFragment extends ChartFragment {
         chart.setEntryLabelTextSize(10f);
         chart.setRotationEnabled(false);
         chart.setNoDataText(String.valueOf(R.string.no_data));
-        Legend legend = chart.getLegend();
-        legend.setPosition(Legend.LegendPosition.RIGHT_OF_CHART);
-        legend.setXEntrySpace(7f);
-        legend.setYEntrySpace(0f);
-        legend.setYOffset(0f);
-        legend.setEnabled(true);
-        legend.setTextColor(Color.BLACK);
-        legend.setTextSize(10f);
         chart.invalidate();
 
         return inflaterView;
@@ -85,7 +75,6 @@ public class RingChartFragment extends ChartFragment {
     public PieData getData(String timeFrame) {
         DataBaseHandler handler = AppGlobal.getHandler();
         Date date = TimeUtils.getCurrentDate();
-//        ArrayList<ActivityItem> activityItems = handler.GetDay(handler,date);
         ArrayList<ActivityItem> activityItems = handler.getActivities(date, timeFrame);
         List<PieEntry> pieValues = new ArrayList<>();
         HashMap<String, Integer> valueMap = new HashMap<>();
@@ -110,19 +99,7 @@ public class RingChartFragment extends ChartFragment {
             pieValues.add(new PieEntry(duration, entryKey));
             j++;
         }
-        PieDataSet pieDataSet = new PieDataSet(pieValues, getResources().getString(R.string.activity));
-
-        ArrayList<Integer> colors = new ArrayList<>();
-
-//      Color bad
-        pieDataSet.addColor(Color.rgb(239, 83, 80));
-//      Color potential bad
-        pieDataSet.addColor(Color.rgb(255, 202, 40));
-//      Color good
-        pieDataSet.addColor(Color.rgb(178, 255, 89));
-//      Color no influence
-        pieDataSet.addColor(Color.rgb(77, 208, 255));
-
+        CustomPieDataSet pieDataSet = new CustomPieDataSet(pieValues, getResources().getString(R.string.activity), this.getContext());
 
         return new PieData(pieDataSet);
     }
