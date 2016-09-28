@@ -142,6 +142,7 @@ public class DailyRoutineFragment extends Fragment {
 //        if (predicted.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR) && predicted.get(Calendar.YEAR) <= current.get(Calendar.YEAR)) {
 
 
+        try {
         /*
          * Creates a new Intent to start the RSSPullService
          * IntentService. Passes a URI in the
@@ -153,7 +154,7 @@ public class DailyRoutineFragment extends Fragment {
             progressBar.setVisibility(View.VISIBLE);
             routineLayout.setVisibility(View.GONE);
 
-        // Instantiates a new ResponseReceiver
+            // Instantiates a new ResponseReceiver
             ResponseReceiver mPredictionReceiver =
                     new ResponseReceiver();
             // Registers the ResponseReceiver and its intent filters
@@ -163,6 +164,10 @@ public class DailyRoutineFragment extends Fragment {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("LAST_PREDICTION", String.valueOf(current.getTimeInMillis()));
             editor.commit();
+        }catch(Exception e){
+            e.printStackTrace();
+            Log.e(TAG, "onCreateView: " + e.getLocalizedMessage());
+        }
 //        }
 
 

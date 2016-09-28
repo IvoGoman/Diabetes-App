@@ -441,6 +441,16 @@ public class TimeUtils {
     }
 
     /**
+     * returns Calendar.DAY_OF_WEEK for the current day
+     * @return
+     * @author Stefan 28.09.2016
+     */
+    public static int getCurrentDayOfWeek(){
+        Calendar c = Calendar.getInstance();
+        return c.get(Calendar.DAY_OF_WEEK);
+    }
+
+    /**
      * returns time in format HH:mm if timeformat is 24h and in format KK:mm AM/PM if timeformat is 12h
      *
      * @param timestamp

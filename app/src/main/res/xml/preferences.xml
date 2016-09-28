@@ -92,6 +92,14 @@
             android:title="@string/pref_algos_reset"
             android:summary="@string/pref_algos_reset_summary"/>
 
+        <ListPreference
+            android:key="pref_pred_mode"
+            android:title="@string/pred_mode"
+            android:summary="@string/pred_mode_summary"
+            android:entries="@array/pred_mode_names"
+            android:entryValues="@array/pred_mode_values"
+            android:defaultValue="0"/>
+
         <PreferenceScreen
             android:key="pref_key_algos_super"
             android:title="@string/algos"
@@ -99,7 +107,7 @@
             <intent
                 android:action="android.intent.action.VIEW"
                 android:targetPackage="uni.mannheim.teamproject.diabetesplaner"
-                android:targetClass="uni.mannheim.teamproject.diabetesplaner.UI.SettingsActivity.SettingsActivity" >
+                android:targetClass="uni.mannheim.teamproject.diabetesplaner.UI.Settings.SettingsActivity" >
                 <extra android:name="page" android:value="pref_key_algos_super" />
             </intent>
             <CheckBoxPreference

@@ -191,4 +191,6 @@
     <string name="wrong_format">Dateiformat wird nicht unterstützt.</string>
     <string name="usualBSM">Deine gewöhnliche Eingabe des Blutzuckerspiegels ist um</string>
     <string name="timeToInputBS">Es wird Zeit dein Blutzuckerspiegel einzutragen.</string>
+    <string name="pred_mode">Detailliertheit der Vorhersage</string>
+    <string name="pred_mode_summary">Intervall das als Trainingsdaten benutzt wird</string>
 </resources>
