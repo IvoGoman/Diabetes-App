@@ -55,29 +55,22 @@ public class LineChartFragment extends ChartFragment {
                              Bundle savedInstanceState) {
         View inflaterView = inflater.inflate(R.layout.fragment_line_chart, container, false);
 
-//        chart.setDrawOrder(new CombinedChart.DrawOrder[]{CombinedChart.DrawOrder.BAR, CombinedChart.DrawOrder.LINE});
         // getting the reference to the chart and setting the data
         LineChart chart = (LineChart) inflaterView.findViewById(R.id.combinedInsulinGlucoseChart);
         LineData lineData = this.getData("DAY");
         chart.setData(lineData);
         chart.setDescription("Combination of Blood Sugar and Insulin Levels");
         chart.setDrawGridBackground(false);
-//        chart.setDrawHighlightArrow(false);
-//        YAxis rightAxis = chart.getAxisRight();
-//        rightAxis.setAxisMinValue(0f);
-//        rightAxis.setAxisMaxValue(160f);
         YAxis yAxisL = chart.getAxisLeft();
         yAxisL.setAxisMinValue(0f);
-//        yAxisL.setAxisMaxValue(500f);
         yAxisL.setDrawGridLines(false);
         YAxis yAxisR = chart.getAxisRight();
         yAxisR.setAxisMinValue(0f);
-//        yAxisR.setAxisMaxValue(500f);
         yAxisR.setDrawGridLines(false);
 
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.TOP_INSIDE);
-//        xAxis.setTypeface(mTfLight);
+
         xAxis.setTextSize(10f);
         xAxis.setTextColor(Color.WHITE);
         xAxis.setDrawAxisLine(false);
@@ -129,9 +122,7 @@ public class LineChartFragment extends ChartFragment {
      * retrieves the data for the tiemframe from the DB and puts it in a CombinedData object
      */
     public LineData getData(String timeFrame) {
-        DataBaseHandler handler = AppGlobal.getHandler();
         Date date = TimeUtils.getCurrentDate();
-        Entry entry = null;
 
 //        Process Insulin Entries
         List<Entry> lineValues = getEntries(date, timeFrame, "insulin");
@@ -147,7 +138,6 @@ public class LineChartFragment extends ChartFragment {
                 });
         LineDataSet lineDataSet = new LineDataSet(lineValues, "Insulin");
         lineDataSet.setDrawHighlightIndicators(false);
-        LineData insulinEntries = new LineData(lineDataSet);
         lineDataSet.setColor(Color.BLUE);
         lineDataSet.setCircleColor(Color.BLUE);
         lineDataSet.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -166,7 +156,6 @@ public class LineChartFragment extends ChartFragment {
         });
         LineDataSet lineDataSet2 = new LineDataSet(lineValues2, "Blood Sugar Level");
         lineDataSet2.setDrawHighlightIndicators(false);
-        LineData bloodsugarEntries = new LineData(lineDataSet2);
         lineDataSet2.setColor(Color.RED);
         lineDataSet2.setCircleColor(Color.RED);
         lineDataSet2.setAxisDependency(YAxis.AxisDependency.RIGHT);
@@ -188,11 +177,17 @@ public class LineChartFragment extends ChartFragment {
     public void updateChart(String timeFrame) {
         LineChart chart = (LineChart) this.getView().findViewById(R.id.combinedInsulinGlucoseChart);
         LineData lineData = this.getData(timeFrame);
-        XAxis xAxis = chart.getXAxis();
         chart.setData(lineData);
         chart.invalidate();
     }
 
+    /**
+     *
+     * @param date current date
+     * @param timeFrame "DAY", "WEEK", or "MONTH"
+     * @param measurekind "bloodsugar" or "insulin"
+     * @return List of all Measurement entries for the timeframe and measurekind
+     */
     private List<Entry> getEntries(Date date, String timeFrame, String measurekind) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
@@ -200,15 +195,12 @@ public class LineChartFragment extends ChartFragment {
             ArrayList<MeasureItem> measurements = AppGlobal.getHandler().getMeasurementValues(date, timeFrame, measurekind);
 
         String[] window = TimeUtils.getWindowStartEnd(date, timeFrame);
-        int i = 0;
         HashMap<Float,Float> values = new HashMap<>();
 
         List<Entry> result = new ArrayList<>();
-        Date startdate = TimeUtils.getDateFromString(window[0]);
-        Entry entry = null;
-        Date entryDate = null;
-        float entryTimestamp = 0;
-        float value = 0;
+        Entry entry;
+        float entryTimestamp;
+        float value;
         for (MeasureItem item : measurements) {
             if(timeFrame.equals("DAY")) {
                 c.setTimeInMillis(item.getTimestamp());
@@ -231,7 +223,6 @@ public class LineChartFragment extends ChartFragment {
         long timestamp;
         switch(timeFrame){
             case("DAY"):
-                i = 24;
                 for(int j = 23; j>=0; j--){
                     c.setTime(date);
                     c.set(c.get(Calendar.YEAR),c.get(Calendar.MONTH),c.get(Calendar.DAY_OF_MONTH), j, 0,0);
@@ -247,7 +238,6 @@ public class LineChartFragment extends ChartFragment {
                 }
                 break;
             case("WEEK"):
-                i = 7;
                 for(int j = 7; j >= 0; j--){
                     c.setTime(date);
                     c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH) - j,0,0,0);
@@ -262,7 +252,6 @@ public class LineChartFragment extends ChartFragment {
                 }
                 break;
             case("MONTH"):
-                i = 30;
                 for(int j = 30; j>=0; j--){
                     c.setTime(date);
                     c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH) - j,0,0,0);

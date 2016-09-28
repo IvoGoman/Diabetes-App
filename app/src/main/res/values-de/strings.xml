@@ -114,7 +114,7 @@
     <string name="insulinText">Insulin Dosis</string>
     <string name="bloodsugar_prompt">Blutzuckerwert eintragen</string>
     <string name="bloodsugar_date">Datum eingeben:</string>
-    <string name="bloodsugar_time">Zeitpunkt eingeben:</string>
+    <string name="bloodsugar_time">Uhrzeit eingeben:</string>
     <string name="hint_measurement">Blutzuckerwert eingeben</string>
     <string name="activity_limit">Eine Aktivität muss übrig bleiben</string>
     <string name="bloodSugar">Blutzucker</string>
