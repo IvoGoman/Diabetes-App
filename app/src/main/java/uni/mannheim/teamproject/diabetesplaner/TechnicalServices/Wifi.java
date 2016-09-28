@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.Locale;
 
+import uni.mannheim.teamproject.diabetesplaner.Domain.myWifi;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
@@ -200,7 +201,7 @@ public class Wifi extends BroadcastReceiver {
 
                 for (int q = 1; q < WifiList.size(); q++) {//loop over wifi array list
                     try {
-                        time_wifi = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(WifiList.get(q).time);
+                        time_wifi = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault()).parse(WifiList.get(q).getTime());
                     } catch (ParseException e) {
                         //Handle exception here
                         e.printStackTrace();
