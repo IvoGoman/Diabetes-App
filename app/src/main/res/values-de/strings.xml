@@ -193,4 +193,10 @@
     <string name="timeToInputBS">Es wird Zeit dein Blutzuckerspiegel einzutragen.</string>
     <string name="pred_mode">Detailliertheit der Vorhersage</string>
     <string name="pred_mode_summary">Intervall das als Trainingsdaten benutzt wird</string>
+    <string name="allTime">All Time</string>
+    <string name="current_day">Heute</string>
+    <string name="last_week">Letzten 7 Tage</string>
+    <string name="last_month">Letzten 30 Tage</string>
+    <string name="all_time">All Time</string>
+    <string name="last_year">Letzten 365 Tage</string>
 </resources>

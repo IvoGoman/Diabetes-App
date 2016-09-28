@@ -302,6 +302,7 @@ public class EntryScreenActivity extends AppCompatActivity
             case R.id.statistic_day:
             case R.id.statistic_month:
             case R.id.statistic_week:
+            case R.id.statistic_year:
                 ChartFragment active = null;
                 FragmentManager fragmentManager = this.getSupportFragmentManager();
                 List<Fragment> fragments = fragmentManager.getFragments();
@@ -336,6 +337,13 @@ public class EntryScreenActivity extends AppCompatActivity
                     case R.id.statistic_month:
                         try {
                             chartFragment.updateChart("MONTH");
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        break;
+                    case R.id.statistic_year:
+                        try {
+                            chartFragment.updateChart("YEAR");
                         } catch (Exception e) {
                             e.printStackTrace();
                         }

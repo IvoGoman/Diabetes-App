@@ -97,81 +97,6 @@ public class StatisticsFragment extends Fragment {
         return inflaterView;
     }
 
-    //moved to EntryScreenActivity
-//    @Override
-//    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-//        inflater.inflate(R.menu.statistics, menu);
-//
-//    }
-//
-//    /**
-//     * Set the Add Icon in the Action Bar to invisible.
-//     *
-//     * @param menu
-//     */
-//    @Override
-//    public void onPrepareOptionsMenu(Menu menu) {
-//        if (menu != null) {
-//            MenuItem addItemRoutine = menu.findItem(R.id.add_icon_action_bar_routine);
-//            addItemRoutine.setVisible(false);
-////           menu.removeItem(R.id.add_icon_action_bar);
-//        }
-//        super.onPrepareOptionsMenu(menu);
-//    }
-//
-//    /**
-//     * Update the TimeWindow of the Chart that is currently displayed to the user
-//     *
-//     * @param item
-//     * @return
-//     */
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-////        get the currently active fragment that is shown to the user
-//        Fragment active = null;
-//        FragmentManager fragmentManager = aca.getSupportFragmentManager();
-//        List<Fragment> fragments = fragmentManager.getFragments();
-//        for (Fragment fragment : fragments) {
-//            if (fragment != null && fragment.getUserVisibleHint())
-//                active = fragment;
-//        }
-////        update the chart of the fragment based on the TimeWindow selected
-//        if (!(active == null)) {
-//            switch (id) {
-//                case R.id.statistic_day:
-////                    TODO:Update the charts by calling them by their ID
-//                    try{
-//                        ChartFragment chartFragment = (ChartFragment) active;
-//                        chartFragment.updateChart("DAY");
-//                    }catch (Exception e){
-//                        e.printStackTrace();
-//                    }
-//                    break;
-//                case R.id.statistic_week:
-////                    TODO: Update the charts by calling them by their ID
-//                    try{
-//                        ChartFragment chartFragment = (ChartFragment) active;
-//                        chartFragment.updateChart("WEEK");
-//                    }catch (Exception e){
-//                        e.printStackTrace();
-//                    }
-//
-//                    break;
-//                case R.id.statistic_month:
-////                    TODO:Update the charts by calling them by their ID
-//                    try{
-//                        ChartFragment chartFragment = (ChartFragment) active;
-//                        chartFragment.updateChart("MONTH");
-//                    }catch (Exception e){
-//                        e.printStackTrace();
-//                    }
-//                    break;
-//            }
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
-
     /**
      * setUp ViewPager with a RingChartFragment and a LineChartFragment
      *
@@ -179,8 +104,8 @@ public class StatisticsFragment extends Fragment {
      */
     private void setupViewPager(ViewPager viewPager) {
         ViewPagerAdapter adapter = new ViewPagerAdapter(aca.getSupportFragmentManager());
-        adapter.addFragment(new RingChartFragment(), "Activities");
-        adapter.addFragment(new LineChartFragment(), "Glucose & Insulin");
+        adapter.addFragment(new RingChartFragment(), getString(R.string.activities));
+        adapter.addFragment(new LineChartFragment(), getString(R.string.measurements));
         viewPager.setAdapter(adapter);
     }
 

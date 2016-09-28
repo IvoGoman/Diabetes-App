@@ -34,11 +34,13 @@
         <menu
             android:id="@+id/statistics_menu">
             <item android:id="@+id/statistic_day"
-                android:title="Current Day"/>
+                android:title="@string/current_day"/>
             <item android:id="@+id/statistic_week"
-                android:title="Last Week"/>
+                android:title="@string/last_week"/>
             <item android:id="@+id/statistic_month"
-                android:title="Last Month"/>
+                android:title="@string/last_month"/>
+            <item android:id="@+id/statistic_year"
+                android:title="@string/last_year"/>
         </menu>
     </item>
 </menu>

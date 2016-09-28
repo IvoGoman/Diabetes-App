@@ -1264,14 +1264,14 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * Method to retrieve all Values as MeasureItems for a given measurekind and timeframe
      *
      * @param date date for which the values should be retrieved
-     * @param window "DAY","WEEK" or "MONTH" are acceptable values. Counting backwards from date the
+     * @param window "DAY","WEEK","MONTH" or "YEAR" are acceptable values. Counting backwards from date the
      *               values for that timeframe are returned
      * @param measure_kind "insulin" or "bloodsugar"
      * @return ArrayList containing all the MeasureItems for a time window
      */
     public ArrayList<MeasureItem> getMeasurementValues(Date date, String window, String measure_kind){
         SQLiteDatabase db = this.getReadableDatabase();
-        Long[] windowStartEnd = TimeUtils.convertDateStringToTimestamp(TimeUtils.getWindowStartEnd(date,window));
+        Long[] windowStartEnd = TimeUtils.convertDateStringToTimestamp(TimeUtils.getWindowStartEnd(date, window));
         Cursor cursor = db.rawQuery("select measure_value, measure_unit, timestamp from  " + MEASUREMENT_TABLE_NAME + " "  +
                 "where timestamp>='"+windowStartEnd[0]+"' and timestamp <'"+windowStartEnd[1]+"'" +
                 "AND measure_kind = '"+measure_kind+"';",null);
@@ -1288,6 +1288,19 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return measureList;
     }
 
+    /**
+     * @return the First MeasureItem stored in the DB
+     */
+    public MeasureItem getFirstMeasurement(){
+        SQLiteDatabase db = this.getReadableDatabase();
+        MeasureItem item = new MeasureItem(0L,0d,"bloodsugar");
+        Cursor cursor = db.rawQuery("select measure_value, measure_unit, min(timestamp) from " + MEASUREMENT_TABLE_NAME+";", null);
+        if(cursor.getCount()>0){
+            cursor.moveToFirst();
+            item = new MeasureItem(Long.parseLong(cursor.getString(2)), cursor.getDouble(0), cursor.getString(1));
+        }
+        return item;
+    }
     /**
      * Retrieve all measurements of a certain measure kind
      * @param measure_kind "insulin" or "bloodsugar"

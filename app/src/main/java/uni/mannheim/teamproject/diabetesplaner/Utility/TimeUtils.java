@@ -375,6 +375,7 @@ public class TimeUtils {
         return (int) diffInDays;
     }
 
+
     /**
      * @param date
      * @param hour
@@ -673,7 +674,7 @@ public class TimeUtils {
      * Reusing Leonids Code to calculate the start and end of a day
      * The start and end are then returned as unix timestamps
      * In Addition a Parameter can be provided to specify the time window
-     * DAY, WEEK or MONTH are acceptable inputs
+     * DAY, WEEK, MONTH or YEAR are acceptable inputs
      * @param date the day for which start and end shall be returned
      * @param window string with the value for the timeframe
      * @return array with 2 fields [0] = windowStart ; [1] = windowEnd
@@ -693,6 +694,13 @@ public class TimeUtils {
                 break;
             case "WEEK":
                 calendar.add(Calendar.DAY_OF_MONTH,-7);
+                break;
+            case "YEAR":
+                calendar.add(Calendar.DAY_OF_MONTH, -365);
+                break;
+            case "ALL":
+                calendar.setTimeInMillis(0);
+                break;
         }
         year =calendar.get(Calendar.YEAR);
         month = formatMonthOrDay(calendar.get(Calendar.MONTH)+1);

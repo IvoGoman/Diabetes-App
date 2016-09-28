@@ -236,5 +236,13 @@
     <string name="weekday_weekend">Weekdays/Weekend</string>
     <string name="single_day">Current day</string>
     <string name="pred_mode_summary">Interval that is used as training data</string>
+    <string name="allTime">All Time</string>
+    <string name="current_day">Today</string>
+    <string name="last_week">Last 7 Days</string>
+    <string name="last_month">Last 30 Days</string>
+    <string name="all_time">All Time</string>
+    <string name="last_year">Last 365 Days</string>
+    <string name="activities">Activities</string>
+    <string name="measurements">Measurements</string>
 
 </resources>
