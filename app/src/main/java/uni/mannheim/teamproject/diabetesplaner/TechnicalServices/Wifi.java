@@ -210,6 +210,15 @@ public class Wifi extends BroadcastReceiver {
                         System.out.println("relevant Activity for current WIFI: " + x[1]);
                     } else {
                         System.out.println("irrelevant Activity for current WIFI: " + x[1]);
+                        /**
+                         * edited by leonidgunko
+                         */
+                        try {
+                            AppGlobal.wifiUnusualActivity = AppGlobal.getHandler().getSubactivityID(x[1]);
+                        }
+                        catch(Exception e){
+                            AppGlobal.wifiUnusualActivity=-1;
+                        }
                     }
                 }
             }

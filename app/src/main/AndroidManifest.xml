@@ -115,6 +115,9 @@
         <service
             android:name=".DataMining.Recommendation.FoodRecommendation"
             android:exported="false" />
+        <service
+            android:name=".DataMining.Recommendation.SensorsRecommendation"
+            android:exported="false" />
     </application>
 
 </manifest>

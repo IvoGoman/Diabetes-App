@@ -3,10 +3,6 @@ package uni.mannheim.teamproject.diabetesplaner.DataMining;
 
 import android.support.v4.util.Pair;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,8 +29,7 @@ public class ProcessMiningUtil {
      */
     public static int getCurrentActivityID() {
         DataBaseHandler dbHandler = AppGlobal.getHandler();
-        ActivityItem currentActivity = dbHandler.getCurrentActivity();
-        return currentActivity.getActivityId();
+        return dbHandler.getCurrentActivity();
     }
 
     /**

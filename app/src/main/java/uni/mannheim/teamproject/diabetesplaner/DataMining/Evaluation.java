@@ -19,6 +19,10 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
 public class Evaluation {
 
+    /**
+     * Created by leonidgunko
+     * K VALIDATION FOR GSP
+     */
     public static double usageGspK(ArrayList<ArrayList<ActivityItem>> train, int k){
         double accuracy =0;
         if (k>train.size()){
@@ -33,6 +37,10 @@ public class Evaluation {
         return accuracy/k;
      }
 
+    /**
+     * Created by leonidgunko
+     * K VALIDATION FOR Decision tree
+     */
     public static double usageTreeK(ArrayList<ArrayList<ActivityItem>> train, int k) throws Exception {
         double accuracy =0;
         if (k>train.size()){
@@ -47,6 +55,10 @@ public class Evaluation {
         return accuracy/k;
     }
 
+    /**
+     * Created by leonidgunko
+     * K VALIDATION FOR fuzzy miner
+     */
     public static double usageFMK(ArrayList<ArrayList<ActivityItem>> train, int k) throws Exception {
         double accuracy =0;
         if (k>train.size()){
@@ -62,6 +74,10 @@ public class Evaluation {
         return accuracy/k;
     }
 
+    /**
+     * Created by leonidgunko
+     * K VALIDATION FOR heuristic miner
+     */
     public static double usageHMK(ArrayList<ArrayList<ActivityItem>> train, int k) throws Exception {
         double accuracy =0;
         if (k>train.size()){
@@ -77,6 +93,10 @@ public class Evaluation {
         return accuracy/k;
     }
 
+    /**
+     * Created by leonidgunko
+     * accuracy based on minutes of the day
+     */
     static double Accuracy(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> gsp){
         int acc=0;
         int count=0;
@@ -107,6 +127,10 @@ public class Evaluation {
         return (double)acc/count;
     }
 
+    /**
+     * Created by leonidgunko
+     * accuracy based on accuracy flow
+     */
     static double AccuracyFlow(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> prediction){
         HashMap<Integer,ArrayList<Integer>> real = new HashMap<>(); //MAP<Activity, List of following activities>
         HashMap<Integer,ArrayList<Integer>> predicted = new HashMap<>();
@@ -193,6 +217,10 @@ public class Evaluation {
         return 1-error;
     }
 
+    /**
+     * Created by leonidgunko
+     * Precision based on minutes of the day
+     */
     static double Precision(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> pred){
         ArrayList<Integer> Actions = AppGlobal.getHandler().getAllSubactivitiesId();
         int acc=0;
@@ -234,6 +262,10 @@ public class Evaluation {
         return sumPrecisions/precisions.size();
     }
 
+    /**
+     * Created by leonidgunko
+     * Recall based on minutes of the day
+     */
     static double Recall(ArrayList<ArrayList<ActivityItem>> train, ArrayList<ActivityItem> pred){
         ArrayList<Integer> Actions = AppGlobal.getHandler().getAllSubactivitiesId();
         int acc=0;
@@ -279,11 +311,19 @@ public class Evaluation {
         return sumRecalls/recalls.size();
     }
 
+    /**
+     * Created by leonidgunko
+     * Fmeasure based on minutes of the day
+     */
     static double Fmeasure(double precision, double recall){
         Double Fmeasure=2*precision*recall/(recall+precision);
         return Fmeasure;
     }
 
+    /**
+     * Created by leonidgunko
+     * converts activityItem to hashMap <minuteoftheday, subactivityId>
+     */
     static HashMap<Integer,Integer> activityItemToHashMap(ActivityItem activityItem){
         HashMap<Integer,Integer> result = new HashMap<Integer,Integer>();
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.getDefault());

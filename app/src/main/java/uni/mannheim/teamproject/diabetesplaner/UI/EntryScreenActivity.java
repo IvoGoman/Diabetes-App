@@ -37,6 +37,7 @@ import java.util.List;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.ActivityRecommendation;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.BSInputRecommendation;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.FoodRecommendation;
+import uni.mannheim.teamproject.diabetesplaner.DataMining.Recommendation.SensorsRecommendation;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
 import uni.mannheim.teamproject.diabetesplaner.R;
@@ -607,6 +608,7 @@ public class EntryScreenActivity extends AppCompatActivity
     protected void onDestroy() {
         servicesRunning = false;
         stopService(new Intent(this, ActivityRecommendation.class));
+        stopService(new Intent(this, SensorsRecommendation.class));
         stopService(new Intent(this, BSInputRecommendation.class));
         stopService(new Intent(this, FoodRecommendation.class));
 

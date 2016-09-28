@@ -85,14 +85,12 @@ public class DailyRoutineHandler extends DayHandler{
 
 
     /**
-     * TODO
-     * returns the predicted DailyRoutine from the model
-     * @return
+     * Created by leonidgunko
+     * predicts routine as arraylist of activity items from the whole routine
      */
     public void predictDailyRoutine(Date date){
         this.setDate(date);
         ArrayList<Prediction.PeriodAction> prediction = new ArrayList<Prediction.PeriodAction>();
-        Context context = AppGlobal.getcontext();
         Prediction prediction1 = new Prediction();
         try{
             AppGlobal.getHandler().deleteDay(TimeUtils.getDateFromString("2016-09-21"));

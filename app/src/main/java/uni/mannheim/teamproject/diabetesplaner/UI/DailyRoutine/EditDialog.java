@@ -29,6 +29,9 @@ public class EditDialog extends InputDialog {
 
         builder.setView(view);
 
+        /**
+         * edited by leonidgunko
+         */
         builder.setPositiveButton(R.string.edit, new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int id) {
 

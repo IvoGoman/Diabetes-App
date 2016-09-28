@@ -207,7 +207,16 @@ public class GPS_Service extends Service implements LocationListener {
         //remove from all activities those that occures at a specific location to get a list with those that never occures at this location
         AllActivityNames.removeAll(relevant_Activities);
         UnusualActivities = AllActivityNames;
-
+        /**
+         * edited by leonidgunko
+         */
+        try {
+            AppGlobal.gpsUnusualActivities.clear();
+            for (String ActivityName : UnusualActivities) {
+                AppGlobal.gpsUnusualActivities.add(AppGlobal.getHandler().getSubactivityID(ActivityName));
+            }
+        }
+        catch(Exception e){}
         return UnusualActivities;
     }//end of makePrediction
 

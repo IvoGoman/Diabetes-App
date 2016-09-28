@@ -171,6 +171,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         Log.d("Database", "MySQLiteHelper Constructor Started");
     }
 
+    /**
+     * Created by leonidgunko on 31.10.15.
+     * database constructor called if there is no DB
+     */
     @Override
     public void onCreate(SQLiteDatabase db) {   //when the App is first installed
 //        try {
@@ -311,6 +315,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return numberOfActivities;
     }
 
+    /**
+     * Created by leonidgunko
+     * get all the subactivities names, takes id of activity as a prameter
+     */
     public ArrayList<String> GetSubActivities(int idActivity)
     {
         SQLiteDatabase db1 = this.getReadableDatabase();
@@ -334,6 +342,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return SubActivityList;
     }
 
+    /**
+     * Created by leonidgunko
+     * get id of activity, name as a parametes
+     */
     public int getActivityID(String activity)
     {
         int activityID = -1;
@@ -352,6 +364,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return activityID;
     }
 
+    /**
+     * Created by leonidgunko
+     * get activity Id by name without spaces, used only in prediction Decision tree
+     */
     public int getActivityIDForPred(String activity)
     {
         int activityID = -1;
@@ -378,6 +394,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return activityID;
     }
 
+    /**
+     * Created by leonidgunko
+     * get activity Id by subactivity name
+     */
     public int getActivityIDbySubActicity(String subactivity)
     {
         SQLiteDatabase db1 = this.getReadableDatabase();
@@ -392,6 +412,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return -1;
     }
 
+    /**
+     * Created by leonidgunko
+     * get activity Id by subactivity name
+     */
     public String getActivitybySubActicity(String subactivity)
     {
         SQLiteDatabase db1 = this.getReadableDatabase();
@@ -406,6 +430,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return "Default";
     }
 
+    /**
+     * Created by leonidgunko
+     * get activity name by subactivity Id
+     */
     public String getActivitybySubActicityId(int subactivityId)
     {
         SQLiteDatabase db1 = this.getReadableDatabase();
@@ -420,6 +448,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return "Default";
     }
 
+    /**
+     * Created by leonidgunko
+     * get activity Id by subactivity Id
+     */
     public int getActivityIdbySubActicityId(int subactivityId)
     {
         int activityId=16;
@@ -455,7 +487,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return activity;
     }
 
-    public int getSubactivityID(String subactivity, int activityID)
+    /**
+     * Created by leonidgunko
+     * get subactivity Id by subactivity name
+     */
+    public int getSubactivityID(String subactivity)
     {
         int subActivityId=16;
         SQLiteDatabase db1 = this.getReadableDatabase();
@@ -473,6 +509,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return subActivityId;
     }
 
+    /**
+     * Created by leonidgunko
+     * get subactivity name by subactivity Id
+     */
     public String getSubactivity(int subactivityID)
     {
         String subActivity="";
@@ -491,7 +531,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return subActivity;
     }
 
-
+    /**
+     * Created by leonidgunko
+     * get all subactivities for activity Id as a hashmap
+     */
     public HashMap<String,Integer> getAllSubactivities(int activityId) {
         SQLiteDatabase db1 = this.getReadableDatabase();
         HashMap<String,Integer> result = new HashMap<>();
@@ -511,6 +554,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return result;
     }
 
+    /**
+     * Created by leonidgunko
+     * get all subactivities ID
+     */
     public ArrayList<Integer> getAllSubactivitiesId() {
         ArrayList<Integer> result = new ArrayList<>();
         SQLiteDatabase db1 = this.getReadableDatabase();
@@ -527,6 +574,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return result;
     }
 
+    /**
+     * Created by leonidgunko
+     * get all subactivities names
+     */
     public ArrayList<String> getAllSubactivities() {
         SQLiteDatabase db1 = this.getReadableDatabase();
         ArrayList<String> result = new ArrayList<>();
@@ -544,6 +595,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return result;
     }
 
+    /**
+     * Created by leonidgunko
+     * get all activities names
+     */
     public ArrayList<String> getAllActivityNames()
     {
         SQLiteDatabase db1 = this.getReadableDatabase();
@@ -635,6 +690,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param Activ
      * @author edited 09.09.2016 by Stefan
      */
+    /**
+     * Created by leonidgunko
+     * inserts ActivitiItem into ActivityLIst
+     */
     public void InsertActivity(ActivityItem Activ) {
         String ImagePath = Activ.getImagePath();
         int idActivity = Activ.getSubactivityId();
@@ -661,7 +720,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 //        db1.close();
     }
 
-
+    /**
+     * Created by leonidgunko
+     * inserts Activity into ActivityLIst
+     */
     public void InsertActivity(int idActivity, int idLocation, int idWIFI, String Start, String End) {
         SQLiteDatabase db1 = this.getWritableDatabase();
         db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI Start, End) values(" + idActivity + "," + idLocation+ "," + idWIFI + " , '" + Start + "','" + End + "' ); ");
@@ -763,6 +825,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
 
     }
+
+    /**
+     * Created by leonidgunko
+     * inserts ActivitiItem into ActivityList while cutting overlapping activities
+     */
     public void ReplaceActivity(ActivityItem Activ){
         String Start = Activ.getStarttimeAsString();
         String End = Activ.getEndtimeAsString();
@@ -787,6 +854,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 //        db1.close();
     }
 
+    /**
+     * Created by leonidgunko
+     * gets Id of superactivity
+     */
     public int getSuperActivityID(int idActivity){
         SQLiteDatabase db = this.getReadableDatabase();
         int superActivityID;
@@ -801,6 +872,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return 6;
     }
 
+    /**
+     * Created by leonidgunko
+     * gets name of superactivity
+     */
     public String getSuperActivity(int idActivity){
         SQLiteDatabase db = this.getReadableDatabase();
         //Return Super Activity of idActivity
@@ -840,6 +915,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     }
 
+    /**
+     * Created by leonidgunko
+     * inserts Routine in Db after prediction Decision Tree, times are completed, because Weka outputs time in format H:M
+     */
     public void InsertNewRoutine(ArrayList<Prediction.PeriodAction> prediction) {
         int idActivity;
         int idLocation;
@@ -914,7 +993,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 //        db1.close();
     }
 
-
+    /**
+     * Created by leonidgunko
+     * gets all known locations
+     */
     public Cursor getAllLocations() {
         SQLiteDatabase db = this.getWritableDatabase();
         //Create a Cursor that contains all records from the locations table
@@ -941,7 +1023,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      * @param id
      * @return
      * @author Stefan
-     * 25.09 edited by Leonid
+     * 25.09 edited by Leonid added translation
      */
     public String getActionById(int id) {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -957,42 +1039,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return name;
     }
 
-    public Cursor getAllActions() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        //Create a Cursor that contains all records from the locations table
-        Cursor cursor = db.rawQuery("select title from " + ACTIVITIES_TABLE_NAME, null);
-        return cursor;
-    }
-
-    public Cursor getAllActionsPr() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        //Create a Cursor that contains all records from the locations table
-        Cursor cursor = db.rawQuery("select distinct SubActivities.title from ActivityList inner join SubActivities on SubActivities.id=ActivityList.id_SubActivity", null);
-        return cursor;
-    }
-
-    /**
-     * Returns a ArrayList containing all Acitivity IDs
-     * @return
-     */
-    public Map<Integer,String> getAllActionIDsAndTitle() {
-        SQLiteDatabase db = this.getWritableDatabase();
-        //Create a Cursor that contains all records from the locations table
-        Cursor cursor = db.rawQuery("select * from " + ACTIVITIES_TABLE_NAME, null);
-        Map<Integer,String> idMap = new HashMap<Integer,String>();
-        cursor.moveToFirst();
-        do {
-            idMap.put(cursor.getInt(0),cursor.getString(1));
-        } while(cursor.moveToNext());
-        cursor.close();
-        return idMap;
-    }
-
     /**
      * 27.06.2016 Stefan
      * returns all activities as a list
      * @return
-     * 25.09 edited Leonid
+     * 25.09 edited Leonid added translation
      */
     public ArrayList<String> getAllActionsAsList() {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -1016,6 +1067,11 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return actionsList;
     }
 
+    /**
+     * Created by leonidgunko
+     * gets all activities which are in daily routine
+     * don't forget to close the cursor
+     */
     public Cursor getAllRoutine() {
         SQLiteDatabase db = this.getReadableDatabase();
         Cursor cursor = db.rawQuery("select ActivityList.id, Activities.title as Activity, SubActivities.title as SubActivity,  ActivityList.Start, ActivityList.End from ActivityList inner join SubActivities on ActivityList.id_SubActivity = SubActivities.id inner join Activities on Subactivities.id_Activity = Activities.id", null);
@@ -1288,6 +1344,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return activityItems;
     }
 
+    /**
+     * Created by leonidgunko
+     * gets day as arraylist of activityItems
+     */
     public ArrayList<ActivityItem> GetDay(Date Date) {
         String StartOfDay, EndOfDay;
         Calendar calendar = Calendar.getInstance();
@@ -1307,19 +1367,26 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return GetArrayFromCursor(cursor, Date);
     }
 
-    public ActivityItem getCurrentActivity(){
-        Date currentTime = TimeUtils.getCurrentDate();
-        Cursor cursor = db.rawQuery("select * from ActivityList where ActivityList.Start < '" + currentTime.toString() + "' and ActivityList.End >= '"+ currentTime.toString() +"';",null );
-        if (GetArrayFromCursor(cursor,currentTime).size()>0) {
-            return GetArrayFromCursor(cursor, currentTime).get(0);
+    /**
+     * Created by leonidgunko
+     * gets current activity
+     */
+    public int getCurrentActivity(){
+        int res =-1;
+        String currentTime = TimeUtils.dateToDateTimeString(TimeUtils.getCurrentDate());
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        String s = "select id_SubActivity from ActivityList where Start <= '" + currentTime + "' and End >= '"+ currentTime +"';";
+        Cursor cursor = db1.rawQuery("select * from ActivityList where Start <= '" + currentTime + "' and End >= '"+ currentTime +"'",null );
+        if (cursor.moveToFirst()) {
+            res = cursor.getInt(cursor.getColumnIndex("id_SubActivity"));
         }
-        else {
-            return null;
-        }
+        return res;
     }
 
-//    Delete Statements
-
+    /**
+     * Created by leonidgunko
+     * delets activity and inserts default activity
+     */
     public void DeleteActivity(ActivityItem Activ) {
         String Start = Activ.getStarttimeAsString();
         String End = Activ.getEndtimeAsString();
@@ -1331,9 +1398,12 @@ public class DataBaseHandler extends SQLiteOpenHelper {
             db1.execSQL("delete from ActivityList where Start = '" + Start + "' and End = '" + End + "';");
             db1.execSQL("insert into ActivityList(id_SubActivity, id_Location,id_WIFI, Start, End) values(16,1,1,'"+Start+"','"+End+"');");
         }
-
-//        db1.close();
     }
+
+    /**
+     * Created by leonidgunko
+     * delets activity and inserts default activity
+     */
     public void DeleteActivity(String Start, String End) {
         SQLiteDatabase db1 = this.getWritableDatabase();
 
@@ -1349,6 +1419,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
 
+    /**
+     * Created by leonidgunko
+     * cuts the overlapping activity
+     */
     private void findActionbyStartTime(String Start) {
         SQLiteDatabase db1 = this.getWritableDatabase();
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + Start + "' and End >= '" + Start + "'; ", null);
@@ -1361,6 +1435,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Created by leonidgunko
+     * cuts the overlapping activity
+     */
     private void findActionbyEndTime(String End) {
         SQLiteDatabase db1 = this.getWritableDatabase();
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start <= '" + End + "' and End >= '" + End + "'; ", null);
@@ -1373,6 +1451,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Created by leonidgunko
+     * cuts the overlapping activity
+     */
     private void findActionbyStartEndTime(String Start, String End) {
         SQLiteDatabase db1 = this.getWritableDatabase();
         Cursor cursor = db1.rawQuery("select id from ActivityList where Start >= '" + Start + "' and End <= '" + End + "'; ", null);
@@ -1385,7 +1467,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
-
+    /**
+     * Created by leonidgunko
+     * cuts the overlapping activity
+     */
     private void findActionbyStartEndTime2(String Start, String End) {
         SQLiteDatabase db1 = this.getWritableDatabase();
         Cursor cursor = db1.rawQuery("select * from ActivityList where Start <= '" + Start + "' and End >= '" + End + "'; ", null);
@@ -1407,7 +1492,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
-    //      Handler Utility Methods
+    /**
+     * Created by leonidgunko
+     * checks if the routine for the day was already added
+     */
     public boolean CheckRoutineAdded(){
         boolean result = true;
         String StartOfDay, EndOfDay;
@@ -1431,6 +1519,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return result;
     }
 
+    /**
+     * Created by leonidgunko
+     * converts cursor into array
+     */
     public ArrayList<ActivityItem> GetArrayFromCursor(Cursor cursor, Date Date) {
         int activityId;
         int subactivityId;
@@ -1481,8 +1573,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return Activities;
     }
 
-//  Potential Utility Functions
-
+    /**
+     * Created by leonidgunko
+     * merges two following similar activities, saves the activity which has more information
+     */
     public void mergeSimilarActivities(String StartOfDay, String EndOfDay) {
         SQLiteDatabase db1 = this.getWritableDatabase();
         Cursor cursor = db1.rawQuery("select id_SubActivity,Start,End,Meal,ImagePath,Intensity from ActivityList where Start>'" + StartOfDay + "' and Start<'"+ EndOfDay +"'order by Start;", null);
@@ -1549,6 +1643,10 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         }
     }
 
+    /**
+     * Created by leonidgunko
+     * measures the completeness of activityItem
+     */
     private int getСompleteness(ActivityItem ai){
         int completeness =0;
         if (ai.getImagePath()!=null && ai.getImagePath()!=""){

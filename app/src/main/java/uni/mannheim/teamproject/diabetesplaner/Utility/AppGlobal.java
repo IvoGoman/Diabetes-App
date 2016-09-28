@@ -1,9 +1,10 @@
 package uni.mannheim.teamproject.diabetesplaner.Utility;
 
 import android.app.Application;
-import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.location.Location;
+
+import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 
@@ -30,15 +31,18 @@ public class AppGlobal extends Application {
     // File to be used for classification. Enables to use individual models or generic models.
     public static String modelDataFileName = "J48.generic";
     private static AppGlobal singleton;
-    private static int num;
     private static long time;
     private static Location LastLocation;
     private static DataBaseHandler Handler1;
-    private static Context context;
     private static boolean EditFlag;
+    public static ArrayList<Integer> gpsUnusualActivities = new ArrayList<>();
+    public static ArrayList<Integer> accUnusualActivities = new ArrayList<>();
+    public static int wifiUnusualActivity=-1;
+
     public AppGlobal getInstance(){
         return singleton;
     }
+
 
     @Override
     public void onCreate() {
@@ -53,10 +57,6 @@ public class AppGlobal extends Application {
 
     public static DataBaseHandler getHandler(){
         return Handler1;
-    }
-
-    public static Context getcontext(){
-        return context;
     }
 
     public static void setTime(long time1){
