@@ -273,7 +273,7 @@ public class InputDialog extends DialogFragment{
 
                 //if activity desk work or sport set the intensity bar to visible, else hide
                 String germanName = dbHandler.getGermanActivityName(activity);
-                if(germanName.equals("Schreibtischarbeit") || germanName.equals("Sport")){
+                if(germanName.equals("Arbeiten") || germanName.equals("Sport")){
                     setIntensityVisible(true);
                 }else{
                     setIntensityVisible(false);

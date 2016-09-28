@@ -50,7 +50,7 @@ public class ColorUtils {
 
         int superId = dbHandler.getSuperActivityID(activityItem.getActivityId());
 
-        if(dbHandler.getGermanActivityName(activityId).equals("Schreibtischarbeit") && activityItem.getIntensity() !=null){
+        if(dbHandler.getGermanActivityName(activityId).equals("Arbeiten") && activityItem.getIntensity() !=null){
             return getIntensityColor(activityItem.getIntensity(), getColorBySuperActivity(superId, context));
         }else if(dbHandler.getGermanActivityName(activityId).equals("Sport") && activityItem.getIntensity() != null){
             return getIntensityColor(activityItem.getIntensity(), getColorBySuperActivity(superId, context));

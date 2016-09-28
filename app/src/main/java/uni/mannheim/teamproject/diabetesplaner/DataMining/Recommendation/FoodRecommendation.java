@@ -34,7 +34,7 @@ public class FoodRecommendation extends Recommendation {
     private final int MEAL_PREP = db.getActivityID("Essen zubereiten");
     private final int SOCIALIZING = db.getActivityID("Geselligkeit");
     private final int MOVEMENT = db.getActivityID("Fortbewegen");
-    private final int DESK_WORK = db.getActivityID("Schreibtischarbeit");
+    private final int DESK_WORK = db.getActivityID("Arbeiten");
     private final int SPORT = db.getActivityID("Sport");
 
     private final int EXERCISE = db.getSuperActivityID(SPORT);
