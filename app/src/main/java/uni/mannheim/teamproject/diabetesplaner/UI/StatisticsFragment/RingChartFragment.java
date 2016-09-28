@@ -87,12 +87,11 @@ public class RingChartFragment extends ChartFragment {
         Date date = TimeUtils.getCurrentDate();
 //        ArrayList<ActivityItem> activityItems = handler.GetDay(handler,date);
         ArrayList<ActivityItem> activityItems = handler.getActivities(date, timeFrame);
-        ArrayList<String> labels = new ArrayList<>();
         List<PieEntry> pieValues = new ArrayList<>();
         HashMap<String, Integer> valueMap = new HashMap<>();
-        String label = "";
-        int value = 0;
-        ActivityItem item = null;
+        String label;
+        int value;
+        ActivityItem item;
         for (int i = 0; i < activityItems.size(); i++) {
             item = activityItems.get(i);
             label = handler.getActionById(item.getActivityId());

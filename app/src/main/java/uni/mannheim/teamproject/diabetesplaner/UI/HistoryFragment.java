@@ -31,8 +31,6 @@ import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Random;
 
-import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyModel;
-import uni.mannheim.teamproject.diabetesplaner.DataMining.ProcessMiningUtil;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.DayHandler;
@@ -169,7 +167,7 @@ public class HistoryFragment extends DailyRoutineFragment {
         //get predicted routine
         linearLayout.removeAllViews();
         items_history.clear();
-        ArrayList<ActivityItem> listItems = new ArrayList<>();
+        ArrayList<ActivityItem> listItems;
         listItems = dayHandler.getDayRoutine(date);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT);
@@ -246,29 +244,11 @@ public class HistoryFragment extends DailyRoutineFragment {
         linearLayout.removeAllViews();
         DailyRoutineView.clearSelectedActivities();
         Log.i(TAG, date.toString());
-//        ArrayList<ActivityItem> day = dayHandler.getDayRoutine(date);
         DailyRoutineView.clearSelectedActivities();
         DailyRoutineView.setSelectable(false);
         DailyRoutineView.setActionBarItems();
         setDate(date);
         updateView();
-//        if (day.size() > 0) {
-//            for (int i = 0; i < day.size(); i++) {
-//                DailyRoutineView drv = new DailyRoutineView(getActivity(), day.get(i));
-//                drv.setState(true);
-//                linearLayout.addView(drv);
-//                drv.setLayoutParams(params);
-//                items_history.add(drv);
-//                updateView();
-//
-//            }
-//        } else {
-//            TextView tv = new TextView(getContext());
-//            tv.setText(R.string.no_data);
-//            linearLayout.addView(tv);
-//            tv.setLayoutParams(params);
-//            tv.setGravity(Gravity.CENTER);
-//        }
     }
 
     /**
@@ -341,9 +321,6 @@ public class HistoryFragment extends DailyRoutineFragment {
             int month = calendar.get(Calendar.MONTH);
             int day = calendar.get(Calendar.DAY_OF_MONTH);
 
-            // Create a new instance of DatePickerDialog and return it
-            //Edit by Naira, Changing date picker color
-            //return new DatePickerDialog(getActivity(), this, year, month, day);
             return new DatePickerDialog(getActivity(), R.style.picker, this, year, month, day);
 
         }
@@ -357,6 +334,8 @@ public class HistoryFragment extends DailyRoutineFragment {
         }
 
         /**
+         * When the Date for the Fragment is set via the Datepicker Dialog it is
+         * checked if it is in the past and then the whole Activity List is updated
          * @param view  the current view
          * @param year  the selected year
          * @param month the selected month
