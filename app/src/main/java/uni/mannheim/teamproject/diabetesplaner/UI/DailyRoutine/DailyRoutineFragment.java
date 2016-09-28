@@ -165,7 +165,7 @@ public class DailyRoutineFragment extends Fragment {
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("LAST_PREDICTION", String.valueOf(current.getTimeInMillis()));
             editor.commit();
-        }catch(Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             Log.e(TAG, "onCreateView: " + e.getLocalizedMessage());
         }
@@ -472,7 +472,7 @@ public class DailyRoutineFragment extends Fragment {
         this.date = date;
     }
 
-    public Date getDate(){
+    public Date getDate() {
         return this.date;
     }
 
@@ -486,33 +486,30 @@ public class DailyRoutineFragment extends Fragment {
         }
 
         // Called when the BroadcastReceiver gets an Intent it's registered to receive
-//    @
         public void onReceive(Context context, Intent intent) {
-//            if(intent.getStringExtra(EntryScreenActivity.EXTENDED_DATA_STATUS).equals("completed")) {
-                if (EntryScreenActivity.getFragment() instanceof DailyRoutineFragment) {
-                    DailyRoutineFragment drf = ((DailyRoutineFragment) EntryScreenActivity.getFragment());
-                    if (drf.getActivity() instanceof EntryScreenActivity) {
-                        try {
-                            drHandler.clearDailyRoutine();
-                            drHandler.update();
-                            progressBar.setVisibility(View.GONE);
-                            routineLayout.setVisibility(View.VISIBLE);
-                        }catch (Exception e){
-                            e.printStackTrace();
-                            Log.e(TAG, "onReceive: " + e.getLocalizedMessage());
-                        }
+            if(intent.getStringExtra(DailyRoutineFragment.EXTENDED_DATA_STATUS).equals("completed")) {
+            if (EntryScreenActivity.getFragment() instanceof DailyRoutineFragment) {
+                DailyRoutineFragment drf = ((DailyRoutineFragment) EntryScreenActivity.getFragment());
+                if (drf.getActivity() instanceof EntryScreenActivity) {
+                    try {
+                        drHandler.clearDailyRoutine();
+                        drHandler.update();
+                        progressBar.setVisibility(View.GONE);
+                        routineLayout.setVisibility(View.VISIBLE);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Log.e(TAG, "onReceive: " + e.getLocalizedMessage());
+                    }
 
-                        if(!EntryScreenActivity.servicesRunning) {
-//                            drf.getActivity().startService(new Intent(drf.getActivity(), ActivityRecommendation.class));
-//                            drf.getActivity().startService(new Intent(drf.getActivity(), BSInputRecommendation.class));
-                            drf.getActivity().startService(new Intent(drf.getActivity(), SensorsRecommendation.class));
-                            drf.getActivity().startService(new Intent(drf.getActivity(), FoodRecommendation.class));
+                    if (!EntryScreenActivity.servicesRunning) {
+                        drf.getActivity().startService(new Intent(drf.getActivity(), SensorsRecommendation.class));
+                        drf.getActivity().startService(new Intent(drf.getActivity(), FoodRecommendation.class));
 
-                            EntryScreenActivity.servicesRunning = true;
-                        }
+                        EntryScreenActivity.servicesRunning = true;
                     }
                 }
-//            }
+            }
+            }
         }
     }
 }

@@ -22,7 +22,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 /**
  * Created by Stefan on 06.09.2016.
  */
-public class PredictionFramework implements Runnable{
+public class PredictionFramework{
     private static final String TAG = "PredictionFramework";
 
 
@@ -50,17 +50,30 @@ public class PredictionFramework implements Runnable{
     private final ArrayList<ArrayList<ActivityItem>> train;
     private static ArrayList<Integer> algorithms;
     private static int completed = 0;
+    public static ArrayList<Thread> threads = new ArrayList<>();
 
     public PredictionFramework(final ArrayList<ArrayList<ActivityItem>> train, final ArrayList<Integer> algorithms){
         super();
         this.train = train;
         this.algorithms = algorithms;
+        killRunningThreads();
+        run();
     }
 
-    @Override
-    public void run() {
+    /**
+     * kills all running threads from previous usages of the PredictionFramework
+     * @author Stefan
+     */
+    private void killRunningThreads() {
+        for(int i = threads.size()-1; i>=0; i--){
+            threads.get(i).interrupt();
+            threads.remove(i);
+        }
+    }
+
+    private void run() {
         completed = 0;
-        dailyRoutine.clear();
+        dailyRoutine = new ArrayList<>();
 
         //check if there is training data
         if(train.size()>0) {
@@ -74,21 +87,21 @@ public class PredictionFramework implements Runnable{
                 }
             }
             //for debugging the results of the Prediction
-            String debugResult = "";
-            for(int k = 0; k < algorithms.size();k++) {
-                debugResult = debugResult + "-----------------------" + "\n";
-                debugResult = debugResult + "Algorithm: " + String.valueOf(algorithms.get(k)) + "\n";
-                for (int l = 0; l < results.get(algorithms.get(k)).size(); l++) {
-
-
-                    ActivityItem currentActivity = results.get(algorithms.get(k)).get(l);
-                    debugResult = debugResult + currentActivity.getActivityId() + "," + currentActivity.getSubactivityId() + ","
-                            + currentActivity.getStarttimeAsString() + "," + currentActivity.getEndtimeAsString() + ","
-                            + currentActivity.getDuration() + "\n";
-                }
-                debugResult = debugResult + "-----------------------" + "\n";
-            }
-            Log.d("ResultsPrediction",debugResult);
+//            String debugResult = "";
+//            for(int k = 0; k < algorithms.size();k++) {
+//                debugResult = debugResult + "-----------------------" + "\n";
+//                debugResult = debugResult + "Algorithm: " + String.valueOf(algorithms.get(k)) + "\n";
+//                for (int l = 0; l < results.get(algorithms.get(k)).size(); l++) {
+//
+//
+//                    ActivityItem currentActivity = results.get(algorithms.get(k)).get(l);
+//                    debugResult = debugResult + currentActivity.getActivityId() + "," + currentActivity.getSubactivityId() + ","
+//                            + currentActivity.getStarttimeAsString() + "," + currentActivity.getEndtimeAsString() + ","
+//                            + currentActivity.getDuration() + "\n";
+//                }
+//                debugResult = debugResult + "-----------------------" + "\n";
+//            }
+//            Log.d("ResultsPrediction",debugResult);
             //check if voting should be performed
             if (algorithms.size() > 1) {
                 dailyRoutine = voteBasedOnAccuracy();
@@ -192,7 +205,7 @@ public class PredictionFramework implements Runnable{
             int algo = algorithms.get(i);
             switch (algo) {
                 case PREDICTION_DECISION_TREE:
-                    new Thread(new Runnable() {
+                    Thread t0 = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             try {
@@ -213,10 +226,12 @@ public class PredictionFramework implements Runnable{
                             completed++;
                             Log.d(TAG, "Decision Tree done");
                         }
-                    }).start();
+                    });
+                    t0.start();
+                    threads.add(t0);
                     break;
                 case PREDICTION_GSP:
-                    new Thread(new Runnable() {
+                    Thread t1 = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             ArrayList<ActivityItem> prediction = GSP_Prediction.makeGSPPrediction(train, 0.2f);
@@ -231,10 +246,12 @@ public class PredictionFramework implements Runnable{
                             accuraciesFlow.put(PREDICTION_GSP, acc2);
                             completed++;
                         }
-                    }).start();
+                    });
+                    t1.start();
+                    threads.add(t1);
                     break;
                 case PREDICTION_FUZZY_MINER:
-                    new Thread(new Runnable() {
+                    Thread t2 = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             FuzzyModel model = new FuzzyModel(train, false);
@@ -249,10 +266,12 @@ public class PredictionFramework implements Runnable{
                             accuraciesFlow.put(PREDICTION_FUZZY_MINER, acc2);
                             completed++;
                         }
-                    }).start();
+                    });
+                    t2.start();
+                    threads.add(t2);
                     break;
                 case PREDICTION_HEURISTICS_MINER:
-                    new Thread(new Runnable() {
+                    Thread t3 = new Thread(new Runnable() {
                         @Override
                         public void run() {
                             HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation(0.7,1,0.05);
@@ -267,7 +286,9 @@ public class PredictionFramework implements Runnable{
                             accuraciesFlow.put(PREDICTION_HEURISTICS_MINER, acc2);
                             completed++;
                         }
-                    }).start();
+                    });
+                    t3.start();
+                    threads.add(t3);
                     break;
             }
         }
@@ -283,7 +304,7 @@ public class PredictionFramework implements Runnable{
         HashMap<Integer, Double> avgAccs = new HashMap<>();
         for(int i=0; i<algorithms.size(); i++){
             int algo = algorithms.get(i);
-            avgAccs.put(algo, (accuracies.get(algo)+accuraciesFlow.get(algo)/2));
+            avgAccs.put(algo, (accuracies.get(algo)+accuraciesFlow.get(algo))/2);
         }
 
         Integer bestAlg = null;
@@ -291,6 +312,7 @@ public class PredictionFramework implements Runnable{
         for (Map.Entry<Integer, Double> entry : avgAccs.entrySet()) {
             Integer algo = entry.getKey();
             Double score = entry.getValue();
+            Log.e("PredictionFramework", "Algorithm: " + algo + " result: " + score);
             if(bestAlg == null){
                 bestAlg = algo;
                 max = score;
@@ -299,6 +321,8 @@ public class PredictionFramework implements Runnable{
                 max = score;
             }
         }
+
+        Log.e("PredictionFramework", "Best algorithm: " + bestAlg + " nr. of algorithms: " + algorithms.size());
 
         return results.get(bestAlg);
     }

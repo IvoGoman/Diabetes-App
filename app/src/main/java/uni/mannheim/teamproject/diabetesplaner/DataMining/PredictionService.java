@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
-import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -27,17 +26,17 @@ public class PredictionService extends IntentService {
         // Gets data from the incoming Intent
         String dataString = workIntent.getDataString();
 
+        //some stuff for testing:
         //DummyDataCreator.populateDataBase();
 
-        ArrayList<Integer> algos = new ArrayList<>();
+//        ArrayList<Integer> algos = new ArrayList<>();
 //        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
-        algos.add(PredictionFramework.PREDICTION_GSP);
+//        algos.add(PredictionFramework.PREDICTION_GSP);
 //        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
 //        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
-//        try {
-        predictDailyRoutine(algos,PredictionFramework.EVERY_DAY);
-//        predictDailyRoutine(getApplicationContext());
-        Log.e("TAG", "Predict");
+
+//        predictDailyRoutine(algos,PredictionFramework.EVERY_DAY);
+        predictDailyRoutine(getApplicationContext());
 
         String status = "completed";
         Intent localIntent =
@@ -91,7 +90,7 @@ public class PredictionService extends IntentService {
         }
 
         try {
-            new Thread(new PredictionFramework(PredictionFramework.retrieveTrainingData(mode), algorithms)).start();
+            new PredictionFramework(PredictionFramework.retrieveTrainingData(mode), algorithms);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -108,7 +107,7 @@ public class PredictionService extends IntentService {
      * @author Stefan 06.09.2016
      */
     public void predictDailyRoutine(ArrayList<Integer> algorithms, int mode){
-        new Thread(new PredictionFramework(PredictionFramework.retrieveTrainingData(mode), algorithms)).start();
+        new PredictionFramework(PredictionFramework.retrieveTrainingData(mode), algorithms);
     }
 
 }
