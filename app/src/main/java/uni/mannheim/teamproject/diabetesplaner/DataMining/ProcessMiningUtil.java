@@ -136,16 +136,21 @@ public class ProcessMiningUtil {
         }
         return mostFrequentID;
     }
+    /**
+     * Calculate the most frequent start activity of a day based on the training data of the prediction framework
+     * Returns the activity which was most often the first in each trace
+     *
+     * @param train Training Data used in the Predcition Framework
+     * @return activity ID of the most frequent start activity
+     */
 
     public static int getMostFrequentStartActivityFromTrain(ArrayList<ArrayList<ActivityItem>> train){
         ActivityItem tempItem;
-        int tempID;
         String tempIDString;
         Long[] timestamps;
         HashMap<String, Integer> activityCount = new HashMap<>();
         if(train.size()>0) {
             for (ArrayList<ActivityItem> trace : train) {
-                tempIDString = "";
                 if(trace.size() > 0) {
                     tempItem = trace.get(0);
                     timestamps = TimeUtils.convertDateStringToTimestamp(new String[]{tempItem.getStarttimeAsString(),tempItem.getEndtimeAsString()});
@@ -159,7 +164,7 @@ public class ProcessMiningUtil {
                 }
             }
         }
-        int maxCount = 0, currentCount = 0;
+        int maxCount = 0, currentCount;
         tempIDString = "0";
         for (Entry<String, Integer> entry : activityCount.entrySet()) {
             currentCount = entry.getValue();
@@ -278,6 +283,13 @@ public class ProcessMiningUtil {
 
     }
 
+    /**
+     * Convert the ID-Duration Map into the Activities that it represents
+     *
+     * @param idDurationMap Map of Activity IDs and Durations
+     * @param percentage are the value absolut or relative
+     * @return List of ActivityItems
+     */
     public static ArrayList<ActivityItem> createActivities(List<Pair<Integer, Double>> idDurationMap, boolean percentage) {
         double total = 0.0;
         int duration;
@@ -378,7 +390,6 @@ public class ProcessMiningUtil {
 
     /**
      * Convert the list of activities grouped by days as one big list
-     *
      * @param train the training data provided by the Prediction Framework
      * @return training data format used by FuzzyMiner
      */
@@ -393,7 +404,7 @@ public class ProcessMiningUtil {
     }
 
     /**
-     *
+     * Adds a leading zero to all activity ids smaller than 9
      * @param id actual Activity ID
      * @return Two Digit Activity ID
      */
@@ -430,5 +441,20 @@ public class ProcessMiningUtil {
             }
         }
         return allEndTimes / divide;
+    }
+
+    /**
+     * Creates the ID used in the Process Mining models from Date, ActivityID and SubActivityID
+     * @param startDate of the Activity
+     * @param activityID Activity ID
+     * @param subactivityID SubActivityID
+     * @return
+     */
+
+    public static int getProcessModelID(Date startDate, int activityID, int subactivityID){
+        String temp = TimeUtils.isAM(startDate.getTime());
+        temp += ProcessMiningUtil.getIDwithLeadingZero(activityID);
+        temp += ProcessMiningUtil.getIDwithLeadingZero(subactivityID);
+        return Integer.valueOf(temp);
     }
 }

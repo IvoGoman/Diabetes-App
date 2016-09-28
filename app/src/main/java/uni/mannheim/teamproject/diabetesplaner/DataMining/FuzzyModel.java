@@ -16,11 +16,11 @@ import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.Default.FME
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.Default.FMNode;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.Default.FuzzyMinerImpl;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.Default.MutableFuzzyGraph;
-import uni.mannheim.teamproject.diabetesplaner.DataMining.FuzzyMiner.impl.FMEdgeImpl;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing.CustomXLog;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityPrediction;
+import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityPredictionEdge;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 
 /**
@@ -129,7 +129,7 @@ public class FuzzyModel {
         }
         int startID = ProcessMiningUtil.getMostFrequentStartActivityFromCases(cases);
         int endID = ProcessMiningUtil.getMostFrequentEndActivity(cases);
-        int currentId = startID, tempId;
+        int currentId = startID;
         idDurationMap.add(new Pair<>(currentId, durationMap.get(currentId)));
         try {
             idDurationMap = createDailyRoutine(startID, endID, durationMap, percentage);
@@ -201,12 +201,10 @@ public class FuzzyModel {
         Set<FMEdge<? extends FMNode, ? extends FMNode>> likelySuccessors = new HashSet<>();
         Set<FMEdge<? extends FMNode, ? extends FMNode>> tempSuccessors = new HashSet<>();
         Set<FMEdge<? extends FMNode, ? extends FMNode>> targets = new HashSet<>();
-        Set<FMNode> interestingNodes = new HashSet<>();
 //        Retrieve all nodes from the model which have the same ID and are the End of that activity
         for (FMNode node : nodes) {
             if (node.getElementName().equals(String.valueOf(currentActivityId)) && node.getEventType().equals("Complete")) {
                 likelySuccessors.addAll(node.getGraph().getOutEdges(node));
-
             }
         }
         if (!visitedEdges.containsAll(likelySuccessors)) {
@@ -215,7 +213,6 @@ public class FuzzyModel {
 
         int successorID = 0;
         int targetID;
-        int targetTargetID;
         FMNode target;
         FMNode tempNode;
         FMEdge<? extends FMNode, ? extends FMNode> targetNode;
@@ -226,9 +223,6 @@ public class FuzzyModel {
         for (FMEdge edge : likelySuccessors) {
             target = (FMNode) edge.getTarget();
             targetID = Integer.parseInt(target.getElementName());
-            if (targetID != 9991) {
-                targetTargetID = getNextActivity(targetID, currentActivityId);
-            } else targetTargetID = 9991;
 //            check if target produces potential self loops
             targets.clear();
             targets.addAll(target.getGraph().getOutEdges(target));
@@ -298,8 +292,6 @@ public class FuzzyModel {
             successorID = Integer.parseInt(target.getElementName());
         } else if( tempSuccessors.size() == 1){
             FMEdge resultEdge = (FMEdge) tempSuccessors.toArray()[0];
-            target = (FMNode) resultEdge.getTarget();
-//            target.getGraph().getOutEdges(target).remove(resultEdge);
             visitedEdges.add(resultEdge);
         }
         return successorID;
@@ -320,7 +312,6 @@ public class FuzzyModel {
         Set<FMEdge<? extends FMNode, ? extends FMNode>> likelySuccessors = new HashSet<>();
         Set<FMEdge<? extends FMNode, ? extends FMNode>> tempSuccessors = new HashSet<>();
         Set<FMEdge<? extends FMNode, ? extends FMNode>> targets = new HashSet<>();
-        Set<FMNode> interestingNodes = new HashSet<>();
 //        Retrieve all nodes from the model which have the same ID and are the End of that activity
         for (FMNode node : nodes) {
             if (node.getElementName().equals(String.valueOf(currentActivityId)) && node.getEventType().equals("Complete")) {
@@ -329,8 +320,8 @@ public class FuzzyModel {
         }
         int successorID = 0;
         int targetID;
-        FMNode target = null;
-        FMNode tempNode = null;
+        FMNode target;
+        FMNode tempNode;
         FMEdge<? extends FMNode, ? extends FMNode> targetNode;
         double edgeSignificance = 0.0;
         double edgeCorrelation = 0.0;
@@ -419,7 +410,6 @@ public class FuzzyModel {
         Set<FMEdge<? extends FMNode, ? extends FMNode>> likelySuccessors = new HashSet<>();
         Set<FMEdge<? extends FMNode, ? extends FMNode>> tempSuccessors = new HashSet<>();
         Set<FMEdge<? extends FMNode, ? extends FMNode>> targets = new HashSet<>();
-        Set<FMNode> interestingNodes = new HashSet<>();
 //        Retrieve all nodes from the model which have the same ID and are the End of that activity
         for (FMNode node : nodes) {
             if (node.getElementName().equals(String.valueOf(currentActivityId)) && node.getEventType().equals("Complete")) {
@@ -503,13 +493,10 @@ public class FuzzyModel {
             int temp = (int) (tempSuccessors.size() * Math.random());
             FMEdge resultEdge = (FMEdge) tempSuccessors.toArray()[temp];
             target = (FMNode) resultEdge.getTarget();
-//            target.getGraph().getOutEdges(target).remove(resultEdge);
             visitedEdges.add(resultEdge);
             successorID = Integer.parseInt(target.getElementName());
         } else if( tempSuccessors.size() == 1){
             FMEdge resultEdge = (FMEdge) tempSuccessors.toArray()[0];
-            target = (FMNode) resultEdge.getTarget();
-//            target.getGraph().getOutEdges(target).remove(resultEdge);
             visitedEdges.add(resultEdge);
         }
         return successorID;
@@ -525,9 +512,10 @@ public class FuzzyModel {
         HashMap<Integer, ActivityPrediction> activityPredictions  = new HashMap<>();
         DataBaseHandler handler = AppGlobal.getHandler();
         String activityName;
-        int activityID;
-        HashMap<Integer, Double> successorProbabilityMap = new HashMap<>();
+        int activityID, targetID;
+        HashMap<Integer, ActivityPredictionEdge> successorProbabilityMap = new HashMap<>();
         ActivityPrediction activityPrediction;
+        ActivityPredictionEdge activityPredictionEdge;
         for (FMNode node : fuzzyMinerModel.getNodes()) {
             if (node.getEventType().equals("Complete")) {
                 activityID = Integer.parseInt(node.getElementName());
@@ -535,9 +523,11 @@ public class FuzzyModel {
                 activityName = handler.getActivitybySubActicityId(ProcessMiningUtil.splitID(activityID)[1]);
                 activityPrediction = new ActivityPrediction(activityID, 0, activityName);
                 for (FMEdge<? extends FMNode, ? extends FMNode> edge : node.getGraph().getOutEdges(node)) {
-                    successorProbabilityMap.put(Integer.valueOf(edge.getTarget().getElementName()), edge.getSignificance());
+                    targetID = Integer.valueOf(edge.getTarget().getElementName());
+                    activityPredictionEdge = new ActivityPredictionEdge(targetID,edge.getSignificance(), edge.getCorrelation(), edge.getTarget().getSignificance());
+                    successorProbabilityMap.put(Integer.valueOf(edge.getTarget().getElementName()), activityPredictionEdge);
                 }
-                activityPrediction.setFollowerProbabilityMap(successorProbabilityMap);
+                activityPrediction.setEdgeTargetMap(successorProbabilityMap);
                 if(durationMap.containsKey(Integer.parseInt(node.getElementName()))) {
                     activityPrediction.setAverageDuration(durationMap.get(Integer.parseInt(node.getElementName())));
                 }
