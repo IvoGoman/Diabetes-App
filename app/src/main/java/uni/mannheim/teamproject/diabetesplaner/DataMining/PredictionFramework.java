@@ -45,21 +45,24 @@ public class PredictionFramework implements Runnable{
 
     private static ArrayList<ActivityItem> dailyRoutine = new ArrayList<>();
     private static HashMap<Integer, ArrayList<ActivityItem>> results = new HashMap<>();
+    private static HashMap<Integer, Double> accuracies = new HashMap<>();
+    private static HashMap<Integer, Double> accuraciesFlow = new HashMap<>();
     private final ArrayList<ArrayList<ActivityItem>> train;
-    private final ArrayList<Integer> algorithms;
+    private static ArrayList<Integer> algorithms;
     private static int completed = 0;
 
     public PredictionFramework(final ArrayList<ArrayList<ActivityItem>> train, final ArrayList<Integer> algorithms){
         super();
         this.train = train;
         this.algorithms = algorithms;
-        run();
     }
 
     @Override
     public void run() {
         completed = 0;
         dailyRoutine.clear();
+
+        //check if there is training data
         if(train.size()>0) {
             runAlgorithms(train, algorithms);
             //wait until all algorithms terminated
@@ -88,7 +91,7 @@ public class PredictionFramework implements Runnable{
             Log.d("ResultsPrediction",debugResult);
             //check if voting should be performed
             if (algorithms.size() > 1) {
-                dailyRoutine = vote();
+                dailyRoutine = voteBasedOnAccuracy();
             } else if (algorithms.size() == 1) {
                 dailyRoutine = results.get(algorithms.get(0));
             }
@@ -154,54 +157,13 @@ public class PredictionFramework implements Runnable{
                 dailyRoutine.add(item);
 
                 start = TimeUtils.getDate(new Date(), 19, 0);
-                end = TimeUtils.getDate(new Date(), 19, 59);
-                item = new ActivityItem(12, 52, start, end);
-                dailyRoutine.add(item);
-
-                start = TimeUtils.getDate(new Date(), 7, 45);
-                end = TimeUtils.getDate(new Date(), 8, 59);
-                item = new ActivityItem(18, 2, start, end);
-                dailyRoutine.add(item);
-
-                start = TimeUtils.getDate(new Date(), 9, 0);
-                end = TimeUtils.getDate(new Date(), 9, 14);
-                item = new ActivityItem(10, 10, start, end);
-                dailyRoutine.add(item);
-
-                start = TimeUtils.getDate(new Date(), 9, 15);
-                end = TimeUtils.getDate(new Date(), 9, 59);
-                item = new ActivityItem(2, 20, start, end);
-                dailyRoutine.add(item);
-
-                start = TimeUtils.getDate(new Date(), 10, 0);
-                end = TimeUtils.getDate(new Date(), 10, 59);
-                item = new ActivityItem(12, 53, start, end);
-                dailyRoutine.add(item);
-
-                start = TimeUtils.getDate(new Date(), 11, 0);
                 end = TimeUtils.getDate(new Date(), 23, 59);
                 item = new ActivityItem(1, 1, start, end);
                 dailyRoutine.add(item);
             }
         }
 
-//        Log.d("PredictionFramework", "doInBackground done");
         DailyRoutineHandler.setDailyRoutine(dailyRoutine);
-//
-//
-//        drHandler.getDailyRoutineFragment().getLayout().post(new Runnable() {
-//            @Override
-//            public void run() {
-//                while(EntryScreenActivity.getOptionsMenu() == null){
-//                    try {
-//                        Thread.sleep(100);
-//                    } catch (InterruptedException e) {
-//                        e.printStackTrace();
-//                    }
-//                }
-//                drHandler.update();
-//            }
-//        });
 
     }
 
@@ -217,45 +179,6 @@ public class PredictionFramework implements Runnable{
         DataBaseHandler dbHandler = AppGlobal.getHandler();
         return dbHandler.getAllDays(mode);
     }
-
-//    /**
-//     * predicts a day
-//     *
-//     * @param train      an arrayList that contains the training data (the days to train on)
-//     * @param algorithm the algorithm that should be chosen
-//     * @return
-//     * @author Stefan 06.09.2016
-//     */
-//    public void predict(final ArrayList<ArrayList<ActivityItem>> train, final int algorithm) {
-//        new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                if (train.size() > 0) {
-//                    switch (algorithms.get(0)) {
-//                        case PREDICTION_DECISION_TREE:
-//                            try {
-//                                Evaluation.usageTree(train);
-//                                dailyRoutine = Prediction.GetRoutineAsAI(train);
-//                            } catch (Exception e) {
-//                                e.printStackTrace();
-//                                Log.e(TAG, "Decision Tree " + e.getLocalizedMessage());
-//                            }
-//                            break;
-//                        case PREDICTION_GSP:
-//                            break;
-//                        case PREDICTION_FUZZY_MINER:
-//                            FuzzyModel model = new FuzzyModel(train, false);
-//                            dailyRoutine = model.makeFuzzyMinerPrediction();
-//                            break;
-//                        case PREDICTION_HEURISTICS_MINER:
-//                            HeuristicsMinerImplementation HMmodel = new HeuristicsMinerImplementation();
-//                            dailyRoutine = HMmodel.runHeuristicsMiner(train);
-//                            break;
-//                    }
-//                }
-//            }
-//        });
-//    }
 
     /**
      * runs the algorithms in algorithms, each in a differnt thread
@@ -281,6 +204,8 @@ public class PredictionFramework implements Runnable{
                                 double recall = Evaluation.Recall(train, prediction);
                                 double fMeasure = Evaluation.Fmeasure(precision,recall);
                                 results.put(PREDICTION_DECISION_TREE, prediction);
+                                accuracies.put(PREDICTION_DECISION_TREE, acc1);
+                                accuraciesFlow.put(PREDICTION_DECISION_TREE, acc2);
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Log.e(TAG, "Decision Tree " + e.getLocalizedMessage());
@@ -302,6 +227,8 @@ public class PredictionFramework implements Runnable{
                             double precision = Evaluation.Precision(train, prediction);
                             double recall = Evaluation.Recall(train, prediction);
                             double fMeasure = Evaluation.Fmeasure(precision,recall);
+                            accuracies.put(PREDICTION_GSP, acc1);
+                            accuraciesFlow.put(PREDICTION_GSP, acc2);
                             completed++;
                         }
                     }).start();
@@ -318,6 +245,8 @@ public class PredictionFramework implements Runnable{
                             double precision = Evaluation.Precision(train, prediction);
                             double recall = Evaluation.Recall(train, prediction);
                             double fMeasure = Evaluation.Fmeasure(precision,recall);
+                            accuracies.put(PREDICTION_FUZZY_MINER, acc1);
+                            accuraciesFlow.put(PREDICTION_FUZZY_MINER, acc2);
                             completed++;
                         }
                     }).start();
@@ -334,6 +263,8 @@ public class PredictionFramework implements Runnable{
                             double precision = Evaluation.Precision(train, prediction);
                             double recall = Evaluation.Recall(train, prediction);
                             double fMeasure = Evaluation.Fmeasure(precision,recall);
+                            accuracies.put(PREDICTION_HEURISTICS_MINER, acc1);
+                            accuraciesFlow.put(PREDICTION_HEURISTICS_MINER, acc2);
                             completed++;
                         }
                     }).start();
@@ -341,6 +272,37 @@ public class PredictionFramework implements Runnable{
             }
         }
     }
+
+    /**
+     * performs voting based on the mean of normal accuracy and flow accuracy.
+     * Daily routine of the algorithm with the best score will be returned
+     * @return
+     * @author Stefan 28.09.2016
+     */
+    private static ArrayList<ActivityItem> voteBasedOnAccuracy(){
+        HashMap<Integer, Double> avgAccs = new HashMap<>();
+        for(int i=0; i<algorithms.size(); i++){
+            int algo = algorithms.get(i);
+            avgAccs.put(algo, (accuracies.get(algo)+accuraciesFlow.get(algo)/2));
+        }
+
+        Integer bestAlg = null;
+        double max = Double.MAX_VALUE;
+        for (Map.Entry<Integer, Double> entry : avgAccs.entrySet()) {
+            Integer algo = entry.getKey();
+            Double score = entry.getValue();
+            if(bestAlg == null){
+                bestAlg = algo;
+                max = score;
+            }else if(score > max){
+                bestAlg = algo;
+                max = score;
+            }
+        }
+
+        return results.get(bestAlg);
+    }
+
 
     /**
      * implements a voting
