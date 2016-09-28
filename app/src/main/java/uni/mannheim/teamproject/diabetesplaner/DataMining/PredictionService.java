@@ -10,6 +10,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import java.util.ArrayList;
 
 import uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine.DailyRoutineFragment;
+import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
  * Created by Stefan on 26.09.2016.
@@ -30,10 +31,10 @@ public class PredictionService extends IntentService {
         ArrayList<Integer> algos = new ArrayList<>();
 //        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
         algos.add(PredictionFramework.PREDICTION_GSP);
-        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
-        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
+//        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
+//        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
 //        try {
-        predictDailyRoutine(algos,PredictionFramework.FRIDAY);
+        predictDailyRoutine(algos,PredictionFramework.EVERY_DAY);
 
         String status = "completed";
         Intent localIntent =
@@ -46,10 +47,9 @@ public class PredictionService extends IntentService {
 
     /**
      * predicts the daily routine and gets the algorithms to choose from the settings
-     * @param mode     EVERY_DAY, WEEKDAYS, WEEKENDS, MONDAY, ... , SUNDAY
      * @author Stefan 06.09.2016
      */
-    public void predictDailyRoutine(int mode, Context context){
+    public void predictDailyRoutine(Context context){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         ArrayList<Integer> algorithms = new ArrayList<>();
         boolean dt = preferences.getBoolean("pref_key_dt", true);
@@ -67,6 +67,22 @@ public class PredictionService extends IntentService {
         boolean heuristics = preferences.getBoolean("pref_key_heuristics", true);
         if(heuristics){
             algorithms.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
+        }
+
+
+        int mode = Integer.valueOf(preferences.getString("pref_pred_mode","-1"));
+        switch (mode){
+            case 0: mode = PredictionFramework.EVERY_DAY;
+                break;
+            case 1: int day = TimeUtils.getCurrentDayOfWeek();
+                if(day == PredictionFramework.SATURDAY || day == PredictionFramework.SUNDAY){
+                    mode = PredictionFramework.WEEKENDS;
+                }else{
+                    mode = PredictionFramework.WEEKDAYS;
+                }
+                break;
+            case 2: mode = TimeUtils.getCurrentDayOfWeek();
+                break;
         }
 
         try {

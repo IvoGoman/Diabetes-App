@@ -351,12 +351,15 @@ public class TimeUtils {
         return calendar.getTime();
     }
 
+    /**
+     * Returns duration between two dates in minutes
+     * @param starttime Start
+     * @param endtime End
+     * @return Duration in Minutes
+     */
     public static int getDurationMinutes(Date starttime, Date endtime) {
         long duration = endtime.getTime() - starttime.getTime();
         long diffInMinutes = TimeUnit.MILLISECONDS.toMinutes(duration);
-        long diffInHours = TimeUnit.MILLISECONDS.toHours(duration);
-        /**int [] time = {(int)diffInHours, (int) diffInMinutes};
-         return time;**/
         return (int) diffInMinutes;
     }
 
@@ -438,6 +441,16 @@ public class TimeUtils {
             time = sdf.format(date);
         }
         return time;
+    }
+
+    /**
+     * returns Calendar.DAY_OF_WEEK for the current day
+     * @return
+     * @author Stefan 28.09.2016
+     */
+    public static int getCurrentDayOfWeek(){
+        Calendar c = Calendar.getInstance();
+        return c.get(Calendar.DAY_OF_WEEK);
     }
 
     /**
@@ -690,6 +703,12 @@ public class TimeUtils {
         return timeWindow;
     }
 
+    /**
+     * Returns the int values as its 2 character string representation
+     * e.g. 9 -> 09 | 10->10
+     * @param i
+     * @return
+     */
     public static String formatMonthOrDay(int i) {
         if (i > 9) {
             return String.valueOf(i);

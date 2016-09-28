@@ -32,9 +32,9 @@ public class ActivityItem {
     private Double duration = null;
 
 
-    public static final Integer INTENSITY_HIGH = 3;
-    public static final Integer INTENSITY_MEDIUM = 2;
-    public static final Integer INTENSITY_LOW = 1;
+    public static final Integer INTENSITY_HIGH = 2;
+    public static final Integer INTENSITY_MEDIUM = 1;
+    public static final Integer INTENSITY_LOW = 0;
 
     /**
      * constructor for an Activity Item with times as Date

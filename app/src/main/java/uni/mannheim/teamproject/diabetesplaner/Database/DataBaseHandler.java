@@ -20,12 +20,13 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionFramework;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.Domain.Datafile;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
+import uni.mannheim.teamproject.diabetesplaner.Domain.Datafile;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
@@ -467,6 +468,26 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     /**
+     * returns German name of activity
+     * @param id
+     * @return
+     * @author Stefan 28.09.2016
+     */
+    public String getGermanActivityName(int id){
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        String activity = "";
+        Cursor cursor = db1.rawQuery("select title from Activities where id= "+ id + "; ", null);
+        if (cursor.moveToFirst()) {
+            activity = cursor.getString(cursor.getColumnIndex("title"));
+        }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return activity;
+    }
+
+    /**
      * Created by leonidgunko
      * get subactivity Id by subactivity name
      */
@@ -474,9 +495,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     {
         int subActivityId=16;
         SQLiteDatabase db1 = this.getReadableDatabase();
-        Cursor cursor = db1.rawQuery("select id from SubActivities where title= '"+ subactivity + "'; ", null);
+        Cursor cursor = db1.rawQuery("select id from SubActivities where title= '"+ subactivity + "' and id_Activity= "+activityID+"; ", null);
         if (Locale.getDefault().getLanguage().equals("en")) {
-            cursor = db1.rawQuery("select id from SubActivities where title_eng= '"+ subactivity + "'; ", null);
+            cursor = db1.rawQuery("select id from SubActivities where title_eng= '"+ subactivity + "' and id_Activity= "+activityID+"; ", null);
         }
         if (cursor.moveToFirst()) {
             subActivityId = cursor.getInt(cursor.getColumnIndex("id"));
@@ -742,9 +763,18 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public void insertMeasurement(MeasureItem item, int profile_id){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, timestamp, measure_value, measure_unit, measure_kind) values(" + profile_id + ","
-                 + item.getTimestamp() +" , '" + item.getMeasure_value()+ "' , '" + item.getMeasure_unit() + "' ,'"+ item.getMeasure_kind()+"');");
-//        db.close();
+        Cursor cursor = db.rawQuery("select count(*) from "+ MEASUREMENT_TABLE_NAME+" where timestamp = "+ item.getTimestamp()+";", null);
+
+        if(cursor.getCount()>=1) {
+            cursor.moveToFirst();
+            if (cursor.getInt(0) > 0) {
+                db.execSQL("delete from " + MEASUREMENT_TABLE_NAME + " where timestamp = " + item.getTimestamp() + ";");
+            }
+            cursor.close();
+            db.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, timestamp, measure_value, measure_unit, measure_kind) values(" + profile_id + ","
+                    + item.getTimestamp() + " , '" + item.getMeasure_value() + "' , '" + item.getMeasure_unit() + "' ,'" + item.getMeasure_kind() + "');");
+
+        }
     }
 
 
@@ -1156,8 +1186,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                     "where profile_ID = " + profile_id + " " +
                     "and measure_kind = 'bloodsugar'" +
                     "ORDER BY timestamp DESC;", null);
-            cursor.moveToFirst();
             if (cursor.getCount() >= 1) {
+                cursor.moveToFirst();
                 result[0] = cursor.getString(0);
                 result[1] = cursor.getString(1);
                 result[2] = cursor.getString(2);
@@ -1640,6 +1670,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     {
         SQLiteDatabase db1 = this.getWritableDatabase();
         try {
+
             String[] result = new String[2];
             Cursor cursor = db1.rawQuery("SELECT name, lastname from "+ PROFILE_TABLE_NAME + " where id = " + id +";",null);
             if (cursor.getCount() >= 1) {
@@ -1683,7 +1714,7 @@ public class DataBaseHandler extends SQLiteOpenHelper {
 
     /**
      * returns a list with all relevant days from the database (training data).
-     * Only days that have a complete daily routine will be returned, the day is excluded
+     * Only days that have a complete daily routine will be returned, the current day is excluded
      * @param mode specifies which days should be returned. <br/>
      *             Valid values are: <br/>
      *

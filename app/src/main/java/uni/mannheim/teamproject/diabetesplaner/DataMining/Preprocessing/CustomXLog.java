@@ -4,7 +4,6 @@ package uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing;
 import org.deckfour.xes.model.XLog;
 import org.deckfour.xes.model.impl.XAttributeTimestampImpl;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -15,6 +14,9 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
  * Created by Ivo on 10.07.2016.
+ *
+ * Class which creates the XLog Object needed for the Process Mining Algorithms
+ * from a list of Activity Items
  */
 public class CustomXLog {
     private ArrayList<ActivityItem> items;
@@ -41,16 +43,18 @@ public class CustomXLog {
         return this.xLog;
     }
 
+    /**
+     * Converts the eventList into a XLog
+     * @param eventList List of evetns represented as String Arrays
+     */
     private void createXLog(ArrayList<String[]> eventList) {
 //		Build the XLog from the List
         LogBuilder builder = new LogBuilder();
         builder.startLog("ActivityLog");
         String caseHelper = eventList.get(1)[0];
         builder.addTrace(eventList.get(1)[0]);
-        int activityID = 0;
         this.createInitialEvent(builder, eventList.get(1));
 //		iterate through the event list with cases
-//        TODO:do not reduce the full amount of activities
         for (int i = 1; i < eventList.size(); i++) {
 //			If it is the same case then fill the trace with events
             if (eventList.get(i)[0].equals(caseHelper)) {
@@ -77,6 +81,11 @@ public class CustomXLog {
         this.xLog = builder.build();
     }
 
+    /**
+     * Create the Start Event for the XLog
+     * @param builder XLog Builder
+     * @param event First Event of the List
+     */
     private void createInitialEvent(LogBuilder builder, String[] event) {
         builder.addEvent("9990");
         builder.addAttribute("Activity", "Start");
@@ -88,7 +97,11 @@ public class CustomXLog {
         builder.addAttribute(new XAttributeTimestampImpl("time:timestamp", new Date(Long.valueOf(event[3]))));
 
     }
-
+    /**
+     * Create the End Event for the XLog
+     * @param builder XLog Builder
+     * @param event Last Event of the List
+     */
     private void createEndEvent(LogBuilder builder, String[] event) {
         builder.addEvent("9991");
         builder.addAttribute("Activity", "End");
@@ -123,7 +136,7 @@ public class CustomXLog {
                 isAM = "11";
             } else {
                 isAM = "10";
-            };
+            }
             event = new String[]{AppGlobal.getHandler().getActionById(item.getActivityId()), isAM + id + subActivityID, String.valueOf(timestamps[0] ), String.valueOf(timestamps[1] )};
             eventList.add(event);
         }

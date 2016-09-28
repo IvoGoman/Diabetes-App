@@ -34,7 +34,7 @@ public class FoodRecommendation extends Recommendation {
     private final int MEAL_PREP = db.getActivityID("Essen zubereiten");
     private final int SOCIALIZING = db.getActivityID("Geselligkeit");
     private final int MOVEMENT = db.getActivityID("Fortbewegen");
-    private final int DESK_WORK = db.getActivityID("Schreibtischarbeit");
+    private final int DESK_WORK = db.getActivityID("Arbeiten");
     private final int SPORT = db.getActivityID("Sport");
 
     private final int EXERCISE = db.getSuperActivityID(SPORT);
@@ -84,7 +84,7 @@ public class FoodRecommendation extends Recommendation {
         boolean notify = preferences.getBoolean("pref_key_food_rec", true);
 
         if (notify) {
-            Log.d("Rec", "recommend based on food");
+//            Log.d("Rec", "recommend based on food");
 //            mIdOffset = getMidOffset();
 //            mIdOffset = Recommendation.FOOD_REC;
 

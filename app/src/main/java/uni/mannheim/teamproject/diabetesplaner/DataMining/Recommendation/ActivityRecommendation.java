@@ -47,20 +47,6 @@ public class ActivityRecommendation extends Recommendation {
     }
 
 
-//    @Override
-//    public IBinder onBind(Intent intent) {
-//        setInterval(INTERVAL);
-//        startRecommendation();
-//
-//        return super.onBind(intent);
-//    }
-//
-//    @Override
-//    public boolean onUnbind(Intent intent) {
-//        stopRecommendation();
-//        return super.onUnbind(intent);
-//    }
-
     /**
      * Launches recommendation process.
      * Recommendation not started if the last recommendation was within a specified interval

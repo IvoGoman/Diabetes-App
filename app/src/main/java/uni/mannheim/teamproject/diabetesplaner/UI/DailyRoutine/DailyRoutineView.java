@@ -10,7 +10,6 @@ import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Vibrator;
-import android.support.v4.content.ContextCompat;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
@@ -201,7 +200,7 @@ public class DailyRoutineView extends View implements View.OnLongClickListener, 
      * @author Stefan
      */
     public void initColors() {
-        innerColor = ContextCompat.getColor(this.getContext(), ColorUtils.getColor(activity, activityItem));
+        innerColor = ColorUtils.getColor(activityItem, getContext());
 
         ColorDrawable cd = new ColorDrawable(innerColor);
         int col = cd.getColor();

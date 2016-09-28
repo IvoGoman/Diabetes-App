@@ -5,7 +5,6 @@ import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
 import android.support.annotation.Nullable;
-import android.util.Log;
 
 import org.apache.commons.math3.ml.clustering.Cluster;
 import org.apache.commons.math3.ml.clustering.DBSCANClusterer;
@@ -106,22 +105,6 @@ public class BSInputRecommendation extends Recommendation {
         dbHandler.insertMeasurement(item,1);
     }
 
-//    @Override
-//    public IBinder onBind(Intent intent) {
-//
-//        setInterval(INTERVAL);
-//        startRecommendation();
-//
-//        return super.onBind(intent);
-//    }
-//
-//    @Override
-//    public boolean onUnbind(Intent intent) {
-//
-//        stopRecommendation();
-//        return super.onUnbind(intent);
-//    }
-
     /**
      * recommends to input bloodsugar when its the time the user usually inputs the bloodsugar
      * @author Stefan
@@ -141,7 +124,7 @@ public class BSInputRecommendation extends Recommendation {
             for(int i=0;i<means.size(); i++){
                 int tmp = (int)((double)means.get(i));
                 String date = TimeUtils.getTimeInUserFormat(TimeUtils.minutesOfDayToTimestamp(tmp), this);
-                Log.d(TAG,"Cluster Mean: " + date);
+//                Log.d(TAG,"Cluster Mean: " + date);
             }
 
             Date date = new Date();
@@ -167,13 +150,13 @@ public class BSInputRecommendation extends Recommendation {
                                 if ((timestamp - mi.getTimestamp()) / 1000 / 60 > eps) {
                                     String usualTime = TimeUtils.getTimeInUserFormat(meanTs, this);
                                     sendNotification(getResources().getString(R.string.usualBSM) + " " + usualTime + ". " + getResources().getString(R.string.timeToInputBS), mIds.get(mean));
-                                    Log.d(TAG, "time to input bloodsugar");
+//                                    Log.d(TAG, "time to input bloodsugar");
                                     tsLastNoficiation = new Date().getTime();
                                 }
                             } else {
                                 String usualTime = TimeUtils.getTimeInUserFormat(meanTs, this);
                                 sendNotification(getResources().getString(R.string.usualBSM) + " " + usualTime + ". " + getResources().getString(R.string.timeToInputBS), mIds.get(mean));
-                                Log.d(TAG, "time to input bloodsugar");
+//                                Log.d(TAG, "time to input bloodsugar");
                                 tsLastNoficiation = new Date().getTime();
                             }
                         }
