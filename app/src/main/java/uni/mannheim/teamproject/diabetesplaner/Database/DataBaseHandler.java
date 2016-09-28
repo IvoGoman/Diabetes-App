@@ -20,13 +20,12 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 import uni.mannheim.teamproject.diabetesplaner.DataMining.Prediction;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.PredictionFramework;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
-import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.Domain.Datafile;
+import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
@@ -488,6 +487,31 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     /**
+     *
+     * @param subactivity
+     * @param activityID
+     * @return
+     * @author Stefan 28.09.2016
+     */
+    public int getSubactivityID(String subactivity, int activityID)
+    {
+        int subActivityId=16;
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        Cursor cursor = db1.rawQuery("select id from SubActivities where title= '"+ subactivity + "' and id_Activity= "+activityID+"; ", null);
+        if (Locale.getDefault().getLanguage().equals("en")) {
+            cursor = db1.rawQuery("select id from SubActivities where title_eng= '"+ subactivity + "' and id_Activity= "+activityID+"; ", null);
+        }
+        if (cursor.moveToFirst()) {
+            subActivityId = cursor.getInt(cursor.getColumnIndex("id"));
+        }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return subActivityId;
+    }
+
+    /**
      * Created by leonidgunko
      * get subactivity Id by subactivity name
      */
@@ -495,9 +519,9 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     {
         int subActivityId=16;
         SQLiteDatabase db1 = this.getReadableDatabase();
-        Cursor cursor = db1.rawQuery("select id from SubActivities where title= '"+ subactivity + "' and id_Activity= "+activityID+"; ", null);
+        Cursor cursor = db1.rawQuery("select id from SubActivities where title= '"+ subactivity + "'; ", null);
         if (Locale.getDefault().getLanguage().equals("en")) {
-            cursor = db1.rawQuery("select id from SubActivities where title_eng= '"+ subactivity + "' and id_Activity= "+activityID+"; ", null);
+            cursor = db1.rawQuery("select id from SubActivities where title_eng= '"+ subactivity + "'; ", null);
         }
         if (cursor.moveToFirst()) {
             subActivityId = cursor.getInt(cursor.getColumnIndex("id"));
