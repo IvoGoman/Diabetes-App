@@ -477,20 +477,31 @@ public class Util {
         return Math.round(((mg + 86.0) / 33.3) * ROUND_FACTOR) / ROUND_FACTOR;
     }
 
-
+    /**
+     * units to ml/cc conversion
+     * @param units
+     * @return ml
+     * @author Naira
+     */
     public static double Units_to_ml(double units) {
         return units / 100;
     }
 
+    /**
+     * ml/cc to units conversion
+     * @param ml
+     * @return units
+     * @author Naira
+     */
     public static double ml_to_Units(double ml) {
         return ml * 100;
     }
 
-    // created by Naira, for the drop down animation of the measurement pop up in Entry screen
-
     /**
+     * drop down animation of the measurement dialog
      * @param ctx
      * @param v
+     * @author Naira
      */
     public static void slide_down(Context ctx, View v) {
         Animation a = AnimationUtils.loadAnimation(ctx, R.anim.slide_down);

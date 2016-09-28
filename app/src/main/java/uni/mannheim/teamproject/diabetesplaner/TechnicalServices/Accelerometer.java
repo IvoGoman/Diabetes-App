@@ -128,7 +128,7 @@ public class Accelerometer extends Service implements SensorEventListener {
                     Toast.makeText(this, aggregatedRecords[1], Toast.LENGTH_SHORT).show();
 
                     System.out.println(aggregatedRecords[1]);
-
+                    // edited by Leonid
                     if (aggregatedRecords[1]=="Walking" || aggregatedRecords[1]=="Climbing up" || aggregatedRecords[1]=="Climbing down" || aggregatedRecords[1]=="Running" || aggregatedRecords[1]=="Jumping")
                     {
                         currentActivities.add(1);

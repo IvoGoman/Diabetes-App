@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!-- created by Naira, animation for radio button on measurement dialog-->
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:fillAfter="true" >
     <scale

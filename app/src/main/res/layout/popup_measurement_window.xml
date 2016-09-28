@@ -6,7 +6,7 @@
     android:contextClickable="true"
     android:orientation="vertical"
     android:padding="20dp">
-
+<!-- creadted by Naira, measurements dialog view -->
 
     <LinearLayout
         android:layout_width="match_parent"

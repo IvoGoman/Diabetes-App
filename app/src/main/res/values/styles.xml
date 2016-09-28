@@ -18,7 +18,7 @@
 
     </style>
 
-    <!-- Theme for Date and time pickers -->
+    <!-- created by Naira, Theme for Date and time pickers -->
     <style name="picker" parent="Base.Theme.AppCompat.Light.Dialog.Alert">
         <!-- Used for the buttons -->
         <item name="colorAccent">@color/colorPrimary</item>
@@ -36,6 +36,7 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <!-- created by Naira, button styling themes -->
     <style name="buttonStyle" parent="@android:style/Widget.Button.Toggle">
         <item name="android:textColor">#FFFFFF</item>
 
