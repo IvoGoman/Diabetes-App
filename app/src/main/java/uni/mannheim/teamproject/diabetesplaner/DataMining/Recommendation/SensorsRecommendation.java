@@ -15,7 +15,7 @@ public class SensorsRecommendation extends Recommendation {
     int id;
 
     public SensorsRecommendation() {
-        super("Sensors", 3000);//10*Recommendation.MIN);
+        super("Sensors", 10*Recommendation.MIN);
         Log.d("Rec", "recommend based on sensors started");
         id = getNewMid();
     }
