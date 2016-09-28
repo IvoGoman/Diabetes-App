@@ -1,5 +1,11 @@
 package uni.mannheim.teamproject.diabetesplaner.Utility;
 
+import android.content.Context;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
+import android.support.v4.content.ContextCompat;
+
+import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 
@@ -8,66 +14,74 @@ import uni.mannheim.teamproject.diabetesplaner.R;
  */
 public class ColorUtils {
     /**
-     * @author Stefan
      * returns the color with respect to the intensity of an acitiviy
      * returns default color if intensity == null
      * @param intensity
      * @return
+     * @author Stefan 28.09.2016
      */
-    public static int getIntensityColor(Integer intensity){
-        if(intensity != null){
-            switch (intensity){
-                case 0: return R.color.good;
-                case 1: return R.color.potential_bad;
-                case 2: return R.color.bad;
-            }
+    public static int getIntensityColor(Integer intensity, int color){
+
+        ColorDrawable cd = new ColorDrawable(color);
+        int col = cd.getColor();
+        int alpha = cd.getAlpha();
+        int red = Color.red(col);
+        int green = Color.green(col);
+        int blue = Color.blue(col);
+
+        switch (intensity){
+            case 1: return Color.argb(alpha, red - 20, green - 20, blue - 20);
+            case 2: return Color.argb(alpha, red - 40, green - 40, blue - 40);
+            default: return color;
         }
-        return R.color.no_influence;
+
     }
 
     /**
      * @author Stefan
      * returns the color for an activity
      *
-     * @param activityid id of activity
+     * @param activityItem
      * @return id of color in resources
      */
-    public static int getColor(int activityid, ActivityItem activityItem) {
-        switch (activityid) {
+    public static int getColor(ActivityItem activityItem, Context context) {
+        int activityId = activityItem.getActivityId();
+        DataBaseHandler dbHandler = AppGlobal.getHandler();
+
+        int superId = dbHandler.getSuperActivityID(activityItem.getActivityId());
+
+        if(dbHandler.getGermanActivityName(activityId).equals("Schreibtischarbeit") && activityItem.getIntensity() !=null){
+            return getIntensityColor(activityItem.getIntensity(), getColorBySuperActivity(superId, context));
+        }else if(dbHandler.getGermanActivityName(activityId).equals("Sport") && activityItem.getIntensity() != null){
+            return getIntensityColor(activityItem.getIntensity(), getColorBySuperActivity(superId, context));
+        }
+
+        return getColorBySuperActivity(superId, context);
+    }
+
+    /**
+     * returns the color by the super activity id
+     * @param superId
+     * @param context
+     * @return
+     * @author Stefan 28.09.2016
+     */
+    public static int getColorBySuperActivity(int superId, Context context){
+        switch (superId) {
             case 1:
-                return R.color.color1;
+                return ContextCompat.getColor(context, R.color.color2);
             case 2:
-                return R.color.color2;
+                return ContextCompat.getColor(context, R.color.color6);
             case 3:
-                return R.color.color6;
+                return ContextCompat.getColor(context, R.color.color3);
             case 4:
-                return R.color.color6;
+                return ContextCompat.getColor(context, R.color.color4);
             case 5:
-                return R.color.color1;
+                return ContextCompat.getColor(context, R.color.color5);
             case 6:
-                return R.color.color4;
-            case 7:
-                return R.color.color3;
-            case 8:
-                return R.color.color4;
-            case 9:
-                return R.color.color4;
-            case 10:
-                return R.color.color6;
-            case 11:
-                return R.color.color6;
-            case 12:
-                return R.color.color4;
-            case 13:
-                return R.color.color5;
-            case 14:
-                return R.color.color4;
-            case 15:
-                return R.color.color5;
-            case 16:
-                return R.color.color6;
+                return ContextCompat.getColor(context, R.color.color1);
             default:
-                return R.color.color1;
+                return ContextCompat.getColor(context, R.color.color1);
         }
     }
 }

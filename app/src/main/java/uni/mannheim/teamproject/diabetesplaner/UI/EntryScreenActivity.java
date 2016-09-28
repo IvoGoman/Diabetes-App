@@ -19,6 +19,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -258,11 +259,16 @@ public class EntryScreenActivity extends AppCompatActivity
 
                 EditDialog editDialog = new EditDialog();
                 if (fragment instanceof DailyRoutineFragment) {
-                    editDialog.setDayHandler(((DailyRoutineFragment) fragment).getDrHandler());
-                    editDialog.setActivityItem(DailyRoutineView.getSelectedActivities().get(0).getActivityItem());
-                    editDialog.setSelected(getIndexesOfSelected(((DailyRoutineFragment) fragment)).get(0));
+                    try {
+                        editDialog.setDayHandler(((DailyRoutineFragment) fragment).getDrHandler());
+                        editDialog.setActivityItem(DailyRoutineView.getSelectedActivities().get(0).getActivityItem());
+                        editDialog.setSelected(getIndexesOfSelected(((DailyRoutineFragment) fragment)).get(0));
 
-                    editDialog.show(getFragmentManager(), "editDialog");
+                        editDialog.show(getFragmentManager(), "editDialog");
+                    }catch (Exception e){
+                        e.printStackTrace();
+                        Log.e(TAG, "onOptionsItemSelected() - edit_icon_action_bar_routine: " + e.getLocalizedMessage());
+                    }
                 }
 
                 return true;

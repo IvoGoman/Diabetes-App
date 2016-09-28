@@ -55,7 +55,6 @@ public abstract class Recommendation extends Service {
         @Override
         public void run() {
             recommend();
-            Log.e("REC", "Recommend");
 
             mHandler.postDelayed(mHandlerTask, interval);
         }
@@ -75,7 +74,7 @@ public abstract class Recommendation extends Service {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("Rec", "destroy");
+//        Log.d("Rec", "destroy");
         stopRecommendation();
     }
 
@@ -87,12 +86,12 @@ public abstract class Recommendation extends Service {
     public abstract void recommend();
 
     public void startRecommendation(){
-        Log.d("Rec", name + " started");
+//        Log.d("Rec", name + " started");
         mHandlerTask.run();
     }
 
     public void stopRecommendation(){
-        Log.d("Rec", name + " stopped");
+//        Log.d("Rec", name + " stopped");
         mHandler.removeCallbacks(mHandlerTask);
     }
 

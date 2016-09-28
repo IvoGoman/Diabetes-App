@@ -435,13 +435,33 @@ public class DataBaseHandler extends SQLiteOpenHelper {
         return activityId;
     }
 
-    public int getSubactivityID(String subactivity)
+    /**
+     * returns German name of activity
+     * @param id
+     * @return
+     * @author Stefan 28.09.2016
+     */
+    public String getGermanActivityName(int id){
+        SQLiteDatabase db1 = this.getReadableDatabase();
+        String activity = "";
+        Cursor cursor = db1.rawQuery("select title from Activities where id= "+ id + "; ", null);
+        if (cursor.moveToFirst()) {
+            activity = cursor.getString(cursor.getColumnIndex("title"));
+        }
+        // close cursor
+        if (!cursor.isClosed()) {
+            cursor.close();
+        }
+        return activity;
+    }
+
+    public int getSubactivityID(String subactivity, int activityID)
     {
         int subActivityId=16;
         SQLiteDatabase db1 = this.getReadableDatabase();
-        Cursor cursor = db1.rawQuery("select id from SubActivities where title= '"+ subactivity + "'; ", null);
+        Cursor cursor = db1.rawQuery("select id from SubActivities where title= '"+ subactivity + "' and id_Activity= "+activityID+"; ", null);
         if (Locale.getDefault().getLanguage().equals("en")) {
-            cursor = db1.rawQuery("select id from SubActivities where title_eng= '"+ subactivity + "'; ", null);
+            cursor = db1.rawQuery("select id from SubActivities where title_eng= '"+ subactivity + "' and id_Activity= "+activityID+"; ", null);
         }
         if (cursor.moveToFirst()) {
             subActivityId = cursor.getInt(cursor.getColumnIndex("id"));

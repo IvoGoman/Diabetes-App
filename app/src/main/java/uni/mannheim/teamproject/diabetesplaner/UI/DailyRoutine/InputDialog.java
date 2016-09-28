@@ -121,6 +121,13 @@ public class InputDialog extends DialogFragment{
                     if (progress >= 0 && progress <= intensityBar.getMax()) {
                         setIntensityText(progress);
                         seekBar.setSecondaryProgress(progress);
+                        switch(progress){
+                            case 0: intensity = ActivityItem.INTENSITY_LOW;
+                                break;
+                            case 1: intensity = ActivityItem.INTENSITY_MEDIUM;
+                                break;
+                            case 2: intensity = ActivityItem.INTENSITY_HIGH;
+                        }
                     }
                 }
             }
@@ -223,7 +230,7 @@ public class InputDialog extends DialogFragment{
                     int subactivityIndex = 0;
                     for(int i=0; i<subactivities.size(); i++){
                         if(subactivities.get(i).equals(tmpSubact)){
-                            subactivityIndex = i+1;
+                            subactivityIndex = i;
                         }
                     }
                     subSpinner.setSelection(subactivityIndex);
@@ -231,7 +238,7 @@ public class InputDialog extends DialogFragment{
                         @Override
                         public void onItemSelected(AdapterView<?> subAdapter, View view, int subPosition, long id) {
                             int tmp = subPosition;
-                            subactivity = dbHandler.getSubactivityID(subAdapter.getItemAtPosition(subPosition).toString());
+                            subactivity = dbHandler.getSubactivityID(subAdapter.getItemAtPosition(subPosition).toString(), activity);
                         }
 
                         @Override
@@ -265,7 +272,8 @@ public class InputDialog extends DialogFragment{
                 }
 
                 //if activity desk work or sport set the intensity bar to visible, else hide
-                if(activity == 12 || activity == 13){
+                String germanName = dbHandler.getGermanActivityName(activity);
+                if(germanName.equals("Schreibtischarbeit") || germanName.equals("Sport")){
                     setIntensityVisible(true);
                 }else{
                     setIntensityVisible(false);
@@ -356,7 +364,7 @@ public class InputDialog extends DialogFragment{
      * @author Stefan 29.08.2016
      */
     public void setSubactivity(int subactivity){
-        this.subactivity = subactivity-1;
+        this.subactivity = subactivity;
     }
 
     public int getChosenActivity(){

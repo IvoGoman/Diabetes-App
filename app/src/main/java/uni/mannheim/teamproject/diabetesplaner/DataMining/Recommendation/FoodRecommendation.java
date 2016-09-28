@@ -84,7 +84,7 @@ public class FoodRecommendation extends Recommendation {
         boolean notify = preferences.getBoolean("pref_key_food_rec", true);
 
         if (notify) {
-            Log.d("Rec", "recommend based on food");
+//            Log.d("Rec", "recommend based on food");
 //            mIdOffset = getMidOffset();
 //            mIdOffset = Recommendation.FOOD_REC;
 
