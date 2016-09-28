@@ -69,7 +69,7 @@ public class ColorUtils {
     public static int getColorBySuperActivity(int superId, Context context){
         switch (superId) {
             case 1:
-                return ContextCompat.getColor(context, R.color.color2);
+                return ContextCompat.getColor(context, R.color.color1);
             case 2:
                 return ContextCompat.getColor(context, R.color.color6);
             case 3:
@@ -79,7 +79,7 @@ public class ColorUtils {
             case 5:
                 return ContextCompat.getColor(context, R.color.color5);
             case 6:
-                return ContextCompat.getColor(context, R.color.color1);
+                return ContextCompat.getColor(context, R.color.color2);
             default:
                 return ContextCompat.getColor(context, R.color.color1);
         }

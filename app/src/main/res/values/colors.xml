@@ -22,11 +22,11 @@
     <!-- possible new colors from color calculator-->
 
     <color name="color1">#D2D2D2</color>
-    <color name="color2">#D2FF9B</color>
-    <color name="color3">#FFC832</color>
-    <color name="color4">#879DFF</color>
-    <color name="color5">#FF786E</color>
-    <color name="color6">#FFF487</color>
+    <color name="color2">#9DEF7A</color>
+    <color name="color3">#FFF487</color>
+    <color name="color4">#6B6DFF</color>
+    <color name="color5">#E14242</color>
+    <color name="color6">#FFC832</color>
 
     <color name="HelpBackground">#bdfdf6</color>
 
