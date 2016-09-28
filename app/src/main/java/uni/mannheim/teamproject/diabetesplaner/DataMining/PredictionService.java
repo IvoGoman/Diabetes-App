@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
 import android.support.v4.content.LocalBroadcastManager;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -35,6 +36,8 @@ public class PredictionService extends IntentService {
 //        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
 //        try {
         predictDailyRoutine(algos,PredictionFramework.EVERY_DAY);
+//        predictDailyRoutine(getApplicationContext());
+        Log.e("TAG", "Predict");
 
         String status = "completed";
         Intent localIntent =
@@ -52,6 +55,8 @@ public class PredictionService extends IntentService {
     public void predictDailyRoutine(Context context){
         SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
         ArrayList<Integer> algorithms = new ArrayList<>();
+
+        //add algorithms which are switched on in the settings
         boolean dt = preferences.getBoolean("pref_key_dt", true);
         if(dt){
             algorithms.add(PredictionFramework.PREDICTION_DECISION_TREE);
@@ -69,7 +74,7 @@ public class PredictionService extends IntentService {
             algorithms.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
         }
 
-
+        //get the mode from the settings
         int mode = Integer.valueOf(preferences.getString("pref_pred_mode","-1"));
         switch (mode){
             case 0: mode = PredictionFramework.EVERY_DAY;
