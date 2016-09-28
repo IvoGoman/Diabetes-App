@@ -19,6 +19,7 @@ import java.sql.Date;
 import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
@@ -36,15 +37,13 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
     Button submit,cancel;
     RadioButton mg,percentage,mmol;
     EditText bloodsugar_level;
-    public Date date_picker;
-    public Time time_picker;
     Button btn_date;
     Button btn_time;
     BloodsugarDialog_and_Settings communicator;
     double roundfactor = 10d;
     private TimerPickerFragment TimerPicker;
     private DatePickerFragment DatePicker;
-
+    private java.util.Date date = null;
     //the current selected measure
     private String measure;
     private  String date_s;
@@ -72,47 +71,40 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         percentage = (RadioButton) view.findViewById(R.id.bs_percentage);
         bloodsugar_level = (EditText) view.findViewById(R.id.edit_measure_value);
 
+        if (date == null) {
+            date = Calendar.getInstance(Locale.getDefault()).getTime();
+        }
+
+        //adjusting date and time formats
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
+        String dateString = dateFormat.format(date);
+        String timeString = timeFormat.format(date);
+
         //Button for DatePicker
         btn_date = (Button) view.findViewById(R.id.btn_Date);
+        btn_date.setText(dateString);
         btn_date.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
                 DatePicker.setBloodsugarDialog(bloodsugar_dialog.this);
                 DatePicker.show(getFragmentManager(), "datePicker");
-
-
             }
         });
 
-
         //Button for TimerPicker
         btn_time = (Button) view.findViewById(R.id.btn_time);
+        btn_time.setText(timeString);
         btn_time.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 TimerPicker.SetDialog(bloodsugar_dialog.this);
                 TimerPicker.show(getFragmentManager(), "timePicker");
-                //timerpickerfragment.SetDialog(bloodsugar_dialog.this);
             }
         });
 
         date_s = btn_date.getText().toString();
         time_s = btn_time.getText().toString();
-        //Set current Date and Time
-        Calendar c = Calendar.getInstance();
-        c.setTimeZone(TimeZone.getDefault());
-        if(date_s.contentEquals("Date"))
-        {
-            date_s = new SimpleDateFormat("dd.MM.yyyy").format(c.getTime());
-            btn_date.setText(date_s);
-
-        }
-        if (time_s.contentEquals("Time"))
-        {
-            time_s = new SimpleDateFormat("HH:mm:ss").format(c.getTime());
-            btn_time.setText(time_s);
-        }
 
         AlertDialog.Builder mybuilder = new AlertDialog.Builder(getActivity());
         mybuilder.setView(view);
@@ -122,13 +114,16 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
             public void onClick(DialogInterface dialog, int which) {
                 //if value is changed, then store value and change display
                 try {
-                    if (measure_value.equals(bloodsugar_level.getText().toString().replace(".","-")) == false) {
                         measure_value = bloodsugar_level.getText().toString();
 
                         if(btn_time.getText().toString().length() < 8) {
                             time_s = btn_time.getText().toString()+ ":" + Calendar.getInstance().get(Calendar.SECOND);
                         }
                         long timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s, time_s).getTime();
+                        Calendar calendar = Calendar.getInstance();
+                        calendar.setTimeInMillis(timestamp);
+                        calendar.set(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE),0);
+                        timestamp = calendar.getTimeInMillis();
                         //Check if entered value is to high or to low
                         if(check_mg(convert_to_mg(Double.parseDouble(measure_value),measure)) == true) {
                            MeasureItem measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value),measure, MeasureItem.MEASURE_KIND_BLOODSUGAR);
@@ -157,21 +152,21 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
                             }
                         }
 
-                    } else {
-                        Log.d("bloodsugar_entry", "Nothing changed");
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                            new AlertDialog.Builder(getContext())
-                                    .setTitle("No Changes")
-                                    .setMessage("You did not change the blood_sugar level.")
-                                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
-                                        public void onClick(DialogInterface dialog, int which) {
-
-                                        }
-                                    })
-                                    .setIcon(android.R.drawable.ic_dialog_alert)
-                                    .show();
-                        }
-                    }
+//                    } else {
+//                        Log.d("bloodsugar_entry", "Nothing changed");
+//                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+//                            new AlertDialog.Builder(getContext())
+//                                    .setTitle("No Changes")
+//                                    .setMessage("You did not change the blood_sugar level.")
+//                                    .setPositiveButton(android.R.string.ok, new DialogInterface.OnClickListener() {
+//                                        public void onClick(DialogInterface dialog, int which) {
+//
+//                                        }
+//                                    })
+//                                    .setIcon(android.R.drawable.ic_dialog_alert)
+//                                    .show();
+//                        }
+//                    }
                 } catch (Exception e) {
                     e.getMessage();
                 }

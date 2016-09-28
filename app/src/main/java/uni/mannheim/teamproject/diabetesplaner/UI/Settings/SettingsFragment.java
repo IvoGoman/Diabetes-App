@@ -413,8 +413,9 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
      */
     public void bloodsugar_change(bloodsugar_dialog bs, String data, String measure, int ID) {
         if (ID == 1) {
-            data = database.getLastBloodsugarMeasurement(1)[0];
-            measure = database.getLastBloodsugarMeasurement(1)[1];
+            String[] result =database.getLastBloodsugarMeasurement(1);
+            data = result[0];
+            measure = result[1];
             pref_bloodsugar.setSummary(data + " " + measure);
             bloodsugar_measure_value = data;
             bloodsugar_measure = measure;

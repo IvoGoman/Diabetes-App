@@ -701,9 +701,18 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public void insertMeasurement(MeasureItem item, int profile_id){
         SQLiteDatabase db = this.getWritableDatabase();
-        db.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, timestamp, measure_value, measure_unit, measure_kind) values(" + profile_id + ","
-                 + item.getTimestamp() +" , '" + item.getMeasure_value()+ "' , '" + item.getMeasure_unit() + "' ,'"+ item.getMeasure_kind()+"');");
-//        db.close();
+        Cursor cursor = db.rawQuery("select count(*) from "+ MEASUREMENT_TABLE_NAME+" where timestamp = "+ item.getTimestamp()+";", null);
+
+        if(cursor.getCount()>=1) {
+            cursor.moveToFirst();
+            if (cursor.getInt(0) > 0) {
+                db.execSQL("delete from " + MEASUREMENT_TABLE_NAME + " where timestamp = " + item.getTimestamp() + ";");
+            }
+            cursor.close();
+            db.execSQL("insert into " + MEASUREMENT_TABLE_NAME + "(profile_ID, timestamp, measure_value, measure_unit, measure_kind) values(" + profile_id + ","
+                    + item.getTimestamp() + " , '" + item.getMeasure_value() + "' , '" + item.getMeasure_unit() + "' ,'" + item.getMeasure_kind() + "');");
+
+        }
     }
 
 
@@ -1121,8 +1130,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
                     "where profile_ID = " + profile_id + " " +
                     "and measure_kind = 'bloodsugar'" +
                     "ORDER BY timestamp DESC;", null);
-            cursor.moveToFirst();
             if (cursor.getCount() >= 1) {
+                cursor.moveToFirst();
                 result[0] = cursor.getString(0);
                 result[1] = cursor.getString(1);
                 result[2] = cursor.getString(2);

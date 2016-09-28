@@ -200,6 +200,10 @@ public class MeasurementDialog extends MeasurementInputDialog {
                         time_s = btn_time.getText().toString() + ":" + Calendar.getInstance().get(Calendar.SECOND);
                     }
                     timestamp = TimeUtils.convertDateAndTimeStringToDate(date_s, time_s).getTime();
+                    Calendar calendar = Calendar.getInstance();
+                    calendar.setTimeInMillis(timestamp);
+                    calendar.set(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH), calendar.get(Calendar.HOUR_OF_DAY), calendar.get(Calendar.MINUTE),0);
+                    timestamp = calendar.getTimeInMillis();
 
                     if (measure_value.equals("") == true && insulin_value.equals("") == true) { //if no inputs are added
                         Toast.makeText(getActivity(), "No Measurements have been entered", Toast.LENGTH_LONG).show();
