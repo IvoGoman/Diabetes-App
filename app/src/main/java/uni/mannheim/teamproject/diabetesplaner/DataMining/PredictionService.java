@@ -38,7 +38,7 @@ public class PredictionService extends IntentService {
 //        predictDailyRoutine(algos,PredictionFramework.EVERY_DAY);
 //        predictDailyRoutine(algos,PredictionFramework.WEEKENDS);
         predictDailyRoutine(getApplicationContext());
-
+//
         String status = "completed";
         Intent localIntent =
                 new Intent(DailyRoutineFragment.BROADCAST_ACTION)

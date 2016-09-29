@@ -159,8 +159,8 @@ public class GSP_Util {
 				//only remove outliers if the activity occurs very often i.e. >= 90% of number of logged days
 				// (Activity can occure more than once a day)
 				if(value.size() >= (float)values.size()*0.9f){
-					v.setValue(removeOutlierWithInterquartileRange(value));
-//					v.setValue(removeOutlierWithMAD(value, 4));
+//					v.setValue(removeOutlierWithInterquartileRange(value));
+					v.setValue(removeOutlierWithMAD(value, 4));
 				}
 			}
 		}
@@ -223,16 +223,16 @@ public class GSP_Util {
 		}
 		double mad = stats.getPercentile(50);
 
-		ArrayList<Long> result = new ArrayList<>();
 		for(int i=0; i<list.size(); i++){
 			Long l = list.get(i);
 			double lower = median - k*mad;
 			double upper = median + k*mad;
-			if(lower <= l && l <= upper){
-				result.add(l);
+			if(!(lower <= l && l <= upper)){
+				list.remove(i);
+				i--;
 			}
 		}
-		return result;
+		return list;
 	}
 
 	/**
