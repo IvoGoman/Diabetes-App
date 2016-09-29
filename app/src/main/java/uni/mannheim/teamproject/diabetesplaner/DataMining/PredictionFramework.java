@@ -238,7 +238,7 @@ public class PredictionFramework{
                             results.put(PREDICTION_GSP, prediction);
                             double acc1 = Evaluation.Accuracy(train, prediction);
                             double acc2 = Evaluation.AccuracyFlow(train, prediction);
-                            Log.d("TAG", "Accuracy: " + acc1 + " Accuracy Flow: " + acc2);
+                            Log.d(TAG, "GSP Accuracy: " + acc1 + " Accuracy Flow: " + acc2);
                             double precision = Evaluation.Precision(train, prediction);
                             double recall = Evaluation.Recall(train, prediction);
                             double fMeasure = Evaluation.Fmeasure(precision,recall);
@@ -312,7 +312,7 @@ public class PredictionFramework{
         for (Map.Entry<Integer, Double> entry : avgAccs.entrySet()) {
             Integer algo = entry.getKey();
             Double score = entry.getValue();
-            Log.e("PredictionFramework", "Algorithm: " + algo + " result: " + score);
+            Log.d(TAG, "Algorithm: " + algo + " result: " + score);
             if(bestAlg == null){
                 bestAlg = algo;
                 max = score;
@@ -322,7 +322,7 @@ public class PredictionFramework{
             }
         }
 
-        Log.e("PredictionFramework", "Best algorithm: " + bestAlg + " nr. of algorithms: " + algorithms.size());
+        Log.d(TAG, "Best algorithm: " + bestAlg + " nr. of algorithms: " + algorithms.size());
 
         return results.get(bestAlg);
     }

@@ -160,6 +160,7 @@ public class GSP_Util {
 				// (Activity can occure more than once a day)
 				if(value.size() >= (float)values.size()*0.9f){
 					v.setValue(removeOutlierWithInterquartileRange(value));
+//					v.setValue(removeOutlierWithMAD(value, 4));
 				}
 			}
 		}
@@ -176,7 +177,7 @@ public class GSP_Util {
 	}
 
 	/**
-	 * removes outliers with Interquartile Range
+	 * removes outliers outside the Interquartile Range
 	 * @param list
 	 * @return
 	 * @author Stefan 21.09.2016
@@ -199,6 +200,39 @@ public class GSP_Util {
 			}
 		}
 		return list;
+	}
+
+	/**
+	 * outlier detection based on distance to median aboslut deviation
+	 * @param list
+	 * @param k median +/- k*MAD
+     * @return list with outliers removed
+	 * @author Stefan 29.09.2016
+     */
+	public static ArrayList<Long> removeOutlierWithMAD(ArrayList<Long> list, int k){
+		DescriptiveStatistics stats = new DescriptiveStatistics();
+		for(int i=0; i<list.size(); i++){
+			stats.addValue(list.get(i));
+		}
+
+		double median = stats.getPercentile(50);
+
+		stats.clear();
+		for(int i=0; i<list.size(); i++){
+			stats.addValue(Math.abs(list.get(i)-median));
+		}
+		double mad = stats.getPercentile(50);
+
+		ArrayList<Long> result = new ArrayList<>();
+		for(int i=0; i<list.size(); i++){
+			Long l = list.get(i);
+			double lower = median - k*mad;
+			double upper = median + k*mad;
+			if(lower <= l && l <= upper){
+				result.add(l);
+			}
+		}
+		return result;
 	}
 
 	/**

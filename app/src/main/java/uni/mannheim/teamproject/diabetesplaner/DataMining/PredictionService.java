@@ -36,6 +36,7 @@ public class PredictionService extends IntentService {
 //        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
 
 //        predictDailyRoutine(algos,PredictionFramework.EVERY_DAY);
+//        predictDailyRoutine(algos,PredictionFramework.WEEKENDS);
         predictDailyRoutine(getApplicationContext());
 
         String status = "completed";
