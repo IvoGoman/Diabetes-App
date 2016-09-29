@@ -354,7 +354,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
      * @param value
      * @param unit
      * @return value
-     * @author Jan
+     * @author Naira
      */
     private double convert_to_mg(double value, String unit) {
         switch (unit) {
@@ -379,7 +379,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
     private boolean check_mg(double value) {
         if (value <= 50) {
             return false;
-        } else if (value >= 500) {
+        } else if (value >= 250) {
             return false;
         } else {
             return true;
