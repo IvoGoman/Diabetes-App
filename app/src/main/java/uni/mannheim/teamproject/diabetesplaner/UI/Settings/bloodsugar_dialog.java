@@ -349,7 +349,7 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
         {
             return false;
         }
-        else if (value >= 500)
+        else if (value >= 250)
         {
             return false;
         }

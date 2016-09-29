@@ -26,7 +26,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
 import uni.mannheim.teamproject.diabetesplaner.R;
 import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
@@ -80,10 +79,11 @@ public class LineChartFragment extends ChartFragment {
         xAxis.setGranularity(1f); // one hour
         xAxis.setValueFormatter(new AxisValueFormatter() {
 
-            private SimpleDateFormat sdf = new SimpleDateFormat("dd MMM");
+            private SimpleDateFormat sdf = new SimpleDateFormat("dd.MM");
 
             @Override
             public String getFormattedValue(float value, AxisBase axis) {
+//                hour values of the day
                 if ((int) value < 25) {
                     String result;
                     if ((int) value < 10) {
@@ -92,6 +92,7 @@ public class LineChartFragment extends ChartFragment {
                         result = String.valueOf((int) value) + ":00";
                     }
                     return result;
+//                    long timestamps
                 } else {
                     long millis = (long) value;
                     return sdf.format(new Date(millis));
@@ -127,15 +128,15 @@ public class LineChartFragment extends ChartFragment {
 //        Process Insulin Entries
         List<Entry> lineValues = getEntries(date, timeFrame, "insulin");
         Collections.sort(lineValues, new Comparator<Entry>() {
-                    @Override
-                    public int compare(Entry lhs, Entry rhs) {
-                        if (lhs.getX()>rhs.getX()){
-                            return 1;
-                        }else{
-                            return -1;
-                        }
-                    }
-                });
+            @Override
+            public int compare(Entry lhs, Entry rhs) {
+                if (lhs.getX() > rhs.getX()) {
+                    return 1;
+                } else {
+                    return -1;
+                }
+            }
+        });
         LineDataSet lineDataSet = new LineDataSet(lineValues, "Insulin");
         lineDataSet.setDrawHighlightIndicators(false);
         lineDataSet.setColor(Color.BLUE);
@@ -147,9 +148,9 @@ public class LineChartFragment extends ChartFragment {
         Collections.sort(lineValues2, new Comparator<Entry>() {
             @Override
             public int compare(Entry lhs, Entry rhs) {
-                if (lhs.getX()>rhs.getX()){
+                if (lhs.getX() > rhs.getX()) {
                     return 1;
-                }else{
+                } else {
                     return -1;
                 }
             }
@@ -158,7 +159,7 @@ public class LineChartFragment extends ChartFragment {
         lineDataSet2.setDrawHighlightIndicators(false);
         lineDataSet2.setColor(Color.RED);
         lineDataSet2.setCircleColor(Color.RED);
-        lineDataSet2.setAxisDependency(YAxis.AxisDependency.RIGHT);
+        lineDataSet2.setAxisDependency(YAxis.AxisDependency.LEFT);
 
         List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         dataSets.add(lineDataSet);
@@ -182,54 +183,56 @@ public class LineChartFragment extends ChartFragment {
     }
 
     /**
-     *
-     * @param date current date
-     * @param timeFrame "DAY", "WEEK", or "MONTH"
+     * @param date        current date
+     * @param timeFrame   "DAY", "WEEK", "MONTH" or "YEAR"
      * @param measurekind "bloodsugar" or "insulin"
      * @return List of all Measurement entries for the timeframe and measurekind
      */
     private List<Entry> getEntries(Date date, String timeFrame, String measurekind) {
         Calendar c = Calendar.getInstance();
         c.setTime(date);
-
-            ArrayList<MeasureItem> measurements = AppGlobal.getHandler().getMeasurementValues(date, timeFrame, measurekind);
-
+        ArrayList<MeasureItem> measurements = AppGlobal.getHandler().getMeasurementValues(date, timeFrame, measurekind);
         String[] window = TimeUtils.getWindowStartEnd(date, timeFrame);
-        HashMap<Float,Float> values = new HashMap<>();
+        HashMap<Float, Float> values = new HashMap<>();
 
         List<Entry> result = new ArrayList<>();
         Entry entry;
         float entryTimestamp;
         float value;
         for (MeasureItem item : measurements) {
-            if(timeFrame.equals("DAY")) {
+            if (timeFrame.equals("DAY")) {
                 c.setTimeInMillis(item.getTimestamp());
-                c.set(c.get(Calendar.YEAR),c.get(Calendar.MONTH),c.get(Calendar.DAY_OF_MONTH),c.get(Calendar.HOUR_OF_DAY),0,0);
+                c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), c.get(Calendar.HOUR_OF_DAY), 0, 0);
+                entryTimestamp = (float) c.getTimeInMillis();
+            } else if (timeFrame.equals("WEEK") || timeFrame.equals("MONTH")) {
+                c.setTime(date);
+                c.setTimeInMillis(item.getTimestamp());
+                c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
                 entryTimestamp = (float) c.getTimeInMillis();
             } else {
                 c.setTime(date);
                 c.setTimeInMillis(item.getTimestamp());
-                c.set(c.get(Calendar.YEAR),c.get(Calendar.MONTH),c.get(Calendar.DAY_OF_MONTH),0,0,0);
+                c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), 0, 0, 0, 0);
                 entryTimestamp = (float) c.getTimeInMillis();
             }
-            if(values.containsKey(entryTimestamp)){
+            if (values.containsKey(entryTimestamp)) {
                 value = values.get(entryTimestamp);
                 value = (value + (float) item.getMeasure_value()) / 2;
                 values.put(entryTimestamp, value);
-            } else{
+            } else {
                 values.put(entryTimestamp, (float) item.getMeasure_value());
             }
         }
         long timestamp;
-        switch(timeFrame){
-            case("DAY"):
-                for(int j = 23; j>=0; j--){
+        switch (timeFrame) {
+            case ("DAY"):
+                for (int j = 23; j >= 0; j--) {
                     c.setTime(date);
-                    c.set(c.get(Calendar.YEAR),c.get(Calendar.MONTH),c.get(Calendar.DAY_OF_MONTH), j, 0,0);
+                    c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), j, 0, 0);
                     timestamp = c.getTimeInMillis();
 
-                    if (values.containsKey((float)timestamp)){
-                        entry = new Entry( j, values.get((float)timestamp));
+                    if (values.containsKey((float) timestamp)) {
+                        entry = new Entry(j, values.get((float) timestamp));
                         result.add(entry);
                     } else {
                         entry = new Entry(j, 0f);
@@ -237,37 +240,50 @@ public class LineChartFragment extends ChartFragment {
                     }
                 }
                 break;
-            case("WEEK"):
-                for(int j = 7; j >= 0; j--){
+            case ("WEEK"):
+                for (int j = 7; j >= 0; j--) {
                     c.setTime(date);
-                    c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH) - j,0,0,0);
+                    c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH) - j, 0, 0, 0);
                     timestamp = c.getTimeInMillis();
-                    if (values.containsKey((float)timestamp)){
-                        entry = new Entry( (float) timestamp, values.get((float)timestamp));
+                    if (values.containsKey((float) timestamp)) {
+                        entry = new Entry((float) timestamp, values.get((float) timestamp));
                         result.add(entry);
                     } else {
-                        entry = new Entry((float)timestamp, 0f);
+                        entry = new Entry((float) timestamp, 0f);
                         result.add(entry);
                     }
                 }
                 break;
-            case("MONTH"):
-                for(int j = 30; j>=0; j--){
+            case ("MONTH"):
+                for (int j = 30; j >= 0; j--) {
                     c.setTime(date);
-                    c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH) - j,0,0,0);
+                    c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH) - j, 0, 0, 0);
                     timestamp = c.getTimeInMillis();
-                    if (values.containsKey((float)timestamp)){
-                        entry = new Entry( (float) timestamp, values.get((float)timestamp));
+                    if (values.containsKey((float) timestamp)) {
+                        entry = new Entry((float) timestamp, values.get((float) timestamp));
                         result.add(entry);
                     } else {
-                        entry = new Entry((float)timestamp, 0f);
+                        entry = new Entry((float) timestamp, 0f);
                         result.add(entry);
                     }
-        }
+                }
                 break;
-
-    }
+            case ("YEAR"):
+                for (int j = 12; j >= 0; j--) {
+                    c.setTime(date);
+                    c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH) - j, 0, 0, 0, 0);
+                    timestamp = c.getTimeInMillis();
+                    if (values.containsKey((float) timestamp)) {
+                        entry = new Entry((float) timestamp, values.get((float) timestamp));
+                        result.add(entry);
+                    } else {
+                        entry = new Entry((float) timestamp, 0f);
+                        result.add(entry);
+                    }
+                }
+                break;
+        }
         return result;
 
-}
+    }
 }

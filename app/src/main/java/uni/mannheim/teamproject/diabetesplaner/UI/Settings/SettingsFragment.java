@@ -206,7 +206,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                     if (pref_datacollection.isChecked()) {
                         //start the Services and Notification
                         showNotification(1);
-                        startServices();
+                       // startServices();
 
                     } else {
                         //stop the Services and Notification
@@ -221,7 +221,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             //check if data collection is already started
             if(getDataCollection())
             {
-                startServices();
+               // startServices();
             }
 
             //Write User Data in the Summary Fields
