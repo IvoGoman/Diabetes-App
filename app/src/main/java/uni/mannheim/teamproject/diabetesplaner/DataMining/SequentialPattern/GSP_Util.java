@@ -159,8 +159,8 @@ public class GSP_Util {
 				//only remove outliers if the activity occurs very often i.e. >= 90% of number of logged days
 				// (Activity can occure more than once a day)
 				if(value.size() >= (float)values.size()*0.9f){
-//					v.setValue(removeOutlierWithInterquartileRange(value));
-					v.setValue(removeOutlierWithMAD(value, 4));
+					v.setValue(removeOutlierWithInterquartileRange(value));
+//					v.setValue(removeOutlierWithMAD(value, 4));
 				}
 			}
 		}

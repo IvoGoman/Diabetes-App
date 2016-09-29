@@ -21,12 +21,27 @@
 
     <!-- possible new colors from color calculator-->
 
-    <color name="color1">#D2D2D2</color>
-    <color name="color2">#9DEF7A</color>
-    <color name="color3">#FFF487</color>
-    <color name="color4">#6B6DFF</color>
-    <color name="color5">#E14242</color>
-    <color name="color6">#FFC832</color>
+    <!--<color name="color1">#D2D2D2</color>-->
+    <!--<color name="color2">#9DEF7A</color>-->
+    <!--<color name="color3">#FFF487</color>-->
+    <!--<color name="color4">#6B6DFF</color>-->
+    <!--<color name="color5">#E14242</color>-->
+    <!--<color name="color6">#FFC832</color>-->
+
+
+    <!--<color name="color1">#91d250</color>-->
+    <!--<color name="color2">#FDD835</color>-->
+    <!--<color name="color3">#b669db</color>-->
+    <!--<color name="color4">#7cc2b8</color>-->
+    <!--<color name="color5">#3c9fda</color>-->
+    <!--<color name="color6">#D2D2D2</color>-->
+
+    <color name="color1">#4DD0E1</color>
+    <color name="color2">#91d250</color>
+    <color name="color3">#EF5350</color>
+    <color name="color4">#FFCA28</color>
+    <color name="color5">#d2d4dc</color>
+    <color name="color6">#B39DDB</color>
 
     <color name="HelpBackground">#bdfdf6</color>
 

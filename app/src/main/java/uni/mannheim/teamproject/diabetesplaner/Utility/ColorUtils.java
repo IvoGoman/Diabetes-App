@@ -71,7 +71,7 @@ public class ColorUtils {
             case 1:
                 return ContextCompat.getColor(context, R.color.color1);
             case 2:
-                return ContextCompat.getColor(context, R.color.color6);
+                return ContextCompat.getColor(context, R.color.color2);
             case 3:
                 return ContextCompat.getColor(context, R.color.color3);
             case 4:
@@ -79,9 +79,9 @@ public class ColorUtils {
             case 5:
                 return ContextCompat.getColor(context, R.color.color5);
             case 6:
-                return ContextCompat.getColor(context, R.color.color2);
+                return ContextCompat.getColor(context, R.color.color6);
             default:
-                return ContextCompat.getColor(context, R.color.color1);
+                return ContextCompat.getColor(context, R.color.color6);
         }
     }
 }
