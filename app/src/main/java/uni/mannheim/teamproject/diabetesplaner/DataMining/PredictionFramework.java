@@ -55,6 +55,7 @@ public class PredictionFramework{
     public PredictionFramework(final ArrayList<ArrayList<ActivityItem>> train, final ArrayList<Integer> algorithms){
         super();
         this.train = train;
+        Log.d(TAG, "Training data: " + train.size());
         this.algorithms = algorithms;
         killRunningThreads();
         run();

@@ -1,7 +1,10 @@
 package uni.mannheim.teamproject.diabetesplaner.DataMining.Preprocessing;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
+import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Util;
 import uni.mannheim.teamproject.diabetesplaner.Utility.Util;
 
 /**
@@ -36,6 +39,10 @@ public class Main_ExecutionTutorial {
 		creator.createCases();
 		//adds a column with the day of the week
 		creator.addDayOfWeek();
+		//print statistics of the csv:
+//		printActivityDistribution(creator.getList());
+//		printAvgDurations(creator.getList(),2,3,4,5);
+//		printDistribution(creator.getList());
 //		Util.printList(list);
 //		System.out.println("-------------------------------------------------");
 		//first case of the complete list is csv header (causes type conversation errors if not removed)
@@ -79,5 +86,190 @@ public class Main_ExecutionTutorial {
 		DailyRoutineCreator daily = new DailyRoutineCreator(Util.read(source));
 		daily.getDailyRoutine();
 		Util.write(daily.getDailyRoutine(),dest);*/
+	}
+
+	/**
+	 * prints day distributions in .csv
+	 * @param list2
+	 * @author Stefan
+     */
+	public static void printDistribution(ArrayList<String[]> list2) {
+		int mon = 0;
+		int tues = 0;
+		int wed = 0;
+		int thur = 0;
+		int fri = 0;
+		int sat = 0;
+		int sun = 0;
+
+		int prev = 0;
+
+		for (int i = 1; i < list2.size(); i++) {
+			int day = Integer.valueOf(list2.get(i)[list2.get(i).length - 1]);
+			int caseId = Integer.valueOf(list2.get(i)[0]);
+			if (i == 1) {
+				switch (day) {
+					case 1:
+						sun++;
+						break;
+					case 2:
+						mon++;
+						break;
+					case 3:
+						tues++;
+						break;
+					case 4:
+						wed++;
+						break;
+					case 5:
+						thur++;
+						break;
+					case 6:
+						fri++;
+						break;
+					case 7:
+						sat++;
+						break;
+				}
+				prev = caseId;
+			} else {
+				if (caseId != prev) {
+					switch (day) {
+						case 1:
+							sun++;
+							break;
+						case 2:
+							mon++;
+							break;
+						case 3:
+							tues++;
+							break;
+						case 4:
+							wed++;
+							break;
+						case 5:
+							thur++;
+							break;
+						case 6:
+							fri++;
+							break;
+						case 7:
+							sat++;
+							break;
+					}
+					prev = caseId;
+				}
+			}
+		}
+
+		System.out.println("Mondays: " + mon);
+		System.out.println("Tuesdays: " + tues);
+		System.out.println("Wednesdays: " + wed);
+		System.out.println("Thursdays: " + thur);
+		System.out.println("Fridays: " + fri);
+		System.out.println("Saturdays: " + sat);
+		System.out.println("Sundays: " + sun);
+		System.out.println("Weekdays: " + (mon + tues + wed + thur + fri));
+		System.out.println("Weekends: " + (sat + sun));
+	}
+
+	/**
+	 * prints activity distribution in .csv
+	 * @param list2
+	 * @author Stefan
+     */
+	public static void printActivityDistribution(ArrayList<String[]> list2) {
+		int mon = 0;
+		int tues = 0;
+		int wed = 0;
+		int thur = 0;
+		int fri = 0;
+		int sat = 0;
+		int sun = 0;
+
+		int prev = 0;
+
+		for (int i = 1; i < list2.size(); i++) {
+			int day = Integer.valueOf(list2.get(i)[list2.get(i).length - 1]);
+			switch (day) {
+				case 1:
+					sun++;
+					break;
+				case 2:
+					mon++;
+					break;
+				case 3:
+					tues++;
+					break;
+				case 4:
+					wed++;
+					break;
+				case 5:
+					thur++;
+					break;
+				case 6:
+					fri++;
+					break;
+				case 7:
+					sat++;
+					break;
+			}
+		}
+
+		System.out.println("Activities Mondays: " + mon);
+		System.out.println("Activities Tuesdays: " + tues);
+		System.out.println("Activities Wednesdays: " + wed);
+		System.out.println("Activities Thursdays: " + thur);
+		System.out.println("Activities Fridays: " + fri);
+		System.out.println("Activities Saturdays: " + sat);
+		System.out.println("Activities Sundays: " + sun);
+		System.out.println("Activities Weekdays: " + (mon + tues + wed + thur + fri));
+		System.out.println("Weekends: " + (sat + sun));
+	}
+
+	/**
+	 * print average and total durations of activities in .csv
+	 * @param list2
+	 * @param iAct
+	 * @param iSub
+	 * @param iStart
+     * @param iEnd
+	 * @author Stefan
+     */
+	public static void printAvgDurations(ArrayList<String[]> list2, int iAct, int iSub, int iStart, int iEnd){
+		HashMap<String, Long> map = new HashMap<>();
+		HashMap<String, Integer>counts = new HashMap<>();
+		for(int i=1; i<list2.size(); i++){
+			String[] arr = list2.get(i);
+			String key = arr[iAct]+"_"+arr[iSub];
+			Long dur = Long.parseLong(arr[iEnd])-Long.parseLong(arr[iStart]);
+			if(map.get(key) != null){
+				map.put(key, (map.get(key) + dur));
+				counts.put(key, (counts.get(key)+ 1));
+			}else{
+				map.put(key, dur);
+				counts.put(key, 1);
+			}
+		}
+
+		HashMap<String, Double> avgDur = new HashMap<>();
+		for(Map.Entry<String, Long> entry : map.entrySet()){
+			String key = entry.getKey();
+			Double value = (double) entry.getValue();
+			avgDur.put(key, value/((double)counts.get(key)));
+		}
+
+		Map<String, Long> newMap = GSP_Util.sortByValue(map, true);
+		for (Map.Entry<String, Long> entry : newMap.entrySet()) {
+			String key = entry.getKey();
+			Long value = entry.getValue()/(1000*60);
+			int hours = (int) (value/60);
+			int mins = (int) (value%60);
+
+			Double avg = avgDur.get(key)/(1000*60);
+			int avgH = (int) (avg/60);
+			int avgMin = (int) (avg%60);
+			System.out.println(key + ": \t" + hours + "h " + mins + "min \t" + "Average duration: " + avgH + "h " + avgMin + "min");
+		}
 	}
 }
