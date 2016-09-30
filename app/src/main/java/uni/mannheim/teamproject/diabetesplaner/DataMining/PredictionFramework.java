@@ -106,6 +106,18 @@ public class PredictionFramework{
             //check if voting should be performed
             if (algorithms.size() > 1) {
                 dailyRoutine = voteBasedOnAccuracy();
+                double acc1 = Evaluation.Accuracy(train, dailyRoutine);
+                double acc2 = Evaluation.AccuracyFlow(train, dailyRoutine);
+                double precision = Evaluation.Precision(train, dailyRoutine);
+                double recall = Evaluation.Recall(train, dailyRoutine);
+                double fMeasure = Evaluation.Fmeasure(precision,recall);
+                Log.d(TAG, "Voting");
+                Log.d(TAG, "Accuracy: \t\t" + acc1);
+                Log.d(TAG, "Accuracy Flow:\t" + acc2);
+                Log.d(TAG, "Precision:\t\t" + precision);
+                Log.d(TAG, "Recall:\t\t\t" + recall);
+                Log.d(TAG, "fMeasure:\t\t\t" + fMeasure);
+                Log.d(TAG, "Predicted Activities: " + dailyRoutine.size());
             } else if (algorithms.size() == 1) {
                 dailyRoutine = results.get(algorithms.get(0));
             }
@@ -116,61 +128,96 @@ public class PredictionFramework{
             if (!AppGlobal.getHandler().CheckRoutineAdded()) {
                 //default prediction (Sleeping from 0:00 to 23:59)
                 Date start = TimeUtils.getDate(new Date(), 0, 0);
-                Date end = TimeUtils.getDate(new Date(), 6, 59);
+                Date end = TimeUtils.getDate(new Date(), 7, 14);
                 ActivityItem item = new ActivityItem(1, 1, start, end);
                 dailyRoutine.add(item);
 
-                start = TimeUtils.getDate(new Date(), 7, 0);
+                start = TimeUtils.getDate(new Date(), 7, 15);
                 end = TimeUtils.getDate(new Date(), 7, 29);
-                item = new ActivityItem(3, 3, start, end);
+                item = new ActivityItem(10, 10, start, end);
                 dailyRoutine.add(item);
 
                 start = TimeUtils.getDate(new Date(), 7, 30);
                 end = TimeUtils.getDate(new Date(), 7, 44);
-                item = new ActivityItem(10, 10, start, end);
-                dailyRoutine.add(item);
-
-                start = TimeUtils.getDate(new Date(), 7, 45);
-                end = TimeUtils.getDate(new Date(), 7, 59);
                 item = new ActivityItem(2, 18, start, end);
                 dailyRoutine.add(item);
 
-                start = TimeUtils.getDate(new Date(), 8, 0);
-                end = TimeUtils.getDate(new Date(), 8, 59);
-                item = new ActivityItem(12, 50, start, end);
+                start = TimeUtils.getDate(new Date(), 7, 45);
+                end = TimeUtils.getDate(new Date(), 9, 29);
+                item = new ActivityItem(3, 3, start, end);
                 dailyRoutine.add(item);
 
-                start = TimeUtils.getDate(new Date(), 9, 0);
+                start = TimeUtils.getDate(new Date(), 9, 30);
                 end = TimeUtils.getDate(new Date(), 10, 29);
                 item = new ActivityItem(13, 13, start, end);
                 dailyRoutine.add(item);
 
                 start = TimeUtils.getDate(new Date(), 10, 30);
-                end = TimeUtils.getDate(new Date(), 10, 39);
+                end = TimeUtils.getDate(new Date(), 10, 34);
                 item = new ActivityItem(2, 21, start, end);
                 dailyRoutine.add(item);
 
-                start = TimeUtils.getDate(new Date(), 10, 40);
-                end = TimeUtils.getDate(new Date(), 12, 59);
+                start = TimeUtils.getDate(new Date(), 10, 35);
+                end = TimeUtils.getDate(new Date(), 12, 29);
                 item = new ActivityItem(13, 13, start, end);
                 dailyRoutine.add(item);
 
-                start = TimeUtils.getDate(new Date(), 13, 0);
-                end = TimeUtils.getDate(new Date(), 13, 59);
+                start = TimeUtils.getDate(new Date(), 12, 30);
+                end = TimeUtils.getDate(new Date(), 13, 29);
                 item = new ActivityItem(2, 19, start, end);
                 dailyRoutine.add(item);
 
-                start = TimeUtils.getDate(new Date(), 14, 0);
-                end = TimeUtils.getDate(new Date(), 17, 59);
+                start = TimeUtils.getDate(new Date(), 13, 30);
+                end = TimeUtils.getDate(new Date(), 15, 29);
                 item = new ActivityItem(13, 13, start, end);
                 dailyRoutine.add(item);
 
-                start = TimeUtils.getDate(new Date(), 18, 0);
-                end = TimeUtils.getDate(new Date(), 18, 59);
-                item = new ActivityItem(14, 14, start, end);
+                start = TimeUtils.getDate(new Date(), 15, 30);
+                end = TimeUtils.getDate(new Date(), 15, 34);
+                item = new ActivityItem(2, 21, start, end);
                 dailyRoutine.add(item);
 
-                start = TimeUtils.getDate(new Date(), 19, 0);
+                start = TimeUtils.getDate(new Date(), 15, 35);
+                end = TimeUtils.getDate(new Date(), 17, 29);
+                item = new ActivityItem(13, 13, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 17, 30);
+                end = TimeUtils.getDate(new Date(), 17, 59);
+                item = new ActivityItem(14, 62, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 18, 00);
+                end = TimeUtils.getDate(new Date(), 18, 59);
+                item = new ActivityItem(5, 36, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 19, 00);
+                end = TimeUtils.getDate(new Date(), 19, 29);
+                item = new ActivityItem(11, 11, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 19, 30);
+                end = TimeUtils.getDate(new Date(), 19, 59);
+                item = new ActivityItem(10, 10, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 20, 00);
+                end = TimeUtils.getDate(new Date(), 21, 59);
+                item = new ActivityItem(2, 20, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 22, 00);
+                end = TimeUtils.getDate(new Date(), 22, 14);
+                item = new ActivityItem(2, 21, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 22, 15);
+                end = TimeUtils.getDate(new Date(), 22, 29);
+                item = new ActivityItem(7, 7, start, end);
+                dailyRoutine.add(item);
+
+                start = TimeUtils.getDate(new Date(), 22, 30);
                 end = TimeUtils.getDate(new Date(), 23, 59);
                 item = new ActivityItem(1, 1, start, end);
                 dailyRoutine.add(item);
@@ -201,6 +248,7 @@ public class PredictionFramework{
      * @author Stefan 22.09.2016
      */
     public static void runAlgorithms(final ArrayList<ArrayList<ActivityItem>> train, ArrayList<Integer> algorithms){
+        Log.d(TAG, "Size Training Data: " + train.size());
         //run the algorithms specified in parameter algos
         for (int i = 0; i < algorithms.size(); i++) {
             int algo = algorithms.get(i);
@@ -220,12 +268,20 @@ public class PredictionFramework{
                                 results.put(PREDICTION_DECISION_TREE, prediction);
                                 accuracies.put(PREDICTION_DECISION_TREE, acc1);
                                 accuraciesFlow.put(PREDICTION_DECISION_TREE, acc2);
+                                Log.d(TAG, "Decision Tree");
+                                Log.d(TAG, "Accuracy: \t\t" + acc1);
+                                Log.d(TAG, "Accuracy Flow:\t" + acc2);
+                                Log.d(TAG, "Precision:\t\t" + precision);
+                                Log.d(TAG, "Recall:\t\t\t" + recall);
+                                Log.d(TAG, "fMeasure:\t\t\t" + fMeasure);
+                                Log.d(TAG, "Predicted Activities: " + prediction.size());
+                                Log.d(TAG, "-------------------------------");
                             } catch (Exception e) {
                                 e.printStackTrace();
                                 Log.e(TAG, "Decision Tree " + e.getLocalizedMessage());
                             }
                             completed++;
-                            Log.d(TAG, "Decision Tree done");
+//                            Log.d(TAG, "Decision Tree done");
                         }
                     });
                     t0.start();
@@ -239,13 +295,21 @@ public class PredictionFramework{
                             results.put(PREDICTION_GSP, prediction);
                             double acc1 = Evaluation.Accuracy(train, prediction);
                             double acc2 = Evaluation.AccuracyFlow(train, prediction);
-                            Log.d(TAG, "GSP Accuracy: " + acc1 + " Accuracy Flow: " + acc2);
                             double precision = Evaluation.Precision(train, prediction);
                             double recall = Evaluation.Recall(train, prediction);
                             double fMeasure = Evaluation.Fmeasure(precision,recall);
                             accuracies.put(PREDICTION_GSP, acc1);
                             accuraciesFlow.put(PREDICTION_GSP, acc2);
+                            Log.d(TAG, "GSP");
+                            Log.d(TAG, "Accuracy: \t\t" + acc1);
+                            Log.d(TAG, "Accuracy Flow:\t" + acc2);
+                            Log.d(TAG, "Precision:\t\t" + precision);
+                            Log.d(TAG, "Recall:\t\t\t" + recall);
+                            Log.d(TAG, "fMeasure:\t\t\t" + fMeasure);
+                            Log.d(TAG, "Predicted Activities: " + prediction.size());
+                            Log.d(TAG, "-------------------------------");
                             completed++;
+
                         }
                     });
                     t1.start();
@@ -265,7 +329,16 @@ public class PredictionFramework{
                             double fMeasure = Evaluation.Fmeasure(precision,recall);
                             accuracies.put(PREDICTION_FUZZY_MINER, acc1);
                             accuraciesFlow.put(PREDICTION_FUZZY_MINER, acc2);
+                            Log.d(TAG, "Fuzzy Miner");
+                            Log.d(TAG, "Accuracy: \t\t" + acc1);
+                            Log.d(TAG, "Accuracy Flow:\t" + acc2);
+                            Log.d(TAG, "Precision:\t\t" + precision);
+                            Log.d(TAG, "Recall:\t\t\t" + recall);
+                            Log.d(TAG, "fMeasure:\t\t\t" + fMeasure);
+                            Log.d(TAG, "Predicted Activities: " + prediction.size());
+                            Log.d(TAG, "-------------------------------");
                             completed++;
+
                         }
                     });
                     t2.start();
@@ -285,7 +358,16 @@ public class PredictionFramework{
                             double fMeasure = Evaluation.Fmeasure(precision,recall);
                             accuracies.put(PREDICTION_HEURISTICS_MINER, acc1);
                             accuraciesFlow.put(PREDICTION_HEURISTICS_MINER, acc2);
+                            Log.d(TAG, "Heuristics Miner");
+                            Log.d(TAG, "Accuracy: \t\t" + acc1);
+                            Log.d(TAG, "Accuracy Flow:\t" + acc2);
+                            Log.d(TAG, "Precision:\t\t" + precision);
+                            Log.d(TAG, "Recall:\t\t\t" + recall);
+                            Log.d(TAG, "fMeasure:\t\t\t" + fMeasure);
+                            Log.d(TAG, "Predicted Activities: " + prediction.size());
+                            Log.d(TAG, "-------------------------------");
                             completed++;
+
                         }
                     });
                     t3.start();

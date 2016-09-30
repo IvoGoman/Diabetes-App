@@ -112,7 +112,7 @@
             android:summary="@string/pred_mode_summary"
             android:entries="@array/pred_mode_names"
             android:entryValues="@array/pred_mode_values"
-            android:defaultValue="0"/>
+            android:defaultValue="1"/>
 
         <PreferenceScreen
             android:key="pref_key_algos_super"

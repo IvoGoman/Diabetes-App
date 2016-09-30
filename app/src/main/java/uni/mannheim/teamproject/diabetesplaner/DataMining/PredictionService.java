@@ -29,15 +29,15 @@ public class PredictionService extends IntentService {
         //some stuff for testing:
         //DummyDataCreator.populateDataBase();
 
-        ArrayList<Integer> algos = new ArrayList<>();
+//        ArrayList<Integer> algos = new ArrayList<>();
 //        algos.add(PredictionFramework.PREDICTION_DECISION_TREE);
-        algos.add(PredictionFramework.PREDICTION_GSP);
+//        algos.add(PredictionFramework.PREDICTION_GSP);
 //        algos.add(PredictionFramework.PREDICTION_FUZZY_MINER);
 //        algos.add(PredictionFramework.PREDICTION_HEURISTICS_MINER);
 
 //        predictDailyRoutine(algos,PredictionFramework.EVERY_DAY);
-        predictDailyRoutine(algos,PredictionFramework.WEEKENDS);
-//        predictDailyRoutine(getApplicationContext());
+//        predictDailyRoutine(algos,PredictionFramework.EVERY_DAY);
+        predictDailyRoutine(getApplicationContext());
 //
         String status = "completed";
         Intent localIntent =
