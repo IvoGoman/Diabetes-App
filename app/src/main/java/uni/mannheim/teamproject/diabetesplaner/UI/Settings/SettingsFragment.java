@@ -53,8 +53,7 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private String bloodsugar_measure_value;
     private String bloodsugar_measure;
     private ListPreference pref_weight_measurement;
-    private ListPreference pref_bloodsugarOptions;
-    private ListPreference pref_insulinOptions;
+    private ListPreference pref_pred_mode;
     private EditTextPreference pref_name;
     private EditTextPreference pref_weight;
     private CheckBoxPreference pref_vacation;
@@ -193,26 +192,23 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                     return true;
                 }
             });
-
-
-            pref_bloodsugarOptions = (ListPreference) findPreference("pref_bloodsugarOptions");
-            pref_bloodsugarOptions.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
-                    sharedPreferences.edit().putString("pref_bloodsugarOptions",String.valueOf(newValue));
-                    return true;
-                }
-            });
-            pref_insulinOptions = (ListPreference) findPreference("pref_insulinOptions");
-            pref_insulinOptions.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
-                @Override
-                public boolean onPreferenceChange(Preference preference, Object newValue) {
-                    SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
-                    sharedPreferences.edit().putString("pref_insulinOptions",String.valueOf(newValue));
-                    return true;
-                }
-            });
+//
+//            /**
+//             * Ivo
+//             * On change listerner for the prediction mode that resets
+//             * the shared preference of the last prediction if the mode is changed
+//             */
+//            pref_pred_mode = (ListPreference) findPreference("pref_pred_mode");
+//            pref_pred_mode.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+//                @Override
+//                public boolean onPreferenceChange(Preference preference, Object newValue) {
+//                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("PREDICTION_SERVICE_FILE", Context.MODE_PRIVATE);
+//                    SharedPreferences.Editor editor = sharedPreferences.edit();
+//                    editor.putString("LAST_PREDICTION", "0");
+//                    editor.commit();
+//                    return true;
+//                }
+//            });
 
 
             //define preference for the onclick-method
@@ -372,7 +368,12 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 }
             }
         }
-
+        if(key.equals("pref_key_gsp") || key.equals("pref_key_dt") ||key.equals("pref_key_fuzzy") ||key.equals("pref_key_heuristics")|| key.equals("pref_pred_mode")){
+            sharedPreferences = getActivity().getSharedPreferences("PREDICTION_SERVICE_FILE", Context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPreferences.edit();
+            editor.putString("LAST_PREDICTION", "0");
+            editor.commit();
+        }
         //converts the current weight
         if (findPreference(key) == pref_weight_measurement) {
             SharedPreferences pref_weight = getActivity().getSharedPreferences("pref_key_weight", 0);
