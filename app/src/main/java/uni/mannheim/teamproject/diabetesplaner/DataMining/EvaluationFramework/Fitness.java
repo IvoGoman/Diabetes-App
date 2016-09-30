@@ -35,11 +35,11 @@ public class Fitness {
                     traceCount += 1;
                     valueCount += Fitness.compareUnweighted(trace, model);
                     break;
-                case (Fitness.FITNESS_WEIGHTED):
+                case (FITNESS_WEIGHTED):
                     traceCount += 1;
                     valueCount += Fitness.compareWeighted(trace, model);
                     break;
-                case (Fitness.FITNESS_TOKEN):
+                case (FITNESS_TOKEN):
                     traceCount += trace.size();
                     valueCount += Fitness.compareTokenWeighted(trace, model);
                     break;
@@ -169,7 +169,9 @@ public class Fitness {
                 error += 1;
                 predictionItem = model.get(traceID);
             } else {
-                while (traceIterator.hasNext()) {
+                while (traceIterator.hasNext() && currentTraceItem.getActivityId() != predictionItem.getActivityID() ) {
+                    currentTraceItem = (ActivityItem) traceIterator.next();
+                    predictionItem = model.get(Fitness.getNextActivity(predictionItem));
                     error += 1;
                 }
                 return error;
@@ -183,14 +185,16 @@ public class Fitness {
                     error += 1;
                     predictionItem = model.get(traceID);
                 } else {
-                    while (traceIterator.hasNext()) {
-                        traceIterator.next();
+                    predictionItem = model.get(Fitness.getNextActivity(predictionItem));
+                    while (traceIterator.hasNext() && predictionItem.getActivityID() != traceID ) {
+                        currentTraceItem = (ActivityItem) traceIterator.next();
+                        traceID = ProcessMiningUtil.getProcessModelID(currentTraceItem.getStarttime(), currentTraceItem.getActivityId(), currentTraceItem.getSubactivityId());
                         error += 1;
                     }
                     break;
                 }
                 if (!traceIterator.hasNext()) {
-                    if (Fitness.nextActivityPossible(9991, predictionItem.getEdgeTargetMap())) {
+                    if (!Fitness.nextActivityPossible(9991, predictionItem.getEdgeTargetMap())) {
                         error += 1;
                         break;
                     }
@@ -236,16 +240,50 @@ public class Fitness {
      * looking at its followerPredictionEdgeMapMap
      * @param activityID which is tested to be a possible successor
      * @param followerPredictionEdgeMap the Edges that are possible successors
-     * @return
+     * @return true if it is part of the possible successors
      */
     public static boolean nextActivityPossible(int activityID, Map<Integer, ActivityPredictionEdge> followerPredictionEdgeMap) {
+        boolean possible = false;
+        Set<Integer> possibleSuccessors = getPossibleSuccessors(followerPredictionEdgeMap);
+            if (possibleSuccessors.contains(activityID)) {
+                possible = true;
+            } else {
+            possible = false;
+        }
+        return possible;
+    }
+
+    /**
+     *
+     * @param item PredictionItem
+     * @return next most probable activity
+     */
+    public static int getNextActivity(ActivityPrediction item){
+        int next = 0;
+        Set<Integer> possibleSuccessors = getPossibleSuccessors(item.getEdgeTargetMap());
+        if(possibleSuccessors.size()>1){
+            int temp = (int) (possibleSuccessors.size() * Math.random());
+            next =  (int) possibleSuccessors.toArray()[temp];
+        } else if(possibleSuccessors.size()==1){
+            next = (int) possibleSuccessors.toArray()[0];
+        } else {
+            next = 9991;
+        }
+        return next;
+    }
+
+    /**
+     * For a given activity ID look if it can be reached from the current node in the graph
+     * looking at its followerPredictionEdgeMapMap
+     * @param followerPredictionEdgeMap the Edges that are possible successors
+     * @return all possible successors
+     */
+    public static Set<Integer> getPossibleSuccessors(Map<Integer, ActivityPredictionEdge> followerPredictionEdgeMap) {
         double edgeSignificance = 0.0;
         double edgeCorrelation = 0.0;
         double targetSignificance = 0.0;
-        boolean possible = false;
         Set<Integer> possibleSuccessors = new HashSet<>();
         int targetID = 0;
-        if (followerPredictionEdgeMap.containsKey(activityID)) {
             for (ActivityPredictionEdge edge : followerPredictionEdgeMap.values()) {
                 if (edgeCorrelation < edge.getEdgeCorrelation()) {
                     edgeCorrelation = edge.getEdgeCorrelation();
@@ -272,12 +310,6 @@ public class Fitness {
                     possibleSuccessors.add(targetID);
                 }
             }
-            if (possibleSuccessors.contains(activityID)) {
-                possible = true;
-            }
-        } else {
-            possible = false;
-        }
-        return possible;
+        return possibleSuccessors;
     }
 }

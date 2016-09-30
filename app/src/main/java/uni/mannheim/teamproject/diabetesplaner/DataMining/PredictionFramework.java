@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
+import uni.mannheim.teamproject.diabetesplaner.DataMining.EvaluationFramework.Fitness;
 import uni.mannheim.teamproject.diabetesplaner.DataMining.SequentialPattern.GSP_Prediction;
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.ActivityItem;
@@ -322,6 +323,9 @@ public class PredictionFramework{
                             FuzzyModel model = new FuzzyModel(train, false);
                             ArrayList<ActivityItem> prediction = model.makeFuzzyMinerPrediction();
                             results.put(PREDICTION_FUZZY_MINER, prediction);
+                            double fit = Fitness.evaluate(train, model.getPredictionStructure(),Fitness.FITNESS_COMPLETENESS);
+                            double fitWeighted = Fitness.evaluate(train, model.getPredictionStructure(),Fitness.FITNESS_WEIGHTED);
+                            double fitToken = 1- Fitness.evaluate(train, model.getPredictionStructure(),Fitness.FITNESS_TOKEN);
                             double acc1 = Evaluation.Accuracy(train, prediction);
                             double acc2 = Evaluation.AccuracyFlow(train, prediction);
                             double precision = Evaluation.Precision(train, prediction);
@@ -330,6 +334,9 @@ public class PredictionFramework{
                             accuracies.put(PREDICTION_FUZZY_MINER, acc1);
                             accuraciesFlow.put(PREDICTION_FUZZY_MINER, acc2);
                             Log.d(TAG, "Fuzzy Miner");
+                            Log.d(TAG, "Plain Fitness: \t\t" + fit);
+                            Log.d(TAG, "Weighted Fitness: \t\t" + fitWeighted);
+                            Log.d(TAG, "Weighted Token Fitness: \t\t" + fitToken);
                             Log.d(TAG, "Accuracy: \t\t" + acc1);
                             Log.d(TAG, "Accuracy Flow:\t" + acc2);
                             Log.d(TAG, "Precision:\t\t" + precision);

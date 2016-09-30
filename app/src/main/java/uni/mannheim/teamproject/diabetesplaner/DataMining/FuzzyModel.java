@@ -224,9 +224,9 @@ public class FuzzyModel {
             likelySuccessors.removeAll(candidates);
         }
 //        remove all edges that go from PM to AM
-//        if(!candidatesAMPM.containsAll(likelySuccessors)){
-//            likelySuccessors.removeAll(candidatesAMPM);
-//        }
+        if(!candidatesAMPM.containsAll(likelySuccessors)){
+            likelySuccessors.removeAll(candidatesAMPM);
+        }
 
 //      are any successors left after removing the visited edges?
         if (likelySuccessors.size() < 1) {
