@@ -140,36 +140,43 @@ public class DailyRoutineFragment extends Fragment {
         current.setTimeInMillis(timestamp_current);
         predicted.setTimeInMillis(timestamp_predicted);
 
-//        if (predicted.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR) && predicted.get(Calendar.YEAR) <= current.get(Calendar.YEAR)) {
+        if (predicted.get(Calendar.DAY_OF_YEAR) < current.get(Calendar.DAY_OF_YEAR) && predicted.get(Calendar.YEAR) <= current.get(Calendar.YEAR)) {
 
 
-        try {
+            try {
         /*
          * Creates a new Intent to start the RSSPullService
          * IntentService. Passes a URI in the
          * Intent's "data" field.
          */
-            Intent mServiceIntent = new Intent(getActivity(), PredictionService.class);
-            // Starts the IntentService
-            getActivity().startService(mServiceIntent);
-            progressBar.setVisibility(View.VISIBLE);
-            routineLayout.setVisibility(View.GONE);
+                Intent mServiceIntent = new Intent(getActivity(), PredictionService.class);
+                // Starts the IntentService
+                getActivity().startService(mServiceIntent);
+                progressBar.setVisibility(View.VISIBLE);
+                routineLayout.setVisibility(View.GONE);
 
-            // Instantiates a new ResponseReceiver
-            ResponseReceiver mPredictionReceiver =
-                    new ResponseReceiver();
-            // Registers the ResponseReceiver and its intent filters
-            LocalBroadcastManager.getInstance(getContext()).registerReceiver(
-                    mPredictionReceiver, mStatusIntentFilter);
+                // Instantiates a new ResponseReceiver
+                ResponseReceiver mPredictionReceiver =
+                        new ResponseReceiver();
+                // Registers the ResponseReceiver and its intent filters
+                LocalBroadcastManager.getInstance(getContext()).registerReceiver(
+                        mPredictionReceiver, mStatusIntentFilter);
 
-            SharedPreferences.Editor editor = sharedPreferences.edit();
-            editor.putString("LAST_PREDICTION", String.valueOf(current.getTimeInMillis()));
-            editor.commit();
-        } catch (Exception e) {
-            e.printStackTrace();
-            Log.e(TAG, "onCreateView: " + e.getLocalizedMessage());
+                SharedPreferences.Editor editor = sharedPreferences.edit();
+                editor.putString("LAST_PREDICTION", String.valueOf(current.getTimeInMillis()));
+                editor.commit();
+            } catch (Exception e) {
+                e.printStackTrace();
+                Log.e(TAG, "onCreateView: " + e.getLocalizedMessage());
+            }
+        }else{
+            if (!EntryScreenActivity.servicesRunning) {
+                getActivity().startService(new Intent(getActivity(), SensorsRecommendation.class));
+                getActivity().startService(new Intent(getActivity(), FoodRecommendation.class));
+
+                EntryScreenActivity.servicesRunning = true;
+            }
         }
-//        }
 
 
         DailyRoutineView.clearSelectedActivities();
@@ -191,8 +198,8 @@ public class DailyRoutineFragment extends Fragment {
         //get predicted routine
         linearLayout.removeAllViews();
         items.clear();
-        //TODO --------- for testing ------------------------------------------
         ArrayList<ActivityItem> listItems = drHandler.getDayRoutine(date);
+        //for testing purposes only:
 //        ArrayList<ActivityItem> listItems = new ArrayList<>();
 //
 //        String start1 = "17.09.2016 00:00:00";
@@ -487,28 +494,28 @@ public class DailyRoutineFragment extends Fragment {
 
         // Called when the BroadcastReceiver gets an Intent it's registered to receive
         public void onReceive(Context context, Intent intent) {
-            if(intent.getStringExtra(DailyRoutineFragment.EXTENDED_DATA_STATUS).equals("completed")) {
-            if (EntryScreenActivity.getFragment() instanceof DailyRoutineFragment) {
-                DailyRoutineFragment drf = ((DailyRoutineFragment) EntryScreenActivity.getFragment());
-                if (drf.getActivity() instanceof EntryScreenActivity) {
-                    try {
-                        drHandler.clearDailyRoutine();
-                        drHandler.update();
-                        progressBar.setVisibility(View.GONE);
-                        routineLayout.setVisibility(View.VISIBLE);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        Log.e(TAG, "onReceive: " + e.getLocalizedMessage());
-                    }
+            if (intent.getStringExtra(DailyRoutineFragment.EXTENDED_DATA_STATUS).equals("completed")) {
+                if (EntryScreenActivity.getFragment() instanceof DailyRoutineFragment) {
+                    DailyRoutineFragment drf = ((DailyRoutineFragment) EntryScreenActivity.getFragment());
+                    if (drf.getActivity() instanceof EntryScreenActivity) {
+                        try {
+                            drHandler.clearDailyRoutine();
+                            drHandler.update();
+                            progressBar.setVisibility(View.GONE);
+                            routineLayout.setVisibility(View.VISIBLE);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                            Log.e(TAG, "onReceive: " + e.getLocalizedMessage());
+                        }
 
-                    if (!EntryScreenActivity.servicesRunning) {
-                        drf.getActivity().startService(new Intent(drf.getActivity(), SensorsRecommendation.class));
-                        drf.getActivity().startService(new Intent(drf.getActivity(), FoodRecommendation.class));
+                        if (!EntryScreenActivity.servicesRunning) {
+                            drf.getActivity().startService(new Intent(drf.getActivity(), SensorsRecommendation.class));
+                            drf.getActivity().startService(new Intent(drf.getActivity(), FoodRecommendation.class));
 
-                        EntryScreenActivity.servicesRunning = true;
+                            EntryScreenActivity.servicesRunning = true;
+                        }
                     }
                 }
-            }
             }
         }
     }
