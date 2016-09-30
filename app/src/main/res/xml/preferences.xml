@@ -27,16 +27,16 @@
         <ListPreference
             android:entries="@array/bloodsugarOptions"
             android:entryValues="@array/bloodsugarOptions"
-            android:defaultValue="1"
+            android:defaultValue="mg/dl"
             android:key="pref_bloodsugarOptions"
-            android:summary="@string/pref_blood_sugar_preference"
+            android:summary="mg/dl"
             android:title="@string/pref_blood_sugar_unit" />
         <ListPreference
             android:entries="@array/insulinOptions"
             android:entryValues="@array/insulinOptions"
-            android:defaultValue="1"
+            android:defaultValue="mL/cc"
             android:key="pref_insulinOptions"
-            android:summary="@string/pref_blood_sugar_preference"
+            android:summary="mL/cc"
             android:title="@string/pref_insulin_unit" />
         <EditTextPreference
             android:key="pref_key_weight"

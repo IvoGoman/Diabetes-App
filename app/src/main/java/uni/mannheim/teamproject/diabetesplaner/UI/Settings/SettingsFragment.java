@@ -368,12 +368,33 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                 }
             }
         }
+            /**
+             * Ivo
+             * Reset the Prediction if the Algorithms or Mode change
+             */
         if(key.equals("pref_key_gsp") || key.equals("pref_key_dt") ||key.equals("pref_key_fuzzy") ||key.equals("pref_key_heuristics")|| key.equals("pref_pred_mode")){
             sharedPreferences = getActivity().getSharedPreferences("PREDICTION_SERVICE_FILE", Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString("LAST_PREDICTION", "0");
             editor.commit();
         }
+            if(key.equals("pref_bloodsugarOptions")){
+                ListPreference bloodsugar = (ListPreference) findPreference("pref_bloodsugarOptions");
+                switch(bloodsugar.getValue()){
+                    case("%"):
+                        bloodsugar.setSummary("Percent");
+                        break;
+                    default:
+                        bloodsugar.setSummary(bloodsugar.getValue());
+                        break;
+                }
+
+            }
+            if(key.equals("pref_insulinOptions")){
+                ListPreference insulin = (ListPreference) findPreference("pref_insulinOptions");
+                insulin.setSummary(String.valueOf(insulin.getValue()));
+            }
+
         //converts the current weight
         if (findPreference(key) == pref_weight_measurement) {
             SharedPreferences pref_weight = getActivity().getSharedPreferences("pref_key_weight", 0);
