@@ -63,13 +63,13 @@ public class LineChartFragment extends ChartFragment {
         chart.setDrawGridBackground(false);
         YAxis yAxisL = chart.getAxisLeft();
         yAxisL.setAxisMinValue(0f);
-        yAxisL.setAxisMaxValue(80f);
+        yAxisL.setAxisMaxValue(0.85f);
         yAxisL.setDrawGridLines(false);
         YAxis yAxisR = chart.getAxisRight();
         yAxisR.setAxisMinValue(0f);
         yAxisR.setDrawGridLines(false);
         yAxisR.setAxisMinValue(50f);
-        yAxisR.setAxisMaxValue(350f);
+        yAxisR.setAxisMaxValue(275f);
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.TOP_INSIDE);
 

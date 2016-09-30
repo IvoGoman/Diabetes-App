@@ -101,9 +101,11 @@ public class MeasureItem {
         switch(measure_unit){
             case("mL/cc"):
                 result = measure_value;
+                break;
             case("Units"):
             case("Einheiten"):
                 result = Util.Units_to_ml(measure_value);
+                break;
         }
         return result;
     }
@@ -118,9 +120,11 @@ public class MeasureItem {
         switch(measure_unit){
             case("mL/cc"):
                 result = Util.ml_to_Units(measure_value);
+                break;
             case("Units"):
             case("Einheiten"):
                 result = measure_value;
+                break;
         }
         return result;
     }
