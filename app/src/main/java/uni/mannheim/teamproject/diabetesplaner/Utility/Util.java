@@ -64,6 +64,27 @@ public class Util {
     }
 
     /**
+     * Converts Bloodsugar to Percent
+     * @param value
+     * @param unit
+     * @return bloodsugar in percent
+     */
+    public static double convertBSToPercent(double value, String unit) {
+        switch (unit) {
+            case "%":
+                return value;
+
+            case "mmol/l":
+                return Util.mg_to_percentage(Util.mmol_to_milligram(value));
+
+            case "mg/dl":
+                return Util.mg_to_percentage(value);
+            default:
+                return 0;
+        }
+    }
+
+    /**
      * converts a bloodsugar level into mg/dl
      *
      * @param value

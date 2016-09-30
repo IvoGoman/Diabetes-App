@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="insulinOptions">
+        <item>@string/insulin_unit</item>
+        <item>mL/cc</item>
+    </string-array>
+</resources>

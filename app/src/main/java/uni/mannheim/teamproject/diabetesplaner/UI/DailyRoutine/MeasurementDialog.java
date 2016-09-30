@@ -3,7 +3,9 @@ package uni.mannheim.teamproject.diabetesplaner.UI.DailyRoutine;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
@@ -209,13 +211,13 @@ public class MeasurementDialog extends MeasurementInputDialog {
                         Toast.makeText(getActivity(), "No Measurements have been entered", Toast.LENGTH_LONG).show();
                     }
 
-                    if (measure_value.equals("") == true) { //if only the blood sugar is added
+                    if (measure_value.equals("") == true && check_Units(convert_to_Units(Double.parseDouble(insulin_value), insulin))) { //if only the blood sugar is added
                         measureItem = new MeasureItem(timestamp, Double.parseDouble(insulin_value), insulin, MeasureItem.MEASURE_KIND_INSULIN);
                         database.insertMeasurement(measureItem, database.getUserID());
                         EntryScreenActivity.updateDailyRoutine();
                         Toast.makeText(getActivity(), "No Blood sugar level entered; " + insulin_value + " " + insulin + " stored", Toast.LENGTH_LONG).show();
 
-                    } else if (insulin_value.equals("") == true) { // if only the insulin is added
+                    } else if (insulin_value.equals("") == true && check_mg(convert_to_mg(Double.parseDouble(measure_value), measure))) { // if only the insulin is added
                         measureItem = new MeasureItem(timestamp, Double.parseDouble(measure_value), measure, MeasureItem.MEASURE_KIND_BLOODSUGAR);
                         database.insertMeasurement(measureItem, database.getUserID());
 
@@ -271,11 +273,9 @@ public class MeasurementDialog extends MeasurementInputDialog {
      */
     private void initialize_measure() {
 
-        //sustains the last blood sugar measure inserted
-        if (database.getLastBloodsugarMeasurement(1) != null) {
-            addBloodSugar.setText(database.getLastBloodsugarMeasurement(1)[0].toString());
-            measure = database.getLastBloodsugarMeasurement(1)[1].toString();
-        }
+
+            SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+            measure = sharedPreferences.getString("pref_bloodsugarOptions","");
 
         if (measure.equals("")) {
             measure = "mg/dl";
@@ -311,11 +311,8 @@ public class MeasurementDialog extends MeasurementInputDialog {
                 break;
         }
 
-        //sustains the last insulin measure inserted
-        if (database.getLastInsulinMeasurement(1) != null) {
-            addInsulin.setText(database.getLastInsulinMeasurement(1)[0].toString());
-            insulin = database.getLastInsulinMeasurement(1)[1].toString();
-        }
+
+        insulin = sharedPreferences.getString("pref_insulinOptions", "");
 
         if (insulin.equals("")) {
             insulin = "Units";
@@ -324,6 +321,7 @@ public class MeasurementDialog extends MeasurementInputDialog {
         //selects the radio button units for insulin
         switch (insulin) {
             case "Units":
+            case "Einheiten":
                 units.setActivated(true);
                 units.setChecked(true);
                 ml.setActivated(false);

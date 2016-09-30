@@ -199,4 +199,16 @@
     <string name="last_month">Letzten 30 Tage</string>
     <string name="all_time">All Time</string>
     <string name="last_year">Letzten 365 Tage</string>
+    <string name="activities">Aktivitäten</string>
+    <string name="error_time"></string>
+    <string name="error_date"></string>
+    <string name="everyday">Jeder Tag</string>
+    <string name="insulin_unit">Einheiten</string>
+    <string name="pref_blood_sugar_unit">Blutzucker Einheit</string>
+    <string name="pref_blood_sugar_preference">Bevorzugte Einheit</string>
+    <string name="pref_key_dt"></string>
+    <string name="pref_insulin_unit">Einheiten Insulin</string>
+    <string name="single_day">Heute</string>
+    <string name="weekday_weekend">Wochentage/ Wochenende</string>
+    <string name="measurements">Messwerte</string>
 </resources>

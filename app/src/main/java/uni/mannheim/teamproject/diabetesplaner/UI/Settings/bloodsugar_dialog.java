@@ -5,8 +5,10 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
 import android.os.Build;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,12 +17,9 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.Toast;
 
-import java.sql.Date;
-import java.sql.Time;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Locale;
-import java.util.TimeZone;
 
 import uni.mannheim.teamproject.diabetesplaner.Database.DataBaseHandler;
 import uni.mannheim.teamproject.diabetesplaner.Domain.MeasureItem;
@@ -196,10 +195,8 @@ public class bloodsugar_dialog extends DialogFragment implements View.OnClickLis
      */
     private void initialize_measure()
     {
-        if(database.getLastBloodsugarMeasurement(1) != null) {
-            bloodsugar_level.setText(database.getLastBloodsugarMeasurement(1)[0].toString());
-            measure = database.getLastBloodsugarMeasurement(1)[1].toString();
-        }
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.getActivity());
+        measure = sharedPreferences.getString("pref_bloodsugarOptions","");
         if (measure.equals("")) {
             measure = "mg/dl";
         }

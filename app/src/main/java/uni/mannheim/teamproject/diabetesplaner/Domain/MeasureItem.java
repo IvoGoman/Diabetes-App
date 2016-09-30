@@ -48,6 +48,10 @@ public class MeasureItem {
     public void setMeasure_value(double measure_value) {
         this.measure_value = measure_value;
     }
+    public void setMeasure_value(double measure_value, String measure_unit) {
+        this.measure_value = measure_value;
+        this.measure_unit = measure_unit;
+    }
 
     public String getMeasure_unit() {
         return measure_unit;
@@ -71,6 +75,12 @@ public class MeasureItem {
         return Util.convertBSToMol(measure_value, measure_unit);
     }
 
+
+    public double getMeasureValueInPercent() {
+        return Util.convertBSToPercent(measure_value, measure_unit);
+    }
+
+
     /**
      * returns the blood sugar level in mg/dl
      *
@@ -81,6 +91,39 @@ public class MeasureItem {
         return Util.convertBSToMG(measure_value, measure_unit);
     }
 
+    /**
+     * Ivo
+     * Conversion for Insulin Values
+     * @return returns value in mL/cc
+     */
+    public double getMeasureValueInCL(){
+        double result = 0;
+        switch(measure_unit){
+            case("mL/cc"):
+                result = measure_value;
+            case("Units"):
+            case("Einheiten"):
+                result = Util.Units_to_ml(measure_value);
+        }
+        return result;
+    }
+
+    /**
+     * Ivo
+     * Conversion for Insulin Values
+     * @return returns the value in Units
+     */
+    public double getMeasureValueinUnits(){
+        double result = 0;
+        switch(measure_unit){
+            case("mL/cc"):
+                result = Util.ml_to_Units(measure_value);
+            case("Units"):
+            case("Einheiten"):
+                result = measure_value;
+        }
+        return result;
+    }
     /**
      * compares two MeasureItems
      *

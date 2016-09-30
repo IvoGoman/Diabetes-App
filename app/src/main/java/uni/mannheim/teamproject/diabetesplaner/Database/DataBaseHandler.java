@@ -787,6 +787,13 @@ public class DataBaseHandler extends SQLiteOpenHelper {
      */
     public void insertMeasurement(MeasureItem item, int profile_id){
         SQLiteDatabase db = this.getWritableDatabase();
+        switch(item.getMeasure_kind()){
+            case("bloodsugar"):
+                item.setMeasure_value(item.getMeasureValueInMG(),"mg/dl");
+                break;
+            case("insulin"):
+                item.setMeasure_value(item.getMeasureValueInCL(),"mL/cc");
+        }
         Cursor cursor = db.rawQuery("select count(*) from "+ MEASUREMENT_TABLE_NAME+" where timestamp = "+ item.getTimestamp()+";", null);
 
         if(cursor.getCount()>=1) {
@@ -1289,6 +1296,8 @@ public class DataBaseHandler extends SQLiteOpenHelper {
     }
 
     /**
+     * Intended for the Statistics Fragment
+     * In order to build the datasets for the charts the timeframe needs to be known
      * @return the First MeasureItem stored in the DB
      */
     public MeasureItem getFirstMeasurement(){

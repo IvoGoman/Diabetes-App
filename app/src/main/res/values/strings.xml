@@ -244,5 +244,12 @@
     <string name="last_year">Last 365 Days</string>
     <string name="activities">Activities</string>
     <string name="measurements">Measurements</string>
+    <string name="insulin_mlcc">Insulin mL/cc</string>
+    <string name="bloodsugar_mgdl">Blood sugar mg/dl</string>
+    <string name="pref_blood_sugar_preference">Preferred Unit</string>
+    <string name="pref_blood_sugar_unit">Blood Sugar Unit</string>
+    <string name="pref_insulin_unit">Insulin Unit</string>
+    <string name="insulin_unit">unit</string>
+    <string name="chart_measurement"><![CDATA[Insulin & Blood sugar Chart]]></string>
 
 </resources>

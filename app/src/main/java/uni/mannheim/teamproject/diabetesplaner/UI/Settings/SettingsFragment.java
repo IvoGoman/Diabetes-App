@@ -53,6 +53,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
     private String bloodsugar_measure_value;
     private String bloodsugar_measure;
     private ListPreference pref_weight_measurement;
+    private ListPreference pref_bloodsugarOptions;
+    private ListPreference pref_insulinOptions;
     private EditTextPreference pref_name;
     private EditTextPreference pref_weight;
     private CheckBoxPreference pref_vacation;
@@ -112,16 +114,16 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
                             .setMessage(R.string.pref_algos_reset_message)
                             .setIcon(getResources().getDrawable(android.R.drawable.ic_dialog_alert))
                             .setCancelable(false)
-                            .setPositiveButton(R.string.accept,new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
+                            .setPositiveButton(R.string.accept, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
                                     SharedPreferences sharedPreferences = getActivity().getSharedPreferences("PREDICTION_SERVICE_FILE", Context.MODE_PRIVATE);
                                     SharedPreferences.Editor editor = sharedPreferences.edit();
                                     editor.putString("LAST_PREDICTION", "0");
                                     editor.commit();
                                 }
                             })
-                            .setNegativeButton(R.string.cancel,new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog,int id) {
+                            .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                                public void onClick(DialogInterface dialog, int id) {
                                     // if this button is clicked, just close
                                     // the dialog box and do nothing
                                     dialog.cancel();
@@ -193,7 +195,24 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             });
 
 
-
+            pref_bloodsugarOptions = (ListPreference) findPreference("pref_bloodsugarOptions");
+            pref_bloodsugarOptions.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
+                    sharedPreferences.edit().putString("pref_bloodsugarOptions",String.valueOf(newValue));
+                    return true;
+                }
+            });
+            pref_insulinOptions = (ListPreference) findPreference("pref_insulinOptions");
+            pref_insulinOptions.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+                @Override
+                public boolean onPreferenceChange(Preference preference, Object newValue) {
+                    SharedPreferences sharedPreferences = getPreferenceManager().getSharedPreferences();
+                    sharedPreferences.edit().putString("pref_insulinOptions",String.valueOf(newValue));
+                    return true;
+                }
+            });
 
 
             //define preference for the onclick-method
@@ -219,9 +238,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             });
 
             //check if data collection is already started
-            if(getDataCollection())
-            {
-               startServices();
+            if (getDataCollection()) {
+                startServices();
             }
 
             //Write User Data in the Summary Fields
@@ -234,9 +252,8 @@ public class SettingsFragment extends PreferenceFragment implements SharedPrefer
             pref_name.setSummary(database.getUser(database.getUserID())[0] + database.getUser(database.getUserID())[1]);
 
 
-        }catch(Exception e)
-        {
-            Log.e(TAG,e.getMessage());
+        } catch (Exception e) {
+            Log.e(TAG, e.getMessage());
         }
     }
 
