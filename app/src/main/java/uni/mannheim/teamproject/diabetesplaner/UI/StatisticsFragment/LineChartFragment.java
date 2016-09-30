@@ -32,7 +32,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
- * Created by Stefan on 11.01.2016.
+ * Created by Ivo
  */
 public class LineChartFragment extends ChartFragment {
     public LineChartFragment() {
@@ -58,20 +58,23 @@ public class LineChartFragment extends ChartFragment {
         LineChart chart = (LineChart) inflaterView.findViewById(R.id.combinedInsulinGlucoseChart);
         LineData lineData = this.getData("DAY");
         chart.setData(lineData);
-        chart.setDescription("Combination of Blood Sugar and Insulin Levels");
+        chart.setDescription(getString(R.string.current_day));
+        chart.setDescriptionTextSize(15f);
         chart.setDrawGridBackground(false);
         YAxis yAxisL = chart.getAxisLeft();
         yAxisL.setAxisMinValue(0f);
+        yAxisL.setAxisMaxValue(80f);
         yAxisL.setDrawGridLines(false);
         YAxis yAxisR = chart.getAxisRight();
         yAxisR.setAxisMinValue(0f);
         yAxisR.setDrawGridLines(false);
-
+        yAxisR.setAxisMinValue(50f);
+        yAxisR.setAxisMaxValue(350f);
         XAxis xAxis = chart.getXAxis();
         xAxis.setPosition(XAxis.XAxisPosition.TOP_INSIDE);
 
         xAxis.setTextSize(10f);
-        xAxis.setTextColor(Color.WHITE);
+        xAxis.setTextColor(Color.BLACK);
         xAxis.setDrawAxisLine(false);
         xAxis.setDrawGridLines(true);
         xAxis.setTextColor(Color.rgb(255, 192, 56));
@@ -137,7 +140,7 @@ public class LineChartFragment extends ChartFragment {
                 }
             }
         });
-        LineDataSet lineDataSet = new LineDataSet(lineValues, "Insulin");
+        LineDataSet lineDataSet = new LineDataSet(lineValues, getString(R.string.insulin_mlcc));
         lineDataSet.setDrawHighlightIndicators(false);
         lineDataSet.setColor(Color.BLUE);
         lineDataSet.setCircleColor(Color.BLUE);
@@ -155,11 +158,11 @@ public class LineChartFragment extends ChartFragment {
                 }
             }
         });
-        LineDataSet lineDataSet2 = new LineDataSet(lineValues2, "Blood Sugar Level");
+        LineDataSet lineDataSet2 = new LineDataSet(lineValues2, getString(R.string.bloodsugar_mgdl));
         lineDataSet2.setDrawHighlightIndicators(false);
         lineDataSet2.setColor(Color.RED);
         lineDataSet2.setCircleColor(Color.RED);
-        lineDataSet2.setAxisDependency(YAxis.AxisDependency.LEFT);
+        lineDataSet2.setAxisDependency(YAxis.AxisDependency.RIGHT);
 
         List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         dataSets.add(lineDataSet);
@@ -178,6 +181,22 @@ public class LineChartFragment extends ChartFragment {
     public void updateChart(String timeFrame) {
         LineChart chart = (LineChart) this.getView().findViewById(R.id.combinedInsulinGlucoseChart);
         LineData lineData = this.getData(timeFrame);
+        String desc = "";
+        switch (timeFrame) {
+            case ("DAY"):
+                desc = getString(R.string.current_day);
+                break;
+            case ("WEEK"):
+                desc = getString(R.string.last_week);
+                break;
+            case ("MONTH"):
+                desc = getString(R.string.last_month);
+                break;
+            case ("YEAR"):
+                desc = getString(R.string.last_year);
+                break;
+        }
+        chart.setDescription(desc);
         chart.setData(lineData);
         chart.invalidate();
     }
@@ -189,6 +208,7 @@ public class LineChartFragment extends ChartFragment {
      * @return List of all Measurement entries for the timeframe and measurekind
      */
     private List<Entry> getEntries(Date date, String timeFrame, String measurekind) {
+
         Calendar c = Calendar.getInstance();
         c.setTime(date);
         ArrayList<MeasureItem> measurements = AppGlobal.getHandler().getMeasurementValues(date, timeFrame, measurekind);

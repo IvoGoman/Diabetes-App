@@ -23,7 +23,7 @@ import uni.mannheim.teamproject.diabetesplaner.Utility.AppGlobal;
 import uni.mannheim.teamproject.diabetesplaner.Utility.TimeUtils;
 
 /**
- * Created by Stefan on 11.01.2016.
+ * Created by Ivo
  */
 public class RingChartFragment extends ChartFragment {
 
@@ -54,7 +54,8 @@ public class RingChartFragment extends ChartFragment {
         PieChart chart = (PieChart) inflaterView.findViewById(R.id.activitypiechart);
         chart.setData(pieData);
         chart.setUsePercentValues(true);
-        chart.setDescription("");
+        chart.setDescription(getString(R.string.current_day));
+        chart.setDescriptionTextSize(15f);
         chart.highlightValues(null);
         chart.setTransparentCircleColor(Color.WHITE);
         chart.setEntryLabelColor(Color.BLACK);
@@ -113,7 +114,22 @@ public class RingChartFragment extends ChartFragment {
     public void updateChart(String timeFrame) {
         PieChart chart = (PieChart) this.getView().findViewById(R.id.activitypiechart);
         PieData pieData = this.getData(timeFrame);
-
+        String desc = "";
+        switch (timeFrame) {
+            case ("DAY"):
+                desc = getString(R.string.current_day);
+                break;
+            case ("WEEK"):
+                desc = getString(R.string.last_week);
+                break;
+            case ("MONTH"):
+                desc = getString(R.string.last_month);
+                break;
+            case ("YEAR"):
+                desc = getString(R.string.last_year);
+                break;
+        }
+        chart.setDescription(desc);
         chart.setData(pieData);
         chart.invalidate();
 
